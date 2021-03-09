@@ -10,7 +10,7 @@ void writeQdctLsb(short *qcoeff) {
     //future idea: loop unroll
     for(int i = 1; i < 400 ; i++) {
         short bit = (msg[0] >> (i % 8)) & 1;
-        if(qcoeff[i])
+        if(i % 25 != 0)
             qcoeff[i] = (qcoeff[i] & 0xFFFE) | bit;
     }
     
@@ -39,7 +39,7 @@ void printQdct(short *qcoeff) {
     for(int i = 0; i < 400; i++) {
         if (i % 16 == 0)
             printf("\n");
-        printf("%d", qcoeff[i]);
+        printf("%d,", qcoeff[i]);
     }
     }
 }
