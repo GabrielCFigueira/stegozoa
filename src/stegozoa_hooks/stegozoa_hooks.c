@@ -31,7 +31,7 @@ void printQdct(short *qcoeff) {
         fprintf(fp, "%d", qcoeff[i]);
     }
 
-    fp.close();
+    fclose(fp);
 
 }
 
