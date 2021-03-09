@@ -7,15 +7,10 @@ static int stop = 0;
 void writeQdctLsb(short *qcoeff) {
 
     int n_bits = sizeof(msg) * 8;
-    if(stop < 2) {
-    printf("n_bits: %d\n", n_bits);
     //future idea: loop unroll
     for(int i = 0; i < 400 && i < n_bits; i++) {
         short bit = (msg[i / 8] >> (i % 8)) & 1;
-        printf("bit: %d", bit);
-        printf(", %d\n", 0xFFFE | bit );
         qcoeff[i] = (qcoeff[i] & 0xFFFE) | bit;
-    }
     }
     
 }
