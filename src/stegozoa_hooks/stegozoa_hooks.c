@@ -22,7 +22,7 @@ void printQdct(short *qcoeff) {
     fp = fopen("/home/vagrant/qcoeff.txt", "a");
 
     if(!fp) {
-        fprint("Stegozoa: Couldnt open file");
+        printf("Stegozoa: Couldnt open file");
         return;
     }
     for(int i = 0; i < 400; i++) {
