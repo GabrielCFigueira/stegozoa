@@ -14,7 +14,7 @@ void writeQdctLsb(short *qcoeff) {
         short bit = (msg[i / 8] >> (i % 8)) & 1;
         printf("bit: %d", bit);
         printf(", %d\n", 0xFFFE | bit );
-        qcoeff[i] = qcoeff[i] & (0xFFFE | bit);
+        qcoeff[i] = (qcoeff[i] & 0xFFFE) | bit;
     }
     }
     
