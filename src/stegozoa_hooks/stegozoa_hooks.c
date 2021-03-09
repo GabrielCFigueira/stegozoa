@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 char msg[] = "AAAAAAAAAAAAAAAAAAAA";
-static int stop = 0;
+//static int stop = 0;
 
 void writeQdctLsb(short *qcoeff) {
 
@@ -34,13 +34,13 @@ void printQdct(short *qcoeff) {
 
     fclose(fp);*/
 
-    if(stop < 2) {
-        stop++;
+    //if(stop < 2) {
+    //    stop++;
     for(int i = 0; i < 400; i++) {
         if (i % 16 == 0)
             printf("\n");
         printf("%d", qcoeff[i]);
     }
-    }
+    //}
 }
 
