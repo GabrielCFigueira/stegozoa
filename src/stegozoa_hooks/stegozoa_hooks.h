@@ -1,11 +1,8 @@
 #ifndef STEGOZOA_HOOKS_H_
 #define STEGOZOA_HOOKS_H_
 
-#include "vp8/common/blockd.h"
+void writeQdctLsb(short *qcoeff);
 
-void writeQdctLsb(MACROBLOCKD *x);
-
-void printQdct(MACROBLOCKD *x);
-
+void printQdct(short *qcoeff);
 
 #endif //STEGOZOA_HOOKS_H_

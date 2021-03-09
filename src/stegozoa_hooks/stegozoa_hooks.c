@@ -1,22 +1,21 @@
 #include "stegozoa_hooks.h"
-#include "vp8/common/blockd.h"
 #include <stdio.h>
 
 char msg[] = "AAAAAAAAAAAAAAAAAAAA";
 
-void writeQdctLsb(MACROBLOCKD *x) {
+void writeQdctLsb(short *qcoeff) {
 
     int n_bits = sizeof(msg) * 8;
 
     //future idea: loop unroll
-    for(int i = 0; i < 400, i < n_bits; i++) {
+    for(int i = 0; i < 400 && i < n_bits; i++) {
         short bit = (msg[i / 8] >> (i % 8)) & 1;
-        x->qcoeff[i] = x->qcoeff[i] & 0xFFFE | bit;
+        qcoeff[i] = qcoeff[i] & (0xFFFE | bit);
     }
     
 }
 
-void printQdct(MACROBLOCKD *x) {
+void printQdct(short *qcoeff) {
 
     FILE *fp;
 
@@ -25,7 +24,7 @@ void printQdct(MACROBLOCKD *x) {
     for(int i = 0; i < 400; i++) {
         if (i % 16 == 0)
             fprintf(fp, "\n");
-        fprintf(fp, "%d", x->qcoeff[i]);
+        fprintf(fp, "%d", qcoeff[i]);
     }
 
 }
