@@ -19,9 +19,9 @@ void writeQdctLsb(short *qcoeff) {
 
 void printQdct(short *qcoeff) {
 
-    FILE *fp;
+/*    FILE *fp;
 
-/*    fp = fopen("/home/vagrant/qcoeff.txt", "a");
+    fp = fopen("/home/vagrant/qcoeff.txt", "a");
 
     if(!fp) {
         printf("Stegozoa: Couldnt open file");
@@ -39,8 +39,8 @@ void printQdct(short *qcoeff) {
         stop++;
     for(int i = 0; i < 400; i++) {
         if (i % 16 == 0)
-            fprintf(fp, "\n");
-        fprintf(fp, "%d", qcoeff[i]);
+            printf("\n");
+        printf("%d", qcoeff[i]);
     }
     }
 }
