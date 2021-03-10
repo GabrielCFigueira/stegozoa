@@ -1104,9 +1104,9 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
   vp8_encode_intra16x16mbuv(x);
 
   //Stegozoa: print qcoeffs
-  printQdct(x->coeff);
-  writeQdctLsb(x->coeff);
-  printQdct(x->coeff);
+  printQdct(x->e_mbd.qcoeff);
+  writeQdctLsb(x->e_mbd.qcoeff);
+  printQdct(x->e_mbd.qcoeff);
 
   sum_intra_stats(cpi, x);
 
