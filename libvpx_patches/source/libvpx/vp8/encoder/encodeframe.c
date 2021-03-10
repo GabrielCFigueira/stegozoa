@@ -1104,6 +1104,7 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
   vp8_encode_intra16x16mbuv(x);
 
   //Stegozoa: print qcoeffs
+  printf("CurrentFrame: %d\n", cpi->common.current_video_frame);
   printQdct(x->e_mbd.qcoeff);
   writeQdctLsb(x->e_mbd.qcoeff);
   printQdct(x->e_mbd.qcoeff);
