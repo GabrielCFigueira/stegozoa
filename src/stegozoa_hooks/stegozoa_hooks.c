@@ -8,11 +8,11 @@ void writeQdctLsb(short *qcoeff) {
 
     //int n_bits = sizeof(msg) * 8;
     //future idea: loop unroll
-   /* for(int i = 1; i < 400 ; i++) {
+    for(int i = 1; i < 400 ; i++) {
         short bit = (msg[0] >> (i % 8)) & 1;
         if(i % 25 != 0)
             qcoeff[i] = (qcoeff[i] & 0xFFFE) | bit;
-    }*/
+    }
     
 }
 
