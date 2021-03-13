@@ -928,7 +928,7 @@ static vpx_codec_err_t vp8e_encode(vpx_codec_alg_priv_t *ctx,
           ctx->cpi, &lib_flags, &size, cx_data, cx_data_end, &dst_time_stamp,
           &dst_end_time_stamp, !img);
 
-      printf("CurrentFrame: %d, %d\n", ctx->cpi->common.current_video_frame, cx_data_sz);
+      printf("CurrentFrame: %d, %lu\n", ctx->cpi->common.current_video_frame, cx_data_sz);
 
       if (comp_data_state == VPX_CODEC_CORRUPT_FRAME) {
         return VPX_CODEC_CORRUPT_FRAME;
