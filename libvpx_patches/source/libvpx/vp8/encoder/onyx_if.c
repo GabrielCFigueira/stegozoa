@@ -4864,7 +4864,7 @@ int vp8_get_compressed_data(VP8_COMP *cpi, unsigned int *frame_flags,
       if ((cpi->last_source =
                vp8_lookahead_peek(cpi->lookahead, 1, PEEK_BACKWARD)) == NULL) {
 
-        printf("CurrentFrame: %d, Return: %d\n", ctx->cpi->common.current_video_frame, 1);
+        printf("CurrentFrame: %d, Return: %d\n", cpi->common.current_video_frame, 1);
         return -1;
       }
     }
@@ -4900,7 +4900,7 @@ int vp8_get_compressed_data(VP8_COMP *cpi, unsigned int *frame_flags,
 
 #endif
 
-    printf("CurrentFrame: %d, Return: %d\n", ctx->cpi->common.current_video_frame, 2);
+    printf("CurrentFrame: %d, Return: %d\n", cpi->common.current_video_frame, 2);
 
     return -1;
   }
