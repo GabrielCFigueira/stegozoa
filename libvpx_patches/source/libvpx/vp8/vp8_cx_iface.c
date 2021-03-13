@@ -1022,6 +1022,7 @@ static vpx_codec_err_t vp8e_encode(vpx_codec_alg_priv_t *ctx,
     }
   }
 
+  printf("(left the loop) CurrentFrame: %d, %lu\n", ctx->cpi->common.current_video_frame, cx_data_sz);
   return res;
 }
 
