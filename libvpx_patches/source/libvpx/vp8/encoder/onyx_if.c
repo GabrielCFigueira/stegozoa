@@ -4859,6 +4859,7 @@ int vp8_get_compressed_data(VP8_COMP *cpi, unsigned int *frame_flags,
 #endif
 
   if (!cpi->source) {
+    printf("Source not defined");
     /* Read last frame source if we are encoding first pass. */
     if (cpi->pass == 1 && cm->current_video_frame > 0) {
       if ((cpi->last_source =
