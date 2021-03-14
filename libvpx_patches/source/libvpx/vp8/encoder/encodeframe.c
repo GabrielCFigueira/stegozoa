@@ -668,6 +668,7 @@ static void sum_coef_counts(MACROBLOCK *x, MACROBLOCK *x_thread) {
 #endif  // CONFIG_MULTITHREAD
 
 void vp8_encode_frame(VP8_COMP *cpi) {
+  printf("Current Frame: %d\n", cpi->common.current_video_frame);
   int mb_row;
   MACROBLOCK *const x = &cpi->mb;
   VP8_COMMON *const cm = &cpi->common;
@@ -1107,7 +1108,7 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
   //printf("CurrentFrame: %d\n", cpi->common.current_video_frame);
   //printf("Pass: %d\n", cpi->pass);
   //printQdct(x->e_mbd.qcoeff);
-  writeQdctLsb(x->e_mbd.qcoeff);
+  //writeQdctLsb(x->e_mbd.qcoeff);
   //printQdct(x->e_mbd.qcoeff);
 
   sum_intra_stats(cpi, x);

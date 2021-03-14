@@ -932,7 +932,6 @@ static vpx_codec_err_t vp8e_encode(vpx_codec_alg_priv_t *ctx,
       if (comp_data_state == VPX_CODEC_CORRUPT_FRAME) {
         return VPX_CODEC_CORRUPT_FRAME;
       } else if (comp_data_state == -1) {
-        printf("Break!\n");
         break;
       }
 
