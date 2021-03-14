@@ -5069,7 +5069,6 @@ int vp8_get_compressed_data(VP8_COMP *cpi, unsigned int *frame_flags,
     assert(i < NUM_YV12_BUFFERS);
   }
 
-  printf("CurrentFrame: %d, Pass: %d\n", cpi->common.current_video_frame, cpi->pass);
   switch (cpi->pass) {
 #if !CONFIG_REALTIME_ONLY
     case 1: Pass1Encode(cpi); break;
@@ -5178,7 +5177,6 @@ int vp8_get_compressed_data(VP8_COMP *cpi, unsigned int *frame_flags,
 
         frame_psnr = vpx_sse_to_psnr(t_samples, 255.0, sq_error);
 
-        printf("CurrentFrame: %d, InternalStats\n", cpi->common.current_video_frame);
         cpi->total_y += vpx_sse_to_psnr(y_samples, 255.0, (double)ye);
         cpi->total_u += vpx_sse_to_psnr(uv_samples, 255.0, (double)ue);
         cpi->total_v += vpx_sse_to_psnr(uv_samples, 255.0, (double)ve);
@@ -5187,7 +5185,6 @@ int vp8_get_compressed_data(VP8_COMP *cpi, unsigned int *frame_flags,
 #if CONFIG_POSTPROC
         {
 
-          printf("CurrentFrame: %d, PostProc\n", cpi->common.current_video_frame);
           YV12_BUFFER_CONFIG *pp = &cm->post_proc_buffer;
           double sq_error2;
           double frame_psnr2, frame_ssim2 = 0;
