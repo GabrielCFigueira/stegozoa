@@ -455,10 +455,14 @@ static void encode_mb_row(VP8_COMP *cpi, VP8_COMMON *cm, int mb_row,
 
     if (cm->frame_type == KEY_FRAME) {
       *totalrate += vp8cx_encode_intra_macroblock(cpi, x, tp);
+      //Stegozoa
+      printf("Current Frame: %d\n", cpi->common.current_video_frame);
 #ifdef MODE_STATS
       y_modes[xd->mbmi.mode]++;
 #endif
     } else {
+      //Stegozoa
+      printf("Current Frame: %d\n", cpi->common.current_video_frame);
       *totalrate += vp8cx_encode_inter_macroblock(
           cpi, x, tp, recon_yoffset, recon_uvoffset, mb_row, mb_col);
 
@@ -668,7 +672,6 @@ static void sum_coef_counts(MACROBLOCK *x, MACROBLOCK *x_thread) {
 #endif  // CONFIG_MULTITHREAD
 
 void vp8_encode_frame(VP8_COMP *cpi) {
-  printf("Current Frame: %d\n", cpi->common.current_video_frame);
   int mb_row;
   MACROBLOCK *const x = &cpi->mb;
   VP8_COMMON *const cm = &cpi->common;
@@ -1277,6 +1280,8 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
     }
   }
 
+  //Stegozoa
+  printQdct(x->e_mbd.qcoeff);
   if (!x->skip) {
     vp8_tokenize_mb(cpi, x, t);
 
