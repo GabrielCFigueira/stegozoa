@@ -670,7 +670,6 @@ static void sum_coef_counts(MACROBLOCK *x, MACROBLOCK *x_thread) {
 
 void vp8_encode_frame(VP8_COMP *cpi) {
   int mb_row;
-  printf("Current Frame: %d\n", cpi->common.current_video_frame);
   MACROBLOCK *const x = &cpi->mb;
   VP8_COMMON *const cm = &cpi->common;
   MACROBLOCKD *const xd = &x->e_mbd;
@@ -1116,7 +1115,7 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
   vp8_encode_intra16x16mbuv(x);
 
   //Stegozoa:
-  embbedData += writeQdctLsb(x->e_mbd.qcoeff);
+  //embbedData += writeQdctLsb(x->e_mbd.qcoeff);
   
 
   sum_intra_stats(cpi, x);
