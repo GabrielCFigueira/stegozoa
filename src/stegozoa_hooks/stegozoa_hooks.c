@@ -6,7 +6,7 @@ static int stop = 0;
 
 int writeQdctLsb(short *qcoeff) {
 
-    embdata = 0;
+    int embdata = 0;
     //int n_bits = sizeof(msg) * 8;
     //future idea: loop unroll
     for(int i = 0; i < 400 ; i++) {
