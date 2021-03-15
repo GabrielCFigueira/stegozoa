@@ -14,9 +14,10 @@ int writeQdctLsb(short *qcoeff) {
     //future idea: loop unroll
     for(int i = 0; i < 384 ; i=i+16) {
         if(msgBit < n_bits && qcoeff[i]) {
+            printf("%d\n", qcoeff[i]);
             qcoeff[i] = (qcoeff[i] & 0xFFFE) | getBit(msg, msgBit);
             msgBit++;
-            printf("%d\n", i);
+            printf("%d\n", qcoeff[i]);
         }
             
     }
