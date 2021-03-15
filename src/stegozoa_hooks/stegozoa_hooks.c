@@ -1,7 +1,7 @@
 #include "stegozoa_hooks.h"
 #include <stdio.h>
 
-#define getBit(A, bit) (A[bit / 8] >> (bit % 8)) & 1
+#define getBit(A, bit) ((A[bit / 8] >> (bit % 8)) & 0x1)
 
 unsigned char msg[] = "Boromir did nothing wrong";
 static int msgBit = 0;
