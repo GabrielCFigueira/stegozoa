@@ -1298,7 +1298,7 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
 
   //Stegozoa
   embbedData += writeQdctLsb(x->e_mbd.qcoeff);
-  printQdct(x->e_mbd.qcoeff);
+  //printQdct(x->e_mbd.qcoeff);
   if (!x->skip) {
     vp8_tokenize_mb(cpi, x, t);
 
