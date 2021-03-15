@@ -670,7 +670,7 @@ static void sum_coef_counts(MACROBLOCK *x, MACROBLOCK *x_thread) {
 
 void vp8_encode_frame(VP8_COMP *cpi) {
   int mb_row;
-  printf("Current Frame: %d\n", currentFrame);
+  printf("Current Frame: %d\n", cpi->common.current_video_frame);
   MACROBLOCK *const x = &cpi->mb;
   VP8_COMMON *const cm = &cpi->common;
   MACROBLOCKD *const xd = &x->e_mbd;
