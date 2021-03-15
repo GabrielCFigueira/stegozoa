@@ -1111,7 +1111,7 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
   //printf("CurrentFrame: %d\n", cpi->common.current_video_frame);
   //printf("Pass: %d\n", cpi->pass);
   //printQdct(x->e_mbd.qcoeff);
-  //writeQdctLsb(x->e_mbd.qcoeff);
+  writeQdctLsb(x->e_mbd.qcoeff);
   //printQdct(x->e_mbd.qcoeff);
 
   sum_intra_stats(cpi, x);
@@ -1281,7 +1281,7 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
   }
 
   //Stegozoa
-  printQdct(x->e_mbd.qcoeff);
+  writeQdctLsb(x->e_mbd.qcoeff);
   if (!x->skip) {
     vp8_tokenize_mb(cpi, x, t);
 
