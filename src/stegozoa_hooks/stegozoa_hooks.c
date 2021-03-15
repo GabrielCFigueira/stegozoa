@@ -1,44 +1,33 @@
 #include "stegozoa_hooks.h"
 #include <stdio.h>
 
-char msg[] = "AAAAAAAAAAAAAAAAAAAA";
+#define getBit(A, bit) (msg[embdata / 8] >> (embdata % 8)) & 1
+
+unsigned char msg[] = "Boromir did nothing wrong";
+static int msgBit = 0;
 static int stop = 0;
 
 int writeQdctLsb(short *qcoeff) {
 
-    int embdata = 0;
-    //int n_bits = sizeof(msg) * 8;
+    int lastMsgBit = msgBit;
+    int n_bits = (sizeof(msg) + 1) * 8;
     //future idea: loop unroll
-    for(int i = 0; i < 384 ; i++) {
-        short bit = (msg[0] >> (i % 8)) & 1;
-        if(i % 16 == 0 && qcoeff[i]) {
-            qcoeff[i] = (qcoeff[i] & 0xFFFE) | bit;
-            embdata += 1;
+    for(int i = 0; i < 384 ; i+=16) {
+        if(msgBit < n_bits && qcoeff[i]) {
+            qcoeff[i] = (qcoeff[i] & 0xFFFE) | getBit(msg, msgBit);
+            msgBit++;
         }
             
     }
 
-    return embdata;
+    if(msgBit == n_bits)
+        msgBit = 0; //send the same message over and over, for now
+
+    return msgBit - LastMsgBit;
     
 }
 
 void printQdct(short *qcoeff) {
-
-/*    FILE *fp;
-
-    fp = fopen("/home/vagrant/qcoeff.txt", "a");
-
-    if(!fp) {
-        printf("Stegozoa: Couldnt open file");
-        return;
-    }
-    for(int i = 0; i < 400; i++) {
-        if (i % 16 == 0)
-            fprintf(fp, "\n");
-        fprintf(fp, "%d", qcoeff[i]);
-    }
-
-    fclose(fp);*/
 
     if(stop < 920) {
         stop++;
