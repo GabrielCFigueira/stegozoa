@@ -4,15 +4,21 @@
 char msg[] = "AAAAAAAAAAAAAAAAAAAA";
 static int stop = 0;
 
-void writeQdctLsb(short *qcoeff) {
+int writeQdctLsb(short *qcoeff) {
 
+    embdata = 0;
     //int n_bits = sizeof(msg) * 8;
     //future idea: loop unroll
-    for(int i = 0; i < 384 ; i++) {
+    for(int i = 0; i < 400 ; i++) {
         short bit = (msg[0] >> (i % 8)) & 1;
-        if(i % 16 == 0 && qcoeff[i])
+        if(i % 16 == 0 && qcoeff[i]) {
             qcoeff[i] = (qcoeff[i] & 0xFFFE) | bit;
+            embdata += 1;
+        }
+            
     }
+
+    return embdata;
     
 }
 
@@ -34,7 +40,7 @@ void printQdct(short *qcoeff) {
 
     fclose(fp);*/
 
-    if(stop < 200) {
+    if(stop < 920) {
         stop++;
     for(int i = 0; i < 400; i++) {
         if (i % 16 == 0)

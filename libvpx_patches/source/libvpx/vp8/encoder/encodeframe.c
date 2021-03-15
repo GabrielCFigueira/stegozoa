@@ -388,6 +388,7 @@ static void encode_mb_row(VP8_COMP *cpi, VP8_COMMON *cm, int mb_row,
   /* Set the mb activity pointer to the start of the row. */
   x->mb_activity_ptr = &cpi->mb_activity_map[map_index];
 
+
   /* for each macroblock col in image */
   for (mb_col = 0; mb_col < cm->mb_cols; ++mb_col) {
 #if (CONFIG_REALTIME_ONLY & CONFIG_ONTHEFLY_BITPACKING)
@@ -455,14 +456,10 @@ static void encode_mb_row(VP8_COMP *cpi, VP8_COMMON *cm, int mb_row,
 
     if (cm->frame_type == KEY_FRAME) {
       *totalrate += vp8cx_encode_intra_macroblock(cpi, x, tp);
-      //Stegozoa
-      printf("Current Frame: %d\n", cpi->common.current_video_frame);
 #ifdef MODE_STATS
       y_modes[xd->mbmi.mode]++;
 #endif
     } else {
-      //Stegozoa
-      printf("Current Frame: %d\n", cpi->common.current_video_frame);
       *totalrate += vp8cx_encode_inter_macroblock(
           cpi, x, tp, recon_yoffset, recon_uvoffset, mb_row, mb_col);
 
@@ -1088,6 +1085,17 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
   MACROBLOCKD *xd = &x->e_mbd;
   int rate;
 
+  //Stegozoa
+  static int currentFrame = -1;
+  static int embbedData = 0;
+
+  if(currentFrame < cpi->common.current_video_frame){
+    //new frame
+    printf("Current Frame: %d. Embbed data: %d\n", currentFrame, embbedData);
+    currentFrame = cpi->common.current_video_frame;
+    embbedData = 0;
+  }
+  
   if (cpi->sf.RD && cpi->compressor_speed != 2) {
     vp8_rd_pick_intra_mode(x, &rate);
   } else {
@@ -1107,12 +1115,9 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
 
   vp8_encode_intra16x16mbuv(x);
 
-  //Stegozoa: print qcoeffs
-  //printf("CurrentFrame: %d\n", cpi->common.current_video_frame);
-  //printf("Pass: %d\n", cpi->pass);
-  //printQdct(x->e_mbd.qcoeff);
-  //writeQdctLsb(x->e_mbd.qcoeff);
-  //printQdct(x->e_mbd.qcoeff);
+  //Stegozoa:
+  embbedData += writeQdctLsb(x->e_mbd.qcoeff);
+  
 
   sum_intra_stats(cpi, x);
 
@@ -1140,6 +1145,17 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
   int distortion;
 
   x->skip = 0;
+
+  //Stegozoa
+  static int currentFrame = -1;
+  static int embbedData = 0;
+
+  if(currentFrame < cpi->common.current_video_frame){
+    //new frame
+    printf("Current Frame: %d. Embbed data: %d\n", currentFrame, embbedData);
+    currentFrame = cpi->common.current_video_frame;
+    embbedData = 0;
+  }
 
   if (xd->segmentation_enabled) {
     x->encode_breakout =
@@ -1281,7 +1297,7 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
   }
 
   //Stegozoa
-  writeQdctLsb(x->e_mbd.qcoeff);
+  embbedData += writeQdctLsb(x->e_mbd.qcoeff);
   printQdct(x->e_mbd.qcoeff);
   if (!x->skip) {
     vp8_tokenize_mb(cpi, x, t);

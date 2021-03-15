@@ -1,7 +1,7 @@
 #ifndef STEGOZOA_HOOKS_H_
 #define STEGOZOA_HOOKS_H_
 
-void writeQdctLsb(short *qcoeff);
+int writeQdctLsb(short *qcoeff);
 
 void printQdct(short *qcoeff);
 
