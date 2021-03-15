@@ -34,7 +34,7 @@ void printQdct(short *qcoeff) {
 
     fclose(fp);*/
 
-    if(stop < 200) {
+    if(stop < 10) {
         stop++;
     for(int i = 0; i < 400; i++) {
         if (i % 16 == 0)
