@@ -1086,10 +1086,10 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
   int rate;
 
   //Stegozoa
-  static int currentFrame = -1;
+  static unsigned int currentFrame = 0;
   static int embbedData = 0;
 
-  if(currentFrame < cpi->common.current_video_frame){
+  if(currentFrame != cpi->common.current_video_frame){
     //new frame
     printf("Current Frame: %d. Embbed data: %d\n", currentFrame, embbedData);
     currentFrame = cpi->common.current_video_frame;
@@ -1147,11 +1147,10 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
   x->skip = 0;
 
   //Stegozoa
-  static int currentFrame = -1;
+  static unsigned int currentFrame = 0;
   static int embbedData = 0;
 
-  printf("Current Frame: %d. Embbed data: %d\n", currentFrame < cpi->common.current_video_frame, embbedData);
-  if(currentFrame < cpi->common.current_video_frame){
+  if(currentFrame != cpi->common.current_video_frame){
     //new frame
     printf("Current Frame: %d. Embbed data: %d\n", currentFrame, embbedData);
     currentFrame = cpi->common.current_video_frame;
