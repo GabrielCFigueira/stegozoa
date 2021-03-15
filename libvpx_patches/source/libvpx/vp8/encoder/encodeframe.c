@@ -1150,7 +1150,7 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
   static int currentFrame = -1;
   static int embbedData = 0;
 
-  printf("Current Frame: %d. Embbed data: %d\n", currentFrame, embbedData);
+  printf("Current Frame: %d. Embbed data: %d\n", cpi->common.current_video_frame, embbedData);
   if(currentFrame < cpi->common.current_video_frame){
     //new frame
     printf("Current Frame: %d. Embbed data: %d\n", currentFrame, embbedData);
