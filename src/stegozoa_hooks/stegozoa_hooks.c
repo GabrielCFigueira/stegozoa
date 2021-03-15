@@ -16,7 +16,7 @@ int writeQdctLsb(short *qcoeff) {
         if(msgBit < n_bits && qcoeff[i]) {
             qcoeff[i] = (qcoeff[i] & 0xFFFE) | getBit(msg, msgBit);
             msgBit++;
-            printf(i);
+            printf("%d\n", i);
         }
             
     }
