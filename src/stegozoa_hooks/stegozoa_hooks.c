@@ -13,7 +13,7 @@ int writeQdctLsb(short *qcoeff) {
     int n_bits = (sizeof(msg) + 1) * 8;
     //future idea: loop unroll
     for(int i = 256; i < 384 ; i=i+16) {
-        if(msgBit < n_bits && qcoeff[i] > 1 || qcoeff[i] < -1) {
+        if(msgBit < n_bits && (qcoeff[i] > 1 || qcoeff[i] < 0)) {
             qcoeff[i] = (qcoeff[i] & 0xFFFE) | getBit(msg, msgBit);
             msgBit++;
         }
