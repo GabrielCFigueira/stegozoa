@@ -20,10 +20,12 @@ int writeQdctLsb(short *qcoeff) {
             
     }
 
+    int rate = msgBit - lastMsgBit;
+
     if(msgBit == n_bits)
         msgBit = 0; //send the same message over and over, for now
 
-    return msgBit - lastMsgBit;
+    return rate;
     
 }
 
