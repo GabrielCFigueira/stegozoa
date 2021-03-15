@@ -1093,7 +1093,6 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
     //new frame
     printf("Current Frame: %d. Embbed data: %d\n", currentFrame, embbedData);
     currentFrame = cpi->common.current_video_frame;
-    embbedData = 0;
   }
   
   if (cpi->sf.RD && cpi->compressor_speed != 2) {
@@ -1154,7 +1153,6 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
     //new frame
     printf("Current Frame: %d. Embbed data: %d\n", currentFrame, embbedData);
     currentFrame = cpi->common.current_video_frame;
-    embbedData = 0;
   }
 
   if (xd->segmentation_enabled) {
@@ -1298,7 +1296,6 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
 
   //Stegozoa
   embbedData += writeQdctLsb(x->e_mbd.qcoeff);
-  //printQdct(x->e_mbd.qcoeff);
   if (!x->skip) {
     vp8_tokenize_mb(cpi, x, t);
 
