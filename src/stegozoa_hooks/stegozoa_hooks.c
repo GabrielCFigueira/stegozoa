@@ -9,7 +9,7 @@ int writeQdctLsb(short *qcoeff) {
     int embdata = 0;
     //int n_bits = sizeof(msg) * 8;
     //future idea: loop unroll
-    for(int i = 0; i < 400 ; i++) {
+    for(int i = 0; i < 384 ; i++) {
         short bit = (msg[0] >> (i % 8)) & 1;
         if(i % 16 == 0 && qcoeff[i]) {
             qcoeff[i] = (qcoeff[i] & 0xFFFE) | bit;
