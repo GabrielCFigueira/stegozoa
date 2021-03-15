@@ -670,6 +670,7 @@ static void sum_coef_counts(MACROBLOCK *x, MACROBLOCK *x_thread) {
 
 void vp8_encode_frame(VP8_COMP *cpi) {
   int mb_row;
+  printf("Current Frame: %d\n", currentFrame);
   MACROBLOCK *const x = &cpi->mb;
   VP8_COMMON *const cm = &cpi->common;
   MACROBLOCKD *const xd = &x->e_mbd;
@@ -1085,15 +1086,15 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
   MACROBLOCKD *xd = &x->e_mbd;
   int rate;
 
-  //Stegozoa
-  static unsigned int currentFrame = 0;
+  //Stegozoa: embedding capacity
+  //static unsigned int currentFrame = 0;
   static int embbedData = 0;
 
-  if(currentFrame != cpi->common.current_video_frame){
+  /*if(currentFrame != cpi->common.current_video_frame){
     //new frame
     printf("Current Frame: %d. Embbed data: %d\n", currentFrame, embbedData);
     currentFrame = cpi->common.current_video_frame;
-  }
+  }*/
   
   if (cpi->sf.RD && cpi->compressor_speed != 2) {
     vp8_rd_pick_intra_mode(x, &rate);
@@ -1145,15 +1146,15 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
 
   x->skip = 0;
 
-  //Stegozoa
-  static unsigned int currentFrame = 0;
+  //Stegozoa: embedding capacity
+  //static unsigned int currentFrame = 0;
   static int embbedData = 0;
 
-  if(currentFrame != cpi->common.current_video_frame){
+  /*if(currentFrame != cpi->common.current_video_frame){
     //new frame
     printf("Current Frame: %d. Embbed data: %d\n", currentFrame, embbedData);
     currentFrame = cpi->common.current_video_frame;
-  }
+  }*/
 
   if (xd->segmentation_enabled) {
     x->encode_breakout =
