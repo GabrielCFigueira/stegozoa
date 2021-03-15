@@ -1,7 +1,7 @@
 #include "stegozoa_hooks.h"
 #include <stdio.h>
 
-#define getBit(A, bit) (msg[embdata / 8] >> (embdata % 8)) & 1
+#define getBit(A, bit) (A[bit / 8] >> (bit % 8)) & 1
 
 unsigned char msg[] = "Boromir did nothing wrong";
 static int msgBit = 0;
@@ -23,7 +23,7 @@ int writeQdctLsb(short *qcoeff) {
     if(msgBit == n_bits)
         msgBit = 0; //send the same message over and over, for now
 
-    return msgBit - LastMsgBit;
+    return msgBit - lastMsgBit;
     
 }
 
