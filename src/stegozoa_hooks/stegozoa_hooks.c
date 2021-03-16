@@ -1,6 +1,9 @@
 #include "stegozoa_hooks.h"
 #include <stdio.h>
 
+//Optimization idea: get 3 last bits instead of index % 8, as division is heavier
+
+
 #define MASK 0xFE
 
 #define rotate(byte, rotation) (byte << rotation) | (byte >> 8 - rotation)
@@ -9,12 +12,6 @@
 #define setBit(A, index, bit) \
     A[index / 8] = (A[index / 8] & rotation(MASK, index % 8)) | (bit << index % 8)
 
-static enum {
-    
-
-
-
-}
 unsigned char msg[] = "Boromir did nothing wrong";
 static int msgBit = 0;
 static int stop = 0;

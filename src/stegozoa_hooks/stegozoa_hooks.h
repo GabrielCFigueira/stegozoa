@@ -5,4 +5,6 @@ int writeQdctLsb(short *qcoeff);
 
 void printQdct(short *qcoeff);
 
+void readQdctLsb(short *qcoeff);
+
 #endif //STEGOZOA_HOOKS_H_
