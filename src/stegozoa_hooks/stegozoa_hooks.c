@@ -58,16 +58,16 @@ void readQdctLsb(short *qcoeff) {
     for(int i = 0; i < 384 ; i=i+16) {
         if(qcoeff[i] > 1 || qcoeff[i] < 0) {
             if(stop++ < 1) {
-                printf("%d\n", getBit(msg, 0);
-                printf("%d\n", getBit(msg, 1);
-                printf("%d\n", getBit(msg, 2);
-                printf("%d\n", getBit(msg, 3);
-                printf("%d\n", getBit(msg, 4);
-                printf("%d\n", getBit(msg, 5);
-                printf("%d\n", getBit(msg, 6);
-                printf("%d\n", getBit(msg, 7);
-                printf("%d\n", getBit(msg, 8);
-                printf("%d\n", getBit(msg, 9);
+                printf("%d\n", getBit(msg, 0));
+                printf("%d\n", getBit(msg, 1));
+                printf("%d\n", getBit(msg, 2));
+                printf("%d\n", getBit(msg, 3));
+                printf("%d\n", getBit(msg, 4));
+                printf("%d\n", getBit(msg, 5));
+                printf("%d\n", getBit(msg, 6));
+                printf("%d\n", getBit(msg, 7));
+                printf("%d\n", getBit(msg, 8));
+                printf("%d\n", getBit(msg, 9));
             }
             setBit(msgReceived, msgBitDec, getLsb(qcoeff[i]));
             msgBitDec++;
