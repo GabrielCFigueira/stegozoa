@@ -114,7 +114,9 @@ void readQdctLsb(short *qcoeff) {
         }
         else if (msgBitDec < 8) {
             char initial = '!';
-            if((0xFF >> (7 - msgBitDec)) ^ (initial >> (7 - msgBitDec)))
+            printf("Mask: %x\n", 0xFF >> (7 - msgBitDec));
+            printf("Init: %x\n", msgReceived[0] >> (7 - msgBitDec));
+            if((msgReceived[0] >> (7 - msgBitDec)) ^ (initial >> (7 - msgBitDec)))
                 msgBitDec = 0;
         }
             
