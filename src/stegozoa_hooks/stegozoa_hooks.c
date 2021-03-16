@@ -82,6 +82,7 @@ void test() {
             printf("LSB: %d\n", getLsb(qc[i]));
             printf("bit in right position: %d\n", getLsb(qc[i]) << testMsgBit % 8);
             printf("bit in right position: %d\n", getLsb(qc[i]) << 3);
+            printf("bit in right position: %d\n", 1 << 3);
             printf("bit in right position: %d\n", getLsb(qc[i]) << 4);
             printf("bit in right position: %d\n", 1 << 4);
             printf("%x\n", testReceivedMsg[testMsgBit / 8]);
