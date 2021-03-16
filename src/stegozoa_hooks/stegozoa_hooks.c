@@ -50,6 +50,44 @@ void printQdct(short *qcoeff) {
     }
 }
 
+//test
+void test() {
+    short qc[400];
+    unsigned char testMsg[] = "G";
+
+    for(int i = 0; i < 384 ; i=i+16) {
+        qc[i] = 21;
+    }
+
+    qc[32] = 0;
+
+    int testMsgBit = 0;
+    int n_bits = (sizeof(testMsg)+1)*8;
+
+    for(int i = 0; i < 384 ; i=i+16) {
+        if(testMsgBit < n_bits && (qc[i] > 1 || qc[i] < 0)) {
+            qc[i] = (qc[i] & 0xFFFE) | getBit(testMsg, testMsgBit);
+            testMsgBit++;
+        }
+            
+    }
+
+    unsigned char testReceivedMsg[200];
+    testMsgBit = 0;
+    for(int i = 0; i < 384 ; i=i+16) {
+        if(qc[i] > 1 || qc[i] < 0) {
+            setBit(testReceivedMsg, testMsgBit, getLsb(qc[i]));
+            testMsgBit++;
+        }
+
+        if(testMsgBit % 8 == 0 && testMsgBit / 8 > 1) {
+            if (testReceivedMsg[testMsgBit / 8 - 1] == '\0') {
+                printf("Message: %s\n", testReceivedMsg);
+                break;
+            }
+        }
+    }
+}
 static char msgReceived[200]; //must be dynamic in the future
 static int msgBitDec = 0;
 
@@ -82,41 +120,3 @@ void readQdctLsb(short *qcoeff) {
 }
 
 
-//test
-void test() {
-    short qc[400];
-    unsigned char testMsg[] = "G";
-
-    for(int i = 0; i < 384 ; i=i+16) {
-        qc[i] = 21;
-    }
-
-    qc[32] = 0;
-
-    int testMsgBit = 0;
-    int n_bits = (sizeof(testMsg)+1)*8;
-
-    for(int i = 0; i < 384 ; i=i+16) {
-        if(testMsgBit < n_bits && (qc[i] > 1 || qc[i] < 0)) {
-            qc[i] = (qc[i] & 0xFFFE) | getBit(testMsg, testMsgBit);
-            testMsgBit++;
-        }
-            
-    }
-
-    unsigned char testReceivedMsg[200];
-    testMsgBit = 0;
-    for(int i = 0; i < 384 ; i=i+16) {
-        if(qc[i] > 1 || qc[i] < 0) {
-            setBit(testReceivedMsg, testMsgBit, getLsb(qc[i]));
-            testMsgBit;
-        }
-
-        if(testMsgBit % 8 == 0 && testMsgBit / 8 > 1) {
-            if (testReceivedMsg[testMsgBit / 8 - 1] == '\0') {
-                printf("Message: %s\n", testReceivedMsg);
-                break;
-            }
-        }
-    }
-}
