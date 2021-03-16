@@ -78,10 +78,6 @@ void test() {
     testReceivedMsg[0] = '\0';
     for(int i = 0; i < 384 ; i=i+16) {
         if(qc[i] > 1 || qc[i] < 0) {
-            printf("LSB: %d\n", getLsb(qc[i]));
-            printf("sizeof: %d\n", sizeof(getLsb(qc[i])));
-            printf("bit in right position: %d\n", getLsb(qc[i]) << testMsgBit % 8);
-            printf("Char: %x\n", testReceivedMsg[testMsgBit / 8]);
             setBit(testReceivedMsg, testMsgBit, getLsb(qc[i]));
             testMsgBit++;
         }
@@ -108,18 +104,18 @@ void readQdctLsb(short *qcoeff) {
             setBit(msgReceived, msgBitDec, getLsb(qcoeff[i]));
             msgBitDec++;
         }
-        if(msgBitDec % 8 == 0 && msgBitDec / 8 > 1) {
+        if(msgBitDec / 8 > 1) {
 
-            if(msgReceived[0] != '!') {
-                msgBitDec = 0;
-                break;
-            }
-
-            if (msgReceived[msgBitDec / 8 - 1] == '\0') {
+            if (msgReceived[msgBitDec / 8 - 1] == '\0' && msgBitDec % 8 == 0) {
                 printf("Message: %s\n", msgReceived);
                 msgBitDec = 0;
                 break;
             }
+        }
+        else if (msgBitDec < 8) {
+            char initial = '!';
+            if(!((0xFF >> (7 - msgBitDec)) ^ initial))
+                msgBitDec = 0;
         }
             
     }
