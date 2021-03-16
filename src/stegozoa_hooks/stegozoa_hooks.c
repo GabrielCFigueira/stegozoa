@@ -113,8 +113,8 @@ void test() {
         }
 
         if(testMsgBit % 8 == 0 && testMsgBit / 8 > 1) {
-            if (testMsgReceived[testMsgBit / 8 - 1] == '\0') {
-                printf("Message: %s\n", testMsgReceived);
+            if (testReceivedMsg[testMsgBit / 8 - 1] == '\0') {
+                printf("Message: %s\n", testReceivedMsg);
                 break;
             }
         }
