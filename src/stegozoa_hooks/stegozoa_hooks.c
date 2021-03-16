@@ -6,11 +6,11 @@
 
 #define MASK 0xFE
 
-#define rotate(byte, rotation) (byte << rotation) | (byte >> (8 - rotation))
-#define getLsb(num) num & 0x0001
+#define rotate(byte, rotation) ((byte << rotation) | (byte >> (8 - rotation)))
+#define getLsb(num) (num & 0x0001)
 #define getBit(A, index) (getLsb(A[index / 8] >> (index % 8)))
 #define setBit(A, index, bit) \
-    A[index / 8] = (A[index / 8] & rotate(MASK, index % 8)) | (bit << index % 8)
+    (A[index / 8] = (A[index / 8] & rotate(MASK, index % 8)) | (bit << index % 8))
 
 char msg[] = "!Boromir did nothing wrong";
 static int msgBit = 0;
