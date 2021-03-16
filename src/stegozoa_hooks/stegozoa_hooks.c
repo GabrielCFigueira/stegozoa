@@ -12,7 +12,7 @@
 #define setBit(A, index, bit) \
     (A[index / 8] = (A[index / 8] & rotate(MASK, index % 8)) | (bit << index % 8))
 
-char msg[] = "!Boromir did nothing wrong";
+unsigned char msg[] = "!Boromir did nothing wrong";
 static int msgBit = 0;
 static int stop = 0;
 
@@ -91,7 +91,7 @@ void test() {
         }
     }
 }
-static char msgReceived[200]; //must be dynamic in the future
+static unsigned char msgReceived[200]; //must be dynamic in the future
 static int msgBitDec = 0;
 
 void readQdctLsb(short *qcoeff) {
@@ -114,6 +114,7 @@ void readQdctLsb(short *qcoeff) {
         }
         else if (msgBitDec < 8) {
             unsigned char initial = '!';
+            printf("Char: %x\n", initial);
             if((msgReceived[0] << (7 - msgBitDec)) != (initial << (7 - msgBitDec))) {
 
                 printf("Received: %x, msgBitDec: %d\n", msgReceived[0] << (7 - msgBitDec), msgBitDec);
