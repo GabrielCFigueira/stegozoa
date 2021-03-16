@@ -91,7 +91,7 @@ void test() {
         qc[i] = 21;
     }
 
-    q[32] = 0;
+    qc[32] = 0;
 
     int testMsgBit = 0;
     int n_bits = (sizeof(testMsg)+1)*8;
