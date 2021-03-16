@@ -75,6 +75,7 @@ void test() {
 
     unsigned char testReceivedMsg[200];
     testMsgBit = 0;
+    printf("\n\n");
     testReceivedMsg[0] = '\0';
     for(int i = 0; i < 384 ; i=i+16) {
         if(qc[i] > 1 || qc[i] < 0) {
