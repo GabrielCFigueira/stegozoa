@@ -78,9 +78,10 @@ void test() {
     testReceivedMsg[0] = '\0';
     for(int i = 0; i < 384 ; i=i+16) {
         if(qc[i] > 1 || qc[i] < 0) {
+            printf("%d\n", qc[i]);
             printf("LSB: %d\n", getLsb(qc[i]));
-            printf("bit in right position: %d\n", getLsb(qc[i]) << (testMsgBit % 8));
             printf("bit in right position: %d\n", getLsb(qc[i]) << testMsgBit % 8);
+            printf("bit in right position: %d\n", getLsb(qc[i]) << 1);
             printf("%x\n", testReceivedMsg[testMsgBit / 8]);
             setBit(testReceivedMsg, testMsgBit, getLsb(qc[i]));
             testMsgBit++;
