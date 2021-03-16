@@ -69,6 +69,7 @@ void readQdctLsb(short *qcoeff) {
 
             if(msgReceived[0] != '!') {
                 msgBitDec = 0;
+                printf("%c\n", msgReceived[0]);
                 break;
             }
 
