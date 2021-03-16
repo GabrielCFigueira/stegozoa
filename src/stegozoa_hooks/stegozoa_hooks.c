@@ -7,7 +7,7 @@
 #define MASK 0xFE
 
 #define rotate(byte, rotation) (byte << rotation) | (byte >> (8 - rotation))
-#define getLsb(num) num & 0x1
+#define getLsb(num) num & 0x0001
 #define getBit(A, index) (getLsb(A[index / 8] >> (index % 8)))
 #define setBit(A, index, bit) \
     A[index / 8] = (A[index / 8] & rotate(MASK, index % 8)) | (bit << index % 8)
@@ -80,11 +80,8 @@ void test() {
         if(qc[i] > 1 || qc[i] < 0) {
             printf("%d\n", qc[i]);
             printf("LSB: %d\n", getLsb(qc[i]));
+            printf("sizeof: %d\n", sizeof(qc[i]));
             printf("bit in right position: %d\n", getLsb(qc[i]) << testMsgBit % 8);
-            printf("bit in right position: %d\n", getLsb(qc[i]) << 3);
-            printf("bit in right position: %d\n", 1 << 3);
-            printf("bit in right position: %d\n", getLsb(qc[i]) << 4);
-            printf("bit in right position: %d\n", 1 << 4);
             printf("%x\n", testReceivedMsg[testMsgBit / 8]);
             setBit(testReceivedMsg, testMsgBit, getLsb(qc[i]));
             testMsgBit++;
