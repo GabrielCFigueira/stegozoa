@@ -58,9 +58,10 @@ void readQdctLsb(short *qcoeff) {
     for(int i = 0; i < 384 ; i=i+16) {
         if(qcoeff[i] > 1 || qcoeff[i] < 0) {
             if(stop++ < 1) {
+                printf("%d\n", qcoeff[i]);
                 printf("%d\n", getLsb(qcoeff[i]));
                 unsigned char A[] = "Ola";
-                setBit(A,0,getLsb(qcoeff[i]));
+                setBit(A,2,getLsb(qcoeff[i]));
                 printf("%s\n", A);
             }
             setBit(msgReceived, msgBitDec, getLsb(qcoeff[i]));
