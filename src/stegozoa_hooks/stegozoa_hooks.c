@@ -113,11 +113,11 @@ void readQdctLsb(short *qcoeff) {
             }
         }
         else if (msgBitDec < 8) {
-            char initial = '!';
-            if((msgReceived[0] >> (7 - msgBitDec)) != (initial >> (7 - msgBitDec))) {
+            unsigned char initial = '!';
+            if((msgReceived[0] << (7 - msgBitDec)) != (initial << (7 - msgBitDec))) {
 
-                printf("Received: %x\n", msgReceived[0] >> (7 - msgBitDec));
-                printf("Exclamation: %x\n", initial >> (7 - msgBitDec));
+                printf("Received: %x\n", msgReceived[0] << (7 - msgBitDec));
+                printf("Exclamation: %x\n", initial << (7 - msgBitDec));
                 msgBitDec = 0;
             }
         }
