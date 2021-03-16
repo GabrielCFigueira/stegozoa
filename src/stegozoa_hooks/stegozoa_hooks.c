@@ -61,7 +61,7 @@ void readQdctLsb(short *qcoeff) {
             setBit(msgReceived, msgBitDec, getLsb(qcoeff[i]));
             msgBitDec++;
         }
-        if(msgBitDec % 8 == 0 && msgReceived[msgBitDec / 8 - 1] == '\0') {
+        if(msgBitDec % 8 == 0 && msgBitDec / 8 > 1 && msgReceived[msgBitDec / 8 - 1] == '\0') {
             printf("Message: %s\n", msgReceived);
             msgBitDec = 0;
             break;
