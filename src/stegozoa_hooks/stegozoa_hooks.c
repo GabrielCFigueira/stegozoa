@@ -6,7 +6,7 @@
 
 #define MASK 0xFE
 
-#define rotate(byte, rotation) (byte << rotation) | (byte >> 8 - rotation)
+#define rotate(byte, rotation) (byte << rotation) | (byte >> (8 - rotation))
 #define getLsb(num) num & 0x1
 #define getBit(A, index) (getLsb(A[index / 8] >> (index % 8)))
 #define setBit(A, index, bit) \
