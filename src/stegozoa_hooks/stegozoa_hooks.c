@@ -1,8 +1,20 @@
 #include "stegozoa_hooks.h"
 #include <stdio.h>
 
-#define getBit(A, bit) ((A[bit / 8] >> (bit % 8)) & 0x1)
+#define MASK 0xFE
 
+#define rotate(byte, rotation) (byte << rotation) | (byte >> 8 - rotation)
+#define getLsb(num) num & 0x1
+#define getBit(A, index) (getLsb(A[index / 8] >> (index % 8)))
+#define setBit(A, index, bit) \
+    A[index / 8] = (A[index / 8] & rotation(MASK, index % 8)) | (bit << index % 8)
+
+static enum {
+    
+
+
+
+}
 unsigned char msg[] = "Boromir did nothing wrong";
 static int msgBit = 0;
 static int stop = 0;
@@ -39,5 +51,26 @@ void printQdct(short *qcoeff) {
         printf("%d,", qcoeff[i]);
     }
     }
+}
+
+static unsigned char msgReceived[200]; //must be dynamic in the future
+static int msgBitDec = 0;
+
+void readQdctLsb(short *qcoeff) {
+
+    
+    for(int i = 0; i < 384 ; i=i+16) {
+        if(qcoeff[i] > 1 || qcoeff[i] < 0) {
+            setBit(msgReceived, msgBitDec, getLsb(qcoeff[i]));
+            msgBitDec++;
+        }
+        if(msgBitDec % 8 == 0 && msgReceived[msgBitDec / 8 - 1] == '\0') {
+            printf("Message: %s\n", msgReceived);
+            msgBitDec = 0;
+            break;
+        }
+            
+    }
+
 }
 
