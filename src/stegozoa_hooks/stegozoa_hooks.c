@@ -12,7 +12,7 @@
 #define setBit(A, index, bit) \
     A[index / 8] = (A[index / 8] & rotate(MASK, index % 8)) | (bit << index % 8)
 
-unsigned char msg[] = "!Boromir did nothing wrong";
+char msg[] = "!Boromir did nothing wrong";
 static int msgBit = 0;
 static int stop = 0;
 
@@ -50,7 +50,7 @@ void printQdct(short *qcoeff) {
     }
 }
 
-static unsigned char msgReceived[200]; //must be dynamic in the future
+static char msgReceived[200]; //must be dynamic in the future
 static int msgBitDec = 0;
 
 void readQdctLsb(short *qcoeff) {
