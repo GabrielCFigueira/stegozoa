@@ -77,7 +77,7 @@ void test() {
     for(int i = 0; i < 384 ; i=i+16) {
         if(qc[i] > 1 || qc[i] < 0) {
             setBit(testReceivedMsg, testMsgBit, getLsb(qc[i]));
-            printf("%c\n", testReceivedMsg[testMsgBit / 8]);
+            printf("%x\n", testReceivedMsg[testMsgBit / 8]);
             testMsgBit++;
         }
 
