@@ -77,11 +77,12 @@ void test() {
     for(int i = 0; i < 384 ; i=i+16) {
         if(qc[i] > 1 || qc[i] < 0) {
             setBit(testReceivedMsg, testMsgBit, getLsb(qc[i]));
-            printf("%d\n", getLsb(qc[i]));
+            printf("%c\n", testReceivedMsg[testMsgBit / 8]);
             testMsgBit++;
         }
 
         if(testMsgBit % 8 == 0 && testMsgBit / 8 > 1) {
+            printf("i got here\n");
             if (testReceivedMsg[testMsgBit / 8 - 1] == '\0') {
                 printf("Message: %s\n", testReceivedMsg);
                 break;
