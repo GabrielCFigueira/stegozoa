@@ -64,6 +64,8 @@ void test() {
     int testMsgBit = 0;
     int n_bits = (sizeof(testMsg)+1)*8;
 
+    printQdct(qc);
+
     for(int i = 0; i < 384 ; i=i+16) {
         if(testMsgBit < n_bits && (qc[i] > 1 || qc[i] < 0)) {
             qc[i] = (qc[i] & 0xFFFE) | getBit(testMsg, testMsgBit);
@@ -71,6 +73,8 @@ void test() {
         }
             
     }
+
+    printQdct(qc);
 
     unsigned char testReceivedMsg[200];
     testMsgBit = 0;
@@ -93,6 +97,7 @@ static int msgBitDec = 0;
 
 void readQdctLsb(short *qcoeff) {
 
+    if(stop++ < 1)
     test();
 
     for(int i = 0; i < 384 ; i=i+16) {
@@ -104,7 +109,6 @@ void readQdctLsb(short *qcoeff) {
 
             if(msgReceived[0] != '!') {
                 msgBitDec = 0;
-                printf("%c\n", msgReceived[0]);
                 break;
             }
 
