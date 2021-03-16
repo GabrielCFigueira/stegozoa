@@ -55,14 +55,16 @@ static int msgBitDec = 0;
 
 void readQdctLsb(short *qcoeff) {
 
-    
+    if(stop < 200)
+        printQdct(qcoeff);
+
     for(int i = 0; i < 384 ; i=i+16) {
         if(qcoeff[i] > 1 || qcoeff[i] < 0) {
             setBit(msgReceived, msgBitDec, getLsb(qcoeff[i]));
             msgBitDec++;
         }
         if(msgBitDec % 8 == 0 && msgBitDec / 8 > 1 && msgReceived[msgBitDec / 8 - 1] == '\0') {
-            printf("Message: %s\n", msgReceived);
+            //printf("Message: %s\n", msgReceived);
             msgBitDec = 0;
             break;
         }
