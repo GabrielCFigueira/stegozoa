@@ -114,7 +114,7 @@ void readQdctLsb(short *qcoeff) {
         }
         else if (msgBitDec < 8) {
             unsigned char initial = '!';
-            if((msgReceived[0] << (7 - msgBitDec)) & 0xFF != (initial << (7 - msgBitDec)) & 0xFF) {
+            if(((msgReceived[0] << (7 - msgBitDec)) & 0xFF) != ((initial << (7 - msgBitDec)) & 0xFF)) {
 
                 msgBitDec = 0;
             }
