@@ -10,7 +10,7 @@
 #define getLsb(num) num & 0x1
 #define getBit(A, index) (getLsb(A[index / 8] >> (index % 8)))
 #define setBit(A, index, bit) \
-    A[index / 8] = (A[index / 8] & rotation(MASK, index % 8)) | (bit << index % 8)
+    A[index / 8] = (A[index / 8] & rotate(MASK, index % 8)) | (bit << index % 8)
 
 unsigned char msg[] = "Boromir did nothing wrong";
 static int msgBit = 0;
