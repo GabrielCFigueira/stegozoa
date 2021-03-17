@@ -1080,7 +1080,7 @@ static void adjust_act_zbin(VP8_COMP *cpi, MACROBLOCK *x) {
 #endif
 }
 
-static int mb_is_skippable(MSCROBLOCKD *x, int has_y2_block) {
+static int mb_is_skippable(MACROBLOCKD *x, int has_y2_block) {
   int skip = 1;
   int i = 0;
 
