@@ -105,6 +105,7 @@ static void decode_macroblock(VP8D_COMP *pbi, MACROBLOCKD *xd,
 #endif
 
   if (xd->mode_info_context->mbmi.mb_skip_coeff) {
+    printf("oops\n");
     vp8_reset_mb_tokens_context(xd);
   } else if (!vp8dx_bool_error(xd->current_bc)) {
     int eobtotal;
@@ -556,6 +557,7 @@ static void decode_mb_rows(VP8D_COMP *pbi) {
            * happens after this check, and therefore no inter concealment
            * will be done.
            */
+          printf("OOps2\n");
           vp8_interpolate_motion(xd, mb_row, mb_col, pc->mb_rows, pc->mb_cols);
         }
       }
