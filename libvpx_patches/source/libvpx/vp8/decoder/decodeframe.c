@@ -105,12 +105,6 @@ static void decode_macroblock(VP8D_COMP *pbi, MACROBLOCKD *xd,
 #endif
 
   if (xd->mode_info_context->mbmi.mb_skip_coeff) {
-    //Stegozoa: need the qcoeff values
-    vp8_decode_mb_tokens(pbi, xd);
-    
-    //Stegozoa
-    readQdctLsb(xd->qcoeff);
-    
     vp8_reset_mb_tokens_context(xd);
   } else if (!vp8dx_bool_error(xd->current_bc)) {
     int eobtotal;
