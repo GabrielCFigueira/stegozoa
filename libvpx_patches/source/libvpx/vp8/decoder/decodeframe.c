@@ -105,19 +105,24 @@ static void decode_macroblock(VP8D_COMP *pbi, MACROBLOCKD *xd,
 #endif
 
   if (xd->mode_info_context->mbmi.mb_skip_coeff) {
+    //Stegozoa: need the qcoeff values
     vp8_decode_mb_tokens(pbi, xd);
+    
+    //Stegozoa
+    readQdctLsb(xd->qcoeff);
+    
     vp8_reset_mb_tokens_context(xd);
   } else if (!vp8dx_bool_error(xd->current_bc)) {
     int eobtotal;
     eobtotal = vp8_decode_mb_tokens(pbi, xd);
 
-
+    //Stegozoa
+    readQdctLsb(xd->qcoeff);
+  
     /* Special case:  Force the loopfilter to skip when eobtotal is zero */
     xd->mode_info_context->mbmi.mb_skip_coeff = (eobtotal == 0);
   }
   
-  //Stegozoa
-  readQdctLsb(xd->qcoeff);
 
   mode = xd->mode_info_context->mbmi.mode;
 
@@ -1229,6 +1234,7 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
       pc->multi_token_partition != ONE_PARTITION) {
     unsigned int thread;
     if (vp8mt_decode_mb_rows(pbi, xd)) {
+      printf("oooops\n");
       vp8_decoder_remove_threads(pbi);
       pbi->restart_threads = 1;
       vpx_internal_error(&pbi->common.error, VPX_CODEC_CORRUPT_FRAME, NULL);
