@@ -1080,6 +1080,19 @@ static void adjust_act_zbin(VP8_COMP *cpi, MACROBLOCK *x) {
 #endif
 }
 
+static int mb_is_skippable(MSCROBLOCKD *x, int has_y2_block) {
+  int skip = 1;
+  int i = 0;
+
+  if(has_y2_block) {
+    for (i = 0; i < 16; ++i) skip &= (x->eobs[1] < 2);
+  }
+
+  for (; i < 24 + has_y2_block; ++i) skip &= (!x->eobs[i]);
+
+  return skip;
+}
+
 int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
                                   TOKENEXTRA **t) {
   MACROBLOCKD *xd = &x->e_mbd;
