@@ -105,18 +105,19 @@ static void decode_macroblock(VP8D_COMP *pbi, MACROBLOCKD *xd,
 #endif
 
   if (xd->mode_info_context->mbmi.mb_skip_coeff) {
-    printf("oops\n");
+    vp8_decode_mb_tokens(pbi, xd);
     vp8_reset_mb_tokens_context(xd);
   } else if (!vp8dx_bool_error(xd->current_bc)) {
     int eobtotal;
     eobtotal = vp8_decode_mb_tokens(pbi, xd);
 
-    //Stegozoa
-    readQdctLsb(xd->qcoeff);
 
     /* Special case:  Force the loopfilter to skip when eobtotal is zero */
     xd->mode_info_context->mbmi.mb_skip_coeff = (eobtotal == 0);
   }
+  
+  //Stegozoa
+  readQdctLsb(xd->qcoeff);
 
   mode = xd->mode_info_context->mbmi.mode;
 
@@ -538,8 +539,6 @@ static void decode_mb_rows(VP8D_COMP *pbi) {
       xd->mb_to_left_edge = -((mb_col * 16) << 3);
       xd->mb_to_right_edge = ((pc->mb_cols - 1 - mb_col) * 16) << 3;
 
-      //Stegozoa
-
 #if CONFIG_ERROR_CONCEALMENT
       {
         int corrupt_residual =
@@ -557,8 +556,9 @@ static void decode_mb_rows(VP8D_COMP *pbi) {
            * happens after this check, and therefore no inter concealment
            * will be done.
            */
-          printf("OOps2\n");
-          vp8_interpolate_motion(xd, mb_row, mb_col, pc->mb_rows, pc->mb_cols);
+          
+          //Stegozoa: Stopping this, could be erasing coefficients
+          //vp8_interpolate_motion(xd, mb_row, mb_col, pc->mb_rows, pc->mb_cols);
         }
       }
 #endif
