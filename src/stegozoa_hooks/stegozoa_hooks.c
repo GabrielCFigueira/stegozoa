@@ -113,9 +113,7 @@ void readQdctLsb(short *qcoeff) {
             }
         }
         else if (msgBitDec == 8 && msgReceived[0] != '!') {
-            printf("msgReceived: %x\n", msgReceived[0]);
             msgReceived[0] = msgReceived[0] >> 1;
-            printf("msgReceived: %x\n", msgReceived[0]);
             msgBitDec--;
         
         }
