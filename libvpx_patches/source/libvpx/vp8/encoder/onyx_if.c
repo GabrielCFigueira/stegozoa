@@ -4044,8 +4044,10 @@ static void encode_frame_to_data_rate(VP8_COMP *cpi, size_t *size,
     }
 
 #if CONFIG_REALTIME_ONLY
+    printf("CONFIGREALTIME\n");
     Loop = 0;
 #else
+    printf("NOT REAL TIME\n");
     /* Special case handling for forced key frames */
     if ((cm->frame_type == KEY_FRAME) && cpi->this_key_frame_forced) {
       int last_q = Q;

@@ -1080,7 +1080,10 @@ static void adjust_act_zbin(VP8_COMP *cpi, MACROBLOCK *x) {
 #endif
 }
 
-static int mb_is_skippable(MACROBLOCKD *x, int has_y2_block) {
+//Stegozoa: determine if a macroblock is going to be skipped
+static int mb_is_skippable(MACROBLOCKD *x) {
+  int has_y2_block = (x->mode_info_context->mbmi.mode != B_PRED &&
+                      x->mode_info_context->mbmi.mode != SPLITMV);
   int skip = 1;
   int i = 0;
 
@@ -1129,10 +1132,7 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
 
   //Stegozoa:
   //Code taken from vp8_tokenize_mb: determine if the coefficients are going to be used
-  int has_y2_block;
-  has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
-                  xd->mode_info_context->mbmi.mode != SPLITMV);
-  if(!mb_is_skippable(xd, has_y2_block))
+  if(!mb_is_skippable(xd))
     //Stegozoa
     embbedData += writeQdctLsb(xd->qcoeff);
   
@@ -1317,10 +1317,7 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
   if (!x->skip) {
     //Stegozoa:
     //Code taken from vp8_tokenize_mb: determine if the coefficients are going to be used
-    int has_y2_block;
-    has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
-                  xd->mode_info_context->mbmi.mode != SPLITMV);
-    if(!mb_is_skippable(xd, has_y2_block))
+    if(!mb_is_skippable(xd))
       //Stegozoa
       embbedData += writeQdctLsb(xd->qcoeff);
     
