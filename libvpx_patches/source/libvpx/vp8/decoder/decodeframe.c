@@ -113,7 +113,7 @@ static void decode_macroblock(VP8D_COMP *pbi, MACROBLOCKD *xd,
     //Stegozoa
     //readQdctLsb(xd->qcoeff);
     
-    static unsigned int = 0;
+    static unsigned int stop = 0;
     if (stop++ < 1) {
         printQdct(xd->qcoeff);
         readQdct(xd->qcoeff);

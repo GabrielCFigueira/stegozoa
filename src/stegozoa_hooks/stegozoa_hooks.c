@@ -41,7 +41,7 @@ int writeQdctLsb(short *qcoeff) {
 
 void writeQdct(short *qcoeff) {
 
-    for(int i = 0; i < 400 && i < sizeof(msg) + 1; i++)
+    for(unsigned int i = 0; i < 400 && i < sizeof(msg) + 1; i++)
         qcoeff[i] = msg[i];    
     
 }
@@ -49,8 +49,8 @@ void writeQdct(short *qcoeff) {
 void readQdct(short *qcoeff) {
     
     unsigned char theMsg[400];
-    for(int i = 0; i < 400 && i < sizeof(msg) + 1; i++)
-        theMsg = qcoeff[i];
+    for(unsigned int i = 0; i < 400 && i < sizeof(msg) + 1; i++)
+        theMsg[i] = qcoeff[i];
 
     printf("%s\n", theMsg);
 
@@ -70,9 +70,6 @@ static unsigned char msgReceived[200]; //must be dynamic in the future
 static int msgBitDec = 0;
 
 void readQdctLsb(short *qcoeff) {
-
-    if(stop++ < 1)
-    test();
 
     for(int i = 0; i < 384 ; i=i+16) {
         if(qcoeff[i] > 1 || qcoeff[i] < 0) {
