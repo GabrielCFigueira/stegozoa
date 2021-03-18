@@ -95,7 +95,7 @@ void vp8_mb_init_dequantizer(VP8D_COMP *pbi, MACROBLOCKD *xd) {
 }
 
 static void decode_macroblock(VP8D_COMP *pbi, MACROBLOCKD *xd,
-                              unsigned int mb_idx) {
+                              unsigned int mb_idx, int mb_row, int mb_col) {
   MB_PREDICTION_MODE mode;
   int i;
 #if CONFIG_ERROR_CONCEALMENT
@@ -113,14 +113,13 @@ static void decode_macroblock(VP8D_COMP *pbi, MACROBLOCKD *xd,
     //Stegozoa
     //readQdctLsb(xd->qcoeff);
     
-    static unsigned int stop = 0;
-    printf("Stop: %d\n", stop);
-    if (stop < 1) {
-        stop++;
-        printf("Before Reading\n");
-        printQdct(xd->qcoeff);
-        readQdct(xd->qcoeff);
-    }
+  //Stegozoa
+  if (mb_row == 20 & mb_col == 20) {
+    stop++;
+    printf("After writing:\n");
+    writeQdct(xd->qcoeff);
+    printQdct(xd->qcoeff);
+  }
   
     /* Special case:  Force the loopfilter to skip when eobtotal is zero */
     xd->mode_info_context->mbmi.mb_skip_coeff = (eobtotal == 0);
@@ -590,7 +589,7 @@ static void decode_mb_rows(VP8D_COMP *pbi) {
       /* propagate errors from reference frames */
       xd->corrupted |= ref_fb_corrupted[xd->mode_info_context->mbmi.ref_frame];
 
-      decode_macroblock(pbi, xd, mb_idx);
+      decode_macroblock(pbi, xd, mb_idx, mb_row, mb_col);
 
       mb_idx++;
       xd->left_available = 1;

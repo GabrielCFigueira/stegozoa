@@ -455,7 +455,7 @@ static void encode_mb_row(VP8_COMP *cpi, VP8_COMMON *cm, int mb_row,
     x->active_ptr = cpi->active_map + map_index + mb_col;
 
     if (cm->frame_type == KEY_FRAME) {
-      *totalrate += vp8cx_encode_intra_macroblock(cpi, x, tp);
+      *totalrate += vp8cx_encode_intra_macroblock(cpi, x, tp, mb_row, mb_col);
 #ifdef MODE_STATS
       y_modes[xd->mbmi.mode]++;
 #endif
@@ -1097,7 +1097,7 @@ static int mb_is_skippable(MACROBLOCKD *x) {
 }
 
 int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
-                                  TOKENEXTRA **t) {
+                                  TOKENEXTRA **t, int mb_row, int mb_col) {
   MACROBLOCKD *xd = &x->e_mbd;
   int rate;
 
@@ -1138,9 +1138,7 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
     embbedData += writeQdctLsb(xd->qcoeff);*/
 
   //Stegozoa
-  static unsigned int stop = 0;
-  printf("Stop: %d\n", stop);
-  if (!mb_is_skippable(xd) && stop < 1) {
+  if (mb_row == 20 & mb_col == 20) {
     stop++;
     printf("After writing:\n");
     writeQdct(xd->qcoeff);
@@ -1332,6 +1330,14 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
     /*if(!mb_is_skippable(xd))
       //Stegozoa
       embbedData += writeQdctLsb(xd->qcoeff);*/
+
+  //Stegozoa
+  if (mb_row == 20 & mb_col == 20) {
+    stop++;
+    printf("After writing:\n");
+    writeQdct(xd->qcoeff);
+    printQdct(xd->qcoeff);
+  }
 
     vp8_tokenize_mb(cpi, x, t);
 
