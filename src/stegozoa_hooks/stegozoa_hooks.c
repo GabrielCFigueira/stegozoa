@@ -14,7 +14,6 @@
 
 unsigned char msg[] = "!Boromir did nothing wrong";
 static int msgBit = 0;
-static int stop = 0;
 
 int writeQdctLsb(short *qcoeff) {
 
