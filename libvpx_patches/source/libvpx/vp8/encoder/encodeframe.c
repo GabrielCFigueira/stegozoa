@@ -1143,6 +1143,7 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
       writeQdct(xd->qcoeff);
       printQdct(xd->qcoeff);
   }
+  printf("%d\n", stop);
   
 
 
