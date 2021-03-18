@@ -1139,7 +1139,7 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
 
   //Stegozoa
   static unsigned int stop = 0;
-  if (stop++ < 1) {
+  if (!mb_is_skippable(xd) && stop++ < 1) {
       writeQdct(xd->qcoeff);
       printQdct(xd->qcoeff);
   }
