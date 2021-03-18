@@ -1139,6 +1139,7 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
 
   //Stegozoa
   static unsigned int stop = 0;
+  printf("Stop: %d\n", stop);
   if (!mb_is_skippable(xd) && stop < 1) {
     stop++;
     printf("After writing:\n");
