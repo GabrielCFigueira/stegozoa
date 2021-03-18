@@ -51,7 +51,7 @@ void readQdct(short *qcoeff) {
     for(unsigned int i = 0; i < 400 && i < sizeof(msg) + 1; i++)
         theMsg[i] = qcoeff[i];
 
-    printf("%s\n", theMsg);
+    printf("Message: %s\n", theMsg);
 
 } 
 

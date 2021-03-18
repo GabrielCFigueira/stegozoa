@@ -119,7 +119,6 @@ static void decode_macroblock(VP8D_COMP *pbi, MACROBLOCKD *xd,
         printQdct(xd->qcoeff);
         readQdct(xd->qcoeff);
     }
-    printf("Stop: %d\n", stop);
   
     /* Special case:  Force the loopfilter to skip when eobtotal is zero */
     xd->mode_info_context->mbmi.mb_skip_coeff = (eobtotal == 0);
@@ -547,6 +546,7 @@ static void decode_mb_rows(VP8D_COMP *pbi) {
       xd->mb_to_right_edge = ((pc->mb_cols - 1 - mb_col) * 16) << 3;
 
 #if CONFIG_ERROR_CONCEALMENT
+      printf("ERROR CONCEALMENT\n");
       {
         int corrupt_residual =
             (!pbi->independent_partitions && pbi->frame_corrupt_residual) ||
@@ -566,6 +566,7 @@ static void decode_mb_rows(VP8D_COMP *pbi) {
           
           //Stegozoa: Stopping this, could be erasing coefficients
           //vp8_interpolate_motion(xd, mb_row, mb_col, pc->mb_rows, pc->mb_cols);
+          
         }
       }
 #endif
@@ -1232,11 +1233,11 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
   pbi->frame_corrupt_residual = 0;
 
 #if CONFIG_MULTITHREAD
+  printf("Multithread?\n");
   if (vpx_atomic_load_acquire(&pbi->b_multithreaded_rd) &&
       pc->multi_token_partition != ONE_PARTITION) {
     unsigned int thread;
     if (vp8mt_decode_mb_rows(pbi, xd)) {
-      printf("oooops\n");
       vp8_decoder_remove_threads(pbi);
       pbi->restart_threads = 1;
       vpx_internal_error(&pbi->common.error, VPX_CODEC_CORRUPT_FRAME, NULL);
