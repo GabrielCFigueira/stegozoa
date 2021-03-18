@@ -546,7 +546,6 @@ static void decode_mb_rows(VP8D_COMP *pbi) {
       xd->mb_to_right_edge = ((pc->mb_cols - 1 - mb_col) * 16) << 3;
 
 #if CONFIG_ERROR_CONCEALMENT
-      printf("ERROR CONCEALMENT\n");
       {
         int corrupt_residual =
             (!pbi->independent_partitions && pbi->frame_corrupt_residual) ||
@@ -564,8 +563,7 @@ static void decode_mb_rows(VP8D_COMP *pbi) {
            * will be done.
            */
           
-          //Stegozoa: Stopping this, could be erasing coefficients
-          //vp8_interpolate_motion(xd, mb_row, mb_col, pc->mb_rows, pc->mb_cols);
+          vp8_interpolate_motion(xd, mb_row, mb_col, pc->mb_rows, pc->mb_cols);
           
         }
       }
@@ -1233,7 +1231,6 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
   pbi->frame_corrupt_residual = 0;
 
 #if CONFIG_MULTITHREAD
-  printf("Multithread?\n");
   if (vpx_atomic_load_acquire(&pbi->b_multithreaded_rd) &&
       pc->multi_token_partition != ONE_PARTITION) {
     unsigned int thread;
