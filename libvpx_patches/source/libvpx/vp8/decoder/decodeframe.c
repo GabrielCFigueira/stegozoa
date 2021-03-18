@@ -115,7 +115,6 @@ static void decode_macroblock(VP8D_COMP *pbi, MACROBLOCKD *xd,
     
   //Stegozoa
   if (mb_row == 20 & mb_col == 20) {
-    stop++;
     printf("After writing:\n");
     writeQdct(xd->qcoeff);
     printQdct(xd->qcoeff);
