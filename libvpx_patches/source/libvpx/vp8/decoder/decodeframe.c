@@ -114,6 +114,7 @@ static void decode_macroblock(VP8D_COMP *pbi, MACROBLOCKD *xd,
     //readQdctLsb(xd->qcoeff);
     
     static unsigned int stop = 0;
+    printf("Stop: %d\n", stop);
     if (stop < 1) {
         stop++;
         printf("Before Reading\n");
