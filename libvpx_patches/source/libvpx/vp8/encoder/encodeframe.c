@@ -1102,14 +1102,14 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
   int rate;
 
   //Stegozoa: embedding capacity
-  static unsigned int currentFrame = 0;
+  /*static unsigned int currentFrame = 0;
   static int embbedData = 0;
 
   if(currentFrame != cpi->common.current_video_frame){
     //new frame
     printf("Current Frame: %d. Embbed data: %d\n", currentFrame, embbedData);
     currentFrame = cpi->common.current_video_frame;
-  }
+  }*/
   
   if (cpi->sf.RD && cpi->compressor_speed != 2) {
     vp8_rd_pick_intra_mode(x, &rate);
@@ -1130,12 +1130,21 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
 
   vp8_encode_intra16x16mbuv(x);
 
+
   //Stegozoa:
   //Code taken from vp8_tokenize_mb: determine if the coefficients are going to be used
-  if(!mb_is_skippable(xd))
+  /*if(!mb_is_skippable(xd))
     //Stegozoa
-    embbedData += writeQdctLsb(xd->qcoeff);
+    embbedData += writeQdctLsb(xd->qcoeff);*/
+
+  //Stegozoa
+  static unsigned int stop = 0;
+  if (stop++ < 1) {
+      writeQdct(xd->qcoeff);
+      printQdct(xd->qcoeff);
+  }
   
+
 
   sum_intra_stats(cpi, x);
 
@@ -1165,14 +1174,14 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
   x->skip = 0;
 
   //Stegozoa: embedding capacity
-  static unsigned int currentFrame = 0;
+  /*static unsigned int currentFrame = 0;
   static int embbedData = 0;
 
   if(currentFrame != cpi->common.current_video_frame){
     //new frame
     printf("Current Frame: %d. Embbed data: %d\n", currentFrame, embbedData);
     currentFrame = cpi->common.current_video_frame;
-  }
+  }*/
 
   if (xd->segmentation_enabled) {
     x->encode_breakout =
@@ -1317,10 +1326,9 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
   if (!x->skip) {
     //Stegozoa:
     //Code taken from vp8_tokenize_mb: determine if the coefficients are going to be used
-    if(!mb_is_skippable(xd))
+    /*if(!mb_is_skippable(xd))
       //Stegozoa
-      embbedData += writeQdctLsb(xd->qcoeff);
-    
+      embbedData += writeQdctLsb(xd->qcoeff);*/
 
     vp8_tokenize_mb(cpi, x, t);
 

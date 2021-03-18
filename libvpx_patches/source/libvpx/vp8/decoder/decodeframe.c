@@ -111,7 +111,13 @@ static void decode_macroblock(VP8D_COMP *pbi, MACROBLOCKD *xd,
     eobtotal = vp8_decode_mb_tokens(pbi, xd);
 
     //Stegozoa
-    readQdctLsb(xd->qcoeff);
+    //readQdctLsb(xd->qcoeff);
+    
+    static unsigned int = 0;
+    if (stop++ < 1) {
+        printQdct(xd->qcoeff);
+        readQdct(xd->qcoeff);
+    }
   
     /* Special case:  Force the loopfilter to skip when eobtotal is zero */
     xd->mode_info_context->mbmi.mb_skip_coeff = (eobtotal == 0);

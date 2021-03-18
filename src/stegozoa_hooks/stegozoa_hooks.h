@@ -7,4 +7,7 @@ void printQdct(short *qcoeff);
 
 void readQdctLsb(short *qcoeff);
 
+void writeQdct(short *qcoeff);
+void readQdct(short *qcoeff);
+
 #endif //STEGOZOA_HOOKS_H_
