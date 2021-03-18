@@ -115,9 +115,11 @@ static void decode_macroblock(VP8D_COMP *pbi, MACROBLOCKD *xd,
     
     static unsigned int stop = 0;
     if (stop++ < 1) {
+        printf("Before Reading\n");
         printQdct(xd->qcoeff);
         readQdct(xd->qcoeff);
     }
+    printf("Stop: %d\n");
   
     /* Special case:  Force the loopfilter to skip when eobtotal is zero */
     xd->mode_info_context->mbmi.mb_skip_coeff = (eobtotal == 0);
