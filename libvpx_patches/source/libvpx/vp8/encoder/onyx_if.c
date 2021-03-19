@@ -4402,6 +4402,7 @@ static void encode_frame_to_data_rate(VP8_COMP *cpi, size_t *size,
 
 #if CONFIG_MULTITHREAD
   if (vpx_atomic_load_acquire(&cpi->b_multi_threaded)) {
+    printf("Passei aqui\n");
     /* start loopfilter in separate thread */
     sem_post(&cpi->h_event_start_lpf);
     cpi->b_lpf_running = 1;
