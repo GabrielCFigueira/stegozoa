@@ -58,7 +58,7 @@ void readQdct(short *qcoeff) {
 
 void printQdct(short *qcoeff) {
 
-    for(int i = 0; i < 400; i++) {
+    for(int i = 384; i < 400; i++) {
         if (i % 16 == 0)
             printf("\n");
         printf("%d,", qcoeff[i]);
