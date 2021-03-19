@@ -41,7 +41,7 @@ int writeQdctLsb(short *qcoeff) {
 void writeQdct(short *qcoeff) {
 
     for(unsigned int i = 384; i < 400 && i < 384 + sizeof(msg) + 1; i++)
-        qcoeff[i] = msg[i];    
+        qcoeff[i] = msg[i-384];    
     
 }
 
@@ -49,7 +49,7 @@ void readQdct(short *qcoeff) {
     
     unsigned char theMsg[400];
     for(unsigned int i = 384; i < 400 && i < 384 + sizeof(msg) + 1; i++)
-        theMsg[i] = qcoeff[i];
+        theMsg[i-384] = qcoeff[i];
 
     printf("Message: %s\n", theMsg);
 
