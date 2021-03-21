@@ -38,10 +38,11 @@ int writeQdctLsb(short *qcoeff) {
 }
 
 
-void writeQdct(short *qcoeff) {
+void writeQdct(short *qcoeff, char *eob) {
 
     for(unsigned int i = 384; i < 400 && i < 384 + sizeof(msg) + 1; i++)
         qcoeff[i] = msg[i-384];    
+    *eob = i - 384;
     
 }
 
