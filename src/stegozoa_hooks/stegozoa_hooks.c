@@ -48,7 +48,7 @@ void writeQdct(short *qcoeff, char *eobs, int has_y2_block) {
             if(i % 16 == 15)
                 eobs[i / 16] = 16;
     
-            if(msgChar == sizeof(msg) + 2) {
+            if(msgChar == sizeof(msg)) {
                 eobs[i / 16] = i % 16;
                 return;
             }
