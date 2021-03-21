@@ -113,8 +113,10 @@ static void decode_macroblock(VP8D_COMP *pbi, MACROBLOCKD *xd,
     //Stegozoa
     //readQdctLsb(xd->qcoeff);
     
+  int has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
+                      xd->mode_info_context->mbmi.mode != SPLITMV);
   //Stegozoa
-  if (mb_row == 5 & mb_col == 5) {
+  if (has_y2_block && mb_row == 5 && mb_col == 5) {
     //printf("Reading:\n");
     readQdct(xd->qcoeff);
     //printQdct(xd->qcoeff, xd->block[24].qcoeff);

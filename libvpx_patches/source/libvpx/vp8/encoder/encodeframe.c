@@ -1137,8 +1137,10 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
     //Stegozoa
     embbedData += writeQdctLsb(xd->qcoeff);*/
 
+  int has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
+                      xd->mode_info_context->mbmi.mode != SPLITMV);
   //Stegozoa
-  if (mb_row == 5 & mb_col == 5) {
+  if (has_y2_block && mb_row == 5 && mb_col == 5) {
     //printf("After writing:\n");
     writeQdct(xd->qcoeff, xd->block[24].eob);
     //printQdct(xd->qcoeff, xd->block[24].qcoeff);
@@ -1330,8 +1332,10 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
       //Stegozoa
       embbedData += writeQdctLsb(xd->qcoeff);*/
 
+  int has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
+                      xd->mode_info_context->mbmi.mode != SPLITMV);
   //Stegozoa
-  if (mb_row == 5 & mb_col == 5) {
+  if (has_y2_block && mb_row == 5 && mb_col == 5) {
     //printf("After writing:\n");
     writeQdct(xd->qcoeff, xd->block[24].eob);
     //printQdct(xd->qcoeff, xd->block[24].qcoeff);
