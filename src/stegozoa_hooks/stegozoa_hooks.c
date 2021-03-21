@@ -39,7 +39,6 @@ int writeQdctLsb(short *qcoeff) {
 
 
 void writeQdct(short *qcoeff, char *eobs, int has_y2_block) {
-    printf("\nY2:%d\n", has_y2_block);
 
     int msgChar = 0;
     for(int i = 0; i < 384 + has_y2_block * 16; i++) {
@@ -77,20 +76,14 @@ void readQdct(short *qcoeff, int has_y2_block) {
 } 
 
 
-void printQdct(short *qcoeff, short *qcoeffBlock) {
+void printQdct(short *qcoeff) {
 
-    printf("Macroblock:");
+    printf("\nMacroblock:");
     for(int i = 384; i < 400; i++) {
         if (i % 16 == 0)
             printf("\n");
         printf("%d,", qcoeff[i]);
     }
-    printf("\n");
-    printf("Block:\n"); 
-    for(int i = 0; i < 16; i++) {
-        printf("%d,", qcoeffBlock[i]);
-    }
-
     printf("\n");
 
 }
