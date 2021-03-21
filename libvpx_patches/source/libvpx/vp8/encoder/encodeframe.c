@@ -1096,6 +1096,16 @@ static int mb_is_skippable(MACROBLOCKD *x) {
   return skip;
 }
 
+static void printTokens(TOKENEXTRA *t) {
+
+    while(t->Token != DCT_EOB_TOKEN) {
+        printf("Token: %d, Extra: %d\n", t->Token, t->Extra);
+        t++;
+    }
+
+
+}
+
 int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
                                   TOKENEXTRA **t, int mb_row, int mb_col) {
   MACROBLOCKD *xd = &x->e_mbd;
@@ -1145,6 +1155,7 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
     writeQdct(xd->qcoeff, xd->eobs, has_y2_block);
     printQdct(xd->qcoeff);
   }
+  TOKENEXTRA *t = *tp;
   
 
 
@@ -1152,6 +1163,9 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
 
   vp8_tokenize_mb(cpi, x, t);
 
+  if (mb_row == 5 && mb_col == 5) {
+    printToken(t+4);
+  }
   if (xd->mode_info_context->mbmi.mode != B_PRED) vp8_inverse_transform_mby(xd);
 
   vp8_dequant_idct_add_uv_block(xd->qcoeff + 16 * 16, xd->dequant_uv,
