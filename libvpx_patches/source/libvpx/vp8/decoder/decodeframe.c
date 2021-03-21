@@ -116,11 +116,8 @@ static void decode_macroblock(VP8D_COMP *pbi, MACROBLOCKD *xd,
   int has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
                       xd->mode_info_context->mbmi.mode != SPLITMV);
   //Stegozoa
-  if (mb_row == 5 && mb_col == 5) {
-    printf("\nReading:\n");
+  if (mb_row == 5 && mb_col == 5)
     readQdct(xd->qcoeff, has_y2_block);
-    printQdct(xd->qcoeff);
-  }
   
     /* Special case:  Force the loopfilter to skip when eobtotal is zero */
     xd->mode_info_context->mbmi.mb_skip_coeff = (eobtotal == 0);
