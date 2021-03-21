@@ -1145,7 +1145,7 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
     if(stop++ < 1) {
         printQdct(xd->qcoeff);
         for(int i = 0; i < 25; i++)
-            printf("EOB%d: %d\n", i, xd->eobs);
+            printf("EOB%d: %d\n", i, xd->eobs[i]);
     }
     printf("After writing:\n");
     writeQdct(xd->qcoeff, xd->eobs, has_y2_block);
