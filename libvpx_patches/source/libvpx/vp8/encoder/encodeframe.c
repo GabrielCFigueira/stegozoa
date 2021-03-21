@@ -1142,7 +1142,7 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
   //Stegozoa
   if (mb_row == 5 && mb_col == 5) {
     static int stop = 0 ;
-    if(stop++ < 1) {
+    if(stop++ < 100) {
         printQdct(xd->qcoeff);
         for(int i = 0; i < 25; i++)
             printf("EOB%d: %d\n", i, xd->eobs[i]);
