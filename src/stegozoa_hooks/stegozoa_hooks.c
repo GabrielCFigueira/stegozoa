@@ -79,7 +79,7 @@ void readQdct(short *qcoeff, int has_y2_block) {
 void printQdct(short *qcoeff) {
 
     printf("\nMacroblock:");
-    for(int i = 384; i < 400; i++) {
+    for(int i = 0; i < 400; i++) {
         if (i % 16 == 0)
             printf("\n");
         printf("%d,", qcoeff[i]);
