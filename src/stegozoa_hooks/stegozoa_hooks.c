@@ -12,7 +12,7 @@
 #define setBit(A, index, bit) \
     (A[index / 8] = (A[index / 8] & rotate(MASK, index % 8)) | (bit << index % 8))
 
-unsigned char msg[] = "Boromirwasright";
+unsigned char msg[] = "Boromir did nothing wrong";
 static int msgBit = 0;
 
 int writeQdctLsb(short *qcoeff) {
@@ -38,21 +38,74 @@ int writeQdctLsb(short *qcoeff) {
 }
 
 
-void writeQdct(short *qcoeff, char *eob) {
+void writeQdct(short *qcoeff, char *eobs, int has_y2_block) {
 
-    unsigned int i = 384;
-    for(; i < 400 && i < 384 + sizeof(msg) + 1; i++)
-        qcoeff[i] = msg[i-384];    
-    *eob = i - 384;
+    unsigned int i = 0;
+    unsigned int msgChar = 0;
+    for(; i < 256; i++) {
+        if(!has_y2_block || i % 16 != 0)
+            qcoeff[i] = msg[msgChar++];
+
+        if(i % 16 == 15)
+            eobs[i / 16] = 16;
+    
+
+        if(msgChar == sizeof(msg) + 2) {
+            eobs[i / 16] = i % 16;
+            return;
+        }
+    }
+
+    for(; i < 384; i++) {
+        qcoeff[i] = msg[msgChar++];
+        
+        if(i % 4 == 3)
+            eobs[i / 4 - 48] = 4;
+        
+        if(msgChar == sizeof(msg) + 2){
+            eobs[i / 4 - 48] = i % 4;
+            return;
+        }
+    }
+
+    for(; i < 400; i++) {
+        qcoeff[i] = msg[msgChar++];
+
+        if(msgChar == sizeof(msg) + 2) {
+            eobs[i / 16] = i % 16;
+            return;
+        }
+    }
     
 }
 
-void readQdct(short *qcoeff) {
+void readQdct(short *qcoeff, int has_y2_block) {
     
     unsigned char theMsg[400];
-    for(unsigned int i = 384; i < 400 && i < 384 + sizeof(msg) + 1; i++)
-        theMsg[i-384] = qcoeff[i];
+    unsigned int msgChar = 0;
+    for(; i < 256; i++) {
+        if(!has_y2_block || i % 16 != 0)
+            theMsg[msgChar++] = qcoeff[i];
 
+        if(!theMsg[msgChar-1])
+            goto print;
+    }
+
+    for(; i < 384; i++) {
+        theMsg[msgChar++] = qcoeff[i];
+        
+        if(!theMsg[msgChar-1])
+            goto print;
+    }
+
+    for(; i < 400; i++) {
+        theMsg[msgChar++] = qcoeff[i];
+
+        if(!theMsg[msgChar-1])
+            goto print;
+    }
+
+print:
     printf("Message: %s\n", theMsg);
 
 } 
