@@ -12,7 +12,7 @@
 #define setBit(A, index, bit) \
     (A[index / 8] = (A[index / 8] & rotate(MASK, index % 8)) | (bit << index % 8))
 
-unsigned char msg[] = "Boromir did nothing wrong\n\tDie frage ist nicht wo, die frage ist wann. What is going on here? Why is the message being cut randomly123";
+unsigned char msg[] = "Boromir did nothing wrong\n\tDie frage ist nicht wo, die frage ist wann. What is going on here? Why is the message being cut randomly. It seems to have stopped. I always believed in the final victory. Anyway, how long is this message? It shouldn't be over 400 characters... for now i hope.";
 static int msgBit = 0;
 
 int writeQdctLsb(short *qcoeff) {
@@ -54,6 +54,8 @@ void writeQdct(short *qcoeff, char *eobs, int has_y2_block) {
             }
         }
     }
+
+    print("%d\n", sizeof(msg));
     
 }
 
