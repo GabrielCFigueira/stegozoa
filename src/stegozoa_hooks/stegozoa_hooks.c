@@ -12,7 +12,7 @@
 #define setBit(A, index, bit) \
     (A[index / 8] = (A[index / 8] & rotate(MASK, index % 8)) | (bit << index % 8))
 
-unsigned char msg[] = "Boromir";
+unsigned char msg[] = "Boromirwasright";
 static int msgBit = 0;
 
 int writeQdctLsb(short *qcoeff) {
