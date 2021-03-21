@@ -1356,7 +1356,7 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
   
 
     if (mb_row == 5 && mb_col == 5) {
-        printTokens(tp+120);
+        printTokens(tp+45);
     }
 
     if (xd->mode_info_context->mbmi.mode != B_PRED) {
