@@ -1096,16 +1096,6 @@ static int mb_is_skippable(MACROBLOCKD *x) {
   return skip;
 }
 
-static void printTokens(TOKENEXTRA *t) {
-
-    while(t->Token != DCT_EOB_TOKEN) {
-        printf("Token: %d, Extra: %d\n", t->Token, t->Extra);
-        t++;
-    }
-
-
-}
-
 int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
                                   TOKENEXTRA **t, int mb_row, int mb_col) {
   MACROBLOCKD *xd = &x->e_mbd;
@@ -1151,6 +1141,12 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
                       xd->mode_info_context->mbmi.mode != SPLITMV);
   //Stegozoa
   if (mb_row == 5 && mb_col == 5) {
+    static int stop = 0 ;
+    if(stop++ < 1) {
+        printQdct(xd->qcoeff);
+        for(int i = 0; i < 25; i++)
+            printf("EOB%d: %d\n", i, xd->eobs);
+    }
     printf("After writing:\n");
     writeQdct(xd->qcoeff, xd->eobs, has_y2_block);
     printQdct(xd->qcoeff);
@@ -1354,10 +1350,6 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
     TOKENEXTRA *tp = *t;
     vp8_tokenize_mb(cpi, x, t);
   
-
-    if (mb_row == 5 && mb_col == 5) {
-        printTokens(tp+45);
-    }
 
     if (xd->mode_info_context->mbmi.mode != B_PRED) {
       vp8_inverse_transform_mby(xd);
