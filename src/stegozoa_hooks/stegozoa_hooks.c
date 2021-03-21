@@ -82,6 +82,8 @@ void writeQdct(short *qcoeff, char *eobs, int has_y2_block) {
 void readQdct(short *qcoeff, int has_y2_block) {
     
     unsigned char theMsg[400];
+    
+    unsigned int i = 0;
     unsigned int msgChar = 0;
     for(; i < 256; i++) {
         if(!has_y2_block || i % 16 != 0)
