@@ -65,6 +65,7 @@ void printQdct(short *qcoeff, short *qcoeffBlock) {
             printf("\n");
         printf("%d,", qcoeff[i]);
     }
+    printf("\n");
     printf("Block:\n"); 
     for(int i = 0; i < 16; i++) {
         printf("%d,", qcoeffBlock[i]);
