@@ -55,7 +55,7 @@ void writeQdct(short *qcoeff, char *eobs, int has_y2_block) {
         }
     }
 
-    print("%d\n", sizeof(msg));
+    printf("%d\n", sizeof(msg));
     
 }
 
