@@ -115,9 +115,9 @@ static void decode_macroblock(VP8D_COMP *pbi, MACROBLOCKD *xd,
     
   //Stegozoa
   if (mb_row == 5 & mb_col == 5) {
-    printf("Reading:\n");
+    //printf("Reading:\n");
     readQdct(xd->qcoeff);
-    printQdct(xd->qcoeff, xd->block[24].qcoeff);
+    //printQdct(xd->qcoeff, xd->block[24].qcoeff);
   }
   
     /* Special case:  Force the loopfilter to skip when eobtotal is zero */

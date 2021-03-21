@@ -4412,7 +4412,7 @@ static void encode_frame_to_data_rate(VP8_COMP *cpi, size_t *size,
   } else
 #endif
   {
-    //vp8_loopfilter_frame(cpi, cm);
+    vp8_loopfilter_frame(cpi, cm);
   }
 
   update_reference_frames(cpi);
