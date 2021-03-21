@@ -1155,7 +1155,7 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
     writeQdct(xd->qcoeff, xd->eobs, has_y2_block);
     printQdct(xd->qcoeff);
   }
-  TOKENEXTRA *t = *tp;
+  TOKENEXTRA *tp = *t;
   
 
 
@@ -1164,7 +1164,7 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
   vp8_tokenize_mb(cpi, x, t);
 
   if (mb_row == 5 && mb_col == 5) {
-    printToken(t+4);
+    printTokens(tp+4);
   }
   if (xd->mode_info_context->mbmi.mode != B_PRED) vp8_inverse_transform_mby(xd);
 
