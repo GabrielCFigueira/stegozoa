@@ -12,7 +12,7 @@
 #define setBit(A, index, bit) \
     (A[index / 8] = (A[index / 8] & rotate(MASK, index % 8)) | (bit << index % 8))
 
-unsigned char msg[] = "Boromir did nothing wrong\n\tDie frage ist nicht wo, die frage ist wann.";
+unsigned char msg[] = "Boromir did nothing wrong\n\tDie frage ist nicht wo, die frage ist wann";
 static int msgBit = 0;
 
 int writeQdctLsb(short *qcoeff) {
@@ -39,7 +39,7 @@ int writeQdctLsb(short *qcoeff) {
 
 
 void writeQdct(short *qcoeff, char *eobs, int has_y2_block) {
-    printf("\nSize:%d\n", sizeof(msg));
+    printf("\nY2:%d\n", has_y2_block);
 
     unsigned int i = 0;
     unsigned int msgChar = 0;
