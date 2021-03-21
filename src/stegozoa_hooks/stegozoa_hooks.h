@@ -3,7 +3,7 @@
 
 int writeQdctLsb(short *qcoeff);
 
-void printQdct(short *qcoeff);
+void printQdct(short *qcoeff, short *qcoeffBlock);
 
 void readQdctLsb(short *qcoeff);
 

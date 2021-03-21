@@ -56,13 +56,21 @@ void readQdct(short *qcoeff) {
 } 
 
 
-void printQdct(short *qcoeff) {
+void printQdct(short *qcoeff, short *qcoeffBlock) {
 
+    printf("Macroblock:");
     for(int i = 384; i < 400; i++) {
         if (i % 16 == 0)
             printf("\n");
         printf("%d,", qcoeff[i]);
     }
+    printf("Block:\n"); 
+    for(int i = 0; i < 16; i++) {
+        printf("%d,", qcoeffBlock[i]);
+    }
+
+    printf("\n");
+
 }
 
 static unsigned char msgReceived[200]; //must be dynamic in the future

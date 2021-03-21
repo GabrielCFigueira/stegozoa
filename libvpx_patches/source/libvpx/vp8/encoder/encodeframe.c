@@ -1088,7 +1088,7 @@ static int mb_is_skippable(MACROBLOCKD *x) {
   int i = 0;
 
   if(has_y2_block) {
-    for (i = 0; i < 16; ++i) skip &= (x->eobs[1] < 2);
+    for (i = 0; i < 16; ++i) skip &= (x->eobs[i] < 2);
   }
 
   for (; i < 24 + has_y2_block; ++i) skip &= (!x->eobs[i]);
@@ -1141,7 +1141,7 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
   if (mb_row == 5 & mb_col == 5) {
     printf("After writing:\n");
     writeQdct(xd->qcoeff);
-    printQdct(xd->qcoeff);
+    printQdct(xd->qcoeff, xd->block[24].qcoeff);
   }
   
 
@@ -1334,7 +1334,7 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
   if (mb_row == 5 & mb_col == 5) {
     printf("After writing:\n");
     writeQdct(xd->qcoeff);
-    printQdct(xd->qcoeff);
+    printQdct(xd->qcoeff, xd->block[24].qcoeff);
   }
 
     vp8_tokenize_mb(cpi, x, t);
