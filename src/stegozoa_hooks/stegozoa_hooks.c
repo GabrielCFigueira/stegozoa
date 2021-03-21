@@ -43,16 +43,17 @@ void writeQdct(short *qcoeff, char *eobs, int has_y2_block) {
     unsigned int i = 0;
     unsigned int msgChar = 0;
     for(; i < 256; i++) {
-        if(!has_y2_block || i % 16 != 0)
+        if(!has_y2_block || i % 16 != 0) {
             qcoeff[i] = msg[msgChar++];
 
-        if(i % 16 == 15)
-            eobs[i / 16] = 16;
+            if(i % 16 == 15)
+                eobs[i / 16] = 16;
     
 
-        if(msgChar == sizeof(msg) + 2) {
-            eobs[i / 16] = i % 16;
-            return;
+            if(msgChar == sizeof(msg) + 2) {
+                eobs[i / 16] = i % 16;
+                return;
+            }
         }
     }
 
@@ -86,11 +87,12 @@ void readQdct(short *qcoeff, int has_y2_block) {
     unsigned int i = 0;
     unsigned int msgChar = 0;
     for(; i < 256; i++) {
-        if(!has_y2_block || i % 16 != 0)
+        if(!has_y2_block || i % 16 != 0) {
             theMsg[msgChar++] = qcoeff[i];
 
-        if(!theMsg[msgChar-1])
-            goto print;
+            if(!theMsg[msgChar-1])
+                goto print;
+        }
     }
 
     for(; i < 384; i++) {
