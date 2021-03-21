@@ -40,6 +40,7 @@ int writeQdctLsb(short *qcoeff) {
 
 void writeQdct(short *qcoeff, char *eobs, int has_y2_block) {
 
+    printf("%d\n", sizeof(msg));
     int msgChar = 0;
     for(int i = 0; i < 384 + has_y2_block * 16; i++) {
         if(!has_y2_block || i % 16 != 0 || i > 255) {
@@ -55,7 +56,6 @@ void writeQdct(short *qcoeff, char *eobs, int has_y2_block) {
         }
     }
 
-    printf("%d\n", sizeof(msg));
     
 }
 
