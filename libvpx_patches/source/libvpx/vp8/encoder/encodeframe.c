@@ -775,7 +775,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
 #else
             tp = cpi->tok + mb_row * (cm->mb_cols * 16 * 24);
 #endif
-
+        printf("multithread\n");
         encode_mb_row(cpi, cm, mb_row, x, xd, &tp, segment_counts, &totalrate);
 
         /* adjust to the next row of mbs */
