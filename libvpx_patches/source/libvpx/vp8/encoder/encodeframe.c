@@ -1309,7 +1309,6 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
     writeQdct(xd->qcoeff, xd->eobs, has_y2_block);
 
 
-    TOKENEXTRA *tp = *t;
     vp8_tokenize_mb(cpi, x, t);
   
 
