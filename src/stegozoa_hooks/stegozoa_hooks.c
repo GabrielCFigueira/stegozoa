@@ -12,13 +12,13 @@
 #define setBit(A, index, bit) \
     (A[index / 8] = (A[index / 8] & rotate(MASK, index % 8)) | (bit << index % 8))
 
-unsigned char msg[] = "!Why are we still here... just to suffer?";
+static unsigned char msg[] = "!Why are we still here... just to suffer? ";
 static int msgBit = 0;
 
 int writeQdctLsb(short *qcoeff, int has_y2_block) {
 
     int rate = 0;
-    int n_bits = (sizeof(msg)) * 8;
+    int n_bits = sizeof(msg) * 8;
     //future idea: loop unroll
     for(int i = 0; i < 384 + has_y2_block * 16; i++) {
         if(msgBit < n_bits && qcoeff[i] != 1 && qcoeff[i] != 0 && (!has_y2_block || i % 16 != 0 || i > 255)) {
@@ -30,8 +30,6 @@ int writeQdctLsb(short *qcoeff, int has_y2_block) {
         if(msgBit == n_bits)
             msgBit = 0; //send the same message over and over, for now
     }
-
-
 
     return rate;
     
@@ -47,22 +45,32 @@ void readQdctLsb(short *qcoeff, int has_y2_block) {
             setBit(msgReceived, msgBitDec, getLsb(qcoeff[i]));
             msgBitDec++;
         }
-        if(msgBitDec / 8 > 1) {
 
-            if (!msgReceived[msgBitDec / 8 - 1]) {
-                printf("Message: %s\n", msgReceived);
-                msgBitDec = 0;
-            }
-        }
-        else if (msgBitDec == 8 && msgReceived[0] != '!') {
-            printf("OOPS: %x\n", msgReceived[0]);
-            msgReceived[0] = msgReceived[0] >> 1;
-            msgBitDec--;
+        if(msgBitDec > 7 && !msgReceived[msgBitDec / 8 - 1]) {
+            printf("Message: %s\n", msgReceived);
+            msgBitDec = 0;
         }
             
     }
 
 }
+
+
+
+void printQdct(short *qcoeff) {
+
+    printf("\nMacroblock:");
+    for(int i = 0; i < 400; i++) {
+        if (i % 16 == 0)
+            printf("\n");
+        printf("%d,", qcoeff[i]);
+    }
+    printf("\n");
+
+}
+
+
+
 
 static int msgCharEnc = 0;
 static int msgCharDec = 0;
@@ -103,19 +111,6 @@ void readQdct(short *qcoeff, int has_y2_block) {
         }
     }
 
-
-} 
-
-
-void printQdct(short *qcoeff) {
-
-    printf("\nMacroblock:");
-    for(int i = 0; i < 400; i++) {
-        if (i % 16 == 0)
-            printf("\n");
-        printf("%d,", qcoeff[i]);
-    }
-    printf("\n");
 
 }
 
