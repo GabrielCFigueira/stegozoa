@@ -98,7 +98,7 @@ void readQdct(short *qcoeff, int has_y2_block) {
             printf("msgCharDec: %d\n", msgCharDec);
             if(msgCharDec == 1 && theMsg[0] != '!')
                 msgCharDec = 0;
-            else
+            else if(msgCharDec == 1)
                 printQdct(qcoeff);
             if(msgCharDec == sizeof(msg)) {
                 printf("Message: %s\n", theMsg);
