@@ -50,6 +50,12 @@ void readQdctLsb(short *qcoeff, int has_y2_block) {
             printf("Message: %s\n", msgReceived);
             msgBitDec = 0;
         }
+
+        else if (msgBitDec == 8 && msgReceived[0] != '!') {
+            msgReceived[0] = msgReceived[0] >> 1;
+            msgBitDec--;
+        }
+
             
     }
 
