@@ -20,8 +20,8 @@ int writeQdctLsb(short *qcoeff, int has_y2_block) {
     int lastMsgBit = msgBit;
     int n_bits = (sizeof(msg) + 1) * 8;
     //future idea: loop unroll
-    for(int i = 0; i < 384 + has_y2_block * 16 ; i++) {
-        if(msgBit < n_bits && (qcoeff[i] > 1 || qcoeff[i] < 0) && (!has_y2_block || i % 16 != 0 || i > 255)) {
+    for(int i = 0; i < 384 + has_y2_block * 16 && msgBit < n_bits ; i++) {
+        if(msgBit < n_bits && qcoeff[i] != 1 && qcoeff[i] != 0 && (!has_y2_block || i % 16 != 0 || i > 255)) {
             qcoeff[i] = (qcoeff[i] & 0xFFFE) | getBit(msg, msgBit);
             msgBit++;
         }
@@ -43,7 +43,7 @@ static int msgBitDec = 0;
 void readQdctLsb(short *qcoeff, int has_y2_block) {
 
     for(int i = 0; i < 384 + has_y2_block * 16; i++) {
-        if((qcoeff[i] > 1 || qcoeff[i] < 0) && (!has_y2_block || i % 16 != 0 || i > 255)) {
+        if(qcoeff[i] != 1 && qcoeff[i] != 0 && (!has_y2_block || i % 16 != 0 || i > 255)) {
             setBit(msgReceived, msgBitDec, getLsb(qcoeff[i]));
             msgBitDec++;
         }
