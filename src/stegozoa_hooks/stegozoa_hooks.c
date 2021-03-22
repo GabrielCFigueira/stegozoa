@@ -98,7 +98,8 @@ void readQdct(short *qcoeff, int has_y2_block) {
             printf("msgCharDec: %c, hex:%x\n", theMsg[msgCharDec-1], theMsg[msgCharDec-1]);
             if(msgCharDec == 1 && theMsg[0] != '!')
                 msgCharDec = 0;
-            if(msgCharDec == sizeof(msg)) {
+            if(msgCharDec == sizeof(msg) - 1) {
+                theMsg[msgCharDec] = '\0';
                 printf("Message: %s\n", theMsg);
                 msgCharDec = 0;
                 return;
