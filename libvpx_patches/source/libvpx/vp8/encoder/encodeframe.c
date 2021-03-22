@@ -1080,21 +1080,6 @@ static void adjust_act_zbin(VP8_COMP *cpi, MACROBLOCK *x) {
 #endif
 }
 
-//Stegozoa: determine if a macroblock is going to be skipped
-static int mb_is_skippable(MACROBLOCKD *x) {
-  int has_y2_block = (x->mode_info_context->mbmi.mode != B_PRED &&
-                      x->mode_info_context->mbmi.mode != SPLITMV);
-  int skip = 1;
-  int i = 0;
-
-  if(has_y2_block) {
-    for (i = 0; i < 16; ++i) skip &= (x->eobs[i] < 2);
-  }
-
-  for (; i < 24 + has_y2_block; ++i) skip &= (!x->eobs[i]);
-
-  return skip;
-}
 
 int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
                                   TOKENEXTRA **t, int mb_row, int mb_col) {
@@ -1140,7 +1125,7 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
   int has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
                       xd->mode_info_context->mbmi.mode != SPLITMV);
   //Stegozoa
-  if (mb_row == 5 && mb_col == 5)
+  if (mb_row == 10 && mb_col == 10)
     writeQdct(xd->qcoeff, xd->eobs, has_y2_block);
   
 
@@ -1332,7 +1317,7 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
   int has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
                       xd->mode_info_context->mbmi.mode != SPLITMV);
   //Stegozoa
-  if (mb_row == 5 && mb_col == 5)
+  if (mb_row == 10 && mb_col == 10)
     writeQdct(xd->qcoeff, xd->eobs, has_y2_block);
 
 
