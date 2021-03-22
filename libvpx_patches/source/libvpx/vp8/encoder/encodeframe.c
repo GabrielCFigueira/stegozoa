@@ -1119,7 +1119,7 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
   int has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
                       xd->mode_info_context->mbmi.mode != SPLITMV);
   //Stegozoa
-  writeQdc(xd->qcoeff, xd->eobs, has_y2_block);
+  writeQdct(xd->qcoeff, xd->eobs, has_y2_block);
   
 
 
