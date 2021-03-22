@@ -95,11 +95,9 @@ void readQdct(short *qcoeff, int has_y2_block) {
     for(int i = 0; i < 384 + has_y2_block * 16; i++) {
         if((!has_y2_block || i % 16 != 0 || i > 255) && qcoeff[i] != 1 && qcoeff[i] != 0) {
             theMsg[msgCharDec++] = qcoeff[i];
-            printf("msgCharDec: %d\n", msgCharDec);
+            printf("msgCharDec: %c, hex:%x\n", theMsg[msgCharDec-1], theMsg[msgCharDec-1]);
             if(msgCharDec == 1 && theMsg[0] != '!')
                 msgCharDec = 0;
-            else if(msgCharDec == 1)
-                printQdct(qcoeff);
             if(msgCharDec == sizeof(msg)) {
                 printf("Message: %s\n", theMsg);
                 msgCharDec = 0;
