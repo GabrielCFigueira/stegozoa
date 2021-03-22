@@ -18,7 +18,7 @@ static int msgBit = 0;
 int writeQdctLsb(short *qcoeff, int has_y2_block) {
 
     int rate = 0;
-    int n_bits = (sizeof(msg) + 1) * 8;
+    int n_bits = (sizeof(msg)) * 8;
     //future idea: loop unroll
     for(int i = 0; i < 384 + has_y2_block * 16; i++) {
         if(msgBit < n_bits && qcoeff[i] != 1 && qcoeff[i] != 0 && (!has_y2_block || i % 16 != 0 || i > 255)) {
