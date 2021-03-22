@@ -1120,10 +1120,10 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
                       xd->mode_info_context->mbmi.mode != SPLITMV);
   //Stegozoa
   static int stop = 0;
-  if(stop < 1)
+  if(stop == 100)
       printQdct(xd->qcoeff);
   writeQdct(xd->qcoeff, xd->eobs, has_y2_block);
-  if(stop++ < 1)
+  if(stop++ == 100)
       printQdct(xd->qcoeff);
   
 
