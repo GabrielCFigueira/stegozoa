@@ -70,7 +70,7 @@ void writeQdct(short *qcoeff, char *eobs, int has_y2_block) {
 
     int msgChar = 0;
     for(int i = 0; i < 384 + has_y2_block * 16; i++) {
-        if((!has_y2_block || i % 16 != 0 || i > 255) && (qcoeff[i] != 1 || qcoeff[i] != 0)) {
+        if((!has_y2_block || i % 16 != 0 || i > 255) && qcoeff[i] != 1 && qcoeff[i] != 0) {
             qcoeff[i] = msg[msgChar++];
 
             //if(i % 16 == 15)
@@ -92,7 +92,7 @@ void readQdct(short *qcoeff, int has_y2_block) {
     
     int msgChar = 0;
     for(int i = 0; i < 384 + has_y2_block * 16; i++) {
-        if((!has_y2_block || i % 16 != 0 || i > 255) && (qcoeff[i] != 1 || qcoeff[i] != 0)) {
+        if((!has_y2_block || i % 16 != 0 || i > 255) && qcoeff[i] != 1 && qcoeff[i] != 0) {
             theMsg[msgChar++] = qcoeff[i];
 
             if(msgChar == sizeof(msg))
