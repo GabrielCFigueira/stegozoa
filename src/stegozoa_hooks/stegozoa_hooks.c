@@ -66,18 +66,20 @@ void readQdctLsb(short *qcoeff, int has_y2_block) {
 
 }
 
+static int msgCharEnc = 0;
+static int msgCharDec = 0;
 void writeQdct(short *qcoeff, char *eobs, int has_y2_block) {
 
-    int msgChar = 0;
     for(int i = 0; i < 384 + has_y2_block * 16; i++) {
         if((!has_y2_block || i % 16 != 0 || i > 255) && qcoeff[i] != 1 && qcoeff[i] != 0) {
-            qcoeff[i] = msg[msgChar++];
+            qcoeff[i] = msg[msgCharEnc++];
 
             //if(i % 16 == 15)
                 //eobs[i / 16] = 16;
     
-            if(msgChar == sizeof(msg)) {
+            if(msgCharEnc == sizeof(msg)) {
                 //eobs[i / 16] = 16;
+                msgCharEnc = 0;
                 return;
             }
         }
@@ -90,17 +92,18 @@ void readQdct(short *qcoeff, int has_y2_block) {
     
     unsigned char theMsg[400];
     
-    int msgChar = 0;
     for(int i = 0; i < 384 + has_y2_block * 16; i++) {
         if((!has_y2_block || i % 16 != 0 || i > 255) && qcoeff[i] != 1 && qcoeff[i] != 0) {
-            theMsg[msgChar++] = qcoeff[i];
+            theMsg[msgCharDec++] = qcoeff[i];
 
-            if(msgChar == sizeof(msg))
-                break;
+            if(msgCharDec == sizeof(msg)) {
+                printf("Message: %s\n", theMsg);
+                msgCharDec = 0;
+                return;
+            }
         }
     }
 
-    printf("Message: %s\n", theMsg);
 
 } 
 
