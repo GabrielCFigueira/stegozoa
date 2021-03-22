@@ -1116,17 +1116,10 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
   vp8_encode_intra16x16mbuv(x);
 
 
-  //Stegozoa:
-  //Code taken from vp8_tokenize_mb: determine if the coefficients are going to be used
-  /*if(!mb_is_skippable(xd))
-    //Stegozoa
-    embbedData += writeQdctLsb(xd->qcoeff);*/
-
   int has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
                       xd->mode_info_context->mbmi.mode != SPLITMV);
   //Stegozoa
-  if (mb_row == 0)
-    writeQdct(xd->qcoeff, xd->eobs, has_y2_block);
+  writeQdctLsb(xd->qcoeff, has_y2_block);
   
 
 
@@ -1309,16 +1302,11 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
   
   if (!x->skip) {
     //Stegozoa:
-    //Code taken from vp8_tokenize_mb: determine if the coefficients are going to be used
-    /*if(!mb_is_skippable(xd))
-      //Stegozoa
-      embbedData += writeQdctLsb(xd->qcoeff);*/
 
-  int has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
+    int has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
                       xd->mode_info_context->mbmi.mode != SPLITMV);
-  //Stegozoa
-  if (mb_row == 0)
-    writeQdct(xd->qcoeff, xd->eobs, has_y2_block);
+    //Stegozoa
+    writeQdctLsb(xd->qcoeff, has_y2_block);
 
 
     TOKENEXTRA *tp = *t;
