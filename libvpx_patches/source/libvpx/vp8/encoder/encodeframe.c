@@ -775,7 +775,6 @@ void vp8_encode_frame(VP8_COMP *cpi) {
 #else
             tp = cpi->tok + mb_row * (cm->mb_cols * 16 * 24);
 #endif
-        printf("multithread\n");
         encode_mb_row(cpi, cm, mb_row, x, xd, &tp, segment_counts, &totalrate);
 
         /* adjust to the next row of mbs */
@@ -1119,10 +1118,7 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
   int has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
                       xd->mode_info_context->mbmi.mode != SPLITMV);
   //Stegozoa
-  static int stop = 0;
   writeQdct(xd->qcoeff, xd->eobs, has_y2_block);
-  if(stop++ == 100)
-      printQdct(xd->qcoeff);
   
 
 

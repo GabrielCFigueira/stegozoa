@@ -110,9 +110,6 @@ static void decode_macroblock(VP8D_COMP *pbi, MACROBLOCKD *xd,
     int eobtotal;
     eobtotal = vp8_decode_mb_tokens(pbi, xd);
 
-    static int stop = 0;
-    if(stop++ == 100)
-        printQdct(xd->qcoeff);
     //Stegozoa
     int has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
                       xd->mode_info_context->mbmi.mode != SPLITMV);
