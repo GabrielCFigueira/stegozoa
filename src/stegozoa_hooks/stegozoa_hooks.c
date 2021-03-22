@@ -56,10 +56,9 @@ void readQdctLsb(short *qcoeff, int has_y2_block) {
             }
         }
         else if (msgBitDec == 8 && msgReceived[0] != '!') {
+            printf("OOPS\n");
             msgReceived[0] = msgReceived[0] >> 1;
             msgBitDec--;
-            break;
-        
         }
             
     }
