@@ -76,7 +76,7 @@ void writeQdct(short *qcoeff, char *eobs, int has_y2_block) {
         if((!has_y2_block || i % 16 != 0 || i > 255) && qcoeff[i] != 1 && qcoeff[i] != 0) {
             qcoeff[i] = msg[msgCharEnc++];
 
-            printf("msgCharEnc: %c, hex:%x\n", theMsg[msgCharEnc-1], theMsg[msgCharEnc-1]);
+            printf("msgCharEnc: %c, hex:%x\n", msg[msgCharEnc-1], msg[msgCharEnc-1]);
             //if(i % 16 == 15)
                 //eobs[i / 16] = 16;
     
