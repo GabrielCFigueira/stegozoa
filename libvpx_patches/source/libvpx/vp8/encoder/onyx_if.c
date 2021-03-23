@@ -1782,6 +1782,10 @@ struct VP8_COMP *vp8_create_compressor(VP8_CONFIG *oxcf) {
 
   init_config(cpi, oxcf);
 
+  //Stegozoa:
+  printf("MB_ROWS:%d\n", cm->mb_rows);
+  CHECK_MEM_ERROR(cpi->qcoeff, vpx_calloc(400 * cm->mb_cols * cm->mb_rows, sizeof(short)));
+
   memcpy(cpi->base_skip_false_prob, vp8cx_base_skip_false_prob,
          sizeof(vp8cx_base_skip_false_prob));
   cpi->common.current_video_frame = 0;

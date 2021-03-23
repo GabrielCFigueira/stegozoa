@@ -328,7 +328,7 @@ void vp8_activity_masking(VP8_COMP *cpi, MACROBLOCK *x) {
 
 static void encode_mb_row(VP8_COMP *cpi, VP8_COMMON *cm, int mb_row,
                           MACROBLOCK *x, MACROBLOCKD *xd, TOKENEXTRA **tp,
-                          int *segment_counts, int *totalrate, short *qcoeff) {
+                          int *segment_counts, int *totalrate) {
   int recon_yoffset, recon_uvoffset;
   int mb_col;
   int ref_fb_idx = cm->lst_fb_idx;
@@ -529,6 +529,8 @@ static void encode_mb_row(VP8_COMP *cpi, VP8_COMMON *cm, int mb_row,
       }
     }
 
+    //Stegozoa
+    memcpy(cpi->qcoeff + mb_row * cm->mb_cols * 400, xd->qcoeff, 400);
     cpi->tplist[mb_row].stop = *tp;
 
 #if CONFIG_REALTIME_ONLY & CONFIG_ONTHEFLY_BITPACKING
@@ -681,10 +683,6 @@ void vp8_encode_frame(VP8_COMP *cpi) {
   const int num_part = (1 << cm->multi_token_partition);
 #endif
 
-  //Stegozoa: TODO move this to "vp8_create_crompressor"
-  CHECK_MEM_ERROR(cpi->qcoeff, vpx_calloc(400 * cm->mb_cols * cm->mb_rows, sizeof(short)));
-  xd->qcoeff = cpi->qcoeff;
-
   memset(segment_counts, 0, sizeof(segment_counts));
   totalrate = 0;
 
@@ -798,8 +796,6 @@ void vp8_encode_frame(VP8_COMP *cpi) {
         x->partition_info += xd->mode_info_stride * cpi->encoding_thread_count;
         x->gf_active_ptr += cm->mb_cols * cpi->encoding_thread_count;
         
-        //Stegozoa
-        xd->qcoeff += cpi->encoding_thread_count * cm->mb_cols * 400;
       }
       /* Wait for all the threads to finish. */
       for (i = 0; i < cpi->encoding_thread_count; ++i) {
@@ -880,8 +876,6 @@ void vp8_encode_frame(VP8_COMP *cpi) {
         x->src.u_buffer += 8 * x->src.uv_stride - 8 * cm->mb_cols;
         x->src.v_buffer += 8 * x->src.uv_stride - 8 * cm->mb_cols;
         
-        //Stegozoa
-        xd->qcoeff += cm->mb_cols * 400;
       }
 
       cpi->tok_count = (unsigned int)(tp - cpi->tok);
