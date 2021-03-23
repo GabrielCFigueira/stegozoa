@@ -1230,6 +1230,7 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
   if (vpx_atomic_load_acquire(&pbi->b_multithreaded_rd) &&
       pc->multi_token_partition != ONE_PARTITION) {
     unsigned int thread;
+    printf("Decoder threads!\n");
     if (vp8mt_decode_mb_rows(pbi, xd)) {
       vp8_decoder_remove_threads(pbi);
       pbi->restart_threads = 1;

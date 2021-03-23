@@ -171,7 +171,6 @@ static THREAD_FUNCTION thread_encoding_proc(void *p_data) {
           }
 
           x->active_ptr = cpi->active_map + map_index + mb_col;
-          printf("Ethreading nightmare\n");
           if (cm->frame_type == KEY_FRAME) {
 
             *totalrate += vp8cx_encode_intra_macroblock(cpi, x, &tp, mb_row, mb_col);
