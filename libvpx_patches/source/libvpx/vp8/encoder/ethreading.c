@@ -47,6 +47,7 @@ static THREAD_FUNCTION thread_encoding_proc(void *p_data) {
   MB_ROW_COMP *mbri = (MB_ROW_COMP *)(((ENCODETHREAD_DATA *)p_data)->ptr2);
   ENTROPY_CONTEXT_PLANES mb_row_left_context;
 
+
   while (1) {
     if (vpx_atomic_load_acquire(&cpi->b_multi_threaded) == 0) break;
 
@@ -64,6 +65,10 @@ static THREAD_FUNCTION thread_encoding_proc(void *p_data) {
 
       int *segment_counts = mbri->segment_counts;
       int *totalrate = &mbri->totalrate;
+
+      //Stegozoa: initialize first array of qcoeffs, starting on the first row
+      xd->qcoeff = cpi->qcoeff + (ithread + 1) * cm->mb_cols * 400;
+
 
       /* we're shutting down */
       if (vpx_atomic_load_acquire(&cpi->b_multi_threaded) == 0) break;
@@ -272,6 +277,9 @@ static THREAD_FUNCTION thread_encoding_proc(void *p_data) {
           recon_yoffset += 16;
           recon_uvoffset += 8;
 
+          /* Stegozoa: next array of qcoefficients */
+          xd->qcoeff += 400;
+
           /* Keep track of segment usage */
           segment_counts[xd->mode_info_context->mbmi.segment_id]++;
 
@@ -304,6 +312,9 @@ static THREAD_FUNCTION thread_encoding_proc(void *p_data) {
             xd->mode_info_stride * cpi->encoding_thread_count;
         x->partition_info += xd->mode_info_stride * cpi->encoding_thread_count;
         x->gf_active_ptr += cm->mb_cols * cpi->encoding_thread_count;
+
+        /* Stegozoa: next row */
+        xd->qcoeff += cpi->encoding_thread_count * cm->mb_cols * 400;
       }
       /* Signal that this thread has completed processing its rows. */
       sem_post(&cpi->h_event_end_encoding[ithread]);

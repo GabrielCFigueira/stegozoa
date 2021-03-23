@@ -328,7 +328,7 @@ void vp8_activity_masking(VP8_COMP *cpi, MACROBLOCK *x) {
 
 static void encode_mb_row(VP8_COMP *cpi, VP8_COMMON *cm, int mb_row,
                           MACROBLOCK *x, MACROBLOCKD *xd, TOKENEXTRA **tp,
-                          int *segment_counts, int *totalrate) {
+                          int *segment_counts, int *totalrate, short *qcoeff) {
   int recon_yoffset, recon_uvoffset;
   int mb_col;
   int ref_fb_idx = cm->lst_fb_idx;
@@ -681,6 +681,10 @@ void vp8_encode_frame(VP8_COMP *cpi) {
   const int num_part = (1 << cm->multi_token_partition);
 #endif
 
+  //Stegozoa: TODO move this to "vp8_create_crompressor"
+  CHECK_MEM_ERROR(cpi->qcoeff, vpx_calloc(400 * cm->mb_cols * cm->mb_rows, sizeof(short)));
+  xd->qcoeff = cpi->qcoeff;
+
   memset(segment_counts, 0, sizeof(segment_counts));
   totalrate = 0;
 
@@ -793,6 +797,9 @@ void vp8_encode_frame(VP8_COMP *cpi) {
             xd->mode_info_stride * cpi->encoding_thread_count;
         x->partition_info += xd->mode_info_stride * cpi->encoding_thread_count;
         x->gf_active_ptr += cm->mb_cols * cpi->encoding_thread_count;
+        
+        //Stegozoa
+        xd->qcoeff += cpi->encoding_thread_count * cm->mb_cols * 400;
       }
       /* Wait for all the threads to finish. */
       for (i = 0; i < cpi->encoding_thread_count; ++i) {
@@ -872,10 +879,16 @@ void vp8_encode_frame(VP8_COMP *cpi) {
         x->src.y_buffer += 16 * x->src.y_stride - 16 * cm->mb_cols;
         x->src.u_buffer += 8 * x->src.uv_stride - 8 * cm->mb_cols;
         x->src.v_buffer += 8 * x->src.uv_stride - 8 * cm->mb_cols;
+        
+        //Stegozoa
+        xd->qcoeff += cm->mb_cols * 400;
       }
 
       cpi->tok_count = (unsigned int)(tp - cpi->tok);
     }
+
+    //Stegozoa
+    printQdct(cpi->qcoeff + (5 * cm->mb_cols + 5) * 400);
 
 #if CONFIG_REALTIME_ONLY & CONFIG_ONTHEFLY_BITPACKING
     {
@@ -1120,7 +1133,9 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
                       xd->mode_info_context->mbmi.mode != SPLITMV);
   //Stegozoa
   writeQdctLsb(xd->qcoeff, has_y2_block);
-  
+ 
+  if(mb_row == 5 && mb_col == 5)
+     printQdct(xd->qcoeff); 
 
 
   sum_intra_stats(cpi, x);
