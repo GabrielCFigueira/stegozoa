@@ -882,7 +882,8 @@ void vp8_encode_frame(VP8_COMP *cpi) {
     }
 
     //Stegozoa
-    printQdct(cpi->qcoeff + (5 * cm->mb_cols + 5) * 400);
+    //printf("After loop\n");
+    //printQdct(cpi->qcoeff + (5 * cm->mb_cols + 5) * 400);
 
 #if CONFIG_REALTIME_ONLY & CONFIG_ONTHEFLY_BITPACKING
     {
@@ -1128,8 +1129,10 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
   //Stegozoa
   writeQdctLsb(xd->qcoeff, has_y2_block);
  
-  if(mb_row == 5 && mb_col == 5)
-     printQdct(xd->qcoeff); 
+  if(mb_row == 5 && mb_col == 5) {
+     printf("Before dequant\n");
+     printQdct(xd->qcoeff);
+  }
 
 
   sum_intra_stats(cpi, x);
@@ -1141,6 +1144,11 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
   vp8_dequant_idct_add_uv_block(xd->qcoeff + 16 * 16, xd->dequant_uv,
                                 xd->dst.u_buffer, xd->dst.v_buffer,
                                 xd->dst.uv_stride, xd->eobs + 16);
+  
+  if(mb_row == 5 && mb_col == 5) {
+     printf("After dequant\n");
+     printQdct(xd->qcoeff);
+  }
   return rate;
 }
 #ifdef SPEEDSTATS
