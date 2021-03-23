@@ -33,14 +33,14 @@ int writeQdctLsb(short *qcoeff, int has_y2_block) {
 
     static int stop = 0;
     if (stop++ < 1) {
-        printf("MASK: %d\n" rotate(MASK, 0));
-        printf("MASK: %d\n" rotate(MASK, 1));
-        printf("MASK: %d\n" rotate(MASK, 2));
-        printf("MASK: %d\n" rotate(MASK, 3));
-        printf("MASK: %d\n" rotate(MASK, 4));
-        printf("MASK: %d\n" rotate(MASK, 5));
-        printf("MASK: %d\n" rotate(MASK, 6));
-        printf("MASK: %d\n" rotate(MASK, 7));
+        printf("MASK: %d\n", rotate(MASK, 0));
+        printf("MASK: %d\n", rotate(MASK, 1));
+        printf("MASK: %d\n", rotate(MASK, 2));
+        printf("MASK: %d\n", rotate(MASK, 3));
+        printf("MASK: %d\n", rotate(MASK, 4));
+        printf("MASK: %d\n", rotate(MASK, 5));
+        printf("MASK: %d\n", rotate(MASK, 6));
+        printf("MASK: %d\n", rotate(MASK, 7));
     }
 
     return rate;
