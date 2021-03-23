@@ -1128,7 +1128,7 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
 
 
   //Stegozoa
-  memcpy(cpi->qcoeff + (mb_row * cpi->common.mb_cols + mb_col) * 400, xd->qcoeff, 400);
+  memcpy(cpi->qcoeff + (mb_row * cpi->common.mb_cols + mb_col) * 400, xd->qcoeff, 400 * sizeof(short));
   
   int has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
                       xd->mode_info_context->mbmi.mode != SPLITMV);
@@ -1314,7 +1314,7 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
   }
 
   //Stegozoa
-  memcpy(cpi->qcoeff + (mb_row * cpi->common.mb_cols + mb_col) * 400, xd->qcoeff, 400);
+  memcpy(cpi->qcoeff + (mb_row * cpi->common.mb_cols + mb_col) * 400, xd->qcoeff, 400 * sizeof(short));
   
   if (!x->skip) {
     //Stegozoa:
