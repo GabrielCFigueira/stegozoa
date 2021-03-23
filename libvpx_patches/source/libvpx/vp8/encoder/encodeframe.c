@@ -1325,6 +1325,10 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
     //Stegozoa
     writeQdctLsb(xd->qcoeff, has_y2_block);
 
+    if(mb_row == 5 && mb_col == 5) {
+        printf("Before dequant\n");
+        printQdct(xd->qcoeff);
+    }
 
     vp8_tokenize_mb(cpi, x, t);
   
@@ -1336,6 +1340,11 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
     vp8_dequant_idct_add_uv_block(xd->qcoeff + 16 * 16, xd->dequant_uv,
                                   xd->dst.u_buffer, xd->dst.v_buffer,
                                   xd->dst.uv_stride, xd->eobs + 16);
+    
+    if(mb_row == 5 && mb_col == 5) {
+        printf("After dequant\n");
+        printQdct(xd->qcoeff);
+    }
   } else {
     /* always set mb_skip_coeff as it is needed by the loopfilter */
     xd->mode_info_context->mbmi.mb_skip_coeff = 1;
