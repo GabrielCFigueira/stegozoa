@@ -529,8 +529,6 @@ static void encode_mb_row(VP8_COMP *cpi, VP8_COMMON *cm, int mb_row,
       }
     }
 
-    //Stegozoa
-    memcpy(cpi->qcoeff + mb_row * cm->mb_cols * 400, xd->qcoeff, 400);
     cpi->tplist[mb_row].stop = *tp;
 
 #if CONFIG_REALTIME_ONLY & CONFIG_ONTHEFLY_BITPACKING
@@ -882,8 +880,8 @@ void vp8_encode_frame(VP8_COMP *cpi) {
     }
 
     //Stegozoa
-    //printf("After loop\n");
-    //printQdct(cpi->qcoeff + (5 * cm->mb_cols + 5) * 400);
+    printf("After loop\n");
+    printQdct(cpi->qcoeff + (5 * cm->mb_cols + 5) * 400);
 
 #if CONFIG_REALTIME_ONLY & CONFIG_ONTHEFLY_BITPACKING
     {
@@ -1123,17 +1121,17 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
 
   vp8_encode_intra16x16mbuv(x);
 
+  if(mb_row == 5 && mb_col == 5) {
+      printf("In loop\n");
+      printQdct(xd->qcoeff);
+  }
+
 
   int has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
                       xd->mode_info_context->mbmi.mode != SPLITMV);
   //Stegozoa
   writeQdctLsb(xd->qcoeff, has_y2_block);
  
-  if(mb_row == 5 && mb_col == 5) {
-     printf("Before dequant\n");
-     printQdct(xd->qcoeff);
-  }
-
 
   sum_intra_stats(cpi, x);
 
@@ -1145,10 +1143,6 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
                                 xd->dst.u_buffer, xd->dst.v_buffer,
                                 xd->dst.uv_stride, xd->eobs + 16);
   
-  if(mb_row == 5 && mb_col == 5) {
-     printf("After dequant\n");
-     printQdct(xd->qcoeff);
-  }
   return rate;
 }
 #ifdef SPEEDSTATS
@@ -1316,6 +1310,8 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
     }
   }
 
+  //Stegozoa
+  memcpy(cpi->qcoeff + mb_row * cm->mb_cols * 400, xd->qcoeff, 400);
   
   if (!x->skip) {
     //Stegozoa:
@@ -1324,11 +1320,6 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
                       xd->mode_info_context->mbmi.mode != SPLITMV);
     //Stegozoa
     writeQdctLsb(xd->qcoeff, has_y2_block);
-
-    if(mb_row == 5 && mb_col == 5) {
-        printf("Before dequant\n");
-        printQdct(xd->qcoeff);
-    }
 
     vp8_tokenize_mb(cpi, x, t);
   
@@ -1340,11 +1331,6 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
     vp8_dequant_idct_add_uv_block(xd->qcoeff + 16 * 16, xd->dequant_uv,
                                   xd->dst.u_buffer, xd->dst.v_buffer,
                                   xd->dst.uv_stride, xd->eobs + 16);
-    
-    if(mb_row == 5 && mb_col == 5) {
-        printf("After dequant\n");
-        printQdct(xd->qcoeff);
-    }
   } else {
     /* always set mb_skip_coeff as it is needed by the loopfilter */
     xd->mode_info_context->mbmi.mb_skip_coeff = 1;
