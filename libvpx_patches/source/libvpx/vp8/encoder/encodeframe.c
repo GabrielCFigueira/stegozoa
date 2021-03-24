@@ -1376,8 +1376,8 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
     //}
     
     //Stegozoa
-    memset(cpi->qcoeff + (mb_row * cpi->common.mb_cols + mb_col) * 400, 0, xd->qcoeff, 400 * sizeof(short));
-    memset(cpi->eobs + (mb_row * cpi->common.mb_cols + mb_col) * 25, 0, xd->eobs, 25 * sizeof(char));
+    memset(cpi->qcoeff + (mb_row * cpi->common.mb_cols + mb_col) * 400, 0, 400 * sizeof(short));
+    memset(cpi->eobs + (mb_row * cpi->common.mb_cols + mb_col) * 25, 0, 25 * sizeof(char));
   }
 
   return rate;
