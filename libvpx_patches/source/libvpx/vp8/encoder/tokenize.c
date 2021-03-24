@@ -363,7 +363,7 @@ void vp8_tokenize_mb(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t) {
     if (!cpi->common.mb_no_coeff_skip) {
       vp8_stuff_mb(cpi, x, t);
     } else {
-      vp8_fix_contexts(xd);
+      vp8_fix_contexts(x);
       //Stegozoa
       //x->skip_true_count++;
     }
@@ -425,7 +425,6 @@ void fake_tokenize1st_order_b(MACROBLOCK *x, int plane_type, VP8_COMP *cpi) {
     const int eob = *b->eob;
     tmp1 = vp8_block2above[block];
     tmp2 = vp8_block2left[block];
-    qcoeff_ptr = b->qcoeff;
     a = (ENTROPY_CONTEXT *)xd->above_context + tmp1;
     l = (ENTROPY_CONTEXT *)xd->left_context + tmp2;
 
