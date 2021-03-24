@@ -882,7 +882,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
     }
 
     //Stegozoa: loop embbed
-    int has_y2_block;
+    /*int has_y2_block;
     short *qcoeff = cpi->qcoeff;
     char *eobs = cpi->eobs;
     vp8_fix_contexts(xd);
@@ -892,7 +892,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
 
     for (mb_row = 0; mb_row < cm->mb_rows; ++mb_row) {
 
-        /* reset above block coeffs */
+        // reset above block coeffs
         xd->above_context = cm->above_context;
 
         printf("Row loop\n");
@@ -917,7 +917,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
         }
 
     }
-    printf("After token loop\n");
+    printf("After token loop\n");*/
 
     cpi->tok_count = (unsigned int)(tp - cpi->tok);
 
