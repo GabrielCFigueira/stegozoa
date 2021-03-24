@@ -384,8 +384,8 @@ void vp8_tokenize_mb(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t) {
 void fake_tokenize2nd_order_b(MACROBLOCK *x, VP8_COMP *cpi) {
 
   MACROBLOCKD *xd = &x->e_mbd;
-  ENTROPY_CONTEXT a = (ENTROPY_CONTEXT *)xd->above_context + 8;
-  ENTROPY_CONTEXT l = (ENTROPY_CONTEXT *)xd->left_context + 8;
+  ENTROPY_CONTEXT *a = (ENTROPY_CONTEXT *)xd->above_context + 8;
+  ENTROPY_CONTEXT *l = (ENTROPY_CONTEXT *)xd->left_context + 8;
 
   if (!xd->eobs[24])
     *a = *l = 0;
@@ -401,7 +401,7 @@ void fake_tokenize1st_order_b(MACROBLOCK *x, int plane_type, VP8_COMP *cpi) {
   const BLOCKD *b;
   ENTROPY_CONTEXT *a;
   ENTROPY_CONTEXT *l;
-  int tmp1, tmp2;
+  int tmp1, tmp2, c;
 
   b = xd->block;
   /* Luma */
