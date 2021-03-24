@@ -878,7 +878,6 @@ void vp8_encode_frame(VP8_COMP *cpi) {
       }
 
       cpi->tok_count = (unsigned int)(tp - cpi->tok); //TODO: marking for deletion
-      printf("Token count: %u\n", cpi->tok_count);
     }
 
     //Stegozoa: loop embbed
@@ -887,14 +886,10 @@ void vp8_encode_frame(VP8_COMP *cpi) {
     char *eobs = cpi->eobs;
     xd->mode_info_context = cm->mi;
 
-    printf("Before token loop\n");
-
     for (mb_row = 0; mb_row < cm->mb_rows; ++mb_row) {
 
         // reset above block coeffs
         xd->above_context = cm->above_context;
-
-        printf("Row loop\n");
 
         for (int mb_col = 0; mb_col < cm->mb_cols; ++mb_col) {
             
@@ -907,7 +902,6 @@ void vp8_encode_frame(VP8_COMP *cpi) {
             
             writeQdctLsb(xd->qcoeff, has_y2_block);
             vp8_tokenize_mb(cpi, x, &tp);
-            //printQdct(xd->qcoeff);
 
             qcoeff += 400;
             eobs += 25;
@@ -916,7 +910,6 @@ void vp8_encode_frame(VP8_COMP *cpi) {
         }
 
     }
-    printf("After token loop\n");
 
     cpi->tok_count = (unsigned int)(tp - cpi->tok);
 
