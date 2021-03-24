@@ -43,6 +43,7 @@
 #include "encodeframe.h"
 
 extern void vp8_stuff_mb(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t);
+extern void vp8_fix_contexts(MACROBLOCKD *x);
 static void adjust_act_zbin(VP8_COMP *cpi, MACROBLOCK *x);
 
 #ifdef MODE_STATS
@@ -1179,7 +1180,6 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
 extern int cnt_pm;
 #endif
 
-extern void vp8_fix_contexts(MACROBLOCKD *x);
 
 int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
                                   int recon_yoffset, int recon_uvoffset,
