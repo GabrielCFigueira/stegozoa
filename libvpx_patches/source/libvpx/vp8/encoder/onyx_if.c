@@ -2283,10 +2283,8 @@ void vp8_remove_compressor(VP8_COMP **comp) {
   vpx_free(cpi->consec_zero_last_mvbias);
 
   //Stegozoa
-  printf("Before free\n");
   vpx_free(cpi->qcoeff);
   vpx_free(cpi->eobs);
-  printf("After free\n");
 
   vp8_remove_common(&cpi->common);
   vpx_free(cpi);

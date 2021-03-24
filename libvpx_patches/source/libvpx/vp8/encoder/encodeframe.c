@@ -920,6 +920,8 @@ void vp8_encode_frame(VP8_COMP *cpi) {
 
     cpi->tok_count = (unsigned int)(tp - cpi->tok);
 
+    printf("Token count: %u\n", cpi->tok_count);
+
 #if CONFIG_REALTIME_ONLY & CONFIG_ONTHEFLY_BITPACKING
     {
       int i;
