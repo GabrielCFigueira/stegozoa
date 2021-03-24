@@ -884,6 +884,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
     int has_y2_block;
     short *qcoeff = cpi->qcoeff;
     char *eobs = cpi->eobs;
+    memset(cm->above_context, 0, sizeof(ENTROPY_CONTEXT_PLANES) * cm->mb_cols);
     xd->mode_info_context = cm->mi;
 
     for (mb_row = 0; mb_row < cm->mb_rows; ++mb_row) {
@@ -1373,6 +1374,10 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
       //else {
       //vp8_stuff_mb(cpi, x, t);
     //}
+    
+    //Stegozoa
+    memset(cpi->qcoeff + (mb_row * cpi->common.mb_cols + mb_col) * 400, 0, xd->qcoeff, 400 * sizeof(short));
+    memset(cpi->eobs + (mb_row * cpi->common.mb_cols + mb_col) * 25, 0, xd->eobs, 25 * sizeof(char));
   }
 
   return rate;
