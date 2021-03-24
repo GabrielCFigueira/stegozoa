@@ -773,7 +773,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
 #if CONFIG_REALTIME_ONLY & CONFIG_ONTHEFLY_BITPACKING
             tp = cpi->tok;
 #else
-            tp = cpi->tok + mb_row * (cm->mb_cols * 16 * 24);
+            tp = cpi->tok + mb_row * (cm->mb_cols * 16 * 24); //TODO: marking for deletion
 #endif
         printf("Thread alert!\n");
         encode_mb_row(cpi, cm, mb_row, x, xd, &tp, segment_counts, &totalrate);
@@ -800,7 +800,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
         sem_wait(&cpi->h_event_end_encoding[i]);
       }
 
-      for (mb_row = 0; mb_row < cm->mb_rows; ++mb_row) {
+      for (mb_row = 0; mb_row < cm->mb_rows; ++mb_row) { //TODO: marking for destruction
         cpi->tok_count += (unsigned int)(cpi->tplist[mb_row].stop -
                                          cpi->tplist[mb_row].start);
       }
@@ -876,12 +876,43 @@ void vp8_encode_frame(VP8_COMP *cpi) {
         
       }
 
-      cpi->tok_count = (unsigned int)(tp - cpi->tok);
+      cpi->tok_count = (unsigned int)(tp - cpi->tok); //TODO: marking for deletion
     }
 
-    //Stegozoa
-    printf("After loop\n");
-    printQdct(cpi->qcoeff + (5 * cm->mb_cols + 5) * 400);
+    //Stegozoa: loop embbed
+    int has_y2_block;
+    short *qcoeff = cpi->qcoeff;
+    char *eobs = cpi->eobs;
+    vp8_fix_contexts(x);
+    xd->mode_info_context = cm->mi;
+
+    for (mb_row = 0; mb_row < cm->mb_rows; ++mb_row) {
+
+        /* reset above block coeffs */
+        xd->above_context = cm->above_context;
+
+        for (int mb_col = 0; mb_col < cm->mb_cols; ++mb_col) {
+            
+            vp8_zero(cm->left_context);    
+            memcpy(xd->qcoeff, qcoeff, 400 * sizeof(short));
+            memcpy(xd->eobs, eobs, 25 * sizeof(char));
+            
+            has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
+                      xd->mode_info_context->mbmi.mode != SPLITMV);
+            
+            writeQdct(xd->qcoeff, has_y2_block);
+            vp8_tokenize_mb(cpi, x, &tp);
+
+
+            qcoeff += 400;
+            eobs += 25;
+            xd->above_context++;
+            xd->mode_info_context++;
+        }
+
+    }
+
+    cpi->tok_count = (unsigned int)(tp - cpi->tok);
 
 #if CONFIG_REALTIME_ONLY & CONFIG_ONTHEFLY_BITPACKING
     {
@@ -1121,24 +1152,20 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
 
   vp8_encode_intra16x16mbuv(x);
 
-  if(mb_row == 5 && mb_col == 5) {
-      printf("In loop\n");
-      printQdct(xd->qcoeff);
-  }
-
-
-  //Stegozoa
-  memcpy(cpi->qcoeff + (mb_row * cpi->common.mb_cols + mb_col) * 400, xd->qcoeff, 400 * sizeof(short));
   
-  int has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
-                      xd->mode_info_context->mbmi.mode != SPLITMV);
   //Stegozoa
-  writeQdctLsb(xd->qcoeff, has_y2_block);
- 
+  //int has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
+                      //xd->mode_info_context->mbmi.mode != SPLITMV);
+  //writeQdctLsb(xd->qcoeff, has_y2_block);
+  memcpy(cpi->qcoeff + (mb_row * cpi->common.mb_cols + mb_col) * 400, xd->qcoeff, 400 * sizeof(short));
+  memcpy(cpi->eobs + (mb_row * cpi->common.mb_cols + mb_col) * 25, xd->eobs, 25 * sizeof(char));
+
 
   sum_intra_stats(cpi, x);
 
-  vp8_tokenize_mb(cpi, x, t);
+  //Stegozoa
+  //vp8_tokenize_mb(cpi, x, t);
+  vp8_fake_tokenize_mb(cpi, x);
 
   if (xd->mode_info_context->mbmi.mode != B_PRED) vp8_inverse_transform_mby(xd);
 
@@ -1313,18 +1340,20 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
     }
   }
 
-  //Stegozoa
-  memcpy(cpi->qcoeff + (mb_row * cpi->common.mb_cols + mb_col) * 400, xd->qcoeff, 400 * sizeof(short));
   
   if (!x->skip) {
+
     //Stegozoa:
+    //int has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
+                      //xd->mode_info_context->mbmi.mode != SPLITMV);
+    //writeQdctLsb(xd->qcoeff, has_y2_block);
+    memcpy(cpi->qcoeff + (mb_row * cpi->common.mb_cols + mb_col) * 400, xd->qcoeff, 400 * sizeof(short));
+    memcpy(cpi->eobs + (mb_row * cpi->common.mb_cols + mb_col) * 25, xd->eobs, 25 * sizeof(char));
 
-    int has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
-                      xd->mode_info_context->mbmi.mode != SPLITMV);
+
     //Stegozoa
-    writeQdctLsb(xd->qcoeff, has_y2_block);
-
-    vp8_tokenize_mb(cpi, x, t);
+    //vp8_tokenize_mb(cpi, x, t);
+    vp8_fake_tokenize_mb(cpi, x);
   
 
     if (xd->mode_info_context->mbmi.mode != B_PRED) {
@@ -1341,9 +1370,10 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
     if (cpi->common.mb_no_coeff_skip) {
       x->skip_true_count++;
       vp8_fix_contexts(xd);
-    } else {
-      vp8_stuff_mb(cpi, x, t);
-    }
+    } //Stegozoa
+      //else {
+      //vp8_stuff_mb(cpi, x, t);
+    //}
   }
 
   return rate;

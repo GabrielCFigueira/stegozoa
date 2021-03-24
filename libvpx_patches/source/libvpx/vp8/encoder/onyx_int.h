@@ -290,7 +290,8 @@ typedef struct VP8_COMP {
   
   //Stegozoa
   short *qcoeff;
-  
+  char *eobs;
+
   VP8_COMMON common;
   vp8_writer bc[9]; /* one boolcoder for each partition */
 
@@ -719,6 +720,9 @@ void vp8_pack_bitstream(VP8_COMP *cpi, unsigned char *dest,
                         unsigned char *dest_end, size_t *size);
 
 void vp8_tokenize_mb(VP8_COMP *, MACROBLOCK *, TOKENEXTRA **);
+
+//Stegozoa
+void vp8_fake_tokenize_mb(VP8_COMP *cpi, MACROBLOCK *x);
 
 void vp8_set_speed_features(VP8_COMP *cpi);
 

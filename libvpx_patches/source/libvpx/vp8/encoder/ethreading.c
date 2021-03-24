@@ -251,8 +251,6 @@ static THREAD_FUNCTION thread_encoding_proc(void *p_data) {
             }
           }
 
-          //Stegozoa
-          memcpy(cpi->qcoeff + mb_row * cm->mb_cols * 400, xd->qcoeff, 400);
 
 #if CONFIG_REALTIME_ONLY & CONFIG_ONTHEFLY_BITPACKING
           /* pack tokens for this MB */
