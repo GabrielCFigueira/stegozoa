@@ -853,7 +853,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
         }
 
         /* add up counts for each thread */
-        sum_coef_counts(x, &cpi->mb_row_ei[i].mb);
+        sum_coef_counts(x, &cpi->mb_row_ei[i].mb); //TODO marking for deletion
       }
 
     } else
