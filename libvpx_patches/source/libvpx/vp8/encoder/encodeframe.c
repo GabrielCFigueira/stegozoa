@@ -774,7 +774,8 @@ void vp8_encode_frame(VP8_COMP *cpi) {
 #if CONFIG_REALTIME_ONLY & CONFIG_ONTHEFLY_BITPACKING
             tp = cpi->tok;
 #else
-            tp = cpi->tok + mb_row * (cm->mb_cols * 16 * 24); //TODO: marking for deletion
+            //Stegozoa: comment out
+            //tp = cpi->tok + mb_row * (cm->mb_cols * 16 * 24);
 #endif
         printf("Thread alert!\n");
         encode_mb_row(cpi, cm, mb_row, x, xd, &tp, segment_counts, &totalrate);
@@ -801,10 +802,11 @@ void vp8_encode_frame(VP8_COMP *cpi) {
         sem_wait(&cpi->h_event_end_encoding[i]);
       }
 
-      for (mb_row = 0; mb_row < cm->mb_rows; ++mb_row) { //TODO: marking for destruction
+      //Stegozoa: comment out
+      /*for (mb_row = 0; mb_row < cm->mb_rows; ++mb_row) {
         cpi->tok_count += (unsigned int)(cpi->tplist[mb_row].stop -
                                          cpi->tplist[mb_row].start);
-      }
+      }*/
 
       if (xd->segmentation_enabled) {
         int j;
@@ -853,7 +855,8 @@ void vp8_encode_frame(VP8_COMP *cpi) {
         }
 
         /* add up counts for each thread */
-        sum_coef_counts(x, &cpi->mb_row_ei[i].mb); //TODO marking for deletion
+        //Stegozoa: comment out
+        //sum_coef_counts(x, &cpi->mb_row_ei[i].mb);
       }
 
     } else
@@ -877,7 +880,8 @@ void vp8_encode_frame(VP8_COMP *cpi) {
         
       }
 
-      cpi->tok_count = (unsigned int)(tp - cpi->tok); //TODO: marking for deletion
+      //Stegzoa: comment out
+      //cpi->tok_count = (unsigned int)(tp - cpi->tok);
     }
 
     //Stegozoa: loop embbed
