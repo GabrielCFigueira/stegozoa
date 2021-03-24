@@ -910,6 +910,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
             xd->mode_info_context++;
         }
 
+        xd->mode_info_context++;
     }
 
     cpi->tok_count = (unsigned int)(tp - cpi->tok);
