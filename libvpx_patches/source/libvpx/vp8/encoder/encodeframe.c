@@ -891,10 +891,10 @@ void vp8_encode_frame(VP8_COMP *cpi) {
 
         // reset above block coeffs
         xd->above_context = cm->above_context;
+        vp8_zero(cm->left_context);    
 
         for (int mb_col = 0; mb_col < cm->mb_cols; ++mb_col) {
             
-            vp8_zero(cm->left_context);    
             memcpy(xd->qcoeff, qcoeff, 400 * sizeof(short));
             memcpy(xd->eobs, eobs, 25 * sizeof(char));
             
