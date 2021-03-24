@@ -887,13 +887,18 @@ void vp8_encode_frame(VP8_COMP *cpi) {
     vp8_fix_contexts(xd);
     xd->mode_info_context = cm->mi;
 
+    printf("Before token loop\n");
+
     for (mb_row = 0; mb_row < cm->mb_rows; ++mb_row) {
 
         /* reset above block coeffs */
         xd->above_context = cm->above_context;
 
+        printf("Row loop\n");
+
         for (int mb_col = 0; mb_col < cm->mb_cols; ++mb_col) {
             
+            printf("Column loop\n");
             vp8_zero(cm->left_context);    
             memcpy(xd->qcoeff, qcoeff, 400 * sizeof(short));
             memcpy(xd->eobs, eobs, 25 * sizeof(char));
