@@ -905,9 +905,9 @@ void vp8_encode_frame(VP8_COMP *cpi) {
             has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
                       xd->mode_info_context->mbmi.mode != SPLITMV);
             
-            //writeQdctLsb(xd->qcoeff, has_y2_block);
-            //vp8_tokenize_mb(cpi, x, &tp);
-            printQdct(xd->qcoeff);
+            writeQdctLsb(xd->qcoeff, has_y2_block);
+            vp8_tokenize_mb(cpi, x, &tp);
+            //printQdct(xd->qcoeff);
 
             qcoeff += 400;
             eobs += 25;
@@ -1171,8 +1171,8 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
   sum_intra_stats(cpi, x);
 
   //Stegozoa
-  vp8_tokenize_mb(cpi, x, t);
-  //vp8_fake_tokenize_mb(cpi, x);
+  //vp8_tokenize_mb(cpi, x, t);
+  vp8_fake_tokenize_mb(cpi, x);
 
   if (xd->mode_info_context->mbmi.mode != B_PRED) vp8_inverse_transform_mby(xd);
 
@@ -1358,8 +1358,8 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
 
 
     //Stegozoa
-    vp8_tokenize_mb(cpi, x, t);
-    //vp8_fake_tokenize_mb(cpi, x);
+    //vp8_tokenize_mb(cpi, x, t);
+    vp8_fake_tokenize_mb(cpi, x);
   
 
     if (xd->mode_info_context->mbmi.mode != B_PRED) {
@@ -1377,9 +1377,9 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
       x->skip_true_count++;
       vp8_fix_contexts(xd);
     } //Stegozoa
-      else {
-      vp8_stuff_mb(cpi, x, t);
-    }
+      //else {
+      //vp8_stuff_mb(cpi, x, t);
+    //}
   }
 
   return rate;
