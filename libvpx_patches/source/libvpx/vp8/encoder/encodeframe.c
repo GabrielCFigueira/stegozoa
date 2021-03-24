@@ -1167,7 +1167,7 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
 
   //Stegozoa
   //vp8_tokenize_mb(cpi, x, t);
-  vp8_fake_tokenize_mb(cpi, x);
+  //vp8_fake_tokenize_mb(cpi, x);
 
   if (xd->mode_info_context->mbmi.mode != B_PRED) vp8_inverse_transform_mby(xd);
 
@@ -1354,7 +1354,7 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
 
     //Stegozoa
     //vp8_tokenize_mb(cpi, x, t);
-    vp8_fake_tokenize_mb(cpi, x);
+    //vp8_fake_tokenize_mb(cpi, x);
   
 
     if (xd->mode_info_context->mbmi.mode != B_PRED) {
