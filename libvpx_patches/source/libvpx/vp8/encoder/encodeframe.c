@@ -885,7 +885,6 @@ void vp8_encode_frame(VP8_COMP *cpi) {
     int has_y2_block;
     short *qcoeff = cpi->qcoeff;
     char *eobs = cpi->eobs;
-    //vp8_fix_contexts(xd);
     xd->mode_info_context = cm->mi;
 
     printf("Before token loop\n");
@@ -900,18 +899,18 @@ void vp8_encode_frame(VP8_COMP *cpi) {
         for (int mb_col = 0; mb_col < cm->mb_cols; ++mb_col) {
             
             vp8_zero(cm->left_context);    
-            //memcpy(xd->qcoeff, qcoeff, 400 * sizeof(short));
-            //memcpy(xd->eobs, eobs, 25 * sizeof(char));
+            memcpy(xd->qcoeff, qcoeff, 400 * sizeof(short));
+            memcpy(xd->eobs, eobs, 25 * sizeof(char));
             
             has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
                       xd->mode_info_context->mbmi.mode != SPLITMV);
             
             //writeQdctLsb(xd->qcoeff, has_y2_block);
             //vp8_tokenize_mb(cpi, x, &tp);
-            //printQdct(xd->qcoeff);
+            printQdct(xd->qcoeff);
 
-            //qcoeff += 400;
-            //eobs += 25;
+            qcoeff += 400;
+            eobs += 25;
             xd->above_context++;
             xd->mode_info_context++;
         }
@@ -1165,8 +1164,8 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
   //int has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
                       //xd->mode_info_context->mbmi.mode != SPLITMV);
   //writeQdctLsb(xd->qcoeff, has_y2_block);
-  //memcpy(cpi->qcoeff + (mb_row * cpi->common.mb_cols + mb_col) * 400, xd->qcoeff, 400 * sizeof(short));
-  //memcpy(cpi->eobs + (mb_row * cpi->common.mb_cols + mb_col) * 25, xd->eobs, 25 * sizeof(char));
+  memcpy(cpi->qcoeff + (mb_row * cpi->common.mb_cols + mb_col) * 400, xd->qcoeff, 400 * sizeof(short));
+  memcpy(cpi->eobs + (mb_row * cpi->common.mb_cols + mb_col) * 25, xd->eobs, 25 * sizeof(char));
 
 
   sum_intra_stats(cpi, x);
@@ -1354,8 +1353,8 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
     //int has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
                       //xd->mode_info_context->mbmi.mode != SPLITMV);
     //writeQdctLsb(xd->qcoeff, has_y2_block);
-    //memcpy(cpi->qcoeff + (mb_row * cpi->common.mb_cols + mb_col) * 400, xd->qcoeff, 400 * sizeof(short));
-    //memcpy(cpi->eobs + (mb_row * cpi->common.mb_cols + mb_col) * 25, xd->eobs, 25 * sizeof(char));
+    memcpy(cpi->qcoeff + (mb_row * cpi->common.mb_cols + mb_col) * 400, xd->qcoeff, 400 * sizeof(short));
+    memcpy(cpi->eobs + (mb_row * cpi->common.mb_cols + mb_col) * 25, xd->eobs, 25 * sizeof(char));
 
 
     //Stegozoa
