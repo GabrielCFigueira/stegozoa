@@ -883,7 +883,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
     int has_y2_block;
     short *qcoeff = cpi->qcoeff;
     char *eobs = cpi->eobs;
-    vp8_fix_contexts(x);
+    vp8_fix_contexts(xd);
     xd->mode_info_context = cm->mi;
 
     for (mb_row = 0; mb_row < cm->mb_rows; ++mb_row) {

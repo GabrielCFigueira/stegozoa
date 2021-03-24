@@ -363,7 +363,7 @@ void vp8_tokenize_mb(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t) {
     if (!cpi->common.mb_no_coeff_skip) {
       vp8_stuff_mb(cpi, x, t);
     } else {
-      vp8_fix_contexts(x);
+      vp8_fix_contexts(xd);
       //Stegozoa
       //x->skip_true_count++;
     }
