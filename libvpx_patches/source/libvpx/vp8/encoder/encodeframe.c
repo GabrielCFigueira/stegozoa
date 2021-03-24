@@ -910,8 +910,8 @@ void vp8_encode_frame(VP8_COMP *cpi) {
             //vp8_tokenize_mb(cpi, x, &tp);
             printQdct(xd->qcoeff);
 
-            qcoeff += 400;
-            eobs += 25;
+            //qcoeff += 400;
+            //eobs += 25;
             xd->above_context++;
             xd->mode_info_context++;
         }
