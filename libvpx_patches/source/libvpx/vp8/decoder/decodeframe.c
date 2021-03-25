@@ -141,7 +141,7 @@ static void decode_macroblock(VP8D_COMP *pbi, MACROBLOCKD *xd,
        * Better to use the predictor as reconstruction.
        */
       pbi->frame_corrupt_residual = 1;
-      memset(xd->qcoeff, 0, sizeof(xd->qcoeff));
+      memset(xd->qcoeff, 0, 400);
 
       corruption_detected = 1;
 
@@ -1218,7 +1218,8 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
   }
 
   /* clear out the coeff buffer */
-  memset(xd->qcoeff, 0, sizeof(xd->qcoeff));
+  //Stegozoa: clear everything out
+  memset(xd->qcoeff, 0, 400 * pc->mb_cols * pc->mb_rows * sizeof(short));
 
   vp8_decode_mode_mvs(pbi);
 
