@@ -1253,6 +1253,7 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
   } else
 #endif
   {
+    fprintf(stderr, "Lets decode\n");
     decode_mb_rows(pbi);
     corrupt_tokens |= xd->corrupted;
   }

@@ -742,7 +742,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
     /* Build a frame level activity map */
     build_activity_map(cpi);
   }
-  fprintf(stderr, "Preparing to encode\n");
+  
   /* re-init encode frame context. */
   init_encode_frame_mb_context(cpi);
 
@@ -933,6 +933,10 @@ void vp8_encode_frame(VP8_COMP *cpi) {
         xd->mode_info_context++;
     }
 
+    xd->qcoeff = cpi->qcoeff;
+    xd->eobs = cpi->eobs;
+    xd->block = cpi->block;
+    
     cpi->tok_count = (unsigned int)(tp - cpi->tok);
 
 
