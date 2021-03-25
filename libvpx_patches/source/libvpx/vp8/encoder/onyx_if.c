@@ -2099,10 +2099,14 @@ struct VP8_COMP *vp8_create_compressor(VP8_CONFIG *oxcf) {
   cpi->mb.inter_bmode_costs = cpi->rd_costs.inter_bmode_costs;
   cpi->mb.token_costs = cpi->rd_costs.token_costs;
 
+
   /* setup block ptrs & offsets */
   vp8_setup_block_ptrs(&cpi->mb);
   //Stegozoa
   //vp8_setup_block_dptrs(&cpi->mb.e_mbd);
+  cpi->mb.e_mbd.qcoeff = cpi->qcoeff;
+  cpi->mb.e_mbd.eobs = cpi->eobs;
+  cpi->mb.e_mbd.block = cpi->block;
   vp8_setup_block_dptrs(&cpi->mb.e_mbd, cm->mb_rows * cm->mb_cols);
 
   return cpi;

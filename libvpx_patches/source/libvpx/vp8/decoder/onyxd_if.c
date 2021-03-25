@@ -122,6 +122,8 @@ static struct VP8D_COMP *create_decompressor(VP8D_CONFIG *oxcf) {
   pbi->independent_partitions = 0;
 
   //Stegozoa
+  pbi->mb.e_mbd.qcoeff = pbi->qcoeff;
+  pbi->mb.e_mbd.block = pbi->block;
   vp8_setup_block_dptrs(&pbi->mb, pbi->common.mb_rows * pbi->common.mb_cols);
 
   once(initialize_dec);
