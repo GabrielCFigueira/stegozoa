@@ -389,6 +389,10 @@ static void encode_mb_row(VP8_COMP *cpi, VP8_COMMON *cm, int mb_row,
   /* Set the mb activity pointer to the start of the row. */
   x->mb_activity_ptr = &cpi->mb_activity_map[map_index];
 
+  //Stegozoa
+  xd->qcoeff = cpi->qcoeff;
+  xd->eobs = cpi->eobs;
+  xd->block = cpi->block;
 
   /* for each macroblock col in image */
   for (mb_col = 0; mb_col < cm->mb_cols; ++mb_col) {
@@ -560,6 +564,11 @@ static void encode_mb_row(VP8_COMP *cpi, VP8_COMMON *cm, int mb_row,
     xd->mode_info_context++;
     x->partition_info++;
     xd->above_context++;
+    
+    //Stegozoa
+    xd->qcoeff += 400;
+    xd->eobs += 25;
+    xd->block += 25;
   }
 
   /* extend the recon for intra prediction */
@@ -609,7 +618,7 @@ static void init_encode_frame_mb_context(VP8_COMP *cpi) {
   /* set up frame for intra coded blocks */
   vp8_setup_intra_recon(&cm->yv12_fb[cm->new_fb_idx]);
 
-  vp8_build_block_offsets(x);
+  vp8_build_block_offsets(cpi, x);
 
   xd->mode_info_context->mbmi.mode = DC_PRED;
   xd->mode_info_context->mbmi.uv_mode = DC_PRED;
@@ -890,6 +899,9 @@ void vp8_encode_frame(VP8_COMP *cpi) {
     char *eobs = cpi->eobs;
     memset(cm->above_context, 0, sizeof(ENTROPY_CONTEXT_PLANES) * cm->mb_cols);
     xd->mode_info_context = cm->mi;
+    xd->qcoeff = cpi->qcoeff;
+    xd->eobs = cpi->eobs;
+    xd->block = cpi->blockd;
 
     for (mb_row = 0; mb_row < cm->mb_rows; ++mb_row) {
 
@@ -899,19 +911,17 @@ void vp8_encode_frame(VP8_COMP *cpi) {
 
         for (int mb_col = 0; mb_col < cm->mb_cols; ++mb_col) {
             
-            memcpy(xd->qcoeff, qcoeff, 400 * sizeof(short));
-            memcpy(xd->eobs, eobs, 25 * sizeof(char));
-            
             has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
                       xd->mode_info_context->mbmi.mode != SPLITMV);
             
             writeQdctLsb(xd->qcoeff, has_y2_block);
             vp8_tokenize_mb(cpi, x, &tp);
 
-            qcoeff += 400;
-            eobs += 25;
             xd->above_context++;
             xd->mode_info_context++;
+            xd->qcoeff += 400;
+            xd->eobs += 25;
+            xd->block += 25;
         }
 
         xd->mode_info_context++;
@@ -1031,11 +1041,14 @@ void vp8_setup_block_ptrs(MACROBLOCK *x) {
   }
 }
 
-void vp8_build_block_offsets(MACROBLOCK *x) {
+//Stegozoa: call the new build block offsets function, now receiving a VP8_COMP
+void vp8_build_block_offsets(VP8_COMP *cpi, MACROBLOCK *x) {
   int block = 0;
   int br, bc;
 
-  vp8_build_block_doffsets(&x->e_mbd);
+  //Stegozoa: we need the number of macroblocks
+  VP8_COMMON *cm = &cpi->common;
+  vp8_build_block_doffsets_enc(&x->e_mbd, cm->mb_cols * cm->mb_rows);
 
   /* y blocks */
   x->thismb_ptr = &x->thismb[0];
@@ -1159,14 +1172,6 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
   vp8_encode_intra16x16mbuv(x);
 
   
-  //Stegozoa
-  //int has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
-                      //xd->mode_info_context->mbmi.mode != SPLITMV);
-  //writeQdctLsb(xd->qcoeff, has_y2_block);
-  memcpy(cpi->qcoeff + (mb_row * cpi->common.mb_cols + mb_col) * 400, xd->qcoeff, 400 * sizeof(short));
-  memcpy(cpi->eobs + (mb_row * cpi->common.mb_cols + mb_col) * 25, xd->eobs, 25 * sizeof(char));
-
-
   sum_intra_stats(cpi, x);
 
   //Stegozoa
@@ -1348,14 +1353,6 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
   
   if (!x->skip) {
 
-    //Stegozoa:
-    //int has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
-                      //xd->mode_info_context->mbmi.mode != SPLITMV);
-    //writeQdctLsb(xd->qcoeff, has_y2_block);
-    memcpy(cpi->qcoeff + (mb_row * cpi->common.mb_cols + mb_col) * 400, xd->qcoeff, 400 * sizeof(short));
-    memcpy(cpi->eobs + (mb_row * cpi->common.mb_cols + mb_col) * 25, xd->eobs, 25 * sizeof(char));
-
-
     //Stegozoa
     //vp8_tokenize_mb(cpi, x, t);
     vp8_fake_tokenize_mb(cpi, x);
@@ -1381,8 +1378,8 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
     //}
     
     //Stegozoa
-    memset(cpi->qcoeff + (mb_row * cpi->common.mb_cols + mb_col) * 400, 0, 400 * sizeof(short));
-    memset(cpi->eobs + (mb_row * cpi->common.mb_cols + mb_col) * 25, 0, 25 * sizeof(char));
+    memset(xd->qcoeff, 0, 400 * sizeof(short));
+    memset(xd->eobs, 0, 25 * sizeof(char));
   }
 
   return rate;

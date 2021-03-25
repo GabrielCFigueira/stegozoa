@@ -282,6 +282,11 @@ static THREAD_FUNCTION thread_encoding_proc(void *p_data) {
           xd->mode_info_context++;
           x->partition_info++;
           xd->above_context++;
+          
+          //Stegozoa
+          xd->qcoeff += 400;
+          xd->eobs += 25;
+          xd->block += 25;
         }
 
         vp8_extend_mb_row(&cm->yv12_fb[dst_fb_idx], xd->dst.y_buffer + 16,
@@ -467,7 +472,7 @@ void vp8cx_init_mbrthread_data(VP8_COMP *cpi, MACROBLOCK *x,
     mb->src.u_buffer += 8 * x->src.uv_stride * (i + 1);
     mb->src.v_buffer += 8 * x->src.uv_stride * (i + 1);
 
-    vp8_build_block_offsets(mb);
+    vp8_build_block_offsets(cpi, mb);
 
     mbd->left_context = &cm->left_context;
     mb->mvc = cm->fc.mvc;
@@ -539,7 +544,9 @@ int vp8cx_create_encoder_threads(VP8_COMP *cpi) {
 
       /* Setup block ptrs and offsets */
       vp8_setup_block_ptrs(&cpi->mb_row_ei[ithread].mb);
-      vp8_setup_block_dptrs(&cpi->mb_row_ei[ithread].mb.e_mbd);
+      //Stegozoa
+      //vp8_setup_block_dptrs(&cpi->mb_row_ei[ithread].mb.e_mbd);
+      vp8_setup_block_dptrs(&cpi->mb_row_ei[ithread].mb.e_mbd, cm->mb_rows * cm->mb_cols);
 
       sem_init(&cpi->h_event_start_encoding[ithread], 0, 0);
       sem_init(&cpi->h_event_end_encoding[ithread], 0, 0);

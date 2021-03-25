@@ -1785,6 +1785,8 @@ struct VP8_COMP *vp8_create_compressor(VP8_CONFIG *oxcf) {
   //Stegozoa:
   CHECK_MEM_ERROR(cpi->qcoeff, vpx_calloc(400 * cm->mb_cols * cm->mb_rows, sizeof(short)));
   CHECK_MEM_ERROR(cpi->eobs, vpx_calloc(25 * cm->mb_cols * cm->mb_rows, sizeof(char)));
+  CHECK_MEM_ERROR(cpi->blockd, vpx_calloc(25 * cm->mb_cols * cm->mb_rows, sizeof(BLOCKD)));
+
 
   memcpy(cpi->base_skip_false_prob, vp8cx_base_skip_false_prob,
          sizeof(vp8cx_base_skip_false_prob));
@@ -2099,7 +2101,9 @@ struct VP8_COMP *vp8_create_compressor(VP8_CONFIG *oxcf) {
 
   /* setup block ptrs & offsets */
   vp8_setup_block_ptrs(&cpi->mb);
-  vp8_setup_block_dptrs(&cpi->mb.e_mbd);
+  //Stegozoa
+  //vp8_setup_block_dptrs(&cpi->mb.e_mbd);
+  vp8_setup_block_dptrs(&cpi->mb.e_mbd, cm->mb_rows * cm->mb_cols);
 
   return cpi;
 }
@@ -2285,6 +2289,7 @@ void vp8_remove_compressor(VP8_COMP **comp) {
   //Stegozoa
   vpx_free(cpi->qcoeff);
   vpx_free(cpi->eobs);
+  vpx_free(cpi->blockd);
 
   vp8_remove_common(&cpi->common);
   vpx_free(cpi);

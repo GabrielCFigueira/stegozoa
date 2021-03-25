@@ -291,6 +291,7 @@ typedef struct VP8_COMP {
   //Stegozoa
   short *qcoeff;
   char *eobs;
+  BLOCKD *blockd;
 
   VP8_COMMON common;
   vp8_writer bc[9]; /* one boolcoder for each partition */
