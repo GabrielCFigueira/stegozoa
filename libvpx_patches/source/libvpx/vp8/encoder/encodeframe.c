@@ -906,7 +906,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
     xd->mode_info_context = cm->mi;
     xd->qcoeff = cpi->qcoeff;
     xd->eobs = cpi->eobs;
-    xd->block = cpi->blockd;
+    xd->block = cpi->block;
 
     for (mb_row = 0; mb_row < cm->mb_rows; ++mb_row) {
 
@@ -1053,7 +1053,7 @@ void vp8_build_block_offsets(VP8_COMP *cpi, MACROBLOCK *x) {
 
   //Stegozoa: we need the number of macroblocks
   VP8_COMMON *cm = &cpi->common;
-  vp8_build_block_doffsets_enc(&x->e_mbd, cm->mb_cols * cm->mb_rows);
+  vp8_build_block_doffsets(&x->e_mbd, cm->mb_cols * cm->mb_rows);
 
   /* y blocks */
   x->thismb_ptr = &x->thismb[0];
