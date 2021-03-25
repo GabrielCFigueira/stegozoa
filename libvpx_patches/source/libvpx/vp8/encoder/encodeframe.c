@@ -742,7 +742,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
     /* Build a frame level activity map */
     build_activity_map(cpi);
   }
-  printf("Preparing to encode\n");
+  fprintf(stderr, "Preparing to encode\n");
   /* re-init encode frame context. */
   init_encode_frame_mb_context(cpi);
 
@@ -885,7 +885,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
             tp = cpi->tok;
 #endif
         
-        printf("Encoding row\n");
+        fprintf(stderr, "Encoding row\n");
         encode_mb_row(cpi, cm, mb_row, x, xd, &tp, segment_counts, &totalrate);
 
         /* adjust to the next row of mbs */
