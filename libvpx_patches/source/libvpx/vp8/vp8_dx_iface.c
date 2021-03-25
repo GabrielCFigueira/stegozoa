@@ -414,7 +414,9 @@ static vpx_codec_err_t vp8_decode(vpx_codec_alg_priv_t *ctx,
         }
 #endif
         //Stegozoa
+        fprintf(stderr, "before doffsets\n");
         vp8_build_block_doffsets(&pbi->mb, pc->mb_rows * pc->mb_cols);
+        fprintf(stderr, "after doffsets\n");
 
 /* allocate memory for last frame MODE_INFO array */
 #if CONFIG_ERROR_CONCEALMENT
