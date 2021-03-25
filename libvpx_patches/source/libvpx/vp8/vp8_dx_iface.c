@@ -409,9 +409,11 @@ static vpx_codec_err_t vp8_decode(vpx_codec_alg_priv_t *ctx,
 #if CONFIG_MULTITHREAD
         for (i = 0; i < pbi->allocated_decoding_thread_count; ++i) {
           pbi->mb_row_di[i].mbd.dst = pc->yv12_fb[pc->new_fb_idx];
-          vp8_build_block_doffsets(&pbi->mb_row_di[i].mbd, pc->mb_rows * pb->mb_cols);
+          //Stegozoa
+          vp8_build_block_doffsets(&pbi->mb_row_di[i].mbd, pc->mb_rows * pc->mb_cols);
         }
 #endif
+        //Stegozoa
         vp8_build_block_doffsets(&pbi->mb, pc->mb_rows * pc->mb_cols);
 
 /* allocate memory for last frame MODE_INFO array */
