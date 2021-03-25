@@ -492,6 +492,10 @@ static void decode_mb_rows(VP8D_COMP *pbi) {
 
   vp8_setup_intra_recon_top_line(yv12_fb_new);
 
+  //Stegozoa
+  xd->qcoeff = pbi->qcoeff;
+  xd->block = pbi->block;
+
   /* Decode the individual macro block */
   for (mb_row = 0; mb_row < pc->mb_rows; ++mb_row) {
     if (num_part > 1) {
@@ -605,6 +609,10 @@ static void decode_mb_rows(VP8D_COMP *pbi) {
       ++xd->mode_info_context; /* next mb */
 
       xd->above_context++;
+  
+      //Stegozoa
+      xd->qcoeff += 400;
+      xd->block += 25;
     }
 
     /* adjust to the next row of mbs */

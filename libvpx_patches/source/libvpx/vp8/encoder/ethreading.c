@@ -72,6 +72,11 @@ static THREAD_FUNCTION thread_encoding_proc(void *p_data) {
 
       xd->mode_info_context = cm->mi + cm->mode_info_stride * (ithread + 1);
       xd->mode_info_stride = cm->mode_info_stride;
+        
+      //Stegozoa
+      xd->qcoeff = cpi->qcoeff + 400 * (ithread + 1) * cm->mb_cols;
+      xd->eobs = cpi->eobs + 25 * (ithread + 1) * cm->mb_cols;
+      xd->block = cpi->block + 25 * (ithread + 1) * cm->mb_cols;
 
       for (mb_row = ithread + 1; mb_row < cm->mb_rows;
            mb_row += (cpi->encoding_thread_count + 1)) {
@@ -313,6 +318,10 @@ static THREAD_FUNCTION thread_encoding_proc(void *p_data) {
         x->partition_info += xd->mode_info_stride * cpi->encoding_thread_count;
         x->gf_active_ptr += cm->mb_cols * cpi->encoding_thread_count;
 
+        //Stegozoa
+        xd->qcoeff += 400 * cpi->encoding_thread_count * cm->mb_cols;
+        xd->eobs += 25 * cpi->encoding_thread_count * cm->mb_cols;
+        xd->block += 25 * cpi->encoding_thread_count * cm->mb_cols;
       }
       /* Signal that this thread has completed processing its rows. */
       sem_post(&cpi->h_event_end_encoding[ithread]);

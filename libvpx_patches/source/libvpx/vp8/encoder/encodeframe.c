@@ -805,6 +805,11 @@ void vp8_encode_frame(VP8_COMP *cpi) {
         x->partition_info += xd->mode_info_stride * cpi->encoding_thread_count;
         x->gf_active_ptr += cm->mb_cols * cpi->encoding_thread_count;
         
+        //Stegozoa
+        xd->qcoeff += 400 * cpi->encoding_thread_count * cm->mb_cols;
+        xd->eobs += 25 * cpi->encoding_thread_count * cm->mb_cols;
+        xd->block += 25 * cpi->encoding_thread_count * cm->mb_cols;
+        
       }
       /* Wait for all the threads to finish. */
       for (i = 0; i < cpi->encoding_thread_count; ++i) {

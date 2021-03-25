@@ -1785,7 +1785,7 @@ struct VP8_COMP *vp8_create_compressor(VP8_CONFIG *oxcf) {
   //Stegozoa:
   CHECK_MEM_ERROR(cpi->qcoeff, vpx_calloc(400 * cm->mb_cols * cm->mb_rows, sizeof(short)));
   CHECK_MEM_ERROR(cpi->eobs, vpx_calloc(25 * cm->mb_cols * cm->mb_rows, sizeof(char)));
-  CHECK_MEM_ERROR(cpi->blockd, vpx_calloc(25 * cm->mb_cols * cm->mb_rows, sizeof(BLOCKD)));
+  CHECK_MEM_ERROR(cpi->block, vpx_calloc(25 * cm->mb_cols * cm->mb_rows, sizeof(BLOCKD)));
 
 
   memcpy(cpi->base_skip_false_prob, vp8cx_base_skip_false_prob,

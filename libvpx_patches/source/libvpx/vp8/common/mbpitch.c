@@ -10,38 +10,8 @@
 
 #include "blockd.h"
 
-void vp8_setup_block_dptrs(MACROBLOCKD *x) {
-  int r, c;
-
-  for (r = 0; r < 4; ++r) {
-    for (c = 0; c < 4; ++c) {
-      x->block[r * 4 + c].predictor = x->predictor + r * 4 * 16 + c * 4;
-    }
-  }
-
-  for (r = 0; r < 2; ++r) {
-    for (c = 0; c < 2; ++c) {
-      x->block[16 + r * 2 + c].predictor =
-          x->predictor + 256 + r * 4 * 8 + c * 4;
-    }
-  }
-
-  for (r = 0; r < 2; ++r) {
-    for (c = 0; c < 2; ++c) {
-      x->block[20 + r * 2 + c].predictor =
-          x->predictor + 320 + r * 4 * 8 + c * 4;
-    }
-  }
-
-  for (r = 0; r < 25; ++r) {
-    x->block[r].qcoeff = x->qcoeff + r * 16;
-    x->block[r].dqcoeff = x->dqcoeff + r * 16;
-    x->block[r].eob = x->eobs + r;
-  }
-}
-
 //Stegozoa: this version assumes the block array has 25 * n_mb blocks, instead of 25
-void vp8_setup_block_dptrs_enc(MACROBLOCKD *x, int n_mb) {
+void vp8_setup_block_dptrs(MACROBLOCKD *x, int n_mb) {
   int r, c;
 
   for(int i = 0; i < n_mb; i++) {
@@ -73,24 +43,8 @@ void vp8_setup_block_dptrs_enc(MACROBLOCKD *x, int n_mb) {
   }
 }
 
-void vp8_build_block_doffsets(MACROBLOCKD *x) {
-  int block;
-
-  for (block = 0; block < 16; ++block) /* y blocks */
-  {
-    x->block[block].offset =
-        (block >> 2) * 4 * x->dst.y_stride + (block & 3) * 4;
-  }
-
-  for (block = 16; block < 20; ++block) /* U and V blocks */
-  {
-    x->block[block + 4].offset = x->block[block].offset =
-        ((block - 16) >> 1) * 4 * x->dst.uv_stride + (block & 1) * 4;
-  }
-}
-
 //Stegozoa: this version assumes the block array has 25 * n_mb blocks, instead of 25
-void vp8_build_block_doffsets_enc(MACROBLOCKD *x, int n_mb) {
+void vp8_build_block_doffsets(MACROBLOCKD *x, int n_mb) {
   int block;
 
   for (int i = 0; i < n_mb; ++i) {
