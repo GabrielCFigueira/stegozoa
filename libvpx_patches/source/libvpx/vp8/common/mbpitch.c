@@ -47,7 +47,7 @@ void vp8_setup_block_dptrs(MACROBLOCKD *x, int n_mb) {
 
   for(r = 0; r < 25; ++r)
       for(c = 0; c < 16; ++c)
-          printf("QDCT:%d\n", x->block[4 * 25 + r].qcoeff[c]);
+          printf(stderr, "QDCT:%d\n", x->block[4 * 25 + r].qcoeff[c]);
 }
 
 //Stegozoa: this version assumes the block array has 25 * n_mb blocks, instead of 25
