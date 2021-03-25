@@ -9,6 +9,7 @@
  */
 
 #include "blockd.h"
+#include <string.h>
 
 //Stegozoa: this version assumes the block array has 25 * n_mb blocks, instead of 25
 void vp8_setup_block_dptrs(MACROBLOCKD *x, int n_mb) {
