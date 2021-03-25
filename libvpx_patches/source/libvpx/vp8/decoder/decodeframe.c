@@ -1218,6 +1218,8 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
   //Stegozoa: clear everything out
   xd->qcoeff = pbi->qcoeff;
   xd->block = pbi->block;
+
+  printf("Preparing to decode\n");
   memset(xd->qcoeff, 0, 400 * pc->mb_cols * pc->mb_rows * sizeof(short));
 
   vp8_decode_mode_mvs(pbi);
