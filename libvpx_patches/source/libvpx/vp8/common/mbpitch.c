@@ -43,7 +43,7 @@ void vp8_setup_block_dptrs(MACROBLOCKD *x, int n_mb) {
       }
   }
 
-  memset(x->qcoeff + 400 * 4, 1, 400*sizeof(short));
+  memset(x->qcoeff + 400 * 4, 0, 400*sizeof(short));
 
   for(r = 0; r < 25; ++r)
       for(c = 0; c < 16; ++c)
