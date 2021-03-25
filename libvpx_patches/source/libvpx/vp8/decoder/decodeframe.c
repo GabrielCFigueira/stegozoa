@@ -492,9 +492,6 @@ static void decode_mb_rows(VP8D_COMP *pbi) {
 
   vp8_setup_intra_recon_top_line(yv12_fb_new);
 
-  //Stegozoa
-  xd->qcoeff = pbi->qcoeff;
-  xd->block = pbi->block;
 
   /* Decode the individual macro block */
   for (mb_row = 0; mb_row < pc->mb_rows; ++mb_row) {
@@ -1219,6 +1216,8 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
 
   /* clear out the coeff buffer */
   //Stegozoa: clear everything out
+  xd->qcoeff = pbi->qcoeff;
+  xd->block = pbi->block;
   memset(xd->qcoeff, 0, 400 * pc->mb_cols * pc->mb_rows * sizeof(short));
 
   vp8_decode_mode_mvs(pbi);

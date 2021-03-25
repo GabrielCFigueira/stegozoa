@@ -2289,7 +2289,7 @@ void vp8_remove_compressor(VP8_COMP **comp) {
   //Stegozoa
   vpx_free(cpi->qcoeff);
   vpx_free(cpi->eobs);
-  vpx_free(cpi->blockd);
+  vpx_free(cpi->block);
 
   vp8_remove_common(&cpi->common);
   vpx_free(cpi);
