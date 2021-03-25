@@ -502,6 +502,8 @@ static void decode_mb_rows(VP8D_COMP *pbi) {
       if (ibc == num_part) ibc = 0;
     }
 
+    fprintf(stderr, "decoding mb row\n");
+
     recon_yoffset = mb_row * recon_y_stride * 16;
     recon_uvoffset = mb_row * recon_uv_stride * 8;
 
