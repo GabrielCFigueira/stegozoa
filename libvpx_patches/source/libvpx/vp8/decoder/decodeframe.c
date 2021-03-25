@@ -1219,7 +1219,7 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
   xd->qcoeff = pbi->qcoeff;
   xd->block = pbi->block;
 
-  printf("Preparing to decode\n");
+  fprintf(stderr, "Preparing to decode\n");
   memset(xd->qcoeff, 0, 400 * pc->mb_cols * pc->mb_rows * sizeof(short));
 
   vp8_decode_mode_mvs(pbi);
@@ -1240,7 +1240,7 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
   if (vpx_atomic_load_acquire(&pbi->b_multithreaded_rd) &&
       pc->multi_token_partition != ONE_PARTITION) {
     unsigned int thread;
-    printf("Decoder threads!\n");
+    fprintf(stderr, "Decoder threads!\n");
     if (vp8mt_decode_mb_rows(pbi, xd)) {
       vp8_decoder_remove_threads(pbi);
       pbi->restart_threads = 1;
