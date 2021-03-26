@@ -921,6 +921,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
 
         for (int mb_col = 0; mb_col < cm->mb_cols; ++mb_col) {
             
+            fprintf(stderr, "embedding mb\n");
             has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
                       xd->mode_info_context->mbmi.mode != SPLITMV);
             
@@ -932,6 +933,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
             xd->qcoeff += 400;
             xd->eobs += 25;
             xd->block += 25;
+
         }
 
         xd->mode_info_context++;
