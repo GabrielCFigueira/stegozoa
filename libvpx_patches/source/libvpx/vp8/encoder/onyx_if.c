@@ -2275,13 +2275,17 @@ void vp8_remove_compressor(VP8_COMP **comp) {
 #endif
   }
 
+
+  fprintf(stderr, "1\n");
 #if CONFIG_MULTITHREAD
   vp8cx_remove_encoder_threads(cpi);
 #endif
 
+  fprintf(stderr, "2\n");
 #if CONFIG_TEMPORAL_DENOISING
   vp8_denoiser_free(&cpi->denoiser);
 #endif
+  fprintf(stderr, "3\n");
   dealloc_compressor_data(cpi);
   vpx_free(cpi->mb.ss);
   vpx_free(cpi->tok);
@@ -2290,12 +2294,10 @@ void vp8_remove_compressor(VP8_COMP **comp) {
   vpx_free(cpi->consec_zero_last);
   vpx_free(cpi->consec_zero_last_mvbias);
 
+  fprintf(stderr, "4\n");
   //Stegozoa
-  fprintf(stderr, "1\n");
   vpx_free(cpi->qcoeff);
-  fprintf(stderr, "2\n");
   vpx_free(cpi->eobs);
-  fprintf(stderr, "3\n");
   vpx_free(cpi->block);
 
   vp8_remove_common(&cpi->common);
