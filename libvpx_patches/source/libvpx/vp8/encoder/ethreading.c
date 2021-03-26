@@ -440,8 +440,8 @@ static void setup_mbby_copy(MACROBLOCK *mbdst, MACROBLOCK *mbsrc) {
         zd->block[24].dequant = zd->dequant_y2;
     */
     zd->block = xd->block;
-    zd->qcoeff = xd->qcoeff
-    zd->eobs = xd->eobs
+    zd->qcoeff = xd->qcoeff;
+    zd->eobs = xd->eobs;
 #endif
 
     memcpy(z->rd_threshes, x->rd_threshes, sizeof(x->rd_threshes));
