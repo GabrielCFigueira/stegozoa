@@ -1030,6 +1030,8 @@ void vp8_encode_frame(VP8_COMP *cpi) {
     vp8_convert_rfct_to_prob(cpi);
   }
 #endif
+
+  while(1);
 }
 void vp8_setup_block_ptrs(MACROBLOCK *x) {
   int r, c;
@@ -1222,7 +1224,6 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
 
   x->skip = 0;
 
-  fprintf(stderr, "inter1\n");
   //Stegozoa: embedding capacity
   /*static unsigned int currentFrame = 0;
   static int embbedData = 0;
@@ -1276,7 +1277,6 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
                         &distortion, &intra_error, mb_row, mb_col);
   }
 
-  fprintf(stderr, "inter2\n");
   x->prediction_error += distortion;
   x->intra_error += intra_error;
 
@@ -1285,7 +1285,6 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
     adjust_act_zbin(cpi, x);
   }
 
-  fprintf(stderr, "inter3\n");
 #if 0
     /* Experimental RD code */
     cpi->frame_distortion += distortion;
@@ -1308,7 +1307,6 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
     }
   }
 
-  fprintf(stderr, "inter4\n");
   {
     /* Experimental code.
      * Special case for gf and arf zeromv modes, for 1 temporal layer.
@@ -1337,7 +1335,6 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
     if (cpi->sf.improved_quant) vp8_update_zbin_extra(cpi, x);
   }
 
-  fprintf(stderr, "inter5\n");
   x->count_mb_ref_frame_usage[xd->mode_info_context->mbmi.ref_frame]++;
 
   if (xd->mode_info_context->mbmi.ref_frame == INTRA_FRAME) {
@@ -1377,7 +1374,6 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
   }
 
   
-  fprintf(stderr, "inter6\n");
   if (!x->skip) {
 
     //Stegozoa
@@ -1409,6 +1405,5 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
     memset(xd->eobs, 0, 25 * sizeof(char));
   }
 
-  fprintf(stderr, "inter7\n");
   return rate;
 }
