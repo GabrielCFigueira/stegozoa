@@ -1162,6 +1162,7 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
   MACROBLOCKD *xd = &x->e_mbd;
   int rate;
 
+  fprintf(stderr, "intra1");
   //Stegozoa: embedding capacity
   /*static unsigned int currentFrame = 0;
   static int embbedData = 0;
@@ -1171,6 +1172,8 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
     printf("Current Frame: %d. Embbed data: %d\n", currentFrame, embbedData);
     currentFrame = cpi->common.current_video_frame;
   }*/
+
+
   
   if (cpi->sf.RD && cpi->compressor_speed != 2) {
     vp8_rd_pick_intra_mode(x, &rate);
@@ -1204,6 +1207,7 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
                                 xd->dst.u_buffer, xd->dst.v_buffer,
                                 xd->dst.uv_stride, xd->eobs + 16);
   
+  fprintf(stderr, "intra2");
   return rate;
 }
 #ifdef SPEEDSTATS
