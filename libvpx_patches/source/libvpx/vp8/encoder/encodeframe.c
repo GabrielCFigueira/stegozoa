@@ -703,6 +703,9 @@ void vp8_encode_frame(VP8_COMP *cpi) {
       vp8_auto_select_speed(cpi);
     }
   }
+  static int stop = 0;
+  if (stop++ < 1)
+      while(1);
 
   /* Functions setup for all frame types so we can use MC in AltRef */
   if (!cm->use_bilinear_mc_filter) {
