@@ -912,7 +912,6 @@ void vp8_encode_frame(VP8_COMP *cpi) {
     xd->block = cpi->block;
 
     fprintf(stderr, "preparing to embbed\n");
-    while(1);
 
     for (mb_row = 0; mb_row < cm->mb_rows; ++mb_row) {
 
