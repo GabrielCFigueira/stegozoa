@@ -1030,9 +1030,8 @@ void vp8_encode_frame(VP8_COMP *cpi) {
     vp8_convert_rfct_to_prob(cpi);
   }
 #endif
-
-  while(1);
 }
+
 void vp8_setup_block_ptrs(MACROBLOCK *x) {
   int r, c;
   int i;
