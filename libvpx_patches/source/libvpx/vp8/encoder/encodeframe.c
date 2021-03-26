@@ -1223,6 +1223,7 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
   int rate;
   int distortion;
 
+  fprintf(stderr, "inter1");
   x->skip = 0;
 
   //Stegozoa: embedding capacity
@@ -1406,5 +1407,6 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
     memset(xd->eobs, 0, 25 * sizeof(char));
   }
 
+  fprintf(stderr, "inter2");
   return rate;
 }
