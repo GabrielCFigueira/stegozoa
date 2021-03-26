@@ -915,7 +915,6 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
   xd->corrupted = 0;
   yv12_fb_new->corrupted = 0;
 
-  while(1);
 
   if (data_end - data < 3) {
     if (!pbi->ec_active) {
@@ -1226,6 +1225,7 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
   fprintf(stderr, "Preparing to decode\n");
   memset(xd->qcoeff, 0, 400 * pc->mb_cols * pc->mb_rows * sizeof(short));
 
+  while(1);
   vp8_decode_mode_mvs(pbi);
 
 #if CONFIG_ERROR_CONCEALMENT
