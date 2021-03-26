@@ -434,9 +434,14 @@ static void setup_mbby_copy(MACROBLOCK *mbdst, MACROBLOCK *mbsrc) {
      * the quantizer code uses a passed in pointer to the dequant constants.
      * This will also require modifications to the x86 and neon assembly.
      * */
-    for (i = 0; i < 16; ++i) zd->block[i].dequant = zd->dequant_y1;
-    for (i = 16; i < 24; ++i) zd->block[i].dequant = zd->dequant_uv;
-    zd->block[24].dequant = zd->dequant_y2;
+    /* Stegozoa
+        for (i = 0; i < 16; ++i) zd->block[i].dequant = zd->dequant_y1;
+        for (i = 16; i < 24; ++i) zd->block[i].dequant = zd->dequant_uv;
+        zd->block[24].dequant = zd->dequant_y2;
+    */
+    zd->block = xd->block;
+    zd->qcoeff = xd->qcoeff
+    zd->eobs = xd->eobs
 #endif
 
     memcpy(z->rd_threshes, x->rd_threshes, sizeof(x->rd_threshes));

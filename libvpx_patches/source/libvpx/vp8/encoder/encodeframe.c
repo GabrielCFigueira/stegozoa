@@ -736,6 +736,10 @@ void vp8_encode_frame(VP8_COMP *cpi) {
                            vp8_dc_quant(cm->base_qindex, cm->y1dc_delta_q));
 
   vp8cx_initialize_me_consts(cpi, cm->base_qindex);
+    
+  xd->qcoeff = cpi->qcoeff;
+  xd->eobs = cpi->eobs;
+  xd->block = cpi->block;
 
   if (cpi->oxcf.tuning == VP8_TUNE_SSIM) {
     /* Initialize encode frame context. */
