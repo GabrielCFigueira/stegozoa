@@ -1225,7 +1225,7 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
   fprintf(stderr, "Preparing to decode\n");
   memset(xd->qcoeff, 0, 400 * pc->mb_cols * pc->mb_rows * sizeof(short));
 
-  while(1) fprintf(stderr, "inside while\n");
+  while(1);
   vp8_decode_mode_mvs(pbi);
 
 #if CONFIG_ERROR_CONCEALMENT
