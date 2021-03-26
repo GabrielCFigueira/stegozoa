@@ -1199,15 +1199,12 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
   //vp8_tokenize_mb(cpi, x, t);
   vp8_fake_tokenize_mb(cpi, x);
 
-  fprintf(stderr, "intra1");
   if (xd->mode_info_context->mbmi.mode != B_PRED) vp8_inverse_transform_mby(xd);
 
-  fprintf(stderr, "intra2");
   vp8_dequant_idct_add_uv_block(xd->qcoeff + 16 * 16, xd->dequant_uv,
                                 xd->dst.u_buffer, xd->dst.v_buffer,
                                 xd->dst.uv_stride, xd->eobs + 16);
   
-  fprintf(stderr, "intra3");
   return rate;
 }
 #ifdef SPEEDSTATS
