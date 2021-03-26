@@ -1226,7 +1226,8 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
   memset(xd->qcoeff, 0, 400 * pc->mb_cols * pc->mb_rows * sizeof(short));
 
   vp8_decode_mode_mvs(pbi);
-
+    
+  while(1); 
 #if CONFIG_ERROR_CONCEALMENT
   if (pbi->ec_active &&
       pbi->mvs_corrupt_from_mb < (unsigned int)pc->mb_cols * pc->mb_rows) {
