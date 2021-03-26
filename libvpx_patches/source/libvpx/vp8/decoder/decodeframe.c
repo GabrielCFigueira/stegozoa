@@ -915,6 +915,8 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
   xd->corrupted = 0;
   yv12_fb_new->corrupted = 0;
 
+  while(1);
+
   if (data_end - data < 3) {
     if (!pbi->ec_active) {
       vpx_internal_error(&pc->error, VPX_CODEC_CORRUPT_FRAME,
