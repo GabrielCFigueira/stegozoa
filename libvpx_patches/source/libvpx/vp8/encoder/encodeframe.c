@@ -909,6 +909,8 @@ void vp8_encode_frame(VP8_COMP *cpi) {
     xd->eobs = cpi->eobs;
     xd->block = cpi->block;
 
+    fprintf(stderr, "preparing to embbed\n");
+
     for (mb_row = 0; mb_row < cm->mb_rows; ++mb_row) {
 
         // reset above block coeffs
