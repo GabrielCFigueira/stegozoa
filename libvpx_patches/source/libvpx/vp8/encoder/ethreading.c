@@ -467,7 +467,7 @@ void vp8cx_init_mbrthread_data(VP8_COMP *cpi, MACROBLOCK *x,
     mb->src.u_buffer += 8 * x->src.uv_stride * (i + 1);
     mb->src.v_buffer += 8 * x->src.uv_stride * (i + 1);
 
-    vp8_build_block_offsets(cpi, mb);
+    vp8_build_block_offsets(mb);
 
     mbd->left_context = &cm->left_context;
     mb->mvc = cm->fc.mvc;
