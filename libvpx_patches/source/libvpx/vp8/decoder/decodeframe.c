@@ -115,7 +115,7 @@ static void decode_macroblock(VP8D_COMP *pbi, MACROBLOCKD *xd,
     eobtotal = vp8_decode_mb_tokens(pbi, xd);
 
     //Stegozoa
-    //memcpy(pbi->qcoeff + 400 * (mb_row * pbi->common.mb_cols + mb_col), xd->qcoeff, 400 * sizeof(short));
+    memcpy(pbi->qcoeff + 400 * (mb_row * pbi->common.mb_cols + mb_col), xd->qcoeff, 400 * sizeof(short));
     
     int has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
                       xd->mode_info_context->mbmi.mode != SPLITMV);
