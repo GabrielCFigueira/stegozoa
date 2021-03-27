@@ -906,6 +906,9 @@ void vp8_encode_frame(VP8_COMP *cpi) {
 
             xd->above_context++;
             xd->mode_info_context++;
+
+            qcoeff += 400;
+            eobs += 25;
         }
 
         xd->mode_info_context++;
