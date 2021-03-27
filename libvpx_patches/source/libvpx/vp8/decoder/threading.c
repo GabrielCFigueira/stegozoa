@@ -84,7 +84,7 @@ static void setup_decoding_thread_data(VP8D_COMP *pbi, MACROBLOCKD *xd,
 }
 
 static void mt_decode_macroblock(VP8D_COMP *pbi, MACROBLOCKD *xd,
-                                 unsigned int mb_idx) {
+                                 unsigned int mb_idx, int mb_row, int mb_col) { //Stegozoa
   MB_PREDICTION_MODE mode;
   int i;
 #if CONFIG_ERROR_CONCEALMENT
@@ -432,7 +432,7 @@ static void mt_decode_mb_rows(VP8D_COMP *pbi, MACROBLOCKD *xd,
         xd->pre.u_buffer = 0;
         xd->pre.v_buffer = 0;
       }
-      mt_decode_macroblock(pbi, xd, 0);
+      mt_decode_macroblock(pbi, xd, 0, mb_row, mb_col);
 
       xd->left_available = 1;
 
