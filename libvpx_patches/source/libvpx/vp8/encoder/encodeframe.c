@@ -890,6 +890,8 @@ void vp8_encode_frame(VP8_COMP *cpi) {
     memset(cm->above_context, 0, sizeof(ENTROPY_CONTEXT_PLANES) * cm->mb_cols);
     xd->mode_info_context = cm->mi;
 
+    int embbedData = 0;
+
     for (mb_row = 0; mb_row < cm->mb_rows; ++mb_row) {
 
         // reset above block coeffs
@@ -901,7 +903,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
             has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
                       xd->mode_info_context->mbmi.mode != SPLITMV);
             
-            writeQdctLsb(qcoeff, has_y2_block);
+            emmbedData += writeQdctLsb(qcoeff, has_y2_block);
             vp8_tokenize_mb(cpi, x, &tp, qcoeff, eobs);
 
             xd->above_context++;
@@ -914,6 +916,9 @@ void vp8_encode_frame(VP8_COMP *cpi) {
         xd->mode_info_context++;
     }
 
+    //Stegozoa: embedding capacity
+    printf("Current Frame: %d. Embbed data: %d\n", cpi->common.current_video_frame, embbedData);
+    
     
     cpi->tok_count = (unsigned int)(tp - cpi->tok);
 
@@ -1128,18 +1133,6 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
   MACROBLOCKD *xd = &x->e_mbd;
   int rate;
 
-  //Stegozoa: embedding capacity
-  /*static unsigned int currentFrame = 0;
-  static int embbedData = 0;
-
-  if(currentFrame != cpi->common.current_video_frame){
-    //new frame
-    printf("Current Frame: %d. Embbed data: %d\n", currentFrame, embbedData);
-    currentFrame = cpi->common.current_video_frame;
-  }*/
-
-
-  
   if (cpi->sf.RD && cpi->compressor_speed != 2) {
     vp8_rd_pick_intra_mode(x, &rate);
   } else {
@@ -1191,16 +1184,6 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
   int distortion;
 
   x->skip = 0;
-
-  //Stegozoa: embedding capacity
-  /*static unsigned int currentFrame = 0;
-  static int embbedData = 0;
-
-  if(currentFrame != cpi->common.current_video_frame){
-    //new frame
-    printf("Current Frame: %d. Embbed data: %d\n", currentFrame, embbedData);
-    currentFrame = cpi->common.current_video_frame;
-  }*/
 
   if (xd->segmentation_enabled) {
     x->encode_breakout =
