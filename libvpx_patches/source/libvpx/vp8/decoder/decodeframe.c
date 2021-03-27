@@ -912,6 +912,9 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
   int prev_independent_partitions = pbi->independent_partitions;
 
   YV12_BUFFER_CONFIG *yv12_fb_new = pbi->dec_fb_ref[INTRA_FRAME];
+  
+  //Stegozoa
+  CHECK_MEM_ERROR(pbi->qcoeff, vpx_calloc(400 * pbi->common.mb_cols * pbi->common.mb_rows, sizeof(short)));
 
   /* start with no corruption of current frame */
   xd->corrupted = 0;
@@ -1291,6 +1294,9 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
     fclose(f);
   }
 #endif
+
+  //Stegozoa
+  vpx_free(pbi->qcoeff);
 
   return 0;
 }

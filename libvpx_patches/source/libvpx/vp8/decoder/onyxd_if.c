@@ -59,8 +59,6 @@ static void remove_decompressor(VP8D_COMP *pbi) {
 #if CONFIG_ERROR_CONCEALMENT
   vp8_de_alloc_overlap_lists(pbi);
 #endif
-  //Stegozoa
-  vpx_free(pbi->qcoeff);
   
   vp8_remove_common(&pbi->common);
   vpx_free(pbi);
@@ -86,9 +84,6 @@ static struct VP8D_COMP *create_decompressor(VP8D_CONFIG *oxcf) {
   pbi->common.current_video_frame = 0;
   pbi->ready_for_new_data = 1;
 
-  //Stegozoa
-  CHECK_MEM_ERROR(pbi->qcoeff, vpx_calloc(400 * pbi->common.mb_cols * pbi->common.mb_rows, sizeof(short)));
-  fprintf(stderr, "allocation memory %lu\n", 400 * pbi->common.mb_cols * pbi->common.mb_rows * sizeof(short));
 
   /* vp8cx_init_de_quantizer() is first called here. Add check in
    * frame_init_dequantizer() to avoid
