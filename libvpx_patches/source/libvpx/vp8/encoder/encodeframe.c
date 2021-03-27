@@ -901,7 +901,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
             has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
                       xd->mode_info_context->mbmi.mode != SPLITMV);
             
-            writeQdctLsb(xd->qcoeff, has_y2_block);
+            writeQdctLsb(qcoeff, has_y2_block);
             vp8_tokenize_mb(cpi, x, &tp, qcoeff, eobs);
 
             xd->above_context++;
