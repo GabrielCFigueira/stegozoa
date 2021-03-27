@@ -106,11 +106,16 @@ static void decode_macroblock(VP8D_COMP *pbi, MACROBLOCKD *xd,
 
   if (xd->mode_info_context->mbmi.mb_skip_coeff) {
     vp8_reset_mb_tokens_context(xd);
+    //Stegozoa
+    memset(pbi->qcoeff + 400 * (mb_row * pbi->common.mb_cols + mb_col), 0, 400 * sizeof(short));
+
   } else if (!vp8dx_bool_error(xd->current_bc)) {
     int eobtotal;
     eobtotal = vp8_decode_mb_tokens(pbi, xd);
 
     //Stegozoa
+    memcpy(pbi->qcoeff + 400 * (mb_row * pbi->common.mb_cols + mb_col), xd->qcoeff, 400 * sizeof(short));
+    
     int has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
                       xd->mode_info_context->mbmi.mode != SPLITMV);
     //Stegozoa
@@ -1249,6 +1254,8 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
     decode_mb_rows(pbi);
     corrupt_tokens |= xd->corrupted;
   }
+
+  //Stegozoa
 
   /* Collect information about decoder corruption. */
   /* 1. Check first boolean decoder for errors. */
