@@ -459,8 +459,6 @@ static void encode_mb_row(VP8_COMP *cpi, VP8_COMMON *cm, int mb_row,
 
     x->active_ptr = cpi->active_map + map_index + mb_col;
 
-    fprintf(stderr, "encoding macroblock\n");
-
     if (cm->frame_type == KEY_FRAME) {
       *totalrate += vp8cx_encode_intra_macroblock(cpi, x, tp, mb_row, mb_col);
 #ifdef MODE_STATS
@@ -891,7 +889,6 @@ void vp8_encode_frame(VP8_COMP *cpi) {
             tp = cpi->tok;
 #endif
         
-        fprintf(stderr, "Encoding row\n");
         encode_mb_row(cpi, cm, mb_row, x, xd, &tp, segment_counts, &totalrate);
 
         /* adjust to the next row of mbs */
