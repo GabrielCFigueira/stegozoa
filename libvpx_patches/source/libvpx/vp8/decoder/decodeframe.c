@@ -104,19 +104,17 @@ static void decode_macroblock(VP8D_COMP *pbi, MACROBLOCKD *xd,
   (void)mb_idx;
 #endif
 
-  fprintf(stderr, "Pointer: %p\n", (void*) pbi->qcoeff);
   if (xd->mode_info_context->mbmi.mb_skip_coeff) {
     vp8_reset_mb_tokens_context(xd);
     //Stegozoa
-    //memset(pbi->qcoeff + 400 * (mb_row * pbi->common.mb_cols + mb_col), 0, 400 * sizeof(short));
+    memset(pbi->qcoeff + 400 * (mb_row * pbi->common.mb_cols + mb_col), 0, 400 * sizeof(short));
 
   } else if (!vp8dx_bool_error(xd->current_bc)) {
     int eobtotal;
     eobtotal = vp8_decode_mb_tokens(pbi, xd);
 
     //Stegozoa
-    memcpy(pbi->qcoeff, xd->qcoeff, 400 * sizeof(short));
-    //memcpy(pbi->qcoeff + 400 * (mb_row * pbi->common.mb_cols + mb_col), xd->qcoeff, 400 * sizeof(short));
+    memcpy(pbi->qcoeff + 400 * (mb_row * pbi->common.mb_cols + mb_col), xd->qcoeff, 400 * sizeof(short));
     
     int has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
                       xd->mode_info_context->mbmi.mode != SPLITMV);
