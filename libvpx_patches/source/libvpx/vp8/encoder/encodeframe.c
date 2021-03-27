@@ -942,9 +942,6 @@ void vp8_encode_frame(VP8_COMP *cpi) {
         xd->mode_info_context++;
     }
 
-    xd->qcoeff = cpi->qcoeff;
-    xd->eobs = cpi->eobs;
-    xd->block = cpi->block;
     
     cpi->tok_count = (unsigned int)(tp - cpi->tok);
 
@@ -963,6 +960,11 @@ void vp8_encode_frame(VP8_COMP *cpi) {
     cpi->time_encode_mb_row += vpx_usec_timer_elapsed(&emr_timer);
   }
 
+  //Stegozoa
+  xd->qcoeff = cpi->qcoeff;
+  xd->eobs = cpi->eobs;
+  xd->block = cpi->block;
+  
   // Work out the segment probabilities if segmentation is enabled
   // and needs to be updated
   if (xd->segmentation_enabled && xd->update_mb_segmentation_map) {

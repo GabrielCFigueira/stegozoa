@@ -465,6 +465,11 @@ void vp8cx_init_mbrthread_data(VP8_COMP *cpi, MACROBLOCK *x,
     MACROBLOCK *mb = &mbr_ei[i].mb;
     MACROBLOCKD *mbd = &mb->e_mbd;
 
+    //Stegozoa
+    mbd->qcoeff = cpi->qcoeff;
+    mbd->eobs = cpi->eobs;
+    mbd->block = cpi->block;
+
     mbd->subpixel_predict = xd->subpixel_predict;
     mbd->subpixel_predict8x4 = xd->subpixel_predict8x4;
     mbd->subpixel_predict8x8 = xd->subpixel_predict8x8;
@@ -556,11 +561,17 @@ int vp8cx_create_encoder_threads(VP8_COMP *cpi) {
     for (ithread = 0; ithread < th_count; ++ithread) {
       ENCODETHREAD_DATA *ethd = &cpi->en_thread_data[ithread];
 
+      //Stegozoa
+      MACROBLOCKD *mbd = &cpi->mb_row_ei[ithread].mb.e_mbd;
+      mbd->qcoeff = cpi->qcoeff;
+      mbd->eobs = cpi->eobs;
+      mbd->block = cpi->block;
+
       /* Setup block ptrs and offsets */
       vp8_setup_block_ptrs(&cpi->mb_row_ei[ithread].mb);
       //Stegozoa
       //vp8_setup_block_dptrs(&cpi->mb_row_ei[ithread].mb.e_mbd);
-      vp8_setup_block_dptrs(&cpi->mb_row_ei[ithread].mb.e_mbd, cm->mb_rows * cm->mb_cols);
+      vp8_setup_block_dptrs(mbd, cm->mb_rows * cm->mb_cols);
 
       sem_init(&cpi->h_event_start_encoding[ithread], 0, 0);
       sem_init(&cpi->h_event_end_encoding[ithread], 0, 0);
