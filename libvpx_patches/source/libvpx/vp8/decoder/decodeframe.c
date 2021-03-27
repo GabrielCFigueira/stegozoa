@@ -1295,10 +1295,13 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
 
   for (int i = 0; i < pc->mb_rows; ++i) {
     for (int j = 0; j < pc->mb_cols; ++j) {
+      
       has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
                       xd->mode_info_context->mbmi.mode != SPLITMV);
       readQdctLsb(qcoeff, has_y2_block);
+      
       xd->mode_info_context++;
+      qcoeff += 400;
     }
     xd->mode_info_context++;
   }
