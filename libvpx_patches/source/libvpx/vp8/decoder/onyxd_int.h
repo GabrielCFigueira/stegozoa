@@ -69,7 +69,6 @@ typedef struct VP8D_COMP {
 
   //Stegozoa
   short *qcoeff;
-  BLOCKD *block;
 
 #if CONFIG_MULTITHREAD
   /* variable for threading */

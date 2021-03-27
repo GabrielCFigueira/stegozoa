@@ -61,7 +61,6 @@ static void remove_decompressor(VP8D_COMP *pbi) {
 #endif
   //Stegozoa
   vpx_free(pbi->qcoeff);
-  vpx_free(pbi->block);
   
   vp8_remove_common(&pbi->common);
   vpx_free(pbi);
@@ -89,7 +88,6 @@ static struct VP8D_COMP *create_decompressor(VP8D_CONFIG *oxcf) {
 
   //Stegozoa
   CHECK_MEM_ERROR(pbi->qcoeff, vpx_calloc(400 * pbi->common.mb_cols * pbi->common.mb_rows, sizeof(short)));
-  CHECK_MEM_ERROR(pbi->block, vpx_calloc(25 * pbi->common.mb_cols * pbi->common.mb_rows, sizeof(BLOCKD)));
 
   /* vp8cx_init_de_quantizer() is first called here. Add check in
    * frame_init_dequantizer() to avoid
@@ -121,10 +119,7 @@ static struct VP8D_COMP *create_decompressor(VP8D_CONFIG *oxcf) {
    */
   pbi->independent_partitions = 0;
 
-  //Stegozoa
-  pbi->mb.qcoeff = pbi->qcoeff;
-  pbi->mb.block = pbi->block;
-  vp8_setup_block_dptrs(&pbi->mb, pbi->common.mb_rows * pbi->common.mb_cols);
+  vp8_setup_block_dptrs(&pbi->mb);
 
   once(initialize_dec);
 

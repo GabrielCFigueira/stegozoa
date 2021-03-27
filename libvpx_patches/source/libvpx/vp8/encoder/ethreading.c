@@ -73,11 +73,6 @@ static THREAD_FUNCTION thread_encoding_proc(void *p_data) {
       xd->mode_info_context = cm->mi + cm->mode_info_stride * (ithread + 1);
       xd->mode_info_stride = cm->mode_info_stride;
         
-      //Stegozoa
-      xd->qcoeff = cpi->qcoeff + 400 * (ithread + 1) * cm->mb_cols;
-      xd->eobs = cpi->eobs + 25 * (ithread + 1) * cm->mb_cols;
-      xd->block = cpi->block + 25 * (ithread + 1) * cm->mb_cols;
-
       for (mb_row = ithread + 1; mb_row < cm->mb_rows;
            mb_row += (cpi->encoding_thread_count + 1)) {
         int recon_yoffset, recon_uvoffset;
@@ -287,11 +282,6 @@ static THREAD_FUNCTION thread_encoding_proc(void *p_data) {
           xd->mode_info_context++;
           x->partition_info++;
           xd->above_context++;
-          
-          //Stegozoa
-          xd->qcoeff += 400;
-          xd->eobs += 25;
-          xd->block += 25;
         }
 
         vp8_extend_mb_row(&cm->yv12_fb[dst_fb_idx], xd->dst.y_buffer + 16,
@@ -318,10 +308,6 @@ static THREAD_FUNCTION thread_encoding_proc(void *p_data) {
         x->partition_info += xd->mode_info_stride * cpi->encoding_thread_count;
         x->gf_active_ptr += cm->mb_cols * cpi->encoding_thread_count;
 
-        //Stegozoa
-        xd->qcoeff += 400 * cpi->encoding_thread_count * cm->mb_cols;
-        xd->eobs += 25 * cpi->encoding_thread_count * cm->mb_cols;
-        xd->block += 25 * cpi->encoding_thread_count * cm->mb_cols;
       }
       /* Signal that this thread has completed processing its rows. */
       sem_post(&cpi->h_event_end_encoding[ithread]);
@@ -434,14 +420,9 @@ static void setup_mbby_copy(MACROBLOCK *mbdst, MACROBLOCK *mbsrc) {
      * the quantizer code uses a passed in pointer to the dequant constants.
      * This will also require modifications to the x86 and neon assembly.
      * */
-    /* Stegozoa
-        for (i = 0; i < 16; ++i) zd->block[i].dequant = zd->dequant_y1;
-        for (i = 16; i < 24; ++i) zd->block[i].dequant = zd->dequant_uv;
-        zd->block[24].dequant = zd->dequant_y2;
-    */
-    zd->block = xd->block;
-    zd->qcoeff = xd->qcoeff;
-    zd->eobs = xd->eobs;
+    for (i = 0; i < 16; ++i) zd->block[i].dequant = zd->dequant_y1;
+    for (i = 16; i < 24; ++i) zd->block[i].dequant = zd->dequant_uv;
+    zd->block[24].dequant = zd->dequant_y2;
 #endif
 
     memcpy(z->rd_threshes, x->rd_threshes, sizeof(x->rd_threshes));
@@ -464,11 +445,6 @@ void vp8cx_init_mbrthread_data(VP8_COMP *cpi, MACROBLOCK *x,
   for (i = 0; i < count; ++i) {
     MACROBLOCK *mb = &mbr_ei[i].mb;
     MACROBLOCKD *mbd = &mb->e_mbd;
-
-    //Stegozoa
-    mbd->qcoeff = cpi->qcoeff;
-    mbd->eobs = cpi->eobs;
-    mbd->block = cpi->block;
 
     mbd->subpixel_predict = xd->subpixel_predict;
     mbd->subpixel_predict8x4 = xd->subpixel_predict8x4;
@@ -561,17 +537,9 @@ int vp8cx_create_encoder_threads(VP8_COMP *cpi) {
     for (ithread = 0; ithread < th_count; ++ithread) {
       ENCODETHREAD_DATA *ethd = &cpi->en_thread_data[ithread];
 
-      //Stegozoa
-      MACROBLOCKD *mbd = &cpi->mb_row_ei[ithread].mb.e_mbd;
-      mbd->qcoeff = cpi->qcoeff;
-      mbd->eobs = cpi->eobs;
-      mbd->block = cpi->block;
-
       /* Setup block ptrs and offsets */
       vp8_setup_block_ptrs(&cpi->mb_row_ei[ithread].mb);
-      //Stegozoa
-      //vp8_setup_block_dptrs(&cpi->mb_row_ei[ithread].mb.e_mbd);
-      vp8_setup_block_dptrs(mbd, cm->mb_rows * cm->mb_cols);
+      vp8_setup_block_dptrs(&cpi->mb_row_ei[ithread].mb.e_mbd);
 
       sem_init(&cpi->h_event_start_encoding[ithread], 0, 0);
       sem_init(&cpi->h_event_end_encoding[ithread], 0, 0);

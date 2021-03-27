@@ -21,7 +21,7 @@ struct macroblock;
 
 void vp8_activity_masking(struct VP8_COMP *cpi, MACROBLOCK *x);
 
-void vp8_build_block_offsets(struct VP8_COMP *cpi, struct macroblock *x);
+void vp8_build_block_offsets(struct macroblock *x);
 
 void vp8_setup_block_ptrs(struct macroblock *x);
 

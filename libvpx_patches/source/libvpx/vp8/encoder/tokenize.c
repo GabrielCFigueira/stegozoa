@@ -98,7 +98,8 @@ Length);
 }
 */
 
-static void tokenize2nd_order_b(MACROBLOCK *x, TOKENEXTRA **tp, VP8_COMP *cpi) {
+//Stegozoa: new arguments
+static void tokenize2nd_order_b(MACROBLOCK *x, TOKENEXTRA **tp, VP8_COMP *cpi, short *qcoeff, char *eobs) {
   MACROBLOCKD *xd = &x->e_mbd;
   int pt;              /* near block/prev token context index */
   int c;               /* start at DC */
@@ -111,10 +112,10 @@ static void tokenize2nd_order_b(MACROBLOCK *x, TOKENEXTRA **tp, VP8_COMP *cpi) {
   int eob;
 
   b = xd->block + 24;
-  qcoeff_ptr = b->qcoeff;
+  qcoeff_ptr = qcoeff + 384; //Stegozoa
   a = (ENTROPY_CONTEXT *)xd->above_context + 8;
   l = (ENTROPY_CONTEXT *)xd->left_context + 8;
-  eob = xd->eobs[24];
+  eob = eobs[24];
   VP8_COMBINEENTROPYCONTEXTS(pt, *a, *l);
 
   if (!eob) {
@@ -179,7 +180,7 @@ static void tokenize2nd_order_b(MACROBLOCK *x, TOKENEXTRA **tp, VP8_COMP *cpi) {
 static void tokenize1st_order_b(
     MACROBLOCK *x, TOKENEXTRA **tp,
     int type, /* which plane: 0=Y no DC, 1=Y2, 2=UV, 3=Y with DC */
-    VP8_COMP *cpi) {
+    VP8_COMP *cpi, short *qcoeff, char *eobs) { //Stegozoa new arguments. dont rely on xd->qcoeff
   MACROBLOCKD *xd = &x->e_mbd;
   unsigned int block;
   const BLOCKD *b;
@@ -196,10 +197,10 @@ static void tokenize1st_order_b(
   b = xd->block;
   /* Luma */
   for (block = 0; block < 16; block++, b++) {
-    const int eob = *b->eob;
+    const int eob = eobs[block]; //Stegozoa
     tmp1 = vp8_block2above[block];
     tmp2 = vp8_block2left[block];
-    qcoeff_ptr = b->qcoeff;
+    qcoeff_ptr = qcoeff + 16 * block; //Stegozoa
     a = (ENTROPY_CONTEXT *)xd->above_context + tmp1;
     l = (ENTROPY_CONTEXT *)xd->left_context + tmp2;
 
@@ -267,10 +268,10 @@ static void tokenize1st_order_b(
 
   /* Chroma */
   for (block = 16; block < 24; block++, b++) {
-    const int eob = *b->eob;
+    const int eob = eobs[block]; //Stegozoa
     tmp1 = vp8_block2above[block];
     tmp2 = vp8_block2left[block];
-    qcoeff_ptr = b->qcoeff;
+    qcoeff_ptr = qcoeff + 16 * block; //Stegozoa
     a = (ENTROPY_CONTEXT *)xd->above_context + tmp1;
     l = (ENTROPY_CONTEXT *)xd->left_context + tmp2;
 
@@ -350,7 +351,7 @@ static int mb_is_skippable(MACROBLOCKD *x, int has_y2_block) {
   return skip;
 }
 
-void vp8_tokenize_mb(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t) {
+void vp8_tokenize_mb(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t, short *qcoeff, char *eobs) {
   MACROBLOCKD *xd = &x->e_mbd;
   int plane_type;
   int has_y2_block;
@@ -373,11 +374,11 @@ void vp8_tokenize_mb(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t) {
 
   plane_type = 3;
   if (has_y2_block) {
-    tokenize2nd_order_b(x, t, cpi);
+    tokenize2nd_order_b(x, t, cpi, qcoeff, eobs);
     plane_type = 0;
   }
 
-  tokenize1st_order_b(x, t, plane_type, cpi);
+  tokenize1st_order_b(x, t, plane_type, cpi, qcoeff, eobs);
 }
 
 //Stegozoa

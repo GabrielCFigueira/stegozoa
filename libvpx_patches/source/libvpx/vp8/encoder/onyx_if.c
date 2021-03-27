@@ -1785,15 +1785,7 @@ struct VP8_COMP *vp8_create_compressor(VP8_CONFIG *oxcf) {
   //Stegozoa:
   CHECK_MEM_ERROR(cpi->qcoeff, vpx_calloc(400 * cm->mb_cols * cm->mb_rows, sizeof(short)));
   CHECK_MEM_ERROR(cpi->eobs, vpx_calloc(25 * cm->mb_cols * cm->mb_rows, sizeof(char)));
-  CHECK_MEM_ERROR(cpi->block, vpx_calloc(25 * cm->mb_cols * cm->mb_rows, sizeof(BLOCKD)));
 
-  vpx_free(cpi->qcoeff);
-  vpx_free(cpi->eobs);
-  vpx_free(cpi->block);
-  
-  CHECK_MEM_ERROR(cpi->qcoeff, vpx_calloc(400 * cm->mb_cols * cm->mb_rows, sizeof(short)));
-  CHECK_MEM_ERROR(cpi->eobs, vpx_calloc(25 * cm->mb_cols * cm->mb_rows, sizeof(char)));
-  CHECK_MEM_ERROR(cpi->block, vpx_calloc(25 * cm->mb_cols * cm->mb_rows, sizeof(BLOCKD)));
 
   memcpy(cpi->base_skip_false_prob, vp8cx_base_skip_false_prob,
          sizeof(vp8cx_base_skip_false_prob));
@@ -2109,13 +2101,8 @@ struct VP8_COMP *vp8_create_compressor(VP8_CONFIG *oxcf) {
 
   /* setup block ptrs & offsets */
   vp8_setup_block_ptrs(&cpi->mb);
-  //Stegozoa
-  //vp8_setup_block_dptrs(&cpi->mb.e_mbd);
-  cpi->mb.e_mbd.qcoeff = cpi->qcoeff;
-  cpi->mb.e_mbd.eobs = cpi->eobs;
-  cpi->mb.e_mbd.block = cpi->block;
-  vp8_setup_block_dptrs(&cpi->mb.e_mbd, cm->mb_rows * cm->mb_cols);
-
+  vp8_setup_block_dptrs(&cpi->mb.e_mbd);
+  
   return cpi;
 }
 
@@ -2290,26 +2277,17 @@ void vp8_remove_compressor(VP8_COMP **comp) {
 #if CONFIG_TEMPORAL_DENOISING
   vp8_denoiser_free(&cpi->denoiser);
 #endif
-  fprintf(stderr, "1\n");
   dealloc_compressor_data(cpi);
-  fprintf(stderr, "2\n");
   vpx_free(cpi->mb.ss);
-  fprintf(stderr, "3\n");
   vpx_free(cpi->tok);
-  fprintf(stderr, "4\n");
   vpx_free(cpi->skin_map);
-  fprintf(stderr, "5\n");
   vpx_free(cpi->cyclic_refresh_map);
-  fprintf(stderr, "6\n");
   vpx_free(cpi->consec_zero_last);
-  fprintf(stderr, "7\n");
   vpx_free(cpi->consec_zero_last_mvbias);
 
-  fprintf(stderr, "8\n");
   //Stegozoa
   vpx_free(cpi->qcoeff);
   vpx_free(cpi->eobs);
-  vpx_free(cpi->block);
 
   vp8_remove_common(&cpi->common);
   vpx_free(cpi);

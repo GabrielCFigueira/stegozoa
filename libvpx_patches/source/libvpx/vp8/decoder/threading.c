@@ -290,10 +290,6 @@ static void mt_decode_mb_rows(VP8D_COMP *pbi, MACROBLOCKD *xd,
   xd->mode_info_context = pc->mi + pc->mode_info_stride * start_mb_row;
   xd->mode_info_stride = pc->mode_info_stride;
 
-  //Stegozoa
-  xd->qcoeff = pbi->qcoeff + 400 * pc->mb_cols * start_mb_row;
-  xd->block = pbi->block + 25 * pc->mb_cols * start_mb_row;
-
   for (mb_row = start_mb_row; mb_row < pc->mb_rows;
        mb_row += (pbi->decoding_thread_count + 1)) {
     int recon_yoffset, recon_uvoffset;
@@ -545,10 +541,6 @@ static void mt_decode_mb_rows(VP8D_COMP *pbi, MACROBLOCKD *xd,
       ++xd->mode_info_context; /* next mb */
 
       xd->above_context++;
-      
-      //Stegozoa
-      xd->qcoeff += 400;
-      xd->block += 25;
     }
 
     /* adjust to the next row of mbs */
@@ -579,10 +571,6 @@ static void mt_decode_mb_rows(VP8D_COMP *pbi, MACROBLOCKD *xd,
 
     /* since we have multithread */
     xd->mode_info_context += xd->mode_info_stride * pbi->decoding_thread_count;
-      
-    //Stegozoa
-    xd->qcoeff += 400 * pbi->decoding_thread_count;
-    xd->block += 25 * pbi->decoding_thread_count;
   }
 
   /* signal end of decoding of current thread for current frame */
@@ -624,9 +612,6 @@ void vp8_decoder_create_threads(VP8D_COMP *pbi) {
   int core_count = 0;
   unsigned int ithread;
 
-  //Stegozoa
-  VP8_COMMON *pc = &pbi->common;
-
   vpx_atomic_init(&pbi->b_multithreaded_rd, 0);
   pbi->allocated_decoding_thread_count = 0;
 
@@ -654,9 +639,8 @@ void vp8_decoder_create_threads(VP8D_COMP *pbi) {
 
     for (ithread = 0; ithread < pbi->decoding_thread_count; ++ithread) {
       if (sem_init(&pbi->h_event_start_decoding[ithread], 0, 0)) break;
-    
-      //Stegozoa
-      vp8_setup_block_dptrs(&pbi->mb_row_di[ithread].mbd, pc->mb_rows * pc->mb_cols);
+
+      vp8_setup_block_dptrs(&pbi->mb_row_di[ithread].mbd);
 
       pbi->de_thread_data[ithread].ithread = ithread;
       pbi->de_thread_data[ithread].ptr1 = (void *)pbi;

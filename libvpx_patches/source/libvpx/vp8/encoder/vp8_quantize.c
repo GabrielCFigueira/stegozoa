@@ -333,12 +333,9 @@ void vp8cx_mb_init_quantizer(VP8_COMP *cpi, MACROBLOCK *x, int ok_to_skip) {
      * This will also require modifications to the x86 and neon assembly.
      * */
 
-    //Stegozoa: initialize all the blocks
-    for (int j = 0; j < cpi->common.mb_rows * cpi->common.mb_cols; ++j) {
-        for (i = 0; i < 16; ++i) x->e_mbd.block[25 * j + i].dequant = xd->dequant_y1;
-        for (i = 16; i < 24; ++i) x->e_mbd.block[25 * j + i].dequant = xd->dequant_uv;
-        x->e_mbd.block[25 * j + 24].dequant = xd->dequant_y2;
-    }
+    for (i = 0; i < 16; ++i) x->e_mbd.block[i].dequant = xd->dequant_y1;
+    for (i = 16; i < 24; ++i) x->e_mbd.block[i].dequant = xd->dequant_uv;
+    x->e_mbd.block[24].dequant = xd->dequant_y2;
 #endif
 
     /* Y */

@@ -141,7 +141,7 @@ static void decode_macroblock(VP8D_COMP *pbi, MACROBLOCKD *xd,
        * Better to use the predictor as reconstruction.
        */
       pbi->frame_corrupt_residual = 1;
-      memset(xd->qcoeff, 0, 400);
+      memset(xd->qcoeff, 0, sizeof(xd->qcoeff));
 
       corruption_detected = 1;
 
@@ -502,8 +502,6 @@ static void decode_mb_rows(VP8D_COMP *pbi) {
       if (ibc == num_part) ibc = 0;
     }
 
-    fprintf(stderr, "decoding mb row\n");
-
     recon_yoffset = mb_row * recon_y_stride * 16;
     recon_uvoffset = mb_row * recon_uv_stride * 8;
 
@@ -609,9 +607,6 @@ static void decode_mb_rows(VP8D_COMP *pbi) {
 
       xd->above_context++;
   
-      //Stegozoa
-      xd->qcoeff += 400;
-      xd->block += 25;
     }
 
     /* adjust to the next row of mbs */
@@ -1218,16 +1213,10 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
   }
 
   /* clear out the coeff buffer */
-  //Stegozoa: clear everything out
-  xd->qcoeff = pbi->qcoeff;
-  xd->block = pbi->block;
-
-  fprintf(stderr, "Preparing to decode\n");
-  memset(xd->qcoeff, 0, 400 * pc->mb_cols * pc->mb_rows * sizeof(short));
+  memset(xd->qcoeff, 0, sizeof(xd->qcoeff));
 
   vp8_decode_mode_mvs(pbi);
     
-  while(1); 
 #if CONFIG_ERROR_CONCEALMENT
   if (pbi->ec_active &&
       pbi->mvs_corrupt_from_mb < (unsigned int)pc->mb_cols * pc->mb_rows) {
@@ -1257,7 +1246,6 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
   } else
 #endif
   {
-    fprintf(stderr, "Lets decode\n");
     decode_mb_rows(pbi);
     corrupt_tokens |= xd->corrupted;
   }

@@ -208,9 +208,9 @@ typedef void (*vp8_subpix_fn_t)(unsigned char *src_ptr, int src_pixels_per_line,
 
 typedef struct macroblockd {
   DECLARE_ALIGNED(16, unsigned char, predictor[384]);
-  DECLARE_ALIGNED(16, short, qcoeff_fake[400]);
+  DECLARE_ALIGNED(16, short, qcoeff[400]);
   DECLARE_ALIGNED(16, short, dqcoeff[400]);
-  DECLARE_ALIGNED(16, char, eobs_fake[25]);
+  DECLARE_ALIGNED(16, char, eobs[25]);
 
   DECLARE_ALIGNED(16, short, dequant_y1[16]);
   DECLARE_ALIGNED(16, short, dequant_y1_dc[16]);
@@ -218,11 +218,7 @@ typedef struct macroblockd {
   DECLARE_ALIGNED(16, short, dequant_uv[16]);
 
   /* 16 Y blocks, 4 U, 4 V, 1 DC 2nd order block, each with 16 entries. */
-  BLOCKD block_fake[25];
-  //Stegozoa
-  short *qcoeff;
-  char *eobs;
-  BLOCKD *block;
+  BLOCKD block[25];
 
   int fullpixel_mask;
 
@@ -306,9 +302,8 @@ typedef struct macroblockd {
 #endif
 } MACROBLOCKD;
 
-//Stegozoa
-extern void vp8_build_block_doffsets(MACROBLOCKD *x, int n_mb);
-extern void vp8_setup_block_dptrs(MACROBLOCKD *x, int n_mb);
+extern void vp8_build_block_doffsets(MACROBLOCKD *x);
+extern void vp8_setup_block_dptrs(MACROBLOCKD *x);
 
 #ifdef __cplusplus
 }  // extern "C"
