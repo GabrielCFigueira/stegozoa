@@ -359,7 +359,7 @@ void vp8_tokenize_mb(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t, short *qcoeff
   has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
                   xd->mode_info_context->mbmi.mode != SPLITMV);
 
-  xd->mode_info_context->mbmi.mb_skip_coeff = mb_is_skippable(xd, has_y2_block);
+  xd->mode_info_context->mbmi.mb_skip_coeff = mb_is_skippable(xd, has_y2_block, eobs);
   if (xd->mode_info_context->mbmi.mb_skip_coeff) {
     if (!cpi->common.mb_no_coeff_skip) {
       vp8_stuff_mb(cpi, x, t);
@@ -446,7 +446,7 @@ void vp8_fake_tokenize_mb(VP8_COMP *cpi, MACROBLOCK *x) {
   has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
                   xd->mode_info_context->mbmi.mode != SPLITMV);
 
-  xd->mode_info_context->mbmi.mb_skip_coeff = mb_is_skippable(xd, has_y2_block);
+  xd->mode_info_context->mbmi.mb_skip_coeff = mb_is_skippable(xd, has_y2_block, xd->eobs);
   if (xd->mode_info_context->mbmi.mb_skip_coeff) {
     if (cpi->common.mb_no_coeff_skip) {
       vp8_fix_contexts(xd);
