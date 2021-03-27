@@ -116,11 +116,6 @@ static void decode_macroblock(VP8D_COMP *pbi, MACROBLOCKD *xd,
     //Stegozoa
     memcpy(pbi->qcoeff + 400 * (mb_row * pbi->common.mb_cols + mb_col), xd->qcoeff, 400 * sizeof(short));
     
-    int has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
-                      xd->mode_info_context->mbmi.mode != SPLITMV);
-    //Stegozoa
-    readQdctLsb(xd->qcoeff, has_y2_block);
-  
     /* Special case:  Force the loopfilter to skip when eobtotal is zero */
     xd->mode_info_context->mbmi.mb_skip_coeff = (eobtotal == 0);
   }
@@ -1294,6 +1289,20 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
 #endif
 
   //Stegozoa
+  short *qcoeff = pbi->qcoeff;
+  int has_y2_block;
+  xd->mode_info_context = pc->mi;
+
+  for (int i = 0; i < pc->mb_rows; ++i) {
+    for (int j = 0; j < pc->mb_cols; ++j) {
+      has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
+                      xd->mode_info_context->mbmi.mode != SPLITMV);
+      readQdctLsb(qcoeff, has_y2_block);
+      xd->mode_info_context++;
+    }
+    xd->mode_info_context++;
+  }
+
   vpx_free(pbi->qcoeff);
 
   return 0;
