@@ -88,6 +88,7 @@ static struct VP8D_COMP *create_decompressor(VP8D_CONFIG *oxcf) {
 
   //Stegozoa
   CHECK_MEM_ERROR(pbi->qcoeff, vpx_calloc(400 * pbi->common.mb_cols * pbi->common.mb_rows, sizeof(short)));
+  fprintf(stderr, "allocation memory %d\n", 400 * pbi->common.mb_cols * pbi->common.mb_rows * sizeof(short));
 
   /* vp8cx_init_de_quantizer() is first called here. Add check in
    * frame_init_dequantizer() to avoid
