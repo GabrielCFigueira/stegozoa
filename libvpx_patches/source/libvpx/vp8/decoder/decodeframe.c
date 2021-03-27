@@ -104,7 +104,7 @@ static void decode_macroblock(VP8D_COMP *pbi, MACROBLOCKD *xd,
   (void)mb_idx;
 #endif
 
-  fprintf(stderr, "Pointer: %x\n", pbi->qcoeff);
+  fprintf(stderr, "Pointer: %p\n", (void*) pbi->qcoeff);
   if (xd->mode_info_context->mbmi.mb_skip_coeff) {
     vp8_reset_mb_tokens_context(xd);
     //Stegozoa
