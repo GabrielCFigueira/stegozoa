@@ -1787,6 +1787,13 @@ struct VP8_COMP *vp8_create_compressor(VP8_CONFIG *oxcf) {
   CHECK_MEM_ERROR(cpi->eobs, vpx_calloc(25 * cm->mb_cols * cm->mb_rows, sizeof(char)));
   CHECK_MEM_ERROR(cpi->block, vpx_calloc(25 * cm->mb_cols * cm->mb_rows, sizeof(BLOCKD)));
 
+  vpx_free(cpi->qcoeff);
+  vpx_free(cpi->eobs);
+  vpx_free(cpi->block);
+  
+  CHECK_MEM_ERROR(cpi->qcoeff, vpx_calloc(400 * cm->mb_cols * cm->mb_rows, sizeof(short)));
+  CHECK_MEM_ERROR(cpi->eobs, vpx_calloc(25 * cm->mb_cols * cm->mb_rows, sizeof(char)));
+  CHECK_MEM_ERROR(cpi->block, vpx_calloc(25 * cm->mb_cols * cm->mb_rows, sizeof(BLOCKD)));
 
   memcpy(cpi->base_skip_false_prob, vp8cx_base_skip_false_prob,
          sizeof(vp8cx_base_skip_false_prob));
