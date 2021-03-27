@@ -608,7 +608,7 @@ static void init_encode_frame_mb_context(VP8_COMP *cpi) {
   /* set up frame for intra coded blocks */
   vp8_setup_intra_recon(&cm->yv12_fb[cm->new_fb_idx]);
 
-  vp8_build_block_offsets(cpi, x);
+  vp8_build_block_offsets(x);
 
   xd->mode_info_context->mbmi.mode = DC_PRED;
   xd->mode_info_context->mbmi.uv_mode = DC_PRED;
@@ -725,10 +725,6 @@ void vp8_encode_frame(VP8_COMP *cpi) {
 
   vp8cx_initialize_me_consts(cpi, cm->base_qindex);
     
-  xd->qcoeff = cpi->qcoeff;
-  xd->eobs = cpi->eobs;
-  xd->block = cpi->block;
-
   if (cpi->oxcf.tuning == VP8_TUNE_SSIM) {
     /* Initialize encode frame context. */
     init_encode_frame_mb_context(cpi);
@@ -1167,8 +1163,8 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
   //vp8_tokenize_mb(cpi, x, t);
   vp8_fake_tokenize_mb(cpi, x);
 
-  memcpy(cpi->qcoeff + 400 * (mb_row * cpi->common.mb_cols + mb_cols), xd->qcoeff, 400 * sizeof(short));
-  memcpy(cpi->eobs + 25 * (mb_row * cpi->common.mb_cols + mb_cols), xd->eobs, 25 * sizeof(char));
+  memcpy(cpi->qcoeff + 400 * (mb_row * cpi->common.mb_cols + mb_col), xd->qcoeff, 400 * sizeof(short));
+  memcpy(cpi->eobs + 25 * (mb_row * cpi->common.mb_cols + mb_col), xd->eobs, 25 * sizeof(char));
 
   if (xd->mode_info_context->mbmi.mode != B_PRED) vp8_inverse_transform_mby(xd);
 
@@ -1348,8 +1344,8 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
     //Stegozoa
     //vp8_tokenize_mb(cpi, x, t);
     vp8_fake_tokenize_mb(cpi, x);
-    memcpy(cpi->qcoeff + 400 * (mb_row * cpi->common.mb_cols + mb_cols), xd->qcoeff, 400 * sizeof(short));
-    memcpy(cpi->eobs + 25 * (mb_row * cpi->common.mb_cols + mb_cols), xd->eobs, 25 * sizeof(char));
+    memcpy(cpi->qcoeff + 400 * (mb_row * cpi->common.mb_cols + mb_col), xd->qcoeff, 400 * sizeof(short));
+    memcpy(cpi->eobs + 25 * (mb_row * cpi->common.mb_cols + mb_col), xd->eobs, 25 * sizeof(char));
   
 
     if (xd->mode_info_context->mbmi.mode != B_PRED) {
@@ -1372,8 +1368,8 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
     //}
     
     //Stegozoa
-    memset(cpi->qcoeff + 400 * (mb_row * cpi->common.mb_cols + mb_cols), 0, 400 * sizeof(short));
-    memset(cpi->eobs + 25 * (mb_row * cpi->common.mb_cols + mb_cols), 0, 25 * sizeof(char));
+    memset(cpi->qcoeff + 400 * (mb_row * cpi->common.mb_cols + mb_col), 0, 400 * sizeof(short));
+    memset(cpi->eobs + 25 * (mb_row * cpi->common.mb_cols + mb_col), 0, 25 * sizeof(char));
   }
 
   return rate;
