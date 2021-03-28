@@ -8,6 +8,7 @@
 #define MASK 0xFE
 #define DIVIDE8(num) (num >> 3)
 #define MOD8(num) (num & 0x7)
+#define MOD16(num) (num & 0xF
 #define getLsb(num) (num & 0x1)
 #define rotate(byte, rotation) ((byte << rotation) | (byte >> (8 - rotation)))
 
@@ -62,14 +63,15 @@ int writeQdctLsb(short *qcoeff, int has_y2_block) {
     int n_bits = sizeof(msgSent) * 8;
     //future idea: loop unroll
     for(int i = 0; i < 384 + has_y2_block * 16; i++) {
-        if(msgBitEnc < n_bits && qcoeff[i] != 1 && qcoeff[i] != 0 && (!has_y2_block || i % 16 != 0 || i > 255)) {
+        if(qcoeff[i] != 1 && qcoeff[i] != 0 && (!has_y2_block || MOD16(i) != 0 || i > 255)) {
             qcoeff[i] = (qcoeff[i] & 0xFFFE) | getBit(msgSent, msgBitEnc);
             msgBitEnc++;
             rate++;
-        }
+        
             
-        if(msgBitEnc == n_bits)
-            msgBitEnc = 0; //send the same message over and over, for now
+            if(msgBitEnc == n_bits)
+                msgBitEnc = 0; //send the same message over and over, for now
+        }
     }
 
     return rate;
@@ -80,7 +82,7 @@ int writeQdctLsb(short *qcoeff, int has_y2_block) {
 void readQdctLsb(short *qcoeff, int has_y2_block) {
 
     for(int i = 0; i < 384 + has_y2_block * 16; i++) {
-        if(qcoeff[i] != 1 && qcoeff[i] != 0 && (!has_y2_block || i % 16 != 0 || i > 255)) {
+        if(qcoeff[i] != 1 && qcoeff[i] != 0 && (!has_y2_block || MOD16(i) != 0 || i > 255)) {
             setBit(msgReceived, msgBitDec, getLsb(qcoeff[i]));
             msgBitDec++;
         }
@@ -115,8 +117,6 @@ void printQdct(short *qcoeff) {
 }
 
 
-
-
 static int msgCharEnc = 0;
 static int msgCharDec = 0;
 unsigned char theMsg[400];
@@ -124,7 +124,7 @@ unsigned char theMsg[400];
 void writeQdct(short *qcoeff, char *eobs, int has_y2_block) {
 
     for(int i = 0; i < 384 + has_y2_block * 16; i++) {
-        if((!has_y2_block || i % 16 != 0 || i > 255) && qcoeff[i] != 1 && qcoeff[i] != 0) {
+        if((!has_y2_block || MOD16(i) != 0 || i > 255) && qcoeff[i] != 1 && qcoeff[i] != 0) {
             qcoeff[i] = msgSent[msgCharEnc++];
 
             if(msgCharEnc == sizeof(msgSent) - 1) {
@@ -141,7 +141,7 @@ void readQdct(short *qcoeff, int has_y2_block) {
     
     
     for(int i = 0; i < 384 + has_y2_block * 16; i++) {
-        if((!has_y2_block || i % 16 != 0 || i > 255) && qcoeff[i] != 1 && qcoeff[i] != 0) {
+        if((!has_y2_block || MOD16(i) != 0 || i > 255) && qcoeff[i] != 1 && qcoeff[i] != 0) {
             theMsg[msgCharDec++] = qcoeff[i];
             if(msgCharDec == 1 && theMsg[0] != '!') {
                 printf("OhNO\n");
