@@ -1,6 +1,9 @@
 #include "stegozoa_hooks.h"
 #include <stdio.h>
 #include <errno.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <string.h>
 
 #define MASK 0xFFFE
 #define DIVIDE8(num) (num >> 3)
@@ -35,6 +38,7 @@ int initialize() {
     if((encoderFd = open(ENCODER_PIPE, O_RDONLY | O_NONBLOCK)) == NULL) {
         error(strerror(errno), "Trying to open the encoder pipe for reading");
         return 1;
+    }
 
     if((decoderFd = open(DECODER_PIPE, O_WRONLY | O_NONBLOCK)) == NULL) {
         error(strerror(errno), "Trying to open the decoder pipe for writing");
