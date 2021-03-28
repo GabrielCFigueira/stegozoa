@@ -8,7 +8,7 @@
 #define MASK 0xFE
 #define DIVIDE8(num) (num >> 3)
 #define MOD8(num) (num & 0x7)
-#define MOD16(num) (num & 0xF
+#define MOD16(num) (num & 0xF)
 #define getLsb(num) (num & 0x1)
 #define rotate(byte, rotation) ((byte << rotation) | (byte >> (8 - rotation)))
 
