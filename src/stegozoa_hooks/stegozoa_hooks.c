@@ -1,42 +1,75 @@
 #include "stegozoa_hooks.h"
 #include <stdio.h>
+#include <errno.h>
 
-//Optimization idea: get 3 last bits instead of index % 8, as division is heavier
+#define MASK 0xFFFE
+#define DIVIDE8(num) (num >> 3)
+#define MOD8(num) (num & 0x7)
+#define getLsb(num) (num & 0x1)
+#define rotate(byte, rotation) ((byte << rotation) | (byte >> (32 - rotation)))
 
-
-#define MASK 0xFE
-
-#define rotate(byte, rotation) ((byte << rotation) | (byte >> (8 - rotation)))
-#define getLsb(num) (num & 0x0001)
-#define getBit(A, index) (getLsb(A[index / 8] >> (index % 8)))
+#define getBit(A, index) (getLsb(A[index / 8] >> (MOD8(index))))
 #define setBit(A, index, bit) \
-    (A[index / 8] = (A[index / 8] & rotate(MASK, index % 8)) | (bit << index % 8))
+    (A[DIVIDE8(index)] = (A[DIVIDE8(index)] & rotate(MASK, MOD8(index))) | (bit << MOD8(index)))
 
-static unsigned char msg[] = "!Why are we still here... just to suffer? ";
-static int msgBit = 0;
+#define ENCODER_PIPE "/tmp/stegozoa_encoder_pipe"
+#define DECODER_PIPE "/tmp/stegozoa_decoder_pipe"
+
+
+static unsigned char msgSent[] = "!Why are we still here... just to suffer? ";
+static int msgBitEnc = 0;
+static unsigned char msgReceived[500];
+static int msgBitDec = 0;
+
+static int encoderFd;
+static int decoderFd;
+static int initialized = 0;
+
+static void error(char *errorMsg, char *when) {
+    fprintf(stderr, "Stegozoa hooks error: %s when: %s\n", errorMsg, when);
+}
+
+
+int initialize() {
+
+    if((encoderFd = open(ENCODER_PIPE, O_RDONLY | O_NONBLOCK)) == NULL) {
+        error(strerror(errno), "Trying to open the encoder pipe for reading");
+        return 1;
+
+    if((decoderFd = open(DECODER_PIPE, O_WRONLY | O_NONBLOCK)) == NULL) {
+        error(strerror(errno), "Trying to open the decoder pipe for writing");
+        return 2;
+    }
+
+    initialized = 1;
+    return 0;
+}
+
+int isInitialized() {
+    return initialized;
+}
+
 
 int writeQdctLsb(short *qcoeff, int has_y2_block) {
 
     int rate = 0;
-    int n_bits = sizeof(msg) * 8;
+    int n_bits = sizeof(msgSent) * 8;
     //future idea: loop unroll
     for(int i = 0; i < 384 + has_y2_block * 16; i++) {
-        if(msgBit < n_bits && qcoeff[i] != 1 && qcoeff[i] != 0 && (!has_y2_block || i % 16 != 0 || i > 255)) {
-            qcoeff[i] = (qcoeff[i] & 0xFFFE) | getBit(msg, msgBit);
-            msgBit++;
+        if(msgBitEnc < n_bits && qcoeff[i] != 1 && qcoeff[i] != 0 && (!has_y2_block || i % 16 != 0 || i > 255)) {
+            qcoeff[i] = (qcoeff[i] & 0xFFFE) | getBit(msgSent, msgBitEnc);
+            msgBitEnc++;
             rate++;
         }
             
-        if(msgBit == n_bits)
-            msgBit = 0; //send the same message over and over, for now
+        if(msgBitEnc == n_bits)
+            msgBitEnc = 0; //send the same message over and over, for now
     }
 
     return rate;
     
 }
 
-static unsigned char msgReceived[500]; //must be dynamic in the future
-static int msgBitDec = 0;
 
 void readQdctLsb(short *qcoeff, int has_y2_block) {
 
