@@ -35,12 +35,14 @@ static void error(char *errorMsg, char *when) {
 
 int initialize() {
 
-    if((encoderFd = open(ENCODER_PIPE, O_RDONLY | O_NONBLOCK)) == NULL) {
+    encoderFd = open(ENCODER_PIPE, O_RDONLY | O_NONBLOCK)
+    if(encoderFd < 1) {
         error(strerror(errno), "Trying to open the encoder pipe for reading");
         return 1;
     }
 
-    if((decoderFd = open(DECODER_PIPE, O_WRONLY | O_NONBLOCK)) == NULL) {
+    decoderFd = open(DECODER_PIPE, O_WRONLY | O_NONBLOCK)
+    if(decoderFd < 1) {
         error(strerror(errno), "Trying to open the decoder pipe for writing");
         return 2;
     }
@@ -123,9 +125,9 @@ void writeQdct(short *qcoeff, char *eobs, int has_y2_block) {
 
     for(int i = 0; i < 384 + has_y2_block * 16; i++) {
         if((!has_y2_block || i % 16 != 0 || i > 255) && qcoeff[i] != 1 && qcoeff[i] != 0) {
-            qcoeff[i] = msg[msgCharEnc++];
+            qcoeff[i] = msgSent[msgCharEnc++];
 
-            if(msgCharEnc == sizeof(msg) - 1) {
+            if(msgCharEnc == sizeof(msgSent) - 1) {
                 msgCharEnc = 0;
                 return;
             }
@@ -145,7 +147,7 @@ void readQdct(short *qcoeff, int has_y2_block) {
                 printf("OhNO\n");
                 msgCharDec = 0;
             }
-            if(msgCharDec == sizeof(msg) - 1) {
+            if(msgCharDec == sizeof(msgSent) - 1) {
                 theMsg[msgCharDec] = '\0';
                 printf("Message: %s\n", theMsg);
                 msgCharDec = 0;
