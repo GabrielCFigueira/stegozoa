@@ -5,11 +5,11 @@
 #include <fcntl.h>
 #include <string.h>
 
-#define MASK 0xFFFE
+#define MASK 0xFE
 #define DIVIDE8(num) (num >> 3)
 #define MOD8(num) (num & 0x7)
 #define getLsb(num) (num & 0x1)
-#define rotate(byte, rotation) ((byte << rotation) | (byte >> (32 - rotation)))
+#define rotate(byte, rotation) ((byte << rotation) | (byte >> (8 - rotation)))
 
 #define getBit(A, index) (getLsb(A[index / 8] >> (MOD8(index))))
 #define setBit(A, index, bit) \
