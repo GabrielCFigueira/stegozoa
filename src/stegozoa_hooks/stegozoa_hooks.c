@@ -35,13 +35,13 @@ static void error(char *errorMsg, char *when) {
 
 int initialize() {
 
-    encoderFd = open(ENCODER_PIPE, O_RDONLY | O_NONBLOCK)
+    encoderFd = open(ENCODER_PIPE, O_RDONLY | O_NONBLOCK);
     if(encoderFd < 1) {
         error(strerror(errno), "Trying to open the encoder pipe for reading");
         return 1;
     }
 
-    decoderFd = open(DECODER_PIPE, O_WRONLY | O_NONBLOCK)
+    decoderFd = open(DECODER_PIPE, O_WRONLY | O_NONBLOCK);
     if(decoderFd < 1) {
         error(strerror(errno), "Trying to open the decoder pipe for writing");
         return 2;
