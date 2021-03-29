@@ -19,9 +19,10 @@ except Exception as oe:
 
 
 encoderPipe = open(encoderPipePath, 'w')
-message = 'A' * 100
-print(message)
+message = 'A' * 10000
+
 encoderPipe.write(message)
+encoderPipe.flush()
 encoderPipe.close()
 
 
