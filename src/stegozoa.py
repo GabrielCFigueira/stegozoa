@@ -1,4 +1,5 @@
 import os
+import time
 
 
 
@@ -19,10 +20,12 @@ except Exception as oe:
 
 
 encoderPipe = open(encoderPipePath, 'w')
-message = 'A' * 10000
+message = 'Hello' * 1000
 
 encoderPipe.write(message)
 encoderPipe.flush()
+
+time.sleep(10)
 encoderPipe.close()
 
 

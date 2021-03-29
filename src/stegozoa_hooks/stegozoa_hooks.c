@@ -181,6 +181,8 @@ static int parseHeader(unsigned char array[], int index) {
     res = (res | array[index + 1]) << 8;
     res = res | array[index];
 
+    fprintf(stderr, "Header: %d\n", res);
+
     return res;
 }
 
@@ -188,7 +190,7 @@ static int flushDecoder(int start) {
 
     int n_bytes;
     n_bytes = write(decoderFd, decoderBuff + start, DIVIDE8(msgBitDec) - start);
-    msgBitDec = MOD8(msgBitDec);
+    msgBitDec = MOD8(msgBitDec); //should be 0
 
     if(n_bytes == -1) {
         error(strerror(errno), "Trying to write to the decoder pipe");
@@ -203,6 +205,7 @@ static int flushDecoder(int start) {
 
 int readQdctLsb(short *qcoeff, int has_y2_block) {
 
+    //optimization idea: loop unroll
     for(int i = 0; i < 384 + has_y2_block * 16; i++) {
         if(qcoeff[i] != 1 && qcoeff[i] != 0 && (!has_y2_block || MOD16(i) != 0 || i > 255)) {
             setBit(decoderBuff, msgBitDec, getLsb(qcoeff[i]));
@@ -210,8 +213,10 @@ int readQdctLsb(short *qcoeff, int has_y2_block) {
 
             if(msgBitDec == 16) {
                 msgDecSize = parseHeader(decoderBuff, 0) + 2;
-                if (msgDecSize == 2) //padding indicating the end of the message in this frame
+                if (msgDecSize == 2) { //padding indicating the end of the message in this frame
+                    msgBitDec = 0;
                     return 1;
+                }
             }
             else if(msgBitDec == msgDecSize * 8 && msgBitDec > 16) {
                 if(flushDecoder(2))
