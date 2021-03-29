@@ -61,7 +61,6 @@ int initialize() {
 
     dontRepeat = 0;
     initialized = 1;
-    fprintf(stderr, "It worked!\n");
     return 0;
 }
 
@@ -76,8 +75,10 @@ static void moveToStart(unsigned char array[], int *bitIndex, int *size) {
     int n_bits = *size - DIVIDE8(*bitIndex);
 
     if(n_bits <= 400 && DIVIDE8(*bitIndex) >= 400) {
+        fprintf(stderr, "before seg fault\n");
         memcpy(array, array + DIVIDE8(*bitIndex), n_bits * sizeof(char));
-
+        fprintf(stderr, "after seg fault\n");
+    
         *size = n_bits;
 
     } else {
