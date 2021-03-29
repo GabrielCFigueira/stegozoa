@@ -40,6 +40,8 @@ static void error(char *errorMsg, char *when) {
 
 int initialize() {
 
+    fprintf(stderr, "Too many\n");
+
     static int dontRepeat = 0;
 
     encoderFd = open(ENCODER_PIPE, O_RDONLY | O_NONBLOCK);
