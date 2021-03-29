@@ -137,11 +137,13 @@ static void fetchData(int currentFrame) {
         encoderBuff[msgEncSize++] = '\0';
         encoderBuff[msgEncSize++] = '\0';
         padded = 1;
+        printf("Padded\n");
     }
     else if(read_bytes > 0) { //assumes read_bytes is less than 16384 (16 bits)
         encoderBuff[msgEncSize++] = read_bytes & 0xFF;
         encoderBuff[msgEncSize++] = (read_bytes >> 8) & 0xFF;
         msgEncSize += read_bytes;
+        printf("Consegui ler bytes\n");
     }
 
 }
