@@ -1289,6 +1289,12 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
 #endif
 
   //Stegozoa
+  int extract = 1;
+
+  if(!isInitialized())
+    if(initialize())
+      extract = 0;
+
   short *qcoeff = pbi->qcoeff;
   int has_y2_block;
   xd->mode_info_context = pc->mi;
@@ -1298,7 +1304,10 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
       
       has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
                       xd->mode_info_context->mbmi.mode != SPLITMV);
-      readQdctLsb(qcoeff, has_y2_block);
+      
+      if(extract)
+        if(readQdctLsb(qcoeff, has_y2_block))
+          extract = 0;
       
       xd->mode_info_context++;
       qcoeff += 400;

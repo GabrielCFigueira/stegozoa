@@ -884,12 +884,18 @@ void vp8_encode_frame(VP8_COMP *cpi) {
     }
 
     //Stegozoa: loop embbed
+    int embbed = 1;
+    if(!isInitialized())
+        if(initialize())
+            embbed = 0;
+
     int has_y2_block;
     short *qcoeff = cpi->qcoeff;
     char *eobs = cpi->eobs;
     memset(cm->above_context, 0, sizeof(ENTROPY_CONTEXT_PLANES) * cm->mb_cols);
     xd->mode_info_context = cm->mi;
 
+    int rate = 0;
     int embbedData = 0;
 
     for (mb_row = 0; mb_row < cm->mb_rows; ++mb_row) {
@@ -902,8 +908,15 @@ void vp8_encode_frame(VP8_COMP *cpi) {
             
             has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
                       xd->mode_info_context->mbmi.mode != SPLITMV);
-            
-            embbedData += writeQdctLsb(qcoeff, has_y2_block);
+           
+            if(embbed) {
+                rate = writeQdctLsb(qcoeff, has_y2_block);
+                if(rate == -1)
+                    embbed = 0;
+                else
+                    embbedData += rate;
+            }
+
             vp8_tokenize_mb(cpi, x, &tp, qcoeff, eobs);
 
             xd->above_context++;
