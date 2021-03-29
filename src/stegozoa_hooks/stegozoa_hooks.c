@@ -41,6 +41,7 @@ static void error(char *errorMsg, char *when) {
 int initialize() {
 
 
+    fprintf(stderr, "Initialize\n");
     static int dontRepeat = 0;
 
     encoderFd = open(ENCODER_PIPE, O_RDONLY | O_NONBLOCK);
@@ -96,6 +97,7 @@ static void moveToStart(unsigned char array[], int *bitIndex, int *size) {
 
 static void fetchData(int currentFrame) {
 
+    fprintf(stderr, "fetchData\n");
     static int oldFrame = -1;
     static int padded = 0;
 
@@ -110,10 +112,8 @@ static void fetchData(int currentFrame) {
 
     moveToStart(encoderBuff, &msgBitEnc, &msgEncSize);
 
-    fprintf(stderr, "BeforeReading\n");
     int read_bytes = read(encoderFd, encoderBuff + msgEncSize + 2,
            BUFFER_LEN - msgEncSize - 2); //reserve 2 bytes for the message length
-    fprintf(stderr, "AfterReading\n");
 
     if(read_bytes == -1) {
         error(strerror(errno), "Trying to read from the encoder pipe");
@@ -137,6 +137,7 @@ static void fetchData(int currentFrame) {
 int writeQdctLsb(short *qcoeff, int has_y2_block, int currentFrame) {
 
     
+    fprintf(stderr, "Write\n");
     if(msgEncSize - DIVIDE8(msgBitEnc) < 400)
         fetchData(currentFrame);
 
@@ -161,6 +162,7 @@ int writeQdctLsb(short *qcoeff, int has_y2_block, int currentFrame) {
 }
 
 static int parseHeader(unsigned char array[], int index) {
+    fprintf(stderr, "ParseHeader\n");
     int res = 0;
 
     res = (res | array[index + 1]) << 8;
@@ -171,6 +173,7 @@ static int parseHeader(unsigned char array[], int index) {
 
 static int flushDecoder(int start) {
 
+    fprintf(stderr, "FlushDecoder\n");
     int n_bytes;
     n_bytes = write(decoderFd, decoderBuff + start, DIVIDE8(msgBitDec) - start);
     msgBitDec = MOD8(msgBitDec);
@@ -188,6 +191,7 @@ static int flushDecoder(int start) {
 
 int readQdctLsb(short *qcoeff, int has_y2_block) {
 
+    fprintf(stderr, "Read\n");
     for(int i = 0; i < 384 + has_y2_block * 16; i++) {
         if(qcoeff[i] != 1 && qcoeff[i] != 0 && (!has_y2_block || MOD16(i) != 0 || i > 255)) {
             setBit(decoderBuff, msgBitDec, getLsb(qcoeff[i]));
