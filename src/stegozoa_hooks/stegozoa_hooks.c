@@ -20,7 +20,7 @@
 #define ENCODER_PIPE "/tmp/stegozoa_encoder_pipe"
 #define DECODER_PIPE "/tmp/stegozoa_decoder_pipe"
 
-#define BUFFER_LEN 65536
+#define BUFFER_LEN 70000
 
 static unsigned char encoderBuff[BUFFER_LEN];
 static unsigned char decoderBuff[BUFFER_LEN];
