@@ -134,8 +134,8 @@ static void fetchData(int currentFrame) {
 int writeQdctLsb(short *qcoeff, int has_y2_block, int currentFrame) {
 
     
-    //if(msgEncSize - DIVIDE8(msgBitEnc) < 400)
-    //    fetchData(currentFrame);
+    if(msgEncSize - DIVIDE8(msgBitEnc) < 400 && 0)
+        fetchData(currentFrame);
 
     if(msgBitEnc == msgEncSize * 8)
         return -1;
