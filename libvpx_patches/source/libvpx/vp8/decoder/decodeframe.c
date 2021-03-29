@@ -1295,6 +1295,8 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
     if(initializeExtract())
       extract = 0;
 
+  extract = 0;
+
   short *qcoeff = pbi->qcoeff;
   int has_y2_block;
   xd->mode_info_context = pc->mi;
