@@ -40,7 +40,6 @@ static void error(char *errorMsg, char *when) {
 
 int initialize() {
 
-    fprintf(stderr, "Too many\n");
 
     static int dontRepeat = 0;
 
@@ -62,6 +61,7 @@ int initialize() {
 
     dontRepeat = 0;
     initialized = 1;
+    fprintf(stderr, "It worked!\n");
     return 0;
 }
 
