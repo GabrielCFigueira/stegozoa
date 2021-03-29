@@ -4,7 +4,9 @@
 int writeQdctLsb(short *qcoeff, int has_y2_block, int currentFrame);
 int readQdctLsb(short *qcoeff, int has_y2_block);
 
-int initialize();
-int isInitialized();
+int embbedInitialize();
+int extractInitialize();
+int isEmbbedInitialized();
+int isExtractInitialized();
 
 #endif //STEGOZOA_HOOKS_H_

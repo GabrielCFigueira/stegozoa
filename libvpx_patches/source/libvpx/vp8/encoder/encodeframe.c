@@ -885,8 +885,8 @@ void vp8_encode_frame(VP8_COMP *cpi) {
 
     //Stegozoa: loop embbed
     int embbed = 1;
-    if(!isInitialized())
-        if(initialize())
+    if(!isEmbbedInitialized())
+        if(embbedInitialize())
             embbed = 0;
 
     int has_y2_block;

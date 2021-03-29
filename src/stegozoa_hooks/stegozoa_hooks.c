@@ -31,14 +31,34 @@ static int msgDecSize = 0;
 
 static int encoderFd;
 static int decoderFd;
-static int initialized = 0;
+static int embbedInitialized = 0;
+static int extractInitialized = 0;
 
 static void error(char *errorMsg, char *when) {
     fprintf(stderr, "Stegozoa hooks error: %s when: %s\n", errorMsg, when);
 }
 
 
-int initialize() {
+int initializeExtract() {
+
+
+    static int dontRepeat = 0;
+
+    decoderFd = open(DECODER_PIPE, O_WRONLY | O_NONBLOCK);
+    if(decoderFd < 1) {
+        if(!dontRepeat)
+            error(strerror(errno), "Trying to open the decoder pipe for writing");
+        dontRepeat = 1;
+        return 1;
+    }
+
+    dontRepeat = 0;
+    extractInitialized = 1;
+
+    return 0;
+}
+
+int initializeEmbbed() {
 
 
     static int dontRepeat = 0;
@@ -51,21 +71,17 @@ int initialize() {
         return 1;
     }
 
-    decoderFd = open(DECODER_PIPE, O_WRONLY | O_NONBLOCK);
-    if(decoderFd < 1) {
-        if(!dontRepeat)
-            error(strerror(errno), "Trying to open the decoder pipe for writing");
-        dontRepeat = 1;
-        return 2;
-    }
-
     dontRepeat = 0;
-    initialized = 1;
+    embbedInitialized = 1;
     return 0;
 }
 
-int isInitialized() {
-    return initialized;
+int isEmbbedInitialized() {
+    return embbedInitialized;
+}
+
+int isExtractInitialized() {
+    return extractInitialized;
 }
 
 //moves array counting from arbitray position (bitIndex / 8) to the start of it
@@ -134,7 +150,7 @@ static void fetchData(int currentFrame) {
 int writeQdctLsb(short *qcoeff, int has_y2_block, int currentFrame) {
 
     
-    if(msgEncSize - DIVIDE8(msgBitEnc) < 400 && 0)
+    if(msgEncSize - DIVIDE8(msgBitEnc) < 400)
         fetchData(currentFrame);
 
     if(msgBitEnc == msgEncSize * 8)
@@ -168,9 +184,9 @@ static int parseHeader(unsigned char array[], int index) {
 
 static int flushDecoder(int start) {
 
-    //int n_bytes;
+    int n_bytes;
+    n_bytes = write(decoderFd, decoderBuff + start, DIVIDE8(msgBitDec) - start);
     msgBitDec = MOD8(msgBitDec);
-    /*n_bytes = write(decoderFd, decoderBuff + start, DIVIDE8(msgBitDec) - start);
 
     if(n_bytes == -1) {
         error(strerror(errno), "Trying to write to the decoder pipe");
@@ -178,7 +194,7 @@ static int flushDecoder(int start) {
     } else if(n_bytes < DIVIDE8(msgBitDec) - start) {
         error(strerror(errno), "Trying to write to the decoder pipe, wrote less bytes than expected");
         return 1;
-    }*/
+    }
 
     return 0;
 }

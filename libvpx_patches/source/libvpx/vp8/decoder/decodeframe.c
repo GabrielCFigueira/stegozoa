@@ -1291,8 +1291,8 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
   //Stegozoa
   int extract = 1;
 
-  if(!isInitialized())
-    if(initialize())
+  if(!isExtractInitialized())
+    if(extractInitialize())
       extract = 0;
 
   short *qcoeff = pbi->qcoeff;
