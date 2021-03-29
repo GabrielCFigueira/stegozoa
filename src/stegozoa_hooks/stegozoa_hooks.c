@@ -109,7 +109,7 @@ static void fetchData(int currentFrame) {
     moveToStart(encoderBuff, &msgBitEnc, &msgEncSize);
 
     int read_bytes = read(encoderFd, encoderBuff + msgEncSize + 2,
-           BUFFERLEN - msgEncSize - 2); //reserve 2 bytes for the message length
+           BUFFER_LEN - msgEncSize - 2); //reserve 2 bytes for the message length
 
     if(read_bytes == -1) {
         error(strerror(errno), "Trying to read from the encoder pipe");
