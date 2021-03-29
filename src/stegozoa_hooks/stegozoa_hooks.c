@@ -191,18 +191,21 @@ static int flushDecoder(int start) {
 
 int readQdctLsb(short *qcoeff, int has_y2_block) {
 
-    fprintf(stderr, "Read\n");
     for(int i = 0; i < 384 + has_y2_block * 16; i++) {
         if(qcoeff[i] != 1 && qcoeff[i] != 0 && (!has_y2_block || MOD16(i) != 0 || i > 255)) {
+            fprintf(stderr, "1\n");
             setBit(decoderBuff, msgBitDec, getLsb(qcoeff[i]));
             msgBitDec++;
+            fprintf(stderr, "2\n");
 
             if(msgBitDec == 16) {
+                fprintf(stderr, "3\n");
                 msgDecSize = parseHeader(decoderBuff, 0) + 2;
                 if (msgDecSize == 2) //padding indicating the end of the message in this frame
                     return 1;
             }
             else if(msgBitDec == msgDecSize * 8 && msgBitDec > 16) {
+                fprintf(stderr, "4\n");
                 if(flushDecoder(2))
                     return 1;
             }
