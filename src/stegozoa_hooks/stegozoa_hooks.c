@@ -168,7 +168,7 @@ static int parseHeader(unsigned char array[], int index) {
 
 static int flushDecoder(int start) {
 
-    int n_bytes;
+    //int n_bytes;
     msgBitDec = MOD8(msgBitDec);
     /*n_bytes = write(decoderFd, decoderBuff + start, DIVIDE8(msgBitDec) - start);
 
