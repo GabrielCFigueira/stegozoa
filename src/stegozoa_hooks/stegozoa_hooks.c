@@ -72,12 +72,11 @@ int isInitialized() {
 static void moveToStart(unsigned char array[], int *bitIndex, int *size) {
 
     
+    fprintf(stderr, "moveToStart\n");
     int n_bits = *size - DIVIDE8(*bitIndex);
 
     if(n_bits <= 400 && DIVIDE8(*bitIndex) >= 400) {
-        fprintf(stderr, "before seg fault\n");
         memcpy(array, array + DIVIDE8(*bitIndex), n_bits * sizeof(char));
-        fprintf(stderr, "after seg fault\n");
     
         *size = n_bits;
 
@@ -111,8 +110,10 @@ static void fetchData(int currentFrame) {
 
     moveToStart(encoderBuff, &msgBitEnc, &msgEncSize);
 
+    fprintf(stderr, "BeforeReading\n");
     int read_bytes = read(encoderFd, encoderBuff + msgEncSize + 2,
            BUFFER_LEN - msgEncSize - 2); //reserve 2 bytes for the message length
+    fprintf(stderr, "AfterReading\n");
 
     if(read_bytes == -1) {
         error(strerror(errno), "Trying to read from the encoder pipe");
