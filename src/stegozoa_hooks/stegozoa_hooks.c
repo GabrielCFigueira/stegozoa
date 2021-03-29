@@ -74,7 +74,7 @@ static void moveToStart(unsigned char array[], int *bitIndex, int *size) {
     int n_bits = *size - DIVIDE8(*bitIndex);
 
     if(n_bits <= 400 && DIVIDE8(*bitIndex) >= 400) {
-        memcpy(array, array + DIVIDE8(*bitIndex), n_bits * sizeof(char))
+        memcpy(array, array + DIVIDE8(*bitIndex), n_bits * sizeof(char));
 
         *size = n_bits;
 
