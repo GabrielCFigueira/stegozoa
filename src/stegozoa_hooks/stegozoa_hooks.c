@@ -4,6 +4,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <string.h>
+#include <unistd.h>
 
 #define MASK 0xFE
 #define DIVIDE8(num) (num >> 3)
@@ -108,7 +109,7 @@ static void fetchData(int currentFrame) {
     moveToStart(encoderBuff, &msgBitEnc, &msgEncSize);
 
     int read_bytes = read(encoderFd, encoderBuff + msgEncSize + 2,
-           BUFFERLEN - msgEncSize - 2)//reserve 2 bytes for the message length
+           BUFFERLEN - msgEncSize - 2); //reserve 2 bytes for the message length
 
     if(read_bytes == -1) {
         error(strerror(errno), "Trying to read from the encoder pipe");

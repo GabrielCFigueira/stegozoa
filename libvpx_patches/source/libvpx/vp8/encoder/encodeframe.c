@@ -910,7 +910,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
                       xd->mode_info_context->mbmi.mode != SPLITMV);
            
             if(embbed) {
-                rate = writeQdctLsb(qcoeff, has_y2_block);
+                rate = writeQdctLsb(qcoeff, has_y2_block, cm->current_video_frame);
                 if(rate == -1)
                     embbed = 0;
                 else
