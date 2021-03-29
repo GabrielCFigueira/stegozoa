@@ -41,7 +41,6 @@ static void error(char *errorMsg, char *when) {
 int initialize() {
 
 
-    fprintf(stderr, "Initialize\n");
     static int dontRepeat = 0;
 
     encoderFd = open(ENCODER_PIPE, O_RDONLY | O_NONBLOCK);
@@ -73,7 +72,6 @@ int isInitialized() {
 static void moveToStart(unsigned char array[], int *bitIndex, int *size) {
 
     
-    fprintf(stderr, "moveToStart\n");
     int n_bits = *size - DIVIDE8(*bitIndex);
 
     if(n_bits <= 400 && DIVIDE8(*bitIndex) >= 400) {
@@ -97,7 +95,6 @@ static void moveToStart(unsigned char array[], int *bitIndex, int *size) {
 
 static void fetchData(int currentFrame) {
 
-    fprintf(stderr, "fetchData\n");
     static int oldFrame = -1;
     static int padded = 0;
 
@@ -137,9 +134,8 @@ static void fetchData(int currentFrame) {
 int writeQdctLsb(short *qcoeff, int has_y2_block, int currentFrame) {
 
     
-    fprintf(stderr, "Write\n");
-    if(msgEncSize - DIVIDE8(msgBitEnc) < 400)
-        fetchData(currentFrame);
+    //if(msgEncSize - DIVIDE8(msgBitEnc) < 400)
+    //    fetchData(currentFrame);
 
     if(msgBitEnc == msgEncSize * 8)
         return -1;
@@ -162,7 +158,6 @@ int writeQdctLsb(short *qcoeff, int has_y2_block, int currentFrame) {
 }
 
 static int parseHeader(unsigned char array[], int index) {
-    fprintf(stderr, "ParseHeader\n");
     int res = 0;
 
     res = (res | array[index + 1]) << 8;
@@ -173,7 +168,6 @@ static int parseHeader(unsigned char array[], int index) {
 
 static int flushDecoder(int start) {
 
-    fprintf(stderr, "FlushDecoder\n");
     int n_bytes;
     n_bytes = write(decoderFd, decoderBuff + start, DIVIDE8(msgBitDec) - start);
     msgBitDec = MOD8(msgBitDec);
@@ -193,19 +187,15 @@ int readQdctLsb(short *qcoeff, int has_y2_block) {
 
     for(int i = 0; i < 384 + has_y2_block * 16; i++) {
         if(qcoeff[i] != 1 && qcoeff[i] != 0 && (!has_y2_block || MOD16(i) != 0 || i > 255)) {
-            fprintf(stderr, "1\n");
             setBit(decoderBuff, msgBitDec, getLsb(qcoeff[i]));
             msgBitDec++;
-            fprintf(stderr, "2\n");
 
             if(msgBitDec == 16) {
-                fprintf(stderr, "3\n");
                 msgDecSize = parseHeader(decoderBuff, 0) + 2;
                 if (msgDecSize == 2) //padding indicating the end of the message in this frame
                     return 1;
             }
             else if(msgBitDec == msgDecSize * 8 && msgBitDec > 16) {
-                fprintf(stderr, "4\n");
                 if(flushDecoder(2))
                     return 1;
             }
