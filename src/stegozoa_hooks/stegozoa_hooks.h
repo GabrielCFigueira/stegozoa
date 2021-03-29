@@ -4,8 +4,8 @@
 int writeQdctLsb(short *qcoeff, int has_y2_block, int currentFrame);
 int readQdctLsb(short *qcoeff, int has_y2_block);
 
-int embbedInitialize();
-int extractInitialize();
+int initializeEmbbed();
+int initializeExtract();
 int isEmbbedInitialized();
 int isExtractInitialized();
 

@@ -1292,7 +1292,7 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
   int extract = 1;
 
   if(!isExtractInitialized())
-    if(extractInitialize())
+    if(initializeExtract())
       extract = 0;
 
   short *qcoeff = pbi->qcoeff;
