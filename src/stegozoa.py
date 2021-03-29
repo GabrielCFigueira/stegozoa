@@ -18,8 +18,8 @@ except Exception as oe:
 
 
 
-encoderPipe = open(encoderPipePath)
-message = 'A' * 10000
+encoderPipe = open(encoderPipePath, 'w')
+message = 'A' * 100
 print(message)
 encoderPipe.write(message)
 encoderPipe.close()
