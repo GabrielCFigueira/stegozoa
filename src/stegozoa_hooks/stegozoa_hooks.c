@@ -169,8 +169,8 @@ static int parseHeader(unsigned char array[], int index) {
 static int flushDecoder(int start) {
 
     int n_bytes;
-    n_bytes = write(decoderFd, decoderBuff + start, DIVIDE8(msgBitDec) - start);
     msgBitDec = MOD8(msgBitDec);
+    /*n_bytes = write(decoderFd, decoderBuff + start, DIVIDE8(msgBitDec) - start);
 
     if(n_bytes == -1) {
         error(strerror(errno), "Trying to write to the decoder pipe");
@@ -178,7 +178,7 @@ static int flushDecoder(int start) {
     } else if(n_bytes < DIVIDE8(msgBitDec) - start) {
         error(strerror(errno), "Trying to write to the decoder pipe, wrote less bytes than expected");
         return 1;
-    }
+    }*/
 
     return 0;
 }
