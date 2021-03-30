@@ -25,7 +25,13 @@ message = 'Hello' * 1000
 encoderPipe.write(message)
 encoderPipe.flush()
 
-time.sleep(10)
+decoderPipe = open(decoderPipePath, 'r')
+
+response = decoderPipe.read()
+print(response)
+
+
+time.sleep(100)
 encoderPipe.close()
 
 
