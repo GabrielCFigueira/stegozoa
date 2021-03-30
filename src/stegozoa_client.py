@@ -20,7 +20,7 @@ except Exception as oe:
 
 
 encoderPipe = open(encoderPipePath, 'w')
-message = 'Hello' * 1000
+message = 'Hello'
 
 encoderPipe.write(message)
 encoderPipe.flush()
@@ -30,9 +30,20 @@ decoderPipe = open(decoderPipePath, 'r')
 response = decoderPipe.read(500)
 print(response)
 
+if response == 'World':
+    message = '!'
+else:
+    message = 'NOOO0'
 
-time.sleep(100)
+
+encoderPipe.write(message)
+encoderPipe.flush()
+
+
 encoderPipe.close()
+decoderPipe.close()
+
+time.sleep(20)
 
 
 

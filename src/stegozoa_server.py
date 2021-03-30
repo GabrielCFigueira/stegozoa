@@ -24,16 +24,16 @@ request = decoderPipe.read(500)
 print(request)
 
 encoderPipe = open(encoderPipePath, 'w')
-message = 'World' * 1000
+message = 'World' 
 
 encoderPipe.write(message)
 encoderPipe.flush()
 
+response = decoderPipe.read(500)
+print(response)
 
-
-time.sleep(100)
 encoderPipe.close()
-
+decoderPipe.close()
 
 
 os.remove(encoderPipePath)
