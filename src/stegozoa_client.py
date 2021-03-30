@@ -27,7 +27,7 @@ encoderPipe.flush()
 
 decoderPipe = open(decoderPipePath, 'r')
 
-response = decoderPipe.read(500)
+response = decoderPipe.read(5)
 print(response)
 
 if response == 'World':
