@@ -27,7 +27,7 @@ encoderPipe.flush()
 
 decoderPipe = open(decoderPipePath, 'r')
 
-response = decoderPipe.read()
+response = decoderPipe.read(500)
 print(response)
 
 

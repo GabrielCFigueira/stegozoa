@@ -20,7 +20,7 @@ except Exception as oe:
 
 decoderPipe = open(decoderPipePath, 'r')
 
-request = decoderPipe.read()
+request = decoderPipe.read(500)
 print(request)
 
 encoderPipe = open(encoderPipePath, 'w')
