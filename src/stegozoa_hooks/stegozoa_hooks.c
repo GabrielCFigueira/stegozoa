@@ -128,8 +128,10 @@ static void fetchData(int currentFrame) {
     int read_bytes = read(encoderFd, encoderBuff + msgEncSize + 2,
            BUFFER_LEN - msgEncSize - 2); //reserve 2 bytes for the message length (header)
 
+    
     if(read_bytes == -1) {
-        error(strerror(errno), "Trying to read from the encoder pipe");
+        if(errno != EAGAIN) // read would block, no need to show this error
+            error(strerror(errno), "Trying to read from the encoder pipe");
         read_bytes = 0;
     }
 
