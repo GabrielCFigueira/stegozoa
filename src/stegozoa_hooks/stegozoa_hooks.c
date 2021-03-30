@@ -29,8 +29,8 @@ static int msgEncSize = 0;
 static int msgBitDec = 0;
 static int msgDecSize = 0;
 
-static FILE *encoderFd;
-static FILE *decoderFd;
+static int encoderFd;
+static int decoderFd;
 static int embbedInitialized = 0;
 static int extractInitialized = 0;
 
@@ -44,7 +44,7 @@ int initializeExtract() {
 
     static int dontRepeat = 0;
 
-    decoderFd = fopen(DECODER_PIPE, O_WRONLY | O_NONBLOCK);
+    decoderFd = open(DECODER_PIPE, O_WRONLY | O_NONBLOCK);
     if(decoderFd < 1) {
         if(!dontRepeat)
             error(strerror(errno), "Trying to open the decoder pipe for writing");
@@ -63,7 +63,7 @@ int initializeEmbbed() {
 
     static int dontRepeat = 0;
 
-    encoderFd = fopen(ENCODER_PIPE, O_RDONLY | O_NONBLOCK);
+    encoderFd = open(ENCODER_PIPE, O_RDONLY | O_NONBLOCK);
     if(encoderFd < 1) {
         if(!dontRepeat)
             error(strerror(errno), "Trying to open the encoder pipe for reading");
@@ -125,11 +125,11 @@ static void fetchData(int currentFrame) {
 
     moveToStart(encoderBuff, &msgBitEnc, &msgEncSize);
 
-    int read_bytes = fread(encoderBuff + msgEncSize + 2, sizeof(char),
-           BUFFER_LEN - msgEncSize - 2, encoderFd); //reserve 2 bytes for the message length (header)
+    int read_bytes = read(encoderFd, encoderBuff + msgEncSize + 2,
+           BUFFER_LEN - msgEncSize - 2); //reserve 2 bytes for the message length (header)
 
-    if(ferror(encoderFd)) {
-        error("Unknown", "Trying to read from the encoder pipe");
+    if(read_bytes == -1) {
+        error(strerror(errno), "Trying to read from the encoder pipe");
         read_bytes = 0;
     }
 
@@ -192,18 +192,16 @@ static int flushDecoder(int start) {
     int bytes_to_write = DIVIDE8(msgBitDec) - start;
     msgBitDec = MOD8(msgBitDec); //should be 0
 
-    n_bytes = fwrite(decoderBuff + start, sizeof(char), bytes_to_write, decoderFd);
+    n_bytes = write(decoderFd, decoderBuff + start, bytes_to_write);
 
-    if(n_bytes < bytes_to_write) {
-        error("Unknown", "Trying to write to the decoder pipe, wrote less bytes than expected");
+    if(n_bytes == -1) {
+        error(strerror(errno), "Trying to write to the decoder pipe");
         return 1;
     }
-
-    if(fflush(decoderFd) == EOF) {
-        error(strerror(errno), "Trying to flush the decoder pipe");
+    else if(n_bytes < bytes_to_write) {
+        error(strerror(errno), "Trying to write to the decoder pipe, wrote less bytes than expected");
         return 1;
     }
-
 
     return 0;
 }
