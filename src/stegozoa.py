@@ -46,7 +46,7 @@ def connect():
     global syn, ack, established, encoderPipe, decoderPipe
 
     if established:
-        print("Connection is already established\n")
+        print("Connection is already established")
         return
     else:
         initialize()
@@ -61,12 +61,12 @@ def connect():
 
     response = decoderPipe.read(4) #hooks header + transport header
     if response[2] == 1 and response[3] == 1:
-        print("Connection established\n")
+        print("Connection established")
         established = True
     else:
-        print("Unexpected syn/ack, connection not established\n")
+        print("Unexpected syn/ack, connection not established")
+        print(response[2])
         print(response[3])
-        print(response[4])
 
 
 def send(string):
