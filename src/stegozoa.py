@@ -38,7 +38,7 @@ def createMessage(syn, ack, string = ''):
     return bytes(chr(syn) + chr(ack) + string, 'ascii')
 
 def parseHeader(header): #header: string with two chars
-    size = ord(header[0]) + ord(header[1]) * 256
+    size = int(header[0]) + int(header[1]) * 256
     return size
 
 
@@ -60,13 +60,11 @@ def connect():
 
 
     response = decoderPipe.read(4) #hooks header + transport header
-    if response[2] == 1 and response[3] == 1:
+    if int(response[2]) == 1 and int(response[3]) == 1:
         print("Connection established")
         established = True
     else:
         print("Unexpected syn/ack, connection not established")
-        print(response[2])
-        print(response[3])
 
 
 def send(string):
@@ -96,7 +94,7 @@ def receive():
     response = decoderPipe.read(size)
 
     # TODO validate ack
-    ack = ord(response[2])
+    ack = int(response[2])
     
     return response[2:]
 
