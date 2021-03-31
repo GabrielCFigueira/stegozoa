@@ -35,7 +35,7 @@ def shutdown():
 
 
 def createMessage(syn, ack, string = ''):
-    return chr(syn) + chr(ack) + string
+    return bytes(chr(syn) + chr(ack) + string, 'ascii')
 
 def parseHeader(header): #header: string with two chars
     size = ord(header[0]) + ord(header[1]) * 256
