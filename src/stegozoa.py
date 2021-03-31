@@ -2,8 +2,18 @@ import os
 import time
 
 
+global encoderPipe, decoderPipe
+decoderPipePath = "/tmp/stegozoa_decoder_pipe"
+encoderPipePath = "/tmp/stegozoa_encoder_pipe"
+
+syn = 0
+ack = 0
+established = False
+
+
 def initialize():
 
+    global encoderPipe, decoderPipe, encoderPipePath, decoderPipePath
     try:
         os.mkfifo(encoderPipePath)
     except Exception as oe: 
@@ -18,16 +28,11 @@ def initialize():
     decoderPipe = open(decoderPipePath, 'r')
 
 def shutdown():
+    global encoderPipePath, decoderPipePath
     os.remove(encoderPipePath)
     os.remove(decoderPipePath)
 
 
-decoderPipePath = "/tmp/stegozoa_decoder_pipe"
-encoderPipePath = "/tmp/stegozoa_encoder_pipe"
-
-syn = 0
-ack = 0
-established = False
 
 def createMessage(syn, ack, string = ''):
     return chr(syn) + chr(ack) + string
@@ -38,7 +43,7 @@ def parseHeader(header): #header: string with two chars
 
 
 def connect():
-    global syn, ack, established
+    global syn, ack, established, encoderPipe, decoderPipe
 
     if established:
         print("Connection is already established\n")
@@ -63,7 +68,7 @@ def connect():
 
 
 def send(string):
-    global syn, ack, established
+    global syn, ack, established, encoderPipe
     if not established:
         raise "Must establish connection first"
     
@@ -76,7 +81,7 @@ def send(string):
 
 
 def receive():
-    global syn, ack, established
+    global syn, ack, established, decoderPipe
     if not established:
         raise "Must establish connection first"
 
