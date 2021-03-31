@@ -35,7 +35,7 @@ def shutdown():
 
 
 def createMessage(syn, ack, string = ''):
-    return bytes(chr(syn) + chr(ack) + string, 'ascii')
+    return bytes(str(syn) + str(ack) + string, 'ascii')
 
 def parseHeader(header): #header: string with two chars
     size = int(header[0]) + int(header[1]) * 256
@@ -91,7 +91,7 @@ def receive():
 
     size = parseHeader(response)
 
-    print("Header size: " + chr(size))
+    print("Header size: " + str(size))
 
 
     response = decoderPipe.read(size)
