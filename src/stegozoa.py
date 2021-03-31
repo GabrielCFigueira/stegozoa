@@ -60,7 +60,7 @@ def connect():
 
 
     response = decoderPipe.read(4) #hooks header + transport header
-    if ord(response[3]) == 1 and ord(response[4]) == 1:
+    if response[3] == 1 and response[4] == 1:
         print("Connection established\n")
         established = True
     else:
