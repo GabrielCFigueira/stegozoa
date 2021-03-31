@@ -55,6 +55,7 @@ def connect():
     ack = 1
     message = createMessage(syn, ack)
 
+    print("connection Message: " + str(message))
     encoderPipe.write(message)
     encoderPipe.flush()
 
@@ -66,7 +67,7 @@ def connect():
     else:
         print("Unexpected syn/ack, connection not established")
         print(response[2])
-        print(repsonse[1])
+        print(response[1])
 
 
 def send(string):
