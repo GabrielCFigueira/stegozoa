@@ -60,13 +60,13 @@ def connect():
 
 
     response = decoderPipe.read(4) #hooks header + transport header
-    if ord(response[0]) == 1 and ord(response[1]) == 1:
+    if ord(response[3]) == 1 and ord(response[4]) == 1:
         print("Connection established\n")
         established = True
     else:
         print("Unexpected syn/ack, connection not established\n")
-        print(response[0])
-        print(response[1])
+        print(response[3])
+        print(response[4])
 
 
 def send(string):
