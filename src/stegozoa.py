@@ -102,6 +102,6 @@ def receive():
 
 if __name__ == "__main__":
     connect()
-    send("Hello")
+    send("Hello, Guten tag mein freudin, wie geht's du")
     print(receive())
 
