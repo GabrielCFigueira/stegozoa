@@ -66,8 +66,7 @@ def connect():
         established = True
     else:
         print("Unexpected syn/ack, connection not established")
-        print(response[2])
-        print(response[3])
+        print(response)
 
 
 def send(string):
