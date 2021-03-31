@@ -55,7 +55,6 @@ def connect():
     ack = 1
     message = createMessage(syn, ack)
 
-    print("connection Message: " + str(message))
     encoderPipe.write(message)
     encoderPipe.flush()
 
@@ -91,6 +90,8 @@ def receive():
     response = decoderPipe.read(2) #hooks header
 
     size = parseHeader(response)
+
+    print("Header size: " + chr(size))
 
 
     response = decoderPipe.read(size)
