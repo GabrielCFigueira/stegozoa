@@ -24,8 +24,8 @@ def initialize():
     except Exception as oe: 
         raise ValueError(oe)
 
-    encoderPipe = open(encoderPipePath, 'w')
-    decoderPipe = open(decoderPipePath, 'r')
+    encoderPipe = open(encoderPipePath, 'wb')
+    decoderPipe = open(decoderPipePath, 'rb')
 
 def shutdown():
     global encoderPipePath, decoderPipePath
@@ -96,7 +96,7 @@ def receive():
     response = decoderPipe.read(size)
 
     # TODO validate ack
-    ack = ord(response[0])
+    ack = ord(response[2])
     
     return response[2:]
 
