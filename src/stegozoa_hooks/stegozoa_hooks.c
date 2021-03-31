@@ -220,7 +220,7 @@ int readQdctLsb(short *qcoeff, int has_y2_block) {
                 }
             }
             else if(msgBitDec == msgDecSize * 8 && msgBitDec > 16) {
-                if(flushDecoder(2))
+                if(flushDecoder(0))
                     return 1;
             }
         }
