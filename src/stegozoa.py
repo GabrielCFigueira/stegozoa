@@ -34,16 +34,16 @@ def shutdown():
 
 
 
-def createMessage(syn, ack, string = ''):
-    return bytes(chr(syn) + chr(ack) + string, 'ascii')
+def createMessage(msgType string = ''):
+    return bytes(chr(0) + string, 'ascii')
 
-def parseHeader(header): #header: string with two chars
+def parseHooksHeader(header): #header: string with two chars
     size = int(header[0]) + int(header[1]) * 256
     return size
 
 
 def connect():
-    global syn, ack, established, encoderPipe, decoderPipe
+    global established, encoderPipe, decoderPipe
 
     if established:
         print("Connection is already established")
@@ -51,16 +51,15 @@ def connect():
     else:
         initialize()
 
-    syn = 1
-    ack = 1
-    message = createMessage(syn, ack)
+    msgType = 0
+    message = createMessage(msgType)
 
     encoderPipe.write(message)
     encoderPipe.flush()
 
 
-    response = decoderPipe.read(4) #hooks header + transport header
-    if int(response[2]) == 1 and int(response[3]) == 1:
+    response = decoderPipe.read(3) #hooks header + msgType header
+    if int(response[2]) == 0:
         print("Connection established")
         established = True
     else:
@@ -69,37 +68,35 @@ def connect():
 
 
 def send(string):
-    global syn, ack, established, encoderPipe
+    global established, encoderPipe
     if not established:
         raise "Must establish connection first"
     
-    syn = (syn + 1) % 256
     #TODO packet fragmentation
-    message = createMessage(syn, ack, string)
+    message = createMessage(1, string)
 
     encoderPipe.write(message)
     encoderPipe.flush()
 
 
 def receive():
-    global syn, ack, established, decoderPipe
+    global established, decoderPipe
     if not established:
         raise "Must establish connection first"
 
     
     response = decoderPipe.read(2) #hooks header
 
-    size = parseHeader(response)
+    size = parseHooksHeader(response)
 
     print("Header size: " + str(size))
 
 
     response = decoderPipe.read(size)
 
-    # TODO validate ack
-    ack = int(response[2])
+    #TODO validate message type
     
-    return response[2:]
+    return response
 
 if __name__ == "__main__":
     connect()
