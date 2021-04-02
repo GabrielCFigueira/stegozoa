@@ -34,8 +34,8 @@ def shutdown():
 
 
 
-def createMessage(msgType string = ''):
-    return bytes(chr(0) + string, 'ascii')
+def createMessage(msgType, string = ''):
+    return bytes(chr(msgType) + string, 'ascii')
 
 def parseHooksHeader(header): #header: string with two chars
     size = int(header[0]) + int(header[1]) * 256
