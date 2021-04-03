@@ -930,7 +930,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
     }
 
     //Stegozoa: embedding capacity
-    printf("Current Frame: %d. Embbed data: %d\n", cpi->common.current_video_frame, embbedData);
+    //printf("Current Frame: %d. Embbed data: %d\n", cpi->common.current_video_frame, embbedData);
     
     
     cpi->tok_count = (unsigned int)(tp - cpi->tok);
