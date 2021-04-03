@@ -753,7 +753,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
     vpx_usec_timer_start(&emr_timer);
 
 #if CONFIG_MULTITHREAD
-    if (vpx_atomic_load_acquire(&cpi->b_multi_threaded)) {
+    if (0 && vpx_atomic_load_acquire(&cpi->b_multi_threaded)) {
       int i;
 
       vp8cx_init_mbrthread_data(cpi, x, cpi->mb_row_ei,
@@ -930,7 +930,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
     }
 
     //Stegozoa: embedding capacity
-    //printf("Current Frame: %d. Embbed data: %d\n", cpi->common.current_video_frame, embbedData);
+    printf("Current Frame: %d. Embbed data: %d\n", cpi->common.current_video_frame, embbedData);
     
     
     cpi->tok_count = (unsigned int)(tp - cpi->tok);
