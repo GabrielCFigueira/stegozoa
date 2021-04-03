@@ -20,7 +20,7 @@
 #define ENCODER_PIPE "/tmp/stegozoa_encoder_pipe"
 #define DECODER_PIPE "/tmp/stegozoa_decoder_pipe"
 
-#define BUFFER_LEN 70000
+#define BUFFER_LEN 10000
 
 static unsigned char encoderBuff[BUFFER_LEN];
 static unsigned char decoderBuff[BUFFER_LEN];
@@ -144,6 +144,7 @@ static void fetchData(int currentFrame) {
         encoderBuff[msgEncSize++] = read_bytes & 0xFF;
         encoderBuff[msgEncSize++] = (read_bytes >> 8) & 0xFF;
         msgEncSize += read_bytes;
+        printf("Consegui ler %d bytes\n", read_bytes);
     }
 
 }
