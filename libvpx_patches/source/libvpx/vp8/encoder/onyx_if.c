@@ -2292,6 +2292,7 @@ void vp8_remove_compressor(VP8_COMP **comp) {
   vpx_free(cpi->consec_zero_last_mvbias);
 
   //Stegozoa
+  printf("encode: %d\n", encoded);
   if(encoded) {
   cpi->qcoeff = NULL;
   short a = cpi->qcoeff[0];
