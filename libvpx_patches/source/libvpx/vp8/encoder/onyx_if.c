@@ -61,6 +61,8 @@
 #include <stdio.h>
 #include <limits.h>
 
+static int encoded = 0;
+
 #if CONFIG_REALTIME_ONLY & CONFIG_ONTHEFLY_BITPACKING
 extern int vp8_update_coef_context(VP8_COMP *cpi);
 #endif
@@ -2290,6 +2292,10 @@ void vp8_remove_compressor(VP8_COMP **comp) {
   vpx_free(cpi->consec_zero_last_mvbias);
 
   //Stegozoa
+  if(encoded) {
+  cpi->qcoeff = NULL;
+  short a = cpi->qcoeff[400];
+  }
   printf("They have removed the compressor\n");
   vpx_free(cpi->qcoeff);
   vpx_free(cpi->eobs);
@@ -3968,6 +3974,7 @@ static void encode_frame_to_data_rate(VP8_COMP *cpi, size_t *size,
 #else
     /* transform / motion compensation build reconstruction frame */
     
+    encoded = 1; 
     //Stegozoa
     clock_t start, end;
     start = clock();
