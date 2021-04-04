@@ -2294,7 +2294,7 @@ void vp8_remove_compressor(VP8_COMP **comp) {
   //Stegozoa
   if(encoded) {
   cpi->qcoeff = NULL;
-  short a = cpi->qcoeff[400];
+  short a = cpi->qcoeff[0];
   }
   printf("They have removed the compressor\n");
   vpx_free(cpi->qcoeff);
