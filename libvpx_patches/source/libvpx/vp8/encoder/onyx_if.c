@@ -2301,7 +2301,7 @@ void vp8_remove_compressor(VP8_COMP **comp) {
       char **strings;
       strings = backtrace_symbols(buffer, nptrs);
       for(int i = 0; i < nptrs; i++)
-          printf("%s\n" strings[i]);
+          printf("%s\n", strings[i]);
       exit(1);
   }
   printf("They have removed the compressor\n");
