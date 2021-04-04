@@ -1790,7 +1790,8 @@ struct VP8_COMP *vp8_create_compressor(VP8_CONFIG *oxcf) {
   init_config(cpi, oxcf);
 
   //Stegozoa:
-  printf("Ah oh they have created another compressor\n");
+  fprintf(stdout, "Ah oh they have created another compressor\n");
+  fflush(stdout);
   CHECK_MEM_ERROR(cpi->qcoeff, vpx_calloc(400 * cm->mb_cols * cm->mb_rows, sizeof(short)));
   CHECK_MEM_ERROR(cpi->eobs, vpx_calloc(25 * cm->mb_cols * cm->mb_rows, sizeof(char)));
 
