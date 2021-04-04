@@ -753,7 +753,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
     vpx_usec_timer_start(&emr_timer);
 
 #if CONFIG_MULTITHREAD
-    if (0 && vpx_atomic_load_acquire(&cpi->b_multi_threaded)) {
+    if (vpx_atomic_load_acquire(&cpi->b_multi_threaded)) {
       int i;
 
       vp8cx_init_mbrthread_data(cpi, x, cpi->mb_row_ei,
@@ -776,7 +776,6 @@ void vp8_encode_frame(VP8_COMP *cpi) {
             //Stegozoa: comment out
             //tp = cpi->tok + mb_row * (cm->mb_cols * 16 * 24);
 #endif
-        printf("Thread alert!\n");
         encode_mb_row(cpi, cm, mb_row, x, xd, &tp, segment_counts, &totalrate);
 
         /* adjust to the next row of mbs */
