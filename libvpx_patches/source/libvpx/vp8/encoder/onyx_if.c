@@ -2290,6 +2290,7 @@ void vp8_remove_compressor(VP8_COMP **comp) {
   vpx_free(cpi->consec_zero_last_mvbias);
 
   //Stegozoa
+  printf("They have removed the compressor\n");
   vpx_free(cpi->qcoeff);
   vpx_free(cpi->eobs);
 
