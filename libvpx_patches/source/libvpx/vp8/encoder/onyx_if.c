@@ -61,10 +61,6 @@
 #include <stdio.h>
 #include <limits.h>
 
-//Stegozoa
-#include <execinfo.h>
-static int encoded = 0;
-
 #if CONFIG_REALTIME_ONLY & CONFIG_ONTHEFLY_BITPACKING
 extern int vp8_update_coef_context(VP8_COMP *cpi);
 #endif
@@ -3974,13 +3970,12 @@ static void encode_frame_to_data_rate(VP8_COMP *cpi, size_t *size,
 #else
     /* transform / motion compensation build reconstruction frame */
     
-    encoded = 1; 
     //Stegozoa
     clock_t start, end;
     start = clock();
     vp8_encode_frame(cpi);
     end = clock();
-    //printf("Time spent encoding the frame %d: %lf\n", cm->current_video_frame, ((double) end - start) / CLOCKS_PER_SEC);
+    printf("Time spent encoding the frame %d: %lf\n", cm->current_video_frame, ((double) end - start) / CLOCKS_PER_SEC);
 
     if (cpi->pass == 0 && cpi->oxcf.end_usage == USAGE_STREAM_FROM_SERVER) {
       if (vp8_drop_encodedframe_overshoot(cpi, Q)) {
