@@ -61,6 +61,8 @@
 #include <stdio.h>
 #include <limits.h>
 
+//Stegozoa
+#include <signal.h>
 static int encoded = 0;
 
 #if CONFIG_REALTIME_ONLY & CONFIG_ONTHEFLY_BITPACKING
