@@ -3975,7 +3975,7 @@ static void encode_frame_to_data_rate(VP8_COMP *cpi, size_t *size,
     start = clock();
     vp8_encode_frame(cpi);
     end = clock();
-    printf("Time spent encoding the frame %d: %lf\n", cm->current_video_frame, ((double) end - start) / CLOCKS_PER_SEC);
+    //printf("Time spent encoding the frame %d: %lf\n", cm->current_video_frame, ((double) end - start) / CLOCKS_PER_SEC);
 
     if (cpi->pass == 0 && cpi->oxcf.end_usage == USAGE_STREAM_FROM_SERVER) {
       if (vp8_drop_encodedframe_overshoot(cpi, Q)) {

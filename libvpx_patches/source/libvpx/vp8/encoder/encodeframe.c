@@ -9,6 +9,8 @@
  */
 ///Stegozoa: include hooks
 #include "stegozoa_hooks/stegozoa_hooks.h"
+//Stegozoa
+#include <time.h>
 ///
 
 
@@ -882,6 +884,9 @@ void vp8_encode_frame(VP8_COMP *cpi) {
       //cpi->tok_count = (unsigned int)(tp - cpi->tok);
     }
 
+    //Stegozoa
+    clock_t start, end;
+    start = clock();
     //Stegozoa: loop embbed
     int embbed = 1;
     if(!isEmbbedInitialized())
@@ -928,6 +933,8 @@ void vp8_encode_frame(VP8_COMP *cpi) {
         xd->mode_info_context++;
     }
 
+    end = clock();
+    printf("Time spent generating tokens %d: %lf\n", cm->current_video_frame, ((double) end - start) / CLOCKS_PER_SEC);
     //Stegozoa: embedding capacity
     fprintf(stdout, "Current Frame: %d. Embbed data: %d\n", cpi->common.current_video_frame, embbedData);
     fflush(stdout);
