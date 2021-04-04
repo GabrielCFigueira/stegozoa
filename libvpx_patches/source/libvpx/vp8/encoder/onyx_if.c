@@ -62,7 +62,7 @@
 #include <limits.h>
 
 //Stegozoa
-#include <signal.h>
+#include <execinfo.h>
 static int encoded = 0;
 
 #if CONFIG_REALTIME_ONLY & CONFIG_ONTHEFLY_BITPACKING
@@ -2296,7 +2296,13 @@ void vp8_remove_compressor(VP8_COMP **comp) {
   //Stegozoa
   printf("encode: %d\n", encoded);
   if(encoded) {
-  kill(getpid(), SIGSEGV);
+      void *buffer[30];
+      int nptrs = backtrace(buffer, 30);
+      char **strings;
+      strings = backtrace_symbols(buffer, nptrs);
+      for(int i = 0; i < nptrs; i++)
+          printf("%s\n" strings[i]);
+      exit(1);
   }
   printf("They have removed the compressor\n");
   vpx_free(cpi->qcoeff);
