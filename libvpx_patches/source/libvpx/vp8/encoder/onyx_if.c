@@ -2294,17 +2294,8 @@ void vp8_remove_compressor(VP8_COMP **comp) {
   vpx_free(cpi->consec_zero_last_mvbias);
 
   //Stegozoa
-  printf("encode: %d\n", encoded);
-  if(encoded) {
-      void *buffer[30];
-      int nptrs = backtrace(buffer, 30);
-      char **strings;
-      strings = backtrace_symbols(buffer, nptrs);
-      for(int i = 0; i < nptrs; i++)
-          printf("%s\n", strings[i]);
-      exit(1);
-  }
-  printf("They have removed the compressor\n");
+  fprintf(stdout, "They have removed the compressor\n");
+  fflush(stdout);
   vpx_free(cpi->qcoeff);
   vpx_free(cpi->eobs);
 
