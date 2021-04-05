@@ -207,6 +207,8 @@ static int flushDecoder(int start) {
 
 int readQdctLsb(short *qcoeff, int has_y2_block) {
 
+    printQdct(qcoeff);
+
     //optimization idea: loop unroll
     for(int i = 0; i < 384 + has_y2_block * 16; i++) {
         if(qcoeff[i] != 1 && qcoeff[i] != 0 && (!has_y2_block || MOD16(i) != 0 || i > 255)) {
