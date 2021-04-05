@@ -1236,7 +1236,7 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
   if (vpx_atomic_load_acquire(&pbi->b_multithreaded_rd) &&
       pc->multi_token_partition != ONE_PARTITION) {
     unsigned int thread;
-    fprintf(stderr, "Decoder threads!\n");
+    fprintf(stdout, "Decoder threads!\n");
     if (vp8mt_decode_mb_rows(pbi, xd)) {
       vp8_decoder_remove_threads(pbi);
       pbi->restart_threads = 1;
@@ -1252,8 +1252,6 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
     decode_mb_rows(pbi);
     corrupt_tokens |= xd->corrupted;
   }
-
-  //Stegozoa
 
   /* Collect information about decoder corruption. */
   /* 1. Check first boolean decoder for errors. */
