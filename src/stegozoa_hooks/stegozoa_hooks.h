@@ -9,6 +9,5 @@ int initializeExtract();
 int isEmbbedInitialized();
 int isExtractInitialized();
 
-void printQdct(short *qcoeff);
 
 #endif //STEGOZOA_HOOKS_H_
