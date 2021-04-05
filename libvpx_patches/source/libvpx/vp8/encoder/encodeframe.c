@@ -921,7 +921,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
                     embbedData += rate;
             }
 
-            vp8_tokenize_mb(cpi, x, &tp, qcoeff, eobs);
+            //vp8_tokenize_mb(cpi, x, &tp, qcoeff, eobs);
 
             xd->above_context++;
             xd->mode_info_context++;
