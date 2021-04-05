@@ -1288,7 +1288,8 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
 
   //Stegozoa
   int extract = 1;
-
+   
+  fprintf(stdout, "Extracting message from frame %d\n", pc->current_video_frame);
   if(!isExtractInitialized())
     if(initializeExtract())
       extract = 0;
