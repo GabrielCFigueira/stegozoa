@@ -922,8 +922,8 @@ void vp8_encode_frame(VP8_COMP *cpi) {
             }
 
             for(int i= 0; i < 25; ++i)
-                fprintf("EOBS: %d\n", eobs[i]);
-
+                fprintf(stdout, "EOBS: %d\n", eobs[i]);
+            fflush(stdout);
             vp8_tokenize_mb(cpi, x, &tp, qcoeff, eobs);
 
             xd->above_context++;
