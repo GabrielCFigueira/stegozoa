@@ -912,7 +912,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
         vp8_zero(cm->left_context);    
 
         //multi partition
-        cpi->tplist[mb_row].start = *tp;
+        cpi->tplist[mb_row].start = tp;
         
         for (int mb_col = 0; mb_col < cm->mb_cols; ++mb_col) {
             
@@ -936,7 +936,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
             eobs += 25;
         }
 
-        cpi->tplist[mb_row].stop = *tp;
+        cpi->tplist[mb_row].stop = tp;
         xd->mode_info_context++;
     }
 
