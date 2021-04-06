@@ -885,7 +885,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
     }
 
     //Stegozoa
-    static oldFrame = -1;
+    static int oldFrame = -1;
     int embbed = 1;
     
     if(oldFrame == cm->current_video_frame)
