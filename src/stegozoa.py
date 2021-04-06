@@ -74,7 +74,7 @@ def send(byteArray):
         raise "Must establish connection first"
     
     #TODO validate packet size (cant be bigger than 10000?)
-    message = createMessage(1, binArray)
+    message = createMessage(1, byteArray)
 
     encoderPipe.write(message)
     encoderPipe.flush()
