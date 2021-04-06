@@ -89,6 +89,8 @@ def connect():
     encoderPipe.write(message)
     encoderPipe.flush()
 
+    established = True
+
 def send(byteArray):
     global established, encoderPipe
     if not established:
