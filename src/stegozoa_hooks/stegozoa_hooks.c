@@ -217,12 +217,10 @@ int readQdctLsb(short *qcoeff, int has_y2_block) {
                 msgDecSize = parseHeader(decoderBuff, 0) + 2;
                 if (msgDecSize == 2) { //padding indicating the end of the message in this frame
                     msgBitDec = 0;
-                    fprintf(stdout, "Empty message received\n");
                     return 1;
                 }
             }
             else if(msgBitDec == msgDecSize * 8 && msgBitDec > 16) {
-                fprintf(stdout, "Message received with %d size\n", msgDecSize);
                 if(flushDecoder(0))
                     return 1;
             }
