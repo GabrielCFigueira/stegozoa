@@ -885,14 +885,21 @@ void vp8_encode_frame(VP8_COMP *cpi) {
     }
 
     //Stegozoa
-    clock_t start, end;
-    start = clock();
-    //Stegozoa: loop embbed
+    static oldFrame = -1;
     int embbed = 1;
-    if(!isEmbbedInitialized())
+    
+    if(oldFrame == cm->current_video_frame)
+        embbed = 0;
+    //Stegozoa: loop embbed
+    else if(!isEmbbedInitialized())
         if(initializeEmbbed())
             embbed = 0;
 
+    oldFrame = cm->current_video_frame;
+
+
+    clock_t start, end;
+    start = clock();
     int has_y2_block;
     short *qcoeff = cpi->qcoeff;
     char *eobs = cpi->eobs;
