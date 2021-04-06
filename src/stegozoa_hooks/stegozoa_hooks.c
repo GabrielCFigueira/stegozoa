@@ -141,8 +141,6 @@ static void fetchData(int currentFrame) {
         padded = 1;
     }
     else if(read_bytes > 0) { //assumes read_bytes is less than 10000 (16 bits)
-        int size = encoderBuff[msgEncSize] + (encoderBuff[msgEncSize + 1] << 8);
-     
         msgEncSize += read_bytes;
         printf("Consegui ler %d bytes\n", read_bytes);
     }
