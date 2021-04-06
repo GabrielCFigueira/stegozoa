@@ -20,7 +20,7 @@
 #define ENCODER_PIPE "/tmp/stegozoa_encoder_pipe"
 #define DECODER_PIPE "/tmp/stegozoa_decoder_pipe"
 
-#define BUFFER_LEN 10000
+#define BUFFER_LEN 10500
 
 static unsigned char encoderBuff[BUFFER_LEN];
 static unsigned char decoderBuff[BUFFER_LEN];
@@ -125,8 +125,8 @@ static void fetchData(int currentFrame) {
 
     moveToStart(encoderBuff, &msgBitEnc, &msgEncSize);
 
-    int read_bytes = read(encoderFd, encoderBuff + msgEncSize + 2,
-           BUFFER_LEN - msgEncSize - 2); //reserve 2 bytes for the message length (header)
+    int read_bytes = read(encoderFd, encoderBuff + msgEncSize,
+           BUFFER_LEN - msgEncSize);
 
     
     if(read_bytes == -1) {
@@ -140,9 +140,11 @@ static void fetchData(int currentFrame) {
         encoderBuff[msgEncSize++] = '\0';
         padded = 1;
     }
-    else if(read_bytes > 0) { //assumes read_bytes is less than 16384 (16 bits)
-        encoderBuff[msgEncSize++] = read_bytes & 0xFF;
-        encoderBuff[msgEncSize++] = (read_bytes >> 8) & 0xFF;
+    else if(read_bytes > 0) { //assumes read_bytes is less than 10000 (16 bits)
+        int size = encoderBuff[msgEncSize] + (encoderBuff[msgEncSize + 1] << 8);
+        if(size != read_bytes - 2)
+            error("Unexpected number of bytes read", "Trying to read from the encoder pipe");
+     
         msgEncSize += read_bytes;
         printf("Consegui ler %d bytes\n", read_bytes);
     }

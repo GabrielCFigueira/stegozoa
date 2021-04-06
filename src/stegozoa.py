@@ -6,8 +6,6 @@ global encoderPipe, decoderPipe
 decoderPipePath = "/tmp/stegozoa_decoder_pipe"
 encoderPipePath = "/tmp/stegozoa_encoder_pipe"
 
-syn = 0
-ack = 0
 established = False
 
 
@@ -34,11 +32,14 @@ def shutdown():
 
 
 
-def createMessage(msgType, string = ''):
-    return bytes(chr(msgType) + string, 'ascii')
+def createMessage(msgType, byteArray = ''):
+    size = sizeof(string)
+    l1 = bytes([size && 0xff])
+    l2 = bytes([(size && 0xff00) >> 8])
+    return l1 + l2 + bytes([msgType]) + byteArray
 
 def parseHooksHeader(header): #header: string with two chars
-    size = int(header[0]) + int(header[1]) * 256
+    size = int(header[0]) + (int(header[1]) << 8)
     return size
 
 
@@ -63,17 +64,17 @@ def connect():
         print("Connection established")
         established = True
     else:
-        print("Unexpected syn/ack, connection not established")
+        print("Unexpected message, connection not established")
         print(response)
 
 
-def send(string):
+def send(byteArray):
     global established, encoderPipe
     if not established:
         raise "Must establish connection first"
     
-    #TODO packet fragmentation
-    message = createMessage(1, string)
+    #TODO validate packet size (cant be bigger than 10000?)
+    message = createMessage(1, binArray)
 
     encoderPipe.write(message)
     encoderPipe.flush()
