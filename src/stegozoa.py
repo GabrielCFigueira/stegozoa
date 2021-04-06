@@ -102,6 +102,6 @@ def receive():
 if __name__ == "__main__":
     connect()
     message = "Why are we still here... just to suffer"
-    send(message * 100)
+    send(bytes(message * 100, 'utf-8'))
     print(receive())
 
