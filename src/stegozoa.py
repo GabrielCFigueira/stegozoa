@@ -34,8 +34,8 @@ def shutdown():
 
 def createMessage(msgType, byteArray = ''):
     size = sizeof(string)
-    l1 = bytes([size && 0xff])
-    l2 = bytes([(size && 0xff00) >> 8])
+    l1 = bytes([size & 0xff])
+    l2 = bytes([(size & 0xff00) >> 8])
     return l1 + l2 + bytes([msgType]) + byteArray
 
 def parseHooksHeader(header): #header: string with two chars
