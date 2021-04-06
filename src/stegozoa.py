@@ -1,12 +1,44 @@
 import os
 import time
-
+import threading
+import queue
 
 global encoderPipe, decoderPipe
 decoderPipePath = "/tmp/stegozoa_decoder_pipe"
 encoderPipePath = "/tmp/stegozoa_encoder_pipe"
 
 established = False
+
+messageQueue = queue.Queue()
+
+
+def parseHooksHeader(header): #header: string with two chars
+    size = int(header[0]) + (int(header[1]) << 8)
+    return size
+
+
+def receiveMessage():
+    global messageQueue, established, decoderPipe
+    while True:
+
+        header = decoderPipe.read(2) #size header
+        size = parseHooksHeader(header)
+        
+        body = decoderPipe.read(size) #message body
+        msgType = int(body[0]) #message type
+
+        message = body[1:] #payload
+        print("Header size: " + str(size))
+        
+        if msgType == 0:
+            pass #register new user
+
+        elif not established:
+            continue
+
+        elif msgType == 1:
+            messageQueue.put(message)
+            
 
 
 def initialize():
@@ -25,6 +57,9 @@ def initialize():
     encoderPipe = open(encoderPipePath, 'wb')
     decoderPipe = open(decoderPipePath, 'rb')
 
+    thread = threading.Thread(target=receiveMessage, args=())
+    thread.start()
+
 def shutdown():
     global encoderPipePath, decoderPipePath
     os.remove(encoderPipePath)
@@ -37,10 +72,6 @@ def createMessage(msgType, byteArray = bytes(0)):
     l1 = bytes([size & 0xff])
     l2 = bytes([(size & 0xff00) >> 8])
     return l1 + l2 + bytes([msgType]) + byteArray
-
-def parseHooksHeader(header): #header: string with two chars
-    size = int(header[0]) + (int(header[1]) << 8)
-    return size
 
 
 def connect():
@@ -58,16 +89,6 @@ def connect():
     encoderPipe.write(message)
     encoderPipe.flush()
 
-
-    response = decoderPipe.read(3) #hooks header + msgType header
-    if int(response[2]) == 0:
-        print("Connection established")
-        established = True
-    else:
-        print("Unexpected message, connection not established")
-        print(response)
-
-
 def send(byteArray):
     global established, encoderPipe
     if not established:
@@ -81,21 +102,12 @@ def send(byteArray):
 
 
 def receive():
-    global established, decoderPipe
+    global established, messageQueue
     if not established:
         raise "Must establish connection first"
 
-    
-    response = decoderPipe.read(2) #hooks header
+    response = messageQueue.get()
 
-    size = parseHooksHeader(response)
-
-    print("Header size: " + str(size))
-
-
-    response = decoderPipe.read(size)
-
-    #TODO validate message type
     
     return response
 

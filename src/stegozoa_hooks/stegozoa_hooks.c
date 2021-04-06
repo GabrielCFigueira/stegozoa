@@ -142,8 +142,6 @@ static void fetchData(int currentFrame) {
     }
     else if(read_bytes > 0) { //assumes read_bytes is less than 10000 (16 bits)
         int size = encoderBuff[msgEncSize] + (encoderBuff[msgEncSize + 1] << 8);
-        if(size != read_bytes - 2)
-            error("Unexpected number of bytes read", "Trying to read from the encoder pipe");
      
         msgEncSize += read_bytes;
         printf("Consegui ler %d bytes\n", read_bytes);
