@@ -911,6 +911,9 @@ void vp8_encode_frame(VP8_COMP *cpi) {
         xd->above_context = cm->above_context;
         vp8_zero(cm->left_context);    
 
+        //multi partition
+        cpi->tplist[mb_row].start = *tp;
+        
         for (int mb_col = 0; mb_col < cm->mb_cols; ++mb_col) {
             
             has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
@@ -933,6 +936,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
             eobs += 25;
         }
 
+        cpi->tplist[mb_row].stop = *tp;
         xd->mode_info_context++;
     }
 
