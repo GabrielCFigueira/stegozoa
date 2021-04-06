@@ -32,7 +32,7 @@ def shutdown():
 
 
 
-def createMessage(msgType, byteArray = ''):
+def createMessage(msgType, byteArray = bytes(0)):
     size = len(byteArray)
     l1 = bytes([size & 0xff])
     l2 = bytes([(size & 0xff00) >> 8])
