@@ -780,6 +780,9 @@ void vp8_encode_frame(VP8_COMP *cpi) {
 #endif
         encode_mb_row(cpi, cm, mb_row, x, xd, &tp, segment_counts, &totalrate);
 
+        //Stegozoa
+        fprintf(stdout, "Thread alert\n");
+        fflush(stdout);
         /* adjust to the next row of mbs */
         x->src.y_buffer +=
             16 * x->src.y_stride * (cpi->encoding_thread_count + 1) -
@@ -921,9 +924,6 @@ void vp8_encode_frame(VP8_COMP *cpi) {
                     embbedData += rate;
             }
         
-            for(int i=0 ; i<25; i++)
-                eobs[i] = 0;
-
             vp8_tokenize_mb(cpi, x, &tp, qcoeff, eobs);
 
             xd->above_context++;
@@ -939,8 +939,8 @@ void vp8_encode_frame(VP8_COMP *cpi) {
     end = clock();
     //printf("Time spent generating tokens %d: %lf\n", cm->current_video_frame, ((double) end - start) / CLOCKS_PER_SEC);
     //Stegozoa: embedding capacity
-    fprintf(stdout, "Current Frame: %d. Embbed data: %d\n", cpi->common.current_video_frame, embbedData);
-    fflush(stdout);
+    //fprintf(stdout, "Current Frame: %d. Embbed data: %d\n", cpi->common.current_video_frame, embbedData);
+    //fflush(stdout);
     
     
     cpi->tok_count = (unsigned int)(tp - cpi->tok);
