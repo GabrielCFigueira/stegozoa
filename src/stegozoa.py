@@ -17,7 +17,7 @@ def createMessage(msgType, sender, receiver, byteArray = bytes(0)):
     size = len(byteArray) + 3
     l1 = bytes([size & 0xff])
     l2 = bytes([(size & 0xff00) >> 8])
-    return l1 + l2 + bytes([msgType]) + sender + receiver + byteArray
+    return l1 + l2 + bytes([msgType]) + bytes([sender]) + bytes([receiver]) + byteArray
 
 def parseHooksHeader(header): #header: string with two chars
     size = int(header[0]) + (int(header[1]) << 8)
@@ -129,7 +129,7 @@ def peers():
 
 
 if __name__ == "__main__":
-    if len(sys.argv) > 0:
+    if len(sys.argv) > 1:
         newId = int(sys.argv[1])
     else:
         newId = 1
