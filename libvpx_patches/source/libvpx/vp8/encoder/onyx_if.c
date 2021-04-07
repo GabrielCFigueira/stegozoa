@@ -3222,7 +3222,7 @@ static void encode_frame_to_data_rate(VP8_COMP *cpi, size_t *size,
                                       unsigned char *dest,
                                       unsigned char *dest_end,
                                       unsigned int *frame_flags) {
-  fprintf(stdout, "Calling encode_frame_to_data_rate\n");
+  fprintf(stdout, "Calling encode_frame_to_data_rate %d\n", cm->current_video_frame);
   fflush(stdout);
   int Q;
   int frame_over_shoot_limit;
@@ -3971,7 +3971,7 @@ static void encode_frame_to_data_rate(VP8_COMP *cpi, size_t *size,
     //Stegozoa
     clock_t start, end;
     start = clock();
-    fprintf(stdout, "Calling vp8_encode_frame\n");
+    fprintf(stdout, "Calling vp8_encode_frame %d\n", cm->current_video_frame);
     fflush(stdout);
     vp8_encode_frame(cpi);
     end = clock();
@@ -4846,7 +4846,7 @@ int vp8_get_compressed_data(VP8_COMP *cpi, unsigned int *frame_flags,
                             unsigned char *dest_end, int64_t *time_stamp,
                             int64_t *time_end, int flush) {
   
-  fprintf(stdout, "Calling vp8_get_compressed_data\n");
+  fprintf(stdout, "Calling vp8_get_compressed_data %d\n", cm->current_video_frame);
   fflush(stdout);
   
   VP8_COMMON *cm;
