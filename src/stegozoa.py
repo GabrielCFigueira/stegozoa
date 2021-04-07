@@ -31,7 +31,6 @@ def receiveMessage():
         size = parseHooksHeader(header)
         
         body = decoderPipe.read(size) #message body
-        print(body)
         msgType = body[0] #message type
         sender = body[1] #sender
         receiver = body[2] #receiver
