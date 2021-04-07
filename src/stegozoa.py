@@ -2,42 +2,51 @@ import os
 import time
 import threading
 import queue
+import sys
 
-global encoderPipe, decoderPipe
 decoderPipePath = "/tmp/stegozoa_decoder_pipe"
 encoderPipePath = "/tmp/stegozoa_encoder_pipe"
-
 established = False
-
 messageQueue = queue.Queue()
+peers = []
+myId = 255
 
+
+
+def createMessage(msgType, sender, receiver, byteArray = bytes(0)):
+    size = len(byteArray) + 3
+    l1 = bytes([size & 0xff])
+    l2 = bytes([(size & 0xff00) >> 8])
+    return l1 + l2 + bytes([msgType]) + sender + receiver + byteArray
 
 def parseHooksHeader(header): #header: string with two chars
     size = int(header[0]) + (int(header[1]) << 8)
     return size
 
-
 def receiveMessage():
-    global messageQueue, established, decoderPipe
+    global messageQueue, established, decoderPipe, peers
     while True:
 
         header = decoderPipe.read(2) #size header
         size = parseHooksHeader(header)
         
         body = decoderPipe.read(size) #message body
-        msgType = int(body[0]) #message type
+        msgType = ord(body[0]) #message type
+        sender = ord(body[1]) #sender
+        receiver = ord(body[2]) #receiver
 
-        message = body[1:] #payload
+        message = body[3:] #payload
         print("Header size: " + str(size))
         
         if msgType == 0:
-            pass #register new user
+            peers += [sender]
 
         elif not established:
             continue
 
         elif msgType == 1:
-            messageQueue.put(message)
+            if receiver == myId:
+                messageQueue.put(message)
             
 
 
@@ -66,16 +75,10 @@ def shutdown():
     os.remove(decoderPipePath)
 
 
+#---------------------API begins here---------------------------------
 
-def createMessage(msgType, byteArray = bytes(0)):
-    size = len(byteArray) + 1
-    l1 = bytes([size & 0xff])
-    l2 = bytes([(size & 0xff00) >> 8])
-    return l1 + l2 + bytes([msgType]) + byteArray
-
-
-def connect():
-    global established, encoderPipe, decoderPipe
+def connect(newId):
+    global established, encoderPipe, decoderPipe, myId
 
     if established:
         print("Connection is already established")
@@ -83,21 +86,27 @@ def connect():
     else:
         initialize()
 
+    if not isinstance(newId, int) or newId < 0 or newId > 255:
+        print("Invalid Id")
+        return
+
+    myId = newId
+
     msgType = 0
-    message = createMessage(msgType)
+    message = createMessage(msgType, myId, 255) # 0xff = broadcast address
 
     encoderPipe.write(message)
     encoderPipe.flush()
 
     established = True
 
-def send(byteArray):
+def send(byteArray, receiver):
     global established, encoderPipe
     if not established:
         raise "Must establish connection first"
     
     #TODO validate packet size (cant be bigger than 10000?)
-    message = createMessage(1, byteArray)
+    message = createMessage(1, myId, receiver, byteArray)
 
     encoderPipe.write(message)
     encoderPipe.flush()
@@ -110,11 +119,21 @@ def receive():
 
     response = messageQueue.get()
 
-    
     return response
 
+
+def peers():
+    global peers
+    return peers
+
+
+
 if __name__ == "__main__":
-    connect()
+    if len(sys.argv) > 0:
+        newId = int(sys.argv[1])
+    else:
+        newId = 1
+    connect(newId)
     message = "Why are we still here... just to suffer"
     send(bytes(message * 100, 'utf-8'))
     print(receive())
