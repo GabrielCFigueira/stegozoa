@@ -32,9 +32,9 @@ def receiveMessage():
         
         body = decoderPipe.read(size) #message body
         print(body)
-        msgType = ord(body[0]) #message type
-        sender = ord(body[1]) #sender
-        receiver = ord(body[2]) #receiver
+        msgType = body[0] #message type
+        sender = body[1] #sender
+        receiver = body[2] #receiver
 
         message = body[3:] #payload
         print("Header size: " + str(size))
@@ -123,7 +123,7 @@ def receive():
     return response
 
 
-def peers():
+def getPeers():
     global peers
     return peers
 
@@ -136,6 +136,6 @@ if __name__ == "__main__":
         newId = 1
     connect(newId)
     message = "Why are we still here... just to suffer"
-    send(bytes(message * 100, 'utf-8'), peers()[0])
+    send(bytes(message * 100, 'utf-8'), getPeers()[0])
     print(receive())
 
