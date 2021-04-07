@@ -31,6 +31,7 @@ def receiveMessage():
         size = parseHooksHeader(header)
         
         body = decoderPipe.read(size) #message body
+        print(body)
         msgType = ord(body[0]) #message type
         sender = ord(body[1]) #sender
         receiver = ord(body[2]) #receiver
@@ -135,6 +136,6 @@ if __name__ == "__main__":
         newId = 1
     connect(newId)
     message = "Why are we still here... just to suffer"
-    send(bytes(message * 100, 'utf-8'))
+    send(bytes(message * 100, 'utf-8'), peers()[0])
     print(receive())
 
