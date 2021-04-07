@@ -4846,7 +4846,7 @@ int vp8_get_compressed_data(VP8_COMP *cpi, unsigned int *frame_flags,
                             unsigned char *dest_end, int64_t *time_stamp,
                             int64_t *time_end, int flush) {
   
-  ffprintf(stdout, "Calling vp8_get_compressed_data\n");
+  fprintf(stdout, "Calling vp8_get_compressed_data\n");
   fflush(stdout);
   
   VP8_COMMON *cm;
