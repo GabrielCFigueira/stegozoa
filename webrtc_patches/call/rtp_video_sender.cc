@@ -595,6 +595,10 @@ EncodedImageCallback::Result RtpVideoSender::OnEncodedImage(
   return Result(Result::OK, rtp_timestamp);
 }
 
+//Stegozoa
+void RtpVideoSender::getSsrcs() override {
+    std::cout << rtp_config.ssrcs << std::endl;
+}
 
 void RtpVideoSender::OnBitrateAllocationUpdated(
     const VideoBitrateAllocation& bitrate) {
