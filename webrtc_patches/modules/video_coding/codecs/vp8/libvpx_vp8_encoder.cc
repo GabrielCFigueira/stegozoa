@@ -895,6 +895,7 @@ int LibvpxVp8Encoder::Encode(const VideoFrame& frame,
     return WEBRTC_VIDEO_CODEC_UNINITIALIZED;
 
   //Stegozoa
+  std::cout << typeid(encoded_complete_callback_) << std::endl;
   encoded_complete_callback_->getSsrcs();
 
   bool key_frame_requested = false;
