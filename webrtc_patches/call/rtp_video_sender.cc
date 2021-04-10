@@ -597,7 +597,7 @@ EncodedImageCallback::Result RtpVideoSender::OnEncodedImage(
 
 //Stegozoa
 void RtpVideoSender::getSsrcs() {
-  std:cout << "Lets see!" << std:endl;
+  std::cout << "Lets see!" << std::endl;
 
 }
 
