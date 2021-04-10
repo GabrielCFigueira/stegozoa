@@ -160,7 +160,7 @@ class RtpVideoSender : public RtpVideoSenderInterface,
       RTC_LOCKS_EXCLUDED(mutex_) override;
 
   //Stegozoa
-  void RtpVideoSender::getSsrcs() override {
+  void getSsrcs() override {
     std::cout << "Lets see!" << std::endl;
   }
 
