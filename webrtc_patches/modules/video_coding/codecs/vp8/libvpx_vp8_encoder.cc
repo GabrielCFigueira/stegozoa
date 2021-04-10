@@ -900,7 +900,7 @@ int LibvpxVp8Encoder::Encode(const VideoFrame& frame,
   //Stegozoa
   encoded_complete_callback_->getSsrcs();
 
-  RtpVideoSender *rvs = dynamic_cast<RtpVideoSender*>(encoded_complete_callback_);
+  RtpVideoSender *rvs = static_cast<RtpVideoSender*>(encoded_complete_callback_);
   rvs->getSsrcs();
 
   bool key_frame_requested = false;
