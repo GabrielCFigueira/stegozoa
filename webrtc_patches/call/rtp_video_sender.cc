@@ -596,7 +596,7 @@ EncodedImageCallback::Result RtpVideoSender::OnEncodedImage(
 }
 
 //Stegozoa
-void RtpVideoSender::getSsrcs() override {
+void RtpVideoSender::getSsrcs() {
     std::cout << rtp_config.ssrcs << std::endl;
 }
 
