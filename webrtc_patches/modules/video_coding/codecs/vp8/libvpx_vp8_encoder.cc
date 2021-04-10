@@ -895,8 +895,10 @@ int LibvpxVp8Encoder::Encode(const VideoFrame& frame,
     return WEBRTC_VIDEO_CODEC_UNINITIALIZED;
 
   //Stegozoa
-  std::cout << typeid(encoded_complete_callback_) << std::endl;
   encoded_complete_callback_->getSsrcs();
+
+  RtpVideoSender *rvs = dynamic_cast<RtpVideoSender*>(encoded_complete_callback_);
+  rvs->getSsrcs();
 
   bool key_frame_requested = false;
   for (size_t i = 0; i < key_frame_request_.size() && i < send_stream_.size();
