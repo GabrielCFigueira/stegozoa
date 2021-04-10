@@ -597,7 +597,7 @@ EncodedImageCallback::Result RtpVideoSender::OnEncodedImage(
 
 //Stegozoa
 void RtpVideoSender::getSsrcs() {
-    std::cout << rtp_config.ssrcs << std::endl;
+    std::cout << rtp_config_.ssrcs << std::endl;
 }
 
 void RtpVideoSender::OnBitrateAllocationUpdated(
