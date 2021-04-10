@@ -895,7 +895,7 @@ int LibvpxVp8Encoder::Encode(const VideoFrame& frame,
     return WEBRTC_VIDEO_CODEC_UNINITIALIZED;
 
   //Stegozoa
-  encoded_complete_callback.getSsrcs();
+  encoded_complete_callback_->getSsrcs();
 
   bool key_frame_requested = false;
   for (size_t i = 0; i < key_frame_request_.size() && i < send_stream_.size();
