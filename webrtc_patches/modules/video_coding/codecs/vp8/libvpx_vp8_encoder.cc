@@ -10,6 +10,9 @@
 
 #include "modules/video_coding/codecs/vp8/libvpx_vp8_encoder.h"
 
+//Stegozoa
+#include "call/rtp_video_sender.h"
+
 #include <assert.h>
 #include <string.h>
 
