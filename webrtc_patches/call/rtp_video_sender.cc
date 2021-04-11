@@ -523,8 +523,8 @@ EncodedImageCallback::Result RtpVideoSender::OnEncodedImage(
     const CodecSpecificInfo* codec_specific_info) {
   	
 	//Stegozoa
-  	//RtpVideoSender *rvs = static_cast<RtpVideoSender*>(encoded_complete_callback_);
-  	this->RtpVideoSender::getSsrcs();
+  	RtpVideoSender *rvs = static_cast<RtpVideoSender*>(this);
+  	rvs->RtpVideoSender::getSsrcs();
 
   fec_controller_->UpdateWithEncodedData(encoded_image.size(),
                                          encoded_image._frameType);
