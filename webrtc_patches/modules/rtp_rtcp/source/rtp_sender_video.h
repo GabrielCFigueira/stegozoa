@@ -142,7 +142,7 @@ class RTPSenderVideo {
   uint32_t PacketizationOverheadBps() const;
 
   //Stegozoa
-  RtpSender* RtpSender() { return rtp_sender_; }
+  RTPSender* RTPSender() { return rtp_sender_; }
 
  protected:
   static uint8_t GetTemporalId(const RTPVideoHeader& header);
