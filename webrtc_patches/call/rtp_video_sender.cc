@@ -530,8 +530,8 @@ EncodedImageCallback::Result RtpVideoSender::OnEncodedImage(
     return Result(Result::ERROR_SEND_FAILED);
 
   //Stegozoa
-  RtpVideoSender *rvs = static_cast<RtpVideoSender*>(encoded_complete_callback_);
-  rvs->RtpVideoSender::getSsrcs();
+  //RtpVideoSender *rvs = static_cast<RtpVideoSender*>(encoded_complete_callback_);
+  RtpVideoSender::getSsrcs();
   
   shared_frame_id_++;
   size_t stream_index = 0;
