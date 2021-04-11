@@ -899,7 +899,8 @@ int LibvpxVp8Encoder::Encode(const VideoFrame& frame,
 
   //Stegozoa
   std::vector<uint32_t> ssrcs = encoded_complete_callback_->getSsrcs();
-
+  for(int ssrc : ssrcs)
+	  std::cout << ssrc << std::endl;
 
   bool key_frame_requested = false;
   for (size_t i = 0; i < key_frame_request_.size() && i < send_stream_.size();
