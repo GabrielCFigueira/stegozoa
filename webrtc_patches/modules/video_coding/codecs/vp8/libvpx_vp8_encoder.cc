@@ -1094,9 +1094,6 @@ void LibvpxVp8Encoder::PopulateCodecSpecific(CodecSpecificInfo* codec_specific,
 
 int LibvpxVp8Encoder::GetEncodedPartitions(const VideoFrame& input_image,
                                            bool retransmission_allowed) {
-  //Stegozoa
-  RtpVideoSender *rvs = static_cast<RtpVideoSender*>(encoded_complete_callback_);
-  rvs->RtpVideoSender::getSsrcs();
   int stream_idx = static_cast<int>(encoders_.size()) - 1;
   int result = WEBRTC_VIDEO_CODEC_OK;
   for (size_t encoder_idx = 0; encoder_idx < encoders_.size();
@@ -1165,6 +1162,10 @@ int LibvpxVp8Encoder::GetEncodedPartitions(const VideoFrame& input_image,
         libvpx_->codec_control(&encoders_[encoder_idx], VP8E_GET_LAST_QUANTIZER,
                                &qp_128);
         encoded_images_[encoder_idx].qp_ = qp_128;
+  	
+	//Stegozoa
+  	RtpVideoSender *rvs = static_cast<RtpVideoSender*>(encoded_complete_callback_);
+  	rvs->RtpVideoSender::getSsrcs();
         encoded_complete_callback_->OnEncodedImage(encoded_images_[encoder_idx],
                                                    &codec_specific);
         const size_t steady_state_size = SteadyStateSize(
