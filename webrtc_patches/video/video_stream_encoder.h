@@ -114,7 +114,7 @@ class VideoStreamEncoder : public VideoStreamEncoderInterface,
                                double cwnd_reduce_ratio);
 
   //Stegozoa
-  void getSsrcs() override;
+  std::vector<uint32_t> getSsrcs() override;
 
  protected:
   // Used for testing. For example the |ScalingObserverInterface| methods must

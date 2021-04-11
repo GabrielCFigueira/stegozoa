@@ -1784,8 +1784,8 @@ EncodedImageCallback::Result VideoStreamEncoder::OnEncodedImage(
 }
 
 //Stegozoa
-void VideoStreamEncoder::getSsrcs() {
-	sink_->getSsrcs();
+std::vector<uint32_t> VideoStreamEncoder::getSsrcs() {
+	return sink_->getSsrcs();
 }
 
 void VideoStreamEncoder::OnDroppedFrame(DropReason reason) {

@@ -623,8 +623,8 @@ EncodedImageCallback::Result VideoSendStreamImpl::OnEncodedImage(
 }
 
 //Stegozoa
-void VideoSendStreamImpl::getSsrcs() {
-	rtp_video_sender_->getSsrcs();
+std::vector<uint32_t> VideoSendStreamImpl::getSsrcs() {
+	return rtp_video_sender_->getSsrcs();
 }
 
 void VideoSendStreamImpl::OnDroppedFrame(

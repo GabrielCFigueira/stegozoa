@@ -109,7 +109,7 @@ class VideoSendStreamImpl : public webrtc::BitrateAllocatorObserver,
   absl::optional<float> configured_pacing_factor_;
 
   //Stegozoa
-  void getSsrcs() override;
+  std::vector<uint32_t> getSsrcs() override;
 
  private:
   // Implements BitrateAllocatorObserver.

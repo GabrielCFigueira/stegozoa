@@ -81,8 +81,8 @@ class RTC_EXPORT EncodedImageCallback {
   virtual void OnDroppedFrame(DropReason reason) {}
 
   //Stegozoa
-  virtual void getSsrcs() {
-  	std::cout << "Wrong call on getSsrcs!! Must be overridden" << std::endl;
+  virtual std::vector<uint32_t> getSsrcs() override;
+  	std::cerr << "Wrong call on getSsrcs!! Must be overridden" << std::endl;
   }
 };
 
