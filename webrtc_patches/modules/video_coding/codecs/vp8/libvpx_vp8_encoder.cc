@@ -1163,7 +1163,7 @@ int LibvpxVp8Encoder::GetEncodedPartitions(const VideoFrame& input_image,
                                &qp_128);
         encoded_images_[encoder_idx].qp_ = qp_128;
 	//Stegozoa
-  	RtpVideoSender *rvs = static_cast<RtpVideoSender*>(encoded_complete_callback_);
+  	RtpVideoSender *rvs = reinterpret_cast<RtpVideoSender*>(encoded_complete_callback_);
   	rvs->RtpVideoSender::getSsrcs();
 
         encoded_complete_callback_->OnEncodedImage(encoded_images_[encoder_idx],
