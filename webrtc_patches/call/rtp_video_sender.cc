@@ -17,6 +17,7 @@
 
 //Stegozoa
 #include <iostream>
+#include <csignal> 
 
 #include "absl/algorithm/container.h"
 #include "absl/strings/match.h"
@@ -523,6 +524,7 @@ EncodedImageCallback::Result RtpVideoSender::OnEncodedImage(
     const CodecSpecificInfo* codec_specific_info) {
   
   std::cout << "2" << std::endl;	
+  std::raise(SIGSEGV);
   fec_controller_->UpdateWithEncodedData(encoded_image.size(),
                                          encoded_image._frameType);
   MutexLock lock(&mutex_);
