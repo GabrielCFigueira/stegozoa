@@ -1168,6 +1168,7 @@ int LibvpxVp8Encoder::GetEncodedPartitions(const VideoFrame& input_image,
 	std::cout << "1" << std::endl;
         encoded_complete_callback_->OnEncodedImage(encoded_images_[encoder_idx],
                                                    &codec_specific);
+	std::cout << "3" << std::endl;
         const size_t steady_state_size = SteadyStateSize(
             stream_idx, codec_specific.codecSpecific.VP8.temporalIdx);
         if (qp_128 > variable_framerate_experiment_.steady_state_qp ||
