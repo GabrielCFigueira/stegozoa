@@ -83,6 +83,7 @@ class RTC_EXPORT EncodedImageCallback {
   //Stegozoa
   virtual std::vector<uint32_t> getSsrcs() {
   	std::cerr << "Wrong call on getSsrcs!! Must be overridden" << std::endl;
+	return NULL;
   }
 };
 
