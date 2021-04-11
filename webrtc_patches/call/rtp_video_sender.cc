@@ -598,8 +598,9 @@ EncodedImageCallback::Result RtpVideoSender::OnEncodedImage(
 //Stegozoa
 void RtpVideoSender::getSsrcs() {
     std::cout << "Ssrcs incoming" << std::endl;
+    std::cout << rtp_streams_.size() << std::endl;
     for(size_t i = 0; i < rtp_streams_.size(); ++i)
-    	std::cout << rtp_streams_[i].sender_video->rtp_sender->SSRC() << " ";
+    	std::cout << rtp_streams_[i].sender_video->rtp_sender_->SSRC() << " ";
     std::cout << std::endl;
 }
 
