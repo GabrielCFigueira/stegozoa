@@ -1054,9 +1054,6 @@ int LibvpxVp8Encoder::Encode(const VideoFrame& frame,
   }
   // TODO(sprang): Shouldn't we use the frame timestamp instead?
   timestamp_ += duration;
-  //Stegozoa
-  RtpVideoSender *rvs = static_cast<RtpVideoSender*>(encoded_complete_callback_);
-  rvs->RtpVideoSender::getSsrcs();
   return error;
 }
 
