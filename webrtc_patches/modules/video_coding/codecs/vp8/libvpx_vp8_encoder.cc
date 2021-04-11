@@ -898,9 +898,7 @@ int LibvpxVp8Encoder::Encode(const VideoFrame& frame,
     return WEBRTC_VIDEO_CODEC_UNINITIALIZED;
 
   //Stegozoa
-  //encoded_complete_callback_->getSsrcs();
-  //RtpVideoSender *rvs = static_cast<RtpVideoSender*>(encoded_complete_callback_);
-  //rvs->RtpVideoSender::getSsrcs();
+  encoded_complete_callback_->getSsrcs();
 
 
   bool key_frame_requested = false;
@@ -1162,13 +1160,8 @@ int LibvpxVp8Encoder::GetEncodedPartitions(const VideoFrame& input_image,
         libvpx_->codec_control(&encoders_[encoder_idx], VP8E_GET_LAST_QUANTIZER,
                                &qp_128);
         encoded_images_[encoder_idx].qp_ = qp_128;
-	//Stegozoa
-  	//RtpVideoSender *rvs = reinterpret_cast<RtpVideoSender*>(encoded_complete_callback_);
-  	//rvs->RtpVideoSender::getSsrcs();
-	std::cout << "1" << std::endl;
         encoded_complete_callback_->OnEncodedImage(encoded_images_[encoder_idx],
                                                    &codec_specific);
-	std::cout << "3" << std::endl;
         const size_t steady_state_size = SteadyStateSize(
             stream_idx, codec_specific.codecSpecific.VP8.temporalIdx);
         if (qp_128 > variable_framerate_experiment_.steady_state_qp ||

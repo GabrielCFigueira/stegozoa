@@ -141,9 +141,6 @@ class RTPSenderVideo {
   // place as the other rate stats.
   uint32_t PacketizationOverheadBps() const;
 
-  //Stegozoa
-  RTPSender* RtpSender() { return rtp_sender_; }
-
  protected:
   static uint8_t GetTemporalId(const RTPVideoHeader& header);
   bool AllowRetransmission(uint8_t temporal_id,

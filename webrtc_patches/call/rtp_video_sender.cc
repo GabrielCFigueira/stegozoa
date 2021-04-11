@@ -17,7 +17,6 @@
 
 //Stegozoa
 #include <iostream>
-#include <csignal> 
 
 #include "absl/algorithm/container.h"
 #include "absl/strings/match.h"
@@ -522,9 +521,6 @@ bool RtpVideoSender::IsActiveLocked() {
 EncodedImageCallback::Result RtpVideoSender::OnEncodedImage(
     const EncodedImage& encoded_image,
     const CodecSpecificInfo* codec_specific_info) {
-  
-  std::cout << "2" << std::endl;	
-  std::raise(SIGSEGV);
   fec_controller_->UpdateWithEncodedData(encoded_image.size(),
                                          encoded_image._frameType);
   MutexLock lock(&mutex_);
@@ -602,9 +598,9 @@ EncodedImageCallback::Result RtpVideoSender::OnEncodedImage(
 //Stegozoa
 void RtpVideoSender::getSsrcs() {
     std::cout << "Ssrcs incoming" << std::endl;
-    std::cout << rtp_streams_.size() << std::endl;
-    for(size_t i = 0; i < rtp_streams_.size(); ++i)
-    	std::cout << rtp_streams_[i].sender_video->RtpSender()->SSRC() << " ";
+    std::cout << rtp_config_.ssrcs.size() << std::endl;
+    for(size_t i = 0; i < rtp_config_.ssrcs.size(); ++i)
+    	std::cout << rtp_config_.ssrcs[i] << " ";
     std::cout << std::endl;
 }
 
