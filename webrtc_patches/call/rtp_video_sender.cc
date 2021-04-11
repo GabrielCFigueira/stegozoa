@@ -599,7 +599,7 @@ EncodedImageCallback::Result RtpVideoSender::OnEncodedImage(
 void RtpVideoSender::getSsrcs() {
     std::cout << "Ssrcs incoming" << std::endl;
     for(size_t i = 0; i < rtp_streams_.size(); ++i)
-    	std::cout << rtp_streams_[i].rtp_rtcp->SSRC() << " ";
+    	std::cout << rtp_streams_[i].sender_video->rtp_sender->SSRC() << " ";
     std::cout << std::endl;
 }
 
