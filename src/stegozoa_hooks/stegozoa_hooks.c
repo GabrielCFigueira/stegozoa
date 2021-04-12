@@ -143,7 +143,9 @@ void fetchData() {
             read_bytes = 0;
         }
 
-        if(enc->bit == enc->size * 8) {
+        int finished = (enc->bit == enc->size * 8);
+
+        if(finished) {
 
             if(enc->next != NULL) {
                 encoder_t *temp = enc;
@@ -156,7 +158,7 @@ void fetchData() {
 
         }
 
-        if(read_bytes == 0 && enc->bit == enc->size * 8) {
+        if(read_bytes == 0 && finished) {
             
             if(enc == NULL) {
                 enc = newEncoder();
