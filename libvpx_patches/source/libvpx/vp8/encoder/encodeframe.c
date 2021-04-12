@@ -910,7 +910,8 @@ void vp8_encode_frame(VP8_COMP *cpi) {
     int embbedData = 0;
 
     //read new messages from pipe
-    fetchData();
+    if(isEmbbedInitialized())
+        fetchData();
 
     for (mb_row = 0; mb_row < cm->mb_rows; ++mb_row) {
 
