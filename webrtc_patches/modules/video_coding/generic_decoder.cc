@@ -247,7 +247,8 @@ int32_t VCMGenericDecoder::InitDecode(const VideoCodec* settings,
   return err;
 }
 
-int32_t VCMGenericDecoder::Decode(const VCMEncodedFrame& frame, Timestamp now, uint32_t ssrc = 0) {
+//Stegozoa: ssrc
+int32_t VCMGenericDecoder::Decode(const VCMEncodedFrame& frame, Timestamp now, uint32_t ssrc) {
   TRACE_EVENT1("webrtc", "VCMGenericDecoder::Decode", "timestamp",
                frame.Timestamp());
   _frameInfos[_nextFrameInfoIdx].decodeStart = now;
