@@ -67,6 +67,7 @@ class RTC_EXPORT VideoDecoder {
                          bool missing_frames,
                          int64_t render_time_ms, uint32_t ssrc) {
 	  std::cerr << "Not Implemented!" << std::endl;
+	  return -1;
   }
 
   virtual int32_t Decode(const EncodedImage& input_image,
