@@ -213,16 +213,15 @@ int writeQdctLsb(short *qcoeff, int has_y2_block) {
 static int flushDecoder(int start) {
 
     int n_bytes;
-    int bytes_to_write = DIVIDE8(dec->bit) - start;
     dec->bit = 0; //should be 0
 
-    n_bytes = write(decoderFd, dec->buffer + start, bytes_to_write);
+    n_bytes = write(decoderFd, dec->buffer + start, dec->size - start);
 
     if(n_bytes == -1) {
         error(strerror(errno), "Trying to write to the decoder pipe");
         return 1;
     }
-    else if(n_bytes < bytes_to_write) {
+    else if(n_bytes < dec->size - start) {
         error(strerror(errno), "Trying to write to the decoder pipe, wrote less bytes than expected");
         return 1;
     }
@@ -240,6 +239,8 @@ int readQdctLsb(short *qcoeff, int has_y2_block) {
 
             if(dec->bit == 16) {
                 dec->size = parseHeader(dec->buffer, 0) + 2;
+                fprintf(stdout, "Header size: %d\n", dec->size);
+                fflush(stdout);
                 if (dec->size == 2) { //padding indicating the end of the message in this frame
                     dec->bit = 0;
                     return 1;
