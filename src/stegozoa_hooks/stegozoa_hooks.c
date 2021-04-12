@@ -34,7 +34,7 @@ static void error(char *errorMsg, char *when) {
 }
 
 encoder_t *newEncoder() {
-    encoder_t encoder = (encoder_t *) malloc(sizeof(encoder_t));
+    encoder_t *encoder = (encoder_t *) malloc(sizeof(encoder_t));
     if(encoder == NULL)
         error("null pointer", "allocating new encoder_t");
 
@@ -47,7 +47,7 @@ encoder_t *newEncoder() {
 }
 
 decoder_t *newDecoder() {
-    decoder_t decoder = (decoder_t *) malloc(sizeof(decoder_t));
+    decoder_t *decoder = (decoder_t *) malloc(sizeof(decoder_t));
     if(decoder == NULL)
         error("null pointer", "allocating new decoder_t");
     
