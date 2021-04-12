@@ -5,6 +5,8 @@
 #include <fcntl.h>
 #include <string.h>
 #include <unistd.h>
+#include <stdlib.h>
+
 
 #define MASK 0xFE
 #define DIVIDE8(num) (num >> 3)
@@ -63,7 +65,7 @@ void releaseEncoder(encoder_t *encoder) {
     free(encoder);
 }
 
-void releaseEncoder(decoder_t *decoder) {
+void releaseDecoder(decoder_t *decoder) {
     free(decoder);
 }
 
