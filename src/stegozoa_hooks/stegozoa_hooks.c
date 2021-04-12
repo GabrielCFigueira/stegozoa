@@ -154,7 +154,7 @@ void fetchData() {
                 enc = newEncoder();
                 enc->buffer[0] = '\0';
                 enc->buffer[1] = '\0';
-                enc->size = 16;
+                enc->size = 2;
             }
 
         } else if (read_bytes > 0) {
