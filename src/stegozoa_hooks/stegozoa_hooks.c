@@ -82,7 +82,7 @@ int initializeExtract() {
         return 1;
     }
 
-    if((enc = newEncoder()))
+    if(!(enc = newEncoder()))
         return 1;
     lastEnc = enc;
 
@@ -105,7 +105,7 @@ int initializeEmbbed() {
         return 1;
     }
 
-    if((dec = newDecoder()))
+    if(!(dec = newDecoder()))
         return 1;
 
     dontRepeat = 0;
