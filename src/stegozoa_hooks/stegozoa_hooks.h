@@ -1,6 +1,8 @@
 #ifndef STEGOZOA_HOOKS_H_
 #define STEGOZOA_HOOKS_H_
 
+#include <stdint.h>
+
 #define BUFFER_LEN 10500
 
 typedef struct encoder {
