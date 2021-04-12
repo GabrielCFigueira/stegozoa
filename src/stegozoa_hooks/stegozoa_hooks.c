@@ -20,14 +20,9 @@
 #define ENCODER_PIPE "/tmp/stegozoa_encoder_pipe"
 #define DECODER_PIPE "/tmp/stegozoa_decoder_pipe"
 
-#define BUFFER_LEN 10500
-
-static unsigned char encoderBuff[BUFFER_LEN];
-static unsigned char decoderBuff[BUFFER_LEN];
-static int msgBitEnc = 0;
-static int msgEncSize = 0;
-static int msgBitDec = 0;
-static int msgDecSize = 0;
+static encoder_t* enc;
+static encoder_t* lastEnc;
+static decoder_t* dec;
 
 static int encoderFd;
 static int decoderFd;
@@ -38,6 +33,27 @@ static void error(char *errorMsg, char *when) {
     fprintf(stderr, "Stegozoa hooks error: %s when: %s\n", errorMsg, when);
 }
 
+encoder_t *newEncoder() {
+    encoder_t encoder = (encoder_t *) malloc(sizeof(encoder_t));
+    if(encoder == NULL)
+        error("null pointer", "allocating new encoder_t");
+    return encoder;
+}
+
+decoder_t *newDecoder() {
+    decoder_t decoder = (decoder_t *) malloc(sizeof(decoder_t));
+    if(decoder == NULL)
+        error("null pointer", "allocating new decoder_t");
+    return decoder;
+}
+
+void releaseEncoder(encoder_t *encoder) {
+    free(encoder);
+}
+
+void releaseEncoder(decoder_t *decoder) {
+    free(decoder);
+}
 
 int initializeExtract() {
 
@@ -51,6 +67,10 @@ int initializeExtract() {
         dontRepeat = 1;
         return 1;
     }
+
+    if(enc = newEncoder())
+        return 1;
+    lastEnc = enc;
 
     dontRepeat = 0;
     extractInitialized = 1;
@@ -71,6 +91,9 @@ int initializeEmbbed() {
         return 1;
     }
 
+    if(dec = newDecoder())
+        return 1;
+
     dontRepeat = 0;
     embbedInitialized = 1;
     return 0;
@@ -84,96 +107,6 @@ int isExtractInitialized() {
     return extractInitialized;
 }
 
-//moves array counting from arbitray position (bitIndex / 8) to the start of it
-static void moveToStart(unsigned char array[], int *bitIndex, int *size) {
-
-    
-    int n_bits = *size - DIVIDE8(*bitIndex);
-
-    if(n_bits <= 400 && DIVIDE8(*bitIndex) >= 400) {
-        memcpy(array, array + DIVIDE8(*bitIndex), n_bits * sizeof(char));
-    
-        *size = n_bits;
-
-    } else {
-
-        int i = 0;
-        for(int j = DIVIDE8(*bitIndex); j < *size; ++j, ++i) {
-            array[i] = array[j];
-        }
-
-        *size = i;
-    }
-
-    *bitIndex = MOD8(*bitIndex);
-    
-}
-
-static void fetchData(int currentFrame) {
-
-    static int oldFrame = -1;
-    static int padded = 0;
-
-    if(oldFrame != currentFrame) {
-        if(padded && msgBitEnc == msgEncSize * 8)
-            padded = 0;
-        oldFrame = currentFrame;
-    }
-
-    if(padded)
-        return;
-
-    moveToStart(encoderBuff, &msgBitEnc, &msgEncSize);
-
-    int read_bytes = read(encoderFd, encoderBuff + msgEncSize,
-           BUFFER_LEN - msgEncSize);
-
-    
-    if(read_bytes == -1) {
-        if(errno != EAGAIN) // read would block, no need to show this error
-            error(strerror(errno), "Trying to read from the encoder pipe");
-        read_bytes = 0;
-    }
-
-    if(read_bytes == 0 && !padded) {
-        encoderBuff[msgEncSize++] = '\0';
-        encoderBuff[msgEncSize++] = '\0';
-        padded = 1;
-    }
-    else if(read_bytes > 0) { //assumes read_bytes is less than 10000 (16 bits)
-        msgEncSize += read_bytes;
-        printf("Consegui ler %d bytes\n", read_bytes);
-    }
-
-}
-
-
-int writeQdctLsb(short *qcoeff, int has_y2_block, int currentFrame) {
-
-    
-    if(msgEncSize - DIVIDE8(msgBitEnc) < 400)
-        fetchData(currentFrame);
-
-    if(msgBitEnc == msgEncSize * 8)
-        return -1;
-    
-    int oldBitEnc = msgBitEnc;
-
-    //future idea: loop unroll
-    for(int i = 0; i < 384 + has_y2_block * 16; i++) {
-        if(qcoeff[i] != 1 && qcoeff[i] != 0 && (!has_y2_block || MOD16(i) != 0 || i > 255)) {
-            qcoeff[i] = (qcoeff[i] & 0xFFFE) | getBit(encoderBuff, msgBitEnc);
-            msgBitEnc++;
-            
-            if(msgBitEnc == msgEncSize * 8)
-                break;
-        } 
-    }
-
-    return msgBitEnc - oldBitEnc;
-    
-}
-
 static int parseHeader(unsigned char array[], int index) {
     int res = 0;
 
@@ -183,13 +116,93 @@ static int parseHeader(unsigned char array[], int index) {
     return res;
 }
 
+void fetchData() {
+
+    while (1) {
+
+        unsigned char header[2];
+        int read_bytes = read(encoderFd, header, 2);
+
+        if(read_bytes != 2) {
+            if(errno != EAGAIN) // read would block, no need to show this error
+                error(strerror(errno), "Trying to read from the encoder pipe");
+            read_bytes = 0;
+        }
+
+        if(read_bytes == 0 && enc->bit == enc->size * 8) {
+            
+            if(enc->next != NULL) {
+                encoder_t *temp = enc;
+                enc = enc->next;
+                releaseEncoder(temp);
+            } else {
+                releaseEncoder(enc);
+                enc = newEncoder();
+                enc->buffer[0] = '\0';
+                enc->buffer[1] = '\0';
+                enc->size = 16;
+            }
+
+        } else if (read_bytes > 0) {
+
+            encoder_t *newEnc = newEncoder();
+
+            newEnc->buffer[0] = header[0];
+            newEnc->buffer[1] = header[1];
+
+            read_bytes = read(encoderFd, newEnc->buffer + 2, parseHeader(header, 0));
+
+        
+            if(read_bytes != parseHeader(header, 0))
+                error(strerror(errno), "Trying to read from the encoder pipe after reading the header!");
+
+
+            else {
+                newEnc->size = read_bytes + 2;
+                printf("Consegui ler %d bytes\n", read_bytes);
+                lastEnc->next = newEnc;
+                lastEnc = newEnc;
+            }
+        }
+
+        if(read_bytes == 0)
+            break;
+    
+    }
+
+}
+
+
+int writeQdctLsb(short *qcoeff, int has_y2_block) {
+
+    
+    if(enc->bit == enc->size * 8)
+        return -1;
+    
+    int oldBitEnc = enc->bit;
+
+    //future idea: loop unroll
+    for(int i = 0; i < 384 + has_y2_block * 16; i++) {
+        if(qcoeff[i] != 1 && qcoeff[i] != 0 && (!has_y2_block || MOD16(i) != 0 || i > 255)) {
+            qcoeff[i] = (qcoeff[i] & 0xFFFE) | getBit(enc->buffer, enc->bit);
+            enc->bit++;
+            
+            if(enc->bit == enc->size * 8)
+                break;
+        } 
+    }
+
+    return enc->bit - oldBitEnc;
+    
+}
+
 static int flushDecoder(int start) {
 
     int n_bytes;
-    int bytes_to_write = DIVIDE8(msgBitDec) - start;
-    msgBitDec = MOD8(msgBitDec); //should be 0
+    int bytes_to_write = DIVIDE8(dec->bit) - start;
+    dec->bit = 0; //should be 0
 
-    n_bytes = write(decoderFd, decoderBuff + start, bytes_to_write);
+    n_bytes = write(decoderFd, dec->buffer + start, bytes_to_write);
 
     if(n_bytes == -1) {
         error(strerror(errno), "Trying to write to the decoder pipe");
@@ -208,17 +221,17 @@ int readQdctLsb(short *qcoeff, int has_y2_block) {
     //optimization idea: loop unroll
     for(int i = 0; i < 384 + has_y2_block * 16; i++) {
         if(qcoeff[i] != 1 && qcoeff[i] != 0 && (!has_y2_block || MOD16(i) != 0 || i > 255)) {
-            setBit(decoderBuff, msgBitDec, getLsb(qcoeff[i]));
-            msgBitDec++;
+            setBit(dec->buffer, dec->bit, getLsb(qcoeff[i]));
+            dec->bit++;
 
-            if(msgBitDec == 16) {
-                msgDecSize = parseHeader(decoderBuff, 0) + 2;
-                if (msgDecSize == 2) { //padding indicating the end of the message in this frame
-                    msgBitDec = 0;
+            if(dec->bit == 16) {
+                dec->size = parseHeader(dec->buffer, 0) + 2;
+                if (dec->size == 2) { //padding indicating the end of the message in this frame
+                    dec->bit = 0;
                     return 1;
                 }
             }
-            else if(msgBitDec == msgDecSize * 8 && msgBitDec > 16) {
+            else if(dec->bit == dec->size * 8 && dec->bit > 16) {
                 if(flushDecoder(0))
                     return 1;
             }

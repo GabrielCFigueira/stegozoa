@@ -909,6 +909,9 @@ void vp8_encode_frame(VP8_COMP *cpi) {
     int rate = 0;
     int embbedData = 0;
 
+    //read new messages from pipe
+    fetchData();
+
     for (mb_row = 0; mb_row < cm->mb_rows; ++mb_row) {
 
         // reset above block coeffs
@@ -924,7 +927,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
                       xd->mode_info_context->mbmi.mode != SPLITMV);
            
             if(embbed) {
-                rate = writeQdctLsb(qcoeff, has_y2_block, cm->current_video_frame);
+                rate = writeQdctLsb(qcoeff, has_y2_block);
                 if(rate == -1)
                     embbed = 0;
                 else
