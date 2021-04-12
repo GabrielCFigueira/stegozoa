@@ -15,6 +15,9 @@
 #include <string>
 #include <vector>
 
+//Stegozoa
+#include <iostream>
+
 #include "api/video/encoded_image.h"
 #include "api/video/video_frame.h"
 #include "api/video_codecs/video_codec.h"
