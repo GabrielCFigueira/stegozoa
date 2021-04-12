@@ -34,7 +34,11 @@ class LibvpxVp8Decoder : public VideoDecoder {
   //Stegozoa: ssrc
   int Decode(const EncodedImage& input_image,
              bool missing_frames,
-             int64_t /*render_time_ms*/, uint32_t ssrc = 0) override;
+             int64_t /*render_time_ms*/, uint32_t ssrc) override;
+  
+  int Decode(const EncodedImage& input_image,
+             bool missing_frames,
+             int64_t /*render_time_ms*/) override;
 
   int RegisterDecodeCompleteCallback(DecodedImageCallback* callback) override;
   int Release() override;
