@@ -143,15 +143,24 @@ void fetchData() {
             read_bytes = 0;
         }
 
-        if(read_bytes == 0 && enc->bit == enc->size * 8) {
-            
+        if(enc->bit == enc->size * 8) {
+
             if(enc->next != NULL) {
                 encoder_t *temp = enc;
                 enc = enc->next;
                 releaseEncoder(temp);
             } else {
                 releaseEncoder(enc);
+                enc = NULL;
+            }
+
+        }
+
+        if(read_bytes == 0 && enc->bit == enc->size * 8) {
+            
+            if(enc == NULL) {
                 enc = newEncoder();
+                lastEnc = enc;
                 enc->buffer[0] = '\0';
                 enc->buffer[1] = '\0';
                 enc->size = 2;
@@ -163,22 +172,23 @@ void fetchData() {
 
             newEnc->buffer[0] = header[0];
             newEnc->buffer[1] = header[1];
-
-            fprintf(stdout, "Encoder Header size: %d\n", parseHeader(header, 0));
-            fflush(stdout);
+           
+            if(enc == NULL) {
+                enc = newEnc;
+                lastEnc = enc;
+            } else {
+                lastEnc->next = newEnc;
+                lastEnc = newEnc;
+            }
 
             read_bytes = read(encoderFd, newEnc->buffer + 2, parseHeader(header, 0));
-
         
             if(read_bytes != parseHeader(header, 0))
                 error(strerror(errno), "Trying to read from the encoder pipe after reading the header!");
 
-
             else {
                 newEnc->size = read_bytes + 2;
                 printf("Consegui ler %d bytes\n", read_bytes);
-                lastEnc->next = newEnc;
-                lastEnc = newEnc;
             }
         }
 
