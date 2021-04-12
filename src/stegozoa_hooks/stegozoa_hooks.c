@@ -164,6 +164,9 @@ void fetchData() {
             newEnc->buffer[0] = header[0];
             newEnc->buffer[1] = header[1];
 
+            fprintf(stdout, "Encoder Header size: %d\n", parseHeader(header, 0));
+            fflush(stdout);
+
             read_bytes = read(encoderFd, newEnc->buffer + 2, parseHeader(header, 0));
 
         
