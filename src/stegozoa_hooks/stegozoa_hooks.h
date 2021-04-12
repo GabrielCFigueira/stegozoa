@@ -5,20 +5,20 @@
 
 typedef struct encoder {
 	unsigned char buffer[BUFFER_LEN];
-	int bit = 0;
-	int size = 0;
+	int bit;
+	int size;
 
-	uint32_t ssrc = 0;
+	uint32_t ssrc;
 	
 	struct encoder *next;
 } encoder_t;
 
 typedef struct decoder {
 	unsigned char buffer[BUFFER_LEN];
-	int bit = 0;
-	int size = 0;
+	int bit;
+	int size;
 
-	uint32_t ssrc = 0;
+	uint32_t ssrc;
 
 	struct decoder *next;
 } decoder_t;
