@@ -41,7 +41,7 @@ static message_t *newMessage() {
     if(message == NULL)
         error("null pointer", "allocating new message_t");
 
-    return encoder;
+    return message;
 }
 
 static context_t *newContext(uint32_t ssrc) {
@@ -75,7 +75,7 @@ static int parseHeader(unsigned char array[], int index) {
 static context_t *getEncoderContext(uint32_t ssrc) {
 
     for(int i = 0; i < n_encoders; i++)
-        if(encoders[i].ssrc == ssrc)
+        if(encoders[i]->ssrc == ssrc)
             return encoders[i];
 
     encoders[n_encoders++] = newContext(ssrc);
@@ -85,7 +85,7 @@ static context_t *getEncoderContext(uint32_t ssrc) {
 static context_t *getDecoderContext(uint32_t ssrc) {
 
     for(int i = 0; i < n_decoders; i++)
-        if(decoders[i].ssrc == ssrc)
+        if(decoders[i]->ssrc == ssrc)
             return decoders[i];
 
     decoders[n_decoders++] = newContext(ssrc);
@@ -127,7 +127,7 @@ void fetchData(uint32_t ssrc) {
                 ctx->msg = msg->next;
                 releaseMessage(temp);
             } else {
-                releaseEncoder(msg);
+                releaseContext(msg);
                 ctx->msg = NULL;
             }
 
@@ -175,7 +175,7 @@ void fetchData(uint32_t ssrc) {
 
 int writeQdctLsb(short *qcoeff, int has_y2_block, uint32_t ssrc) {
 
-    message_t *msg = getEncoderContext(ctx)->msg;
+    message_t *msg = getEncoderContext(ssrc)->msg;
     
     if(msg->bit == msg->size * 8)
         return -1;
@@ -215,7 +215,7 @@ static void flushDecoder(uint32_t ssrc) {
 
 int readQdctLsb(short *qcoeff, int has_y2_block, uint32_t ssrc) {
 
-    message_t *msg = getDecoderContext(ctx)->msg;
+    message_t *msg = getDecoderContext(ssrc)->msg;
 
     //optimization idea: loop unroll
     for(int i = 0; i < 384 + has_y2_block * 16; i++) {
