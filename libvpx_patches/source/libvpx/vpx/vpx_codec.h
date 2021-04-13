@@ -203,8 +203,6 @@ typedef struct vpx_codec_ctx {
   vpx_codec_err_t err;          /**< Last returned error */
   const char *err_detail;       /**< Detailed info, if available */
   vpx_codec_flags_t init_flags; /**< Flags passed at init time */
-  //Stegozoa
-  uint32_t ssrc;
   union {
     /**< Decoder Configuration Pointer */
     const struct vpx_codec_dec_cfg *dec;
