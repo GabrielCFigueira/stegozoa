@@ -15,6 +15,9 @@
 #ifndef VPX_VPX_VPX_IMAGE_H_
 #define VPX_VPX_VPX_IMAGE_H_
 
+//Stegozoa
+#include <stdint.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
