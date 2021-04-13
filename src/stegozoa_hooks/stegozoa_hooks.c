@@ -127,7 +127,7 @@ void fetchData(uint32_t ssrc) {
                 ctx->msg = msg->next;
                 releaseMessage(temp);
             } else {
-                releaseContext(msg);
+                releaseMessage(msg);
                 ctx->msg = NULL;
             }
 
