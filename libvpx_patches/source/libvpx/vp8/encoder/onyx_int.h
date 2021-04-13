@@ -11,6 +11,9 @@
 #ifndef VPX_VP8_ENCODER_ONYX_INT_H_
 #define VPX_VP8_ENCODER_ONYX_INT_H_
 
+//Stegozoa
+#include <stdint.h>
+
 #include <stdio.h>
 #include "vpx_config.h"
 #include "vp8/common/onyx.h"
@@ -291,6 +294,7 @@ typedef struct VP8_COMP {
   //Stegozoa
   short *qcoeff;
   char *eobs;
+  uint32_t ssrc;
 
   VP8_COMMON common;
   vp8_writer bc[9]; /* one boolcoder for each partition */
