@@ -58,11 +58,6 @@ static void releaseMessage(message_t *message) {
     free(message);
 }
 
-static void releaseContext(context_t *context) {
-    free(context);
-}
-
-
 static int parseHeader(unsigned char array[], int index) {
     int res = 0;
 
