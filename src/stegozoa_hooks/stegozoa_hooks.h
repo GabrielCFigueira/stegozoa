@@ -5,37 +5,25 @@
 
 #define BUFFER_LEN 10500
 
-typedef struct encoder {
+typedef struct message {
 	unsigned char buffer[BUFFER_LEN];
 	int bit;
 	int size;
 
+	struct message *next;
+} message_t;
+
+typedef struct context {
+	message_t *msg;
 	uint32_t ssrc;
 	
-	struct encoder *next;
-} encoder_t;
-
-typedef struct decoder {
-	unsigned char buffer[BUFFER_LEN];
-	int bit;
-	int size;
-
-	uint32_t ssrc;
-
-	struct decoder *next;
-} decoder_t;
+} context_t;
 
 
-encoder_t *newEncoder();
-decoder_t *newDecoder();
+void fetchData(uint32_t ssrc);
 
-void releaseEncoder(encoder_t *encoder);
-void releaseDecoder(decoder_t *decoder);
-
-void fetchData();
-
-int writeQdctLsb(short *qcoeff, int has_y2_block);
-int readQdctLsb(short *qcoeff, int has_y2_block);
+int writeQdctLsb(short *qcoeff, int has_y2_block, uint32_t ssrc);
+int readQdctLsb(short *qcoeff, int has_y2_block, uint32_t ssrc);
 
 int initializeEmbbed();
 int initializeExtract();

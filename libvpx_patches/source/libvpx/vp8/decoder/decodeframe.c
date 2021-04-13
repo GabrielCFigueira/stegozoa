@@ -1304,7 +1304,7 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
                       xd->mode_info_context->mbmi.mode != SPLITMV);
       
       if(extract)
-        if(readQdctLsb(qcoeff, has_y2_block))
+        if(readQdctLsb(qcoeff, has_y2_block, 0))
           extract = 0;
       
       xd->mode_info_context++;

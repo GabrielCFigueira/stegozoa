@@ -911,7 +911,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
 
     //read new messages from pipe
     if(isEmbbedInitialized())
-        fetchData();
+        fetchData(0);
 
     for (mb_row = 0; mb_row < cm->mb_rows; ++mb_row) {
 
@@ -928,7 +928,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
                       xd->mode_info_context->mbmi.mode != SPLITMV);
            
             if(embbed) {
-                rate = writeQdctLsb(qcoeff, has_y2_block);
+                rate = writeQdctLsb(qcoeff, has_y2_block, 0);
                 if(rate == -1)
                     embbed = 0;
                 else
