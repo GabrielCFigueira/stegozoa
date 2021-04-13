@@ -47,7 +47,7 @@ static message_t *newMessage() {
 static context_t *newContext(uint32_t ssrc) {
     context_t *context = (context_t *) calloc(1, sizeof(context_t));
     if(context == NULL)
-        error("null pointer", "allocating new decoder_t");
+        error("null pointer", "allocating new context_t");
     
     context->ssrc = ssrc;
     context->msg = newMessage();
