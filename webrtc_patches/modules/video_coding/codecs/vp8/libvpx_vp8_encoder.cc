@@ -902,8 +902,8 @@ int LibvpxVp8Encoder::Encode(const VideoFrame& frame,
   //std::cout << ssrcs.size() << std::endl;
   //for(int ssrc : ssrcs)
 	//std::cout << ssrc << std::endl;
-  for(int i = 0; i < ssrcs.size(); ++i)
-    encoders_[i]->priv->cpi->ssrc = ssrc[i];
+  for(unsigned long i = 0; i < ssrcs.size(); ++i)
+    encoders_[i].ssrc = ssrc[i];
 
   bool key_frame_requested = false;
   for (size_t i = 0; i < key_frame_request_.size() && i < send_stream_.size();
