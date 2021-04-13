@@ -17,6 +17,9 @@
 #include "vp8/common/onyxc_int.h"
 #include "vp8/common/threading.h"
 
+//Stegozoa
+#include <stdint.h>
+
 #if CONFIG_ERROR_CONCEALMENT
 #include "ec_types.h"
 #endif
@@ -69,6 +72,7 @@ typedef struct VP8D_COMP {
 
   //Stegozoa
   short *qcoeff;
+  uint32_t ssrc;
 
 #if CONFIG_MULTITHREAD
   /* variable for threading */

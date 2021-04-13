@@ -281,6 +281,9 @@ int LibvpxVp8Decoder::Decode(const EncodedImage& input_image,
   }
 
   const uint8_t* buffer = input_image.data();
+  //Stegozoa
+  img->ssrc = ssrc;
+  
   if (input_image.size() == 0) {
     buffer = NULL;  // Triggers full frame concealment.
   }
