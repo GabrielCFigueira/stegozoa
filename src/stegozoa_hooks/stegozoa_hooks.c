@@ -220,6 +220,7 @@ void fetchData(uint32_t ssrc) {
                     releaseMessage(newMsg);
                 
                 } else if(msgType == 0x1 || receiver == 0xff) {
+                    insertSsrc(newMsg, ssrc);
                     for(int i = 0; i < n_encoders; ++i) {
                         appendMessage(encoders[i], newMsg);
                         newMsg = copyMessage(newMsg);
