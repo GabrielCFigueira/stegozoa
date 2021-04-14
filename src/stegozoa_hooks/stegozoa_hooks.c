@@ -230,8 +230,13 @@ void fetchData(uint32_t ssrc) {
                     }
                     releaseMessage(newMsg);
                 }
-                else
+                else {
+                    fprintf(stdout, "1\n");
+                    fflush(stdout);
                     appendMessage(getEncoderContextById((int) receiver), newMsg);
+                    fprintf(stdout, "2\n");
+                    fflush(stdout);
+                }
 
             }
 
