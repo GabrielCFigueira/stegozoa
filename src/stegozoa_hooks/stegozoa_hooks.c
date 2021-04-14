@@ -211,6 +211,7 @@ void fetchData(uint32_t ssrc) {
             } else {
                 newMsg->size = read_bytes + 2;
                 printf("Consegui ler %d bytes\n", read_bytes);
+                fflush(stdout);
                 
                 if(msgType == 0x0) {
                     senderId = sender;
@@ -246,11 +247,7 @@ void fetchData(uint32_t ssrc) {
 
 int writeQdctLsb(short *qcoeff, int has_y2_block, uint32_t ssrc) {
 
-    fprintf(stdout, "1\n");
-    fflush(stdout);
     message_t *msg = getEncoderContext(ssrc)->msg;
-    fprintf(stdout, "2\n");
-    fflush(stdout);
     
     if(msg->bit == msg->size * 8)
         return -1;
