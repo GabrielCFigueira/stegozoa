@@ -213,13 +213,8 @@ void fetchData(uint32_t ssrc) {
                 }
                 releaseMessage(newMsg);
             }
-            else {
-                fprintf(stdout, "Id: %d\n", (int) receiver);
-                fflush(stdout);
+            else
                 appendMessage(getEncoderContextById((int) receiver), newMsg);
-                fprintf(stdout, "wat: %lu", (unsigned long) ssrc);
-                fflush(stdout);
-            }
 
         }
 
@@ -272,8 +267,6 @@ static void flushDecoder(uint32_t ssrc) {
     if(msgType == 0x1 && receiver == senderId) {
         uint32_t localSsrc = obtainSsrc(msg);
         context_t *ctx = getEncoderContext(localSsrc);
-        fprintf(stdout, "My ssrc: %lu\n", (unsigned long) localSsrc);
-        fflush(stdout);
         ctx->id[ctx->n_ids++] = (int) sender;
     }
 

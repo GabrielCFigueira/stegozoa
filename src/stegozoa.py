@@ -39,13 +39,12 @@ def receiveMessage():
         print("Header size: " + str(size))
         
         if msgType == 0:
-            peers += [sender]
             message = createMessage(1, myId, sender, message) #message is the ssrc in this case, must be sent back
             encoderPipe.write(message)
             encoderPipe.flush()
 
         elif msgType == 1:
-            continue
+            peers += [sender]
 
         elif not established:
             continue
@@ -141,7 +140,7 @@ if __name__ == "__main__":
         newId = 1
     connect(newId)
     while len(getPeers()) < 1:
-        time.sleep(10)
+        time.sleep(0.5)
     message = "Why are we still here... just to suffer"
     send(bytes(message * 100, 'utf-8'), getPeers()[0])
     print(receive())
