@@ -179,7 +179,8 @@ void fetchData(uint32_t ssrc) {
             }
         }
 
-    } else if (read_bytes > 0) {
+    } 
+    if (read_bytes > 0) {
 
         message_t *newMsg = newMessage();
 
