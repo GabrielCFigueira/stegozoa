@@ -99,13 +99,14 @@ static context_t *getDecoderContext(uint32_t ssrc) {
     return decoders[n_decoders - 1];
 }
 
-static message_t *getLastMessage(context_t *ctx) {
-
+static void appendMessage(context_t *ctx, message_t *newMsg) {
     message_t *msg = ctx->msg;
-    while(msg->next != NULL)
-        msg = msg->next;
-
-    return msg;
+    if(msg == NULL)
+        ctx->msg = newMsg;
+    else {
+        while(msg->next != NULL) msg = msg->next;
+        msg->next = newMsg;
+    }
 }
 
 static message_t *copyMessage(message_t *msg) {
