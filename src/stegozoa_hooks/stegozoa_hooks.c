@@ -153,6 +153,8 @@ static uint32_t obtainSsrc(message_t *msg) {
     ssrc += ssrc3 << 16;
     ssrc += ssrc4 << 24;
 
+    return ssrc;
+
 }
 
 void fetchData(uint32_t ssrc) {
