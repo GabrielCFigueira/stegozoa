@@ -27,6 +27,8 @@ static int n_encoders = 0;
 static context_t *decoders[256];
 static int n_decoders = 0;
 
+static unsigned char senderId;
+
 static int encoderFd;
 static int decoderFd;
 static int embbedInitialized = 0;
@@ -51,6 +53,7 @@ static context_t *newContext(uint32_t ssrc) {
     
     context->ssrc = ssrc;
     context->msg = newMessage();
+    context->id = -1;
     return context;
 }
 
@@ -77,6 +80,16 @@ static context_t *getEncoderContext(uint32_t ssrc) {
     return encoders[n_encoders - 1];
 }
 
+static context_t *getEncoderContext(int id) {
+
+    for(int i = 0; i < n_encoders; i++)
+        for(int j = 0; j < encoders[i]->n_ids; j++)
+            if(encoders[i]->id[j] == id)
+                return encoders[i];
+
+    return NULL;
+}
+
 static context_t *getDecoderContext(uint32_t ssrc) {
 
     for(int i = 0; i < n_decoders; i++)
@@ -96,13 +109,60 @@ static message_t *getLastMessage(context_t *ctx) {
     return msg;
 }
 
+static void appendMessage(context_t *ctx, message_t newMsg) {
+    message_t *msg = ctx->msg;
+    if(msg == NULL)
+        ctx->msg = newMsg;
+    else {
+        while(msg->next != NULL);
+        msg->next = newMsg;
+    }
+}
+
+static message_t *copyMessage(message_t *msg) {
+    message_t *newMsg = newMessage();
+    newMsg->bit = msg->bit;
+    newMsg->size = msg->size;
+    memcpy(newMsg->buffer, msg->buffer, BUFFER_LEN * sizeof(unsigned char));
+    return newMsg;
+}
+
+static void insertSsrc(message_t *msg, uint32_t ssrc) {
+    int size = parseHeader(msg->buffer, 0) + 4; //32 bits = 4 bytes
+    msg->size += 4;
+
+    buffer[0] = size & 0xff;
+    buffer[1] = (size >> 8) & 0xff;
+
+    buffer[5] = ssrc & 0xff;
+    buffer[6] = (ssrc >> 8) & 0xff;
+    buffer[7] = (ssrc >> 16) & 0xff;
+    buffer[8] = (ssrc >> 24) & 0xff;
+}
+
+static uint32_t obtainSsrc(message_t *msg) {
+    uint32_t ssrc = 0;
+
+    //probably unnecessary, but must make sure I can shift 24 bits correctly
+    uint32_t ssrc1 = (uint32_t) buffer[5];
+    uint32_t ssrc2 = (uint32_t) buffer[6];
+    uint32_t ssrc3 = (uint32_t) buffer[7];
+    uint32_t ssrc4 = (uint32_t) buffer[8];
+    
+    ssrc += ssrc1;
+    ssrc += ssrc2 << 8;
+    ssrc += ssrc3 << 16;
+    ssrc += ssrc4 << 24;
+
+}
+
 void fetchData(uint32_t ssrc) {
     
     context_t *ctx = getEncoderContext(ssrc);
     message_t *msg = ctx->msg;
 
 
-    while (1) {
+    while (1) { //remove this: may result in denial of service
 
         unsigned char header[2];
         int read_bytes = read(encoderFd, header, 2);
@@ -115,7 +175,7 @@ void fetchData(uint32_t ssrc) {
 
         int finished = (msg->bit == msg->size * 8);
 
-        if(finished) {
+        if(finished) { //discard current message
 
             if(msg->next != NULL) {
                 message_t *temp = msg;
@@ -143,21 +203,42 @@ void fetchData(uint32_t ssrc) {
 
             newMsg->buffer[0] = header[0];
             newMsg->buffer[1] = header[1];
-           
-            if(ctx->msg == NULL)
-                ctx->msg = newMsg;
-            else
-                getLastMessage(ctx)->next = newMsg;
-
+            
             read_bytes = read(encoderFd, newMsg->buffer + 2, parseHeader(header, 0));
-        
-            if(read_bytes != parseHeader(header, 0))
-                error(strerror(errno), "Trying to read from the encoder pipe after reading the header!");
 
-            else {
+            unsigned char msgType = newMsg->buffer[2];
+            unsigned char sender = newMsg->buffer[3];
+            unsigned char receiver = newMsg->buffer[4];
+
+            if(read_bytes != parseHeader(header, 0)) {
+                error(strerror(errno), "Trying to read from the encoder pipe after reading the header!");
+                releaseMessage(newMsg);
+            
+            } else {
                 newMsg->size = read_bytes + 2;
                 printf("Consegui ler %d bytes\n", read_bytes);
+                
+                if(msgType == 0x0) {
+                    senderId = sender;
+                    insertSsrc(newMsg, ssrc);
+                    for(int i = 0; i < n_encoders; ++i) {
+                        appendMessage(encoders[i], newMsg);
+                        newMsg = copyMessage(newMsg);
+                    }
+                    releaseMessage(newMsg);
+                
+                } else if(msgType == 0x1 || receiver == 0xff) {
+                    for(int i = 0; i < n_encoders; ++i) {
+                        appendMessage(encoders[i], newMsg);
+                        newMsg = copyMessage(newMsg);
+                    }
+                    releaseMessage(newMsg);
+                }
+                else
+                    appendMessage(getEncoderContext((int) receiver), newMsg);
+
             }
+
         }
 
         if(read_bytes == 0)
@@ -197,6 +278,16 @@ static void flushDecoder(uint32_t ssrc) {
     message_t *msg = getDecoderContext(ssrc)->msg;
     int n_bytes;
     msg->bit = 0; //should be 0
+
+    unsigned char msgType = msg->buffer[2];
+    unsigned char sender = msg->buffer[3];
+    unsigned char receiver = msg->buffer[4];
+
+    if(msgType == 0x1 && receiver == senderId) {
+        uint32_t localSsrc = obtainSsrc(msg);
+        context_t *ctx = getEncoderContext(localSsrc);
+        ctx->id[ctx->n_ids++] = sender;
+    }
 
     n_bytes = write(decoderFd, msg->buffer, msg->size);
 

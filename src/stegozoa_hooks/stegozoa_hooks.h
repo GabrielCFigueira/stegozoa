@@ -16,7 +16,8 @@ typedef struct message {
 typedef struct context {
 	message_t *msg;
 	uint32_t ssrc;
-	
+	int* id;
+	int n_ids;
 } context_t;
 
 
