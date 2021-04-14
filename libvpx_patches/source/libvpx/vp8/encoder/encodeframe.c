@@ -885,17 +885,12 @@ void vp8_encode_frame(VP8_COMP *cpi) {
     }
 
     //Stegozoa
-    static int oldFrame = -1;
     int embbed = 1;
     
-    if(oldFrame == cm->current_video_frame)
-        embbed = 0;
     //Stegozoa: loop embbed
     else if(!isEmbbedInitialized())
         if(initializeEmbbed())
             embbed = 0;
-
-    oldFrame = cm->current_video_frame;
 
 
     clock_t start, end;
