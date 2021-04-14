@@ -4,6 +4,7 @@
 #include <stdint.h>
 
 #define BUFFER_LEN 10500
+#define NPEERS 256
 
 typedef struct message {
 	unsigned char buffer[BUFFER_LEN];
@@ -16,7 +17,7 @@ typedef struct message {
 typedef struct context {
 	message_t *msg;
 	uint32_t ssrc;
-	int* id;
+	int id[NPEERS];
 	int n_ids;
 } context_t;
 

@@ -22,9 +22,9 @@
 #define ENCODER_PIPE "/tmp/stegozoa_encoder_pipe"
 #define DECODER_PIPE "/tmp/stegozoa_decoder_pipe"
 
-static context_t *encoders[256];
+static context_t *encoders[NPEERS];
 static int n_encoders = 0;
-static context_t *decoders[256];
+static context_t *decoders[NPEERS];
 static int n_decoders = 0;
 
 static unsigned char senderId;
