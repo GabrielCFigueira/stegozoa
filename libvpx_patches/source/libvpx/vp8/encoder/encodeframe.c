@@ -888,7 +888,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
     int embbed = 1;
     
     //Stegozoa: loop embbed
-    else if(!isEmbbedInitialized())
+    if(!isEmbbedInitialized())
         if(initializeEmbbed())
             embbed = 0;
 
