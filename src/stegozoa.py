@@ -141,7 +141,7 @@ if __name__ == "__main__":
         newId = 1
     connect(newId)
     while len(getPeers()) < 1:
-        time.sleep(0.5)
+        time.sleep(10)
     message = "Why are we still here... just to suffer"
     send(bytes(message * 100, 'utf-8'), getPeers()[0])
     print(receive())
