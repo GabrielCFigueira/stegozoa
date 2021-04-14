@@ -153,15 +153,6 @@ void fetchData(uint32_t ssrc) {
     context_t *ctx = getEncoderContext(ssrc);
     message_t *msg = ctx->msg;
     
-    unsigned char header[2];
-    int read_bytes = read(encoderFd, header, 2);
-
-    if(read_bytes != 2) {
-        if(errno != EAGAIN) // read would block, no need to show this error
-            error(strerror(errno), "Trying to read from the encoder pipe");
-        read_bytes = 0;
-    }
-
     if(msg->bit == msg->size * 8) { //discard current message
 
         if(msg->next != NULL) {
@@ -171,15 +162,18 @@ void fetchData(uint32_t ssrc) {
         } else {
             releaseMessage(msg);
             ctx->msg = NULL;
-            if(read_bytes == 0) {
-                ctx->msg = newMessage();
-                ctx->msg->buffer[0] = '\0';
-                ctx->msg->buffer[1] = '\0';
-                ctx->msg->size = 2;
-            }
         }
-
     } 
+    
+    unsigned char header[2];
+    int read_bytes = read(encoderFd, header, 2);
+
+    if(read_bytes != 2) {
+        if(errno != EAGAIN) // read would block, no need to show this error
+            error(strerror(errno), "Trying to read from the encoder pipe");
+        read_bytes = 0;
+    }
+
     if (read_bytes > 0) {
 
         message_t *newMsg = newMessage();
@@ -227,6 +221,13 @@ void fetchData(uint32_t ssrc) {
 
         }
 
+    }
+    
+    if(read_bytes == 0 || ctx->msg == NULL) {
+        ctx->msg = newMessage();
+        ctx->msg->buffer[0] = '\0';
+        ctx->msg->buffer[1] = '\0';
+        ctx->msg->size = 2;
     }
 
 }
