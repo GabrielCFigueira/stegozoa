@@ -108,16 +108,6 @@ static message_t *getLastMessage(context_t *ctx) {
     return msg;
 }
 
-static void appendMessage(context_t *ctx, message_t *newMsg) {
-    message_t *msg = ctx->msg;
-    if(msg == NULL)
-        ctx->msg = newMsg;
-    else {
-        while(msg->next != NULL);
-        msg->next = newMsg;
-    }
-}
-
 static message_t *copyMessage(message_t *msg) {
     message_t *newMsg = newMessage();
     newMsg->bit = msg->bit;

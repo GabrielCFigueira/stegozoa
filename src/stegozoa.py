@@ -40,11 +40,17 @@ def receiveMessage():
         
         if msgType == 0:
             peers += [sender]
+            message = createMessage(1, myId, sender)
+            encoderPipe.write(message)
+            encoderPipe.flush()
+
+        elif msgType == 1:
+            continue
 
         elif not established:
             continue
 
-        elif msgType == 1:
+        elif msgType == 2:
             if receiver == myId:
                 messageQueue.put(message)
             
@@ -106,7 +112,7 @@ def send(byteArray, receiver):
         raise "Must establish connection first"
     
     #TODO validate packet size (cant be bigger than 10000?)
-    message = createMessage(1, myId, receiver, byteArray)
+    message = createMessage(2, myId, receiver, byteArray)
 
     encoderPipe.write(message)
     encoderPipe.flush()
