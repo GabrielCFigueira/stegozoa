@@ -212,7 +212,9 @@ void fetchData(uint32_t ssrc) {
                 releaseMessage(newMsg);
             
             } else if(msgType == 0x1 || receiver == 0xff) {
-                insertSsrc(newMsg, ssrc);
+
+                if(msgType == 0x1)
+                    insertSsrc(newMsg, ssrc);
                 for(int i = 0; i < n_encoders; ++i) {
                     appendMessage(encoders[i], newMsg);
                     newMsg = copyMessage(newMsg);
@@ -269,7 +271,7 @@ static void flushDecoder(uint32_t ssrc) {
     if(msgType == 0x1 && receiver == senderId) {
         uint32_t localSsrc = obtainSsrc(msg);
         context_t *ctx = getEncoderContext(localSsrc);
-        fprintf(stdout, "New id: %d\n", (int) sender);
+        fprintf(stdout, "My ssrc: %lu\n", (unsigned long) localSsrc);
         fflush(stdout);
         ctx->id[ctx->n_ids++] = (int) sender;
     }
