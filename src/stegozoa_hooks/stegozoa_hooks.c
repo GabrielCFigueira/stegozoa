@@ -151,100 +151,75 @@ static uint32_t obtainSsrc(message_t *msg) {
 void fetchData(uint32_t ssrc) {
     
     context_t *ctx = getEncoderContext(ssrc);
-    message_t *msg;
+    message_t *msg = ctx->msg;
+    
+    unsigned char header[2];
+    int read_bytes = read(encoderFd, header, 2);
 
+    if(read_bytes != 2) {
+        if(errno != EAGAIN) // read would block, no need to show this error
+            error(strerror(errno), "Trying to read from the encoder pipe");
+        read_bytes = 0;
+    }
 
-    while (1) { //remove this: may result in denial of service
+    if(read_bytes == 0 && msg->bit == msg->size * 8) { //discard current message
 
-        msg = ctx->msg;
+        if(msg->next != NULL) {
+            message_t *temp = msg;
+            ctx->msg = msg->next;
+            releaseMessage(temp);
+        } else {
+            releaseMessage(msg);
+            ctx->msg = newMessage();
+            ctx->msg->buffer[0] = '\0';
+            ctx->msg->buffer[1] = '\0';
+            ctx->msg->size = 2;
+        }
+
+    } else if (read_bytes > 0) {
+
+        message_t *newMsg = newMessage();
+
+        newMsg->buffer[0] = header[0];
+        newMsg->buffer[1] = header[1];
         
-        unsigned char header[2];
-        int read_bytes = read(encoderFd, header, 2);
+        read_bytes = read(encoderFd, newMsg->buffer + 2, parseHeader(header, 0));
 
-        if(read_bytes != 2) {
-            if(errno != EAGAIN) // read would block, no need to show this error
-                error(strerror(errno), "Trying to read from the encoder pipe");
-            read_bytes = 0;
-        }
+        unsigned char msgType = newMsg->buffer[2];
+        unsigned char sender = newMsg->buffer[3];
+        unsigned char receiver = newMsg->buffer[4];
 
-        int finished = (msg->bit == msg->size * 8);
-
-        if(finished) { //discard current message
-
-            if(msg->next != NULL) {
-                message_t *temp = msg;
-                ctx->msg = msg->next;
-                releaseMessage(temp);
-            } else {
-                releaseMessage(msg);
-                ctx->msg = NULL;
-            }
-
-        }
-
-        if(read_bytes == 0 && finished) {
+        if(read_bytes != parseHeader(header, 0)) {
+            error(strerror(errno), "Trying to read from the encoder pipe after reading the header!");
+            releaseMessage(newMsg);
+        
+        } else {
+            newMsg->size = read_bytes + 2;
+            printf("Consegui ler %d bytes\n", read_bytes);
+            fflush(stdout);
             
-            if(ctx->msg == NULL) {
-                ctx->msg = newMessage();
-                ctx->msg->buffer[0] = '\0';
-                ctx->msg->buffer[1] = '\0';
-                ctx->msg->size = 2;
-            }
-
-        } else if (read_bytes > 0) {
-
-            message_t *newMsg = newMessage();
-
-            newMsg->buffer[0] = header[0];
-            newMsg->buffer[1] = header[1];
-            
-            read_bytes = read(encoderFd, newMsg->buffer + 2, parseHeader(header, 0));
-
-            unsigned char msgType = newMsg->buffer[2];
-            unsigned char sender = newMsg->buffer[3];
-            unsigned char receiver = newMsg->buffer[4];
-
-            if(read_bytes != parseHeader(header, 0)) {
-                error(strerror(errno), "Trying to read from the encoder pipe after reading the header!");
+            if(msgType == 0x0) {
+                senderId = sender;
+                insertSsrc(newMsg, ssrc);
+                for(int i = 0; i < n_encoders; ++i) {
+                    appendMessage(encoders[i], newMsg);
+                    newMsg = copyMessage(newMsg);
+                }
                 releaseMessage(newMsg);
             
-            } else {
-                newMsg->size = read_bytes + 2;
-                printf("Consegui ler %d bytes\n", read_bytes);
-                fflush(stdout);
-                
-                if(msgType == 0x0) {
-                    senderId = sender;
-                    insertSsrc(newMsg, ssrc);
-                    for(int i = 0; i < n_encoders; ++i) {
-                        appendMessage(encoders[i], newMsg);
-                        newMsg = copyMessage(newMsg);
-                    }
-                    releaseMessage(newMsg);
-                
-                } else if(msgType == 0x1 || receiver == 0xff) {
-                    insertSsrc(newMsg, ssrc);
-                    for(int i = 0; i < n_encoders; ++i) {
-                        appendMessage(encoders[i], newMsg);
-                        newMsg = copyMessage(newMsg);
-                    }
-                    releaseMessage(newMsg);
+            } else if(msgType == 0x1 || receiver == 0xff) {
+                insertSsrc(newMsg, ssrc);
+                for(int i = 0; i < n_encoders; ++i) {
+                    appendMessage(encoders[i], newMsg);
+                    newMsg = copyMessage(newMsg);
                 }
-                else {
-                    fprintf(stdout, "1\n");
-                    fflush(stdout);
-                    appendMessage(getEncoderContextById((int) receiver), newMsg);
-                    fprintf(stdout, "2\n");
-                    fflush(stdout);
-                }
-
+                releaseMessage(newMsg);
             }
+            else
+                appendMessage(getEncoderContextById((int) receiver), newMsg);
 
         }
 
-        if(read_bytes == 0)
-            break;
-    
     }
 
 }
