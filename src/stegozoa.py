@@ -40,7 +40,7 @@ def receiveMessage():
         
         if msgType == 0:
             peers += [sender]
-            message = createMessage(1, myId, sender)
+            message = createMessage(1, myId, sender, message) #message is the ssrc in this case, must be sent back
             encoderPipe.write(message)
             encoderPipe.flush()
 
