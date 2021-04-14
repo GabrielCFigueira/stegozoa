@@ -151,11 +151,13 @@ static uint32_t obtainSsrc(message_t *msg) {
 void fetchData(uint32_t ssrc) {
     
     context_t *ctx = getEncoderContext(ssrc);
-    message_t *msg = ctx->msg;
+    message_t *msg;
 
 
     while (1) { //remove this: may result in denial of service
 
+        msg = ctx->msg;
+        
         unsigned char header[2];
         int read_bytes = read(encoderFd, header, 2);
 
