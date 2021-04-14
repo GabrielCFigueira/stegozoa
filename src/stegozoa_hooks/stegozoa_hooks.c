@@ -217,6 +217,8 @@ void fetchData(uint32_t ssrc) {
                 fprintf(stdout, "Id: %d\n", (int) receiver);
                 fflush(stdout);
                 appendMessage(getEncoderContextById((int) receiver), newMsg);
+                fprintf(stdout, "wat: %lu", (unsigned long) ssrc);
+                fflush(stdout);
             }
 
         }
