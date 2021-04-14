@@ -162,7 +162,7 @@ void fetchData(uint32_t ssrc) {
         read_bytes = 0;
     }
 
-    if(read_bytes == 0 && msg->bit == msg->size * 8) { //discard current message
+    if(msg->bit == msg->size * 8) { //discard current message
 
         if(msg->next != NULL) {
             message_t *temp = msg;
@@ -170,10 +170,13 @@ void fetchData(uint32_t ssrc) {
             releaseMessage(temp);
         } else {
             releaseMessage(msg);
-            ctx->msg = newMessage();
-            ctx->msg->buffer[0] = '\0';
-            ctx->msg->buffer[1] = '\0';
-            ctx->msg->size = 2;
+            ctx->msg = NULL;
+            if(read_bytes == 0) {
+                ctx->msg = newMessage();
+                ctx->msg->buffer[0] = '\0';
+                ctx->msg->buffer[1] = '\0';
+                ctx->msg->size = 2;
+            }
         }
 
     } else if (read_bytes > 0) {
