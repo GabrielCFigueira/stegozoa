@@ -277,6 +277,9 @@ static vpx_codec_err_t vp8_decode(vpx_codec_alg_priv_t *ctx,
   volatile unsigned int resolution_change = 0;
   unsigned int w, h;
 
+  //Stegozoa: cheekly obtain the ssrc
+  int ssrc = *((int *) user_priv);
+
   if (!ctx->fragments.enabled && (data == NULL && data_sz == 0)) {
     return 0;
   }
@@ -488,7 +491,7 @@ static vpx_codec_err_t vp8_decode(vpx_codec_alg_priv_t *ctx,
     ctx->user_priv = user_priv;
 
     //Stegozoa
-    pbi->ssrc = ctx->img->ssrc;
+    pbi->ssrc = ssrc;
     if (vp8dx_receive_compressed_data(pbi, deadline)) {
       res = update_error_state(ctx, &pbi->common.error);
     }

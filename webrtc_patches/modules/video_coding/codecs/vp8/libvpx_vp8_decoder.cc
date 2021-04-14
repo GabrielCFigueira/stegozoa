@@ -13,9 +13,6 @@
 #include <stdio.h>
 #include <string.h>
 
-//Stegozoa
-#include <csignal>
-
 #include <algorithm>
 #include <memory>
 #include <string>
@@ -270,7 +267,8 @@ int LibvpxVp8Decoder::Decode(const EncodedImage& input_image,
   // Check for missing frames.
   if (missing_frames) {
     // Call decoder with zero data length to signal missing frames.
-    if (vpx_codec_decode(decoder_, NULL, 0, 0, kDecodeDeadlineRealtime)) {
+    // Stegozoa: it seems the forth argument is never used for anything, so I am going to pull a pro gamer move
+    if (vpx_codec_decode(decoder_, NULL, 0, &ssrc, kDecodeDeadlineRealtime)) {
       // Reset to avoid requesting key frames too often.
       if (propagation_cnt_ > 0)
         propagation_cnt_ = 0;
@@ -281,13 +279,12 @@ int LibvpxVp8Decoder::Decode(const EncodedImage& input_image,
   }
 
   const uint8_t* buffer = input_image.data();
-  //Stegozoa
-  img->ssrc = ssrc;
   
   if (input_image.size() == 0) {
     buffer = NULL;  // Triggers full frame concealment.
   }
-  if (vpx_codec_decode(decoder_, buffer, input_image.size(), 0,
+    // Stegozoa: it seems the forth argument is never used for anything, so I am going to pull a pro gamer move
+  if (vpx_codec_decode(decoder_, buffer, input_image.size(), &ssrc,
                        kDecodeDeadlineRealtime)) {
     // Reset to avoid requesting key frames too often.
     if (propagation_cnt_ > 0) {
