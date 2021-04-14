@@ -53,7 +53,6 @@ static context_t *newContext(uint32_t ssrc) {
     
     context->ssrc = ssrc;
     context->msg = newMessage();
-    context->id = -1;
     return context;
 }
 
@@ -80,7 +79,7 @@ static context_t *getEncoderContext(uint32_t ssrc) {
     return encoders[n_encoders - 1];
 }
 
-static context_t *getEncoderContext(int id) {
+static context_t *getEncoderContextById(int id) {
 
     for(int i = 0; i < n_encoders; i++)
         for(int j = 0; j < encoders[i]->n_ids; j++)
@@ -109,7 +108,7 @@ static message_t *getLastMessage(context_t *ctx) {
     return msg;
 }
 
-static void appendMessage(context_t *ctx, message_t newMsg) {
+static void appendMessage(context_t *ctx, message_t *newMsg) {
     message_t *msg = ctx->msg;
     if(msg == NULL)
         ctx->msg = newMsg;
@@ -131,23 +130,23 @@ static void insertSsrc(message_t *msg, uint32_t ssrc) {
     int size = parseHeader(msg->buffer, 0) + 4; //32 bits = 4 bytes
     msg->size += 4;
 
-    buffer[0] = size & 0xff;
-    buffer[1] = (size >> 8) & 0xff;
+    msg->buffer[0] = size & 0xff;
+    msg->buffer[1] = (size >> 8) & 0xff;
 
-    buffer[5] = ssrc & 0xff;
-    buffer[6] = (ssrc >> 8) & 0xff;
-    buffer[7] = (ssrc >> 16) & 0xff;
-    buffer[8] = (ssrc >> 24) & 0xff;
+    msg->buffer[5] = ssrc & 0xff;
+    msg->buffer[6] = (ssrc >> 8) & 0xff;
+    msg->buffer[7] = (ssrc >> 16) & 0xff;
+    msg->buffer[8] = (ssrc >> 24) & 0xff;
 }
 
 static uint32_t obtainSsrc(message_t *msg) {
     uint32_t ssrc = 0;
 
     //probably unnecessary, but must make sure I can shift 24 bits correctly
-    uint32_t ssrc1 = (uint32_t) buffer[5];
-    uint32_t ssrc2 = (uint32_t) buffer[6];
-    uint32_t ssrc3 = (uint32_t) buffer[7];
-    uint32_t ssrc4 = (uint32_t) buffer[8];
+    uint32_t ssrc1 = (uint32_t) msg->buffer[5];
+    uint32_t ssrc2 = (uint32_t) msg->buffer[6];
+    uint32_t ssrc3 = (uint32_t) msg->buffer[7];
+    uint32_t ssrc4 = (uint32_t) msg->buffer[8];
     
     ssrc += ssrc1;
     ssrc += ssrc2 << 8;
@@ -235,7 +234,7 @@ void fetchData(uint32_t ssrc) {
                     releaseMessage(newMsg);
                 }
                 else
-                    appendMessage(getEncoderContext((int) receiver), newMsg);
+                    appendMessage(getEncoderContextById((int) receiver), newMsg);
 
             }
 
