@@ -198,7 +198,7 @@ void fetchData(uint32_t ssrc) {
             
             if(msgType == 0x0) {
                 senderId = sender;
-                message_t tempMsg;
+                message_t *tempMsg;
                 for(int i = 0; i < n_encoders; ++i) {
                     tempMsg = copyMessage(newMsg)
                     insertSsrc(tempMsg, encoders[i]->ssrc);
