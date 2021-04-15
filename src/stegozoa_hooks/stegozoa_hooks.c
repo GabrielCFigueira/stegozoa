@@ -200,7 +200,7 @@ void fetchData(uint32_t ssrc) {
                 senderId = sender;
                 message_t *tempMsg;
                 for(int i = 0; i < n_encoders; ++i) {
-                    tempMsg = copyMessage(newMsg)
+                    tempMsg = copyMessage(newMsg);
                     insertSsrc(tempMsg, encoders[i]->ssrc);
                     appendMessage(encoders[i], tempMsg);
                 }
