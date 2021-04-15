@@ -136,9 +136,9 @@ def getPeers():
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
-        newId = int(sys.argv[1])
+        myId = int(sys.argv[1])
     else:
-        newId = 1
+        myId = 1
     initialize()
     #connect(newId)
     #while len(getPeers()) < 1:
