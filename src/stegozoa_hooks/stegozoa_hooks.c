@@ -198,10 +198,11 @@ void fetchData(uint32_t ssrc) {
             
             if(msgType == 0x0) {
                 senderId = sender;
+                message_t tempMsg;
                 for(int i = 0; i < n_encoders; ++i) {
-                    insertSsrc(newMsg, encoders[i]->ssrc);
-                    appendMessage(encoders[i], newMsg);
-                    newMsg = copyMessage(newMsg);
+                    tempMsg = copyMessage(newMsg)
+                    insertSsrc(tempMsg, encoders[i]->ssrc);
+                    appendMessage(encoders[i], tempMsg);
                 }
                 releaseMessage(newMsg);
             
