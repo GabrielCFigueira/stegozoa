@@ -44,7 +44,8 @@ def receiveMessage():
             encoderPipe.flush()
 
         elif msgType == 1:
-            peers += [sender]
+            if receiver == myId:
+                peers += [sender]
 
         elif not established:
             continue
