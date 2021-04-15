@@ -83,20 +83,12 @@ def shutdown():
 
 #---------------------API begins here---------------------------------
 
-def connect(newId):
+def connect():
     global established, encoderPipe, decoderPipe, myId
 
     if established:
         print("Connection is already established")
         return
-    #else:
-    #    initialize()
-
-    if not isinstance(newId, int) or newId < 0 or newId > 255:
-        print("Invalid Id")
-        return
-
-    myId = newId
 
     msgType = 0
     message = createMessage(msgType, myId, 255) # 0xff = broadcast address

@@ -268,6 +268,8 @@ static void flushDecoder(uint32_t ssrc) {
         uint32_t localSsrc = obtainSsrc(msg);
         context_t *ctx = getEncoderContext(localSsrc);
         ctx->id[ctx->n_ids++] = (int) sender;
+        fprintf(stdout, "My ssrc: %lu. Id: %d\n", (unsigned long) localSsrc, (int) sender);
+        fflush(stdout);
     }
 
     n_bytes = write(decoderFd, msg->buffer, msg->size);
