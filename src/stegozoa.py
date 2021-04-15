@@ -88,8 +88,8 @@ def connect(newId):
     if established:
         print("Connection is already established")
         return
-    else:
-        initialize()
+    #else:
+    #    initialize()
 
     if not isinstance(newId, int) or newId < 0 or newId > 255:
         print("Invalid Id")
@@ -138,6 +138,7 @@ if __name__ == "__main__":
         newId = int(sys.argv[1])
     else:
         newId = 1
+    initialize()
     #connect(newId)
     #while len(getPeers()) < 1:
     #    time.sleep(0.5)
