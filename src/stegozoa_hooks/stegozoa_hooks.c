@@ -220,7 +220,7 @@ void fetchData(uint32_t ssrc) {
 
     }
     
-    if(read_bytes == 0 || ctx->msg == NULL) {
+    if(ctx->msg == NULL) {
         ctx->msg = newMessage();
         ctx->msg->buffer[0] = '\0';
         ctx->msg->buffer[1] = '\0';
