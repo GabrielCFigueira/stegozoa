@@ -419,9 +419,9 @@ static std::string preferences(std::vector<RtpCodecCapability> codec_preferences
 		res += codec_preferences[i].mime_type();
 		for(std::pair<std::string, std::string> element : codec_preferences[i])
 			res += element.first + element.second;
-		res += max_temporal_layer_extensions;
-		res += max_spatial_layer_extensions;
-		res += max_multi_stream_support;
+		res += codec_preferences[i].max_temporal_layer_extensions;
+		res += codec_preferences[i].max_spatial_layer_extensions;
+		res += codec_preferences[i].max_multi_stream_support;
 	}
 	return res;
 
