@@ -2438,6 +2438,7 @@ SdpOfferAnswerHandler::pending_local_description() const {
   std::string sdp;
   SessionDescriptionInterface *sdi = pending_local_description_.get();
   if(sdi) {
+	std::count << "------------------SDP----------------" << std::endl;
 	sdi->ToString(&sdp);
   	std::cout << sdp << std::endl;
   }
