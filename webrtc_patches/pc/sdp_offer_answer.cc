@@ -2435,13 +2435,13 @@ const SessionDescriptionInterface*
 SdpOfferAnswerHandler::pending_local_description() const {
   RTC_DCHECK_RUN_ON(signaling_thread());
   //Stegozoa
-  std::string sdp;
+  /*std::string sdp;
   SessionDescriptionInterface *sdi = pending_local_description_.get();
   if(sdi && 0) {
 	std::cout << "------------------local-SDP----------------" << std::endl;
 	sdi->ToString(&sdp);
   	std::cout << sdp << std::endl;
-  }
+  }*/
   return pending_local_description_.get();
 }
 
