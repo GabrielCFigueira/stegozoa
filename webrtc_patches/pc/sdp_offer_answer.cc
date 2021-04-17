@@ -2020,6 +2020,9 @@ void SdpOfferAnswerHandler::DoCreateOffer(
     }
   }
 
+  //Stegozoa
+  std::cout << "-----------------Option---------------" << std::endl;
+  std::cout << options.num_simulcast_layers << std::endl;
   cricket::MediaSessionOptions session_options;
   GetOptionsForOffer(options, &session_options);
   webrtc_session_desc_factory_->CreateOffer(observer, options, session_options);
@@ -2105,9 +2108,6 @@ void SdpOfferAnswerHandler::DoCreateAnswer(
     }
   }
 
-  //Stegozoa
-  std::cout << "-----------------Option---------------" << std::endl;
-  std::cout << options.num_simulcast_layers << std::endl;
 
   cricket::MediaSessionOptions session_options;
   GetOptionsForAnswer(options, &session_options);
