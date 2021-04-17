@@ -2105,6 +2105,10 @@ void SdpOfferAnswerHandler::DoCreateAnswer(
     }
   }
 
+  //Stegozoa
+  std::cout << "-----------------Option---------------" << std::endl;
+  std::count << options.num_simulcast_layers << std::endl;
+
   cricket::MediaSessionOptions session_options;
   GetOptionsForAnswer(options, &session_options);
   webrtc_session_desc_factory_->CreateAnswer(observer, session_options);
