@@ -2107,7 +2107,7 @@ void SdpOfferAnswerHandler::DoCreateAnswer(
 
   //Stegozoa
   std::cout << "-----------------Option---------------" << std::endl;
-  std::count << options.num_simulcast_layers << std::endl;
+  std::cout << options.num_simulcast_layers << std::endl;
 
   cricket::MediaSessionOptions session_options;
   GetOptionsForAnswer(options, &session_options);
