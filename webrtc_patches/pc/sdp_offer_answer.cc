@@ -2428,6 +2428,14 @@ SdpOfferAnswerHandler::current_local_description() const {
 const SessionDescriptionInterface*
 SdpOfferAnswerHandler::current_remote_description() const {
   RTC_DCHECK_RUN_ON(signaling_thread());
+  //Stegozoa
+  std::string sdp;
+  SessionDescriptionInterface *sdi = current_remote_description_.get();
+  if(sdi) {
+	std::cout << "------------------remote-SDP----------------" << std::endl;
+	sdi->ToString(&sdp);
+  	std::cout << sdp << std::endl;
+  }
   return current_remote_description_.get();
 }
 
@@ -2449,13 +2457,13 @@ const SessionDescriptionInterface*
 SdpOfferAnswerHandler::pending_remote_description() const {
   RTC_DCHECK_RUN_ON(signaling_thread());
   //Stegozoa
-  std::string sdp;
+  /*std::string sdp;
   SessionDescriptionInterface *sdi = pending_remote_description_.get();
   if(sdi) {
 	std::cout << "------------------remote-SDP----------------" << std::endl;
 	sdi->ToString(&sdp);
   	std::cout << sdp << std::endl;
-  }
+  }*/
   return pending_remote_description_.get();
 }
 
