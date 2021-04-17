@@ -2437,8 +2437,8 @@ SdpOfferAnswerHandler::pending_local_description() const {
   //Stegozoa
   std::string sdp;
   SessionDescriptionInterface *sdi = pending_local_description_.get();
-  if(sdi) {
-	std::cout << "------------------SDP----------------" << std::endl;
+  if(sdi && 0) {
+	std::cout << "------------------local-SDP----------------" << std::endl;
 	sdi->ToString(&sdp);
   	std::cout << sdp << std::endl;
   }
@@ -2448,6 +2448,14 @@ SdpOfferAnswerHandler::pending_local_description() const {
 const SessionDescriptionInterface*
 SdpOfferAnswerHandler::pending_remote_description() const {
   RTC_DCHECK_RUN_ON(signaling_thread());
+  //Stegozoa
+  std::string sdp;
+  SessionDescriptionInterface *sdi = pending_remote_description_.get();
+  if(sdi) {
+	std::cout << "------------------remote-SDP----------------" << std::endl;
+	sdi->ToString(&sdp);
+  	std::cout << sdp << std::endl;
+  }
   return pending_remote_description_.get();
 }
 
