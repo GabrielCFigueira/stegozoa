@@ -2021,8 +2021,8 @@ void SdpOfferAnswerHandler::DoCreateOffer(
   }
 
   //Stegozoa
-  std::cout << "-----------------Option---------------" << std::endl;
-  std::cout << options.num_simulcast_layers << std::endl;
+  //std::cout << "-----------------Option---------------" << std::endl;
+  //std::cout << options.num_simulcast_layers << std::endl;
   cricket::MediaSessionOptions session_options;
   GetOptionsForOffer(options, &session_options);
   webrtc_session_desc_factory_->CreateOffer(observer, options, session_options);
@@ -2433,13 +2433,13 @@ const SessionDescriptionInterface*
 SdpOfferAnswerHandler::current_remote_description() const {
   RTC_DCHECK_RUN_ON(signaling_thread());
   //Stegozoa
-  std::string sdp;
+  /*std::string sdp;
   SessionDescriptionInterface *sdi = current_remote_description_.get();
   if(sdi) {
 	std::cout << "------------------remote-SDP----------------" << std::endl;
 	sdi->ToString(&sdp);
   	std::cout << sdp << std::endl;
-  }
+  }*/
   return current_remote_description_.get();
 }
 
