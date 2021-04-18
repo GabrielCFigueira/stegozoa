@@ -411,22 +411,6 @@ void RtpTransceiver::StopTransceiverProcedure() {
   current_direction_ = absl::nullopt;
 }
 
-//Stegozoa
-static std::string preferences(std::vector<RtpCodecCapability> codec_preferences) {
-	
-	std::string res;
-	for(unsigned long i = 0; i < codec_preferences.size(); ++i) {
-		res += codec_preferences[i].mime_type();
-		for(std::pair<std::string, std::string> element : codec_preferences[i].parameters)
-			res += element.first + element.second;
-		res += codec_preferences[i].max_temporal_layer_extensions;
-		res += codec_preferences[i].max_spatial_layer_extensions;
-		res += codec_preferences[i].svc_multi_stream_support;
-	}
-	return res;
-
-}
-
 RTCError RtpTransceiver::SetCodecPreferences(
     rtc::ArrayView<RtpCodecCapability> codec_capabilities) {
   RTC_DCHECK(unified_plan_);
