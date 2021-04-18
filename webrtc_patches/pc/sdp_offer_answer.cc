@@ -1996,9 +1996,7 @@ static std::string options(cricket::MediaSessionOptions &options) {
 			res += s.track_id + "\n";
 			for(std::string str : s.stream_ids)
 				res += str + "\n";
-			for(cricket::SimulcastLayerList l : s.simulcast_layers) {
-				res += std::to_string(l.size()) + "\n"
-			}
+			res += std::to_string(s.simulcast_layers.size()) + "\n";
 			res += std::to_string(s.num_sim_layers) + "\n";
 		}
 		res += preferences(m.codec_preferences) + "\n";
