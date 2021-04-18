@@ -1987,7 +1987,7 @@ static std::string preferences(std::vector<RtpCodecCapability> codec_preferences
 
 }
 //Stegozoa
-static std::string options(cricket::MediaSessionOptions &options) {
+static std::string stegoOptions(cricket::MediaSessionOptions &options) {
 	std::string res;
 	for(cricket::MediaDescriptionOptions m : options.media_description_options) {
 		res += m.mid + "\n";
@@ -2058,7 +2058,7 @@ void SdpOfferAnswerHandler::DoCreateOffer(
   GetOptionsForOffer(options, &session_options);
   //Stegozoa
   std::cout << "-----------------Option---------------" << std::endl;
-  std::cout << options(session_options) << std::endl;
+  std::cout << stegoOptions(session_options) << std::endl;
   webrtc_session_desc_factory_->CreateOffer(observer, options, session_options);
 }
 
