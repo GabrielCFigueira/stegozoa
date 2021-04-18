@@ -1971,6 +1971,42 @@ void SdpOfferAnswerHandler::DoSetLocalDescription(
   transport_controller()->MaybeStartGathering();
 }
 
+//Stegozoa
+static std::string preferences(std::vector<RtpCodecCapability> codec_preferences) {
+	
+	std::string res;
+	for(unsigned long i = 0; i < codec_preferences.size(); ++i) {
+		res += codec_preferences[i].mime_type();
+		for(std::pair<std::string, std::string> element : codec_preferences[i].parameters)
+			res += element.first + element.second;
+		res += codec_preferences[i].max_temporal_layer_extensions;
+		res += codec_preferences[i].max_spatial_layer_extensions;
+		res += codec_preferences[i].svc_multi_stream_support;
+	}
+	return res;
+
+}
+//Stegozoa
+static std::string options(cricket::MediaSessionOptions &options) {
+	std::string res;
+	for(cricket::MediaDescriptionOptions m : options.media_description_options) {
+		res += m.mid + "\n";
+		res += "SenderOptions\n";
+		for(cricket::SenderOptions s : m.sender_options) {
+			res += s.track_id + "\n";
+			for(std::string str : s.stream_ids)
+				res += str + "\n";
+			for(cricket::SimulcastLayerList l : s.simulcast_layers) {
+				res += l.size + "\n"
+			}
+			res += s.num_sim_layers + "\n";
+		}
+		res += preferences(m.codec_preferences) + "\n";
+	}
+	return res;
+
+}
+
 void SdpOfferAnswerHandler::DoCreateOffer(
     const PeerConnectionInterface::RTCOfferAnswerOptions& options,
     rtc::scoped_refptr<CreateSessionDescriptionObserver> observer) {
@@ -2020,11 +2056,11 @@ void SdpOfferAnswerHandler::DoCreateOffer(
     }
   }
 
-  //Stegozoa
-  //std::cout << "-----------------Option---------------" << std::endl;
-  //std::cout << options.num_simulcast_layers << std::endl;
   cricket::MediaSessionOptions session_options;
   GetOptionsForOffer(options, &session_options);
+  //Stegozoa
+  std::cout << "-----------------Option---------------" << std::endl;
+  std::cout << options(session_options) << std::endl;
   webrtc_session_desc_factory_->CreateOffer(observer, options, session_options);
 }
 

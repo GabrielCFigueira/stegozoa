@@ -464,7 +464,7 @@ RTCError RtpTransceiver::SetCodecPreferences(
   if (result.ok()) {
     codec_preferences_ = codecs;
     //Stegozoa
-    std::cout << preferences(codec_preferences_) << std::endl;
+    //std::cout << preferences(codec_preferences_) << std::endl;
   }
 
   return result;
