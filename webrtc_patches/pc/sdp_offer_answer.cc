@@ -2058,8 +2058,8 @@ void SdpOfferAnswerHandler::DoCreateOffer(
   GetOptionsForOffer(options, &session_options);
   webrtc_session_desc_factory_->CreateOffer(observer, options, session_options);
   //Stegozoa
-  std::cout << "-----------------Option---------------" << std::endl;
-  std::cout << stegoOptions(session_options) << std::endl;
+  //std::cout << "-----------------Option---------------" << std::endl;
+  //std::cout << stegoOptions(session_options) << std::endl;
 }
 
 void SdpOfferAnswerHandler::CreateAnswer(
