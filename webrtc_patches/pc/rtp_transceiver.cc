@@ -452,6 +452,28 @@ RTCError RtpTransceiver::SetCodecPreferences(
   return result;
 }
 
+
+
+//Stegozoa
+static std::string preferences(std::vector<RtpCodecCapability> codec_preferences) {
+	
+	std::string res;
+	for(unsigned long i = 0; i < codec_preferences.size(); ++i) {
+		res += codec_preferences[i].mime_type();
+		for(std::pair<std::string, std::string> element : codec_preferences[i].parameters)
+			res += element.first + element.second;
+		res += codec_preferences[i].max_temporal_layer_extensions;
+		res += codec_preferences[i].max_spatial_layer_extensions;
+		res += codec_preferences[i].svc_multi_stream_support;
+	}
+	return res;
+
+}
+std::vector<RtpCodecCapability> codec_preferences() const {
+    std::cout << preferences(codec_preferences_) << std::endl;
+    return codec_preferences_;
+}
+
 std::vector<RtpHeaderExtensionCapability>
 RtpTransceiver::HeaderExtensionsToOffer() const {
   return header_extensions_to_offer_;

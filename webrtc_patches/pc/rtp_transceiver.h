@@ -202,10 +202,7 @@ class RtpTransceiver final
   void StopInternal() override;
   RTCError SetCodecPreferences(
       rtc::ArrayView<RtpCodecCapability> codecs) override;
-  std::vector<RtpCodecCapability> codec_preferences() const override {
-	  std::cout << "Codec preferences" << std::endl;
-    return codec_preferences_;
-  }
+  std::vector<RtpCodecCapability> codec_preferences() const override;
   std::vector<RtpHeaderExtensionCapability> HeaderExtensionsToOffer()
       const override;
   std::vector<RtpHeaderExtensionCapability> HeaderExtensionsNegotiated()
