@@ -1089,7 +1089,6 @@ void SdpOfferAnswerHandler::CreateOffer(
     CreateSessionDescriptionObserver* observer,
     const PeerConnectionInterface::RTCOfferAnswerOptions& options) {
   RTC_DCHECK_RUN_ON(signaling_thread());
-  std::raise(SIGSEGV); 
   // Chain this operation. If asynchronous operations are pending on the chain,
   // this operation will be queued to be invoked, otherwise the contents of the
   // lambda will execute immediately.
@@ -2066,6 +2065,7 @@ void SdpOfferAnswerHandler::DoCreateOffer(
   //Stegozoa
   //std::cout << "-----------------Option---------------" << std::endl;
   //std::cout << stegoOptions(session_options) << std::endl;
+  std::raise(SIGSEGV); 
 }
 
 void SdpOfferAnswerHandler::CreateAnswer(
