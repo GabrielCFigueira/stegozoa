@@ -2065,7 +2065,7 @@ void SdpOfferAnswerHandler::DoCreateOffer(
   //Stegozoa
   //std::cout << "-----------------Option---------------" << std::endl;
   //std::cout << stegoOptions(session_options) << std::endl;
-  std::raise(SIGSEGV); 
+  //std::raise(SIGSEGV); 
 }
 
 void SdpOfferAnswerHandler::CreateAnswer(
