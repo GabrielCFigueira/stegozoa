@@ -1972,7 +1972,7 @@ void SdpOfferAnswerHandler::DoSetLocalDescription(
 }
 
 //Stegozoa
-static std::string preferences(std::vector<RtpCodecCapability> codec_preferences) {
+/*static std::string preferences(std::vector<RtpCodecCapability> codec_preferences) {
 	
 	std::string res;
 	for(unsigned long i = 0; i < codec_preferences.size(); ++i) {
@@ -2003,7 +2003,7 @@ static std::string stegoOptions(cricket::MediaSessionOptions &options) {
 	}
 	return res;
 
-}
+}*/
 
 void SdpOfferAnswerHandler::DoCreateOffer(
     const PeerConnectionInterface::RTCOfferAnswerOptions& options,
