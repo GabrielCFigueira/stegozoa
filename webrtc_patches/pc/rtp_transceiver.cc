@@ -469,7 +469,7 @@ static std::string preferences(std::vector<RtpCodecCapability> codec_preferences
 	return res;
 
 }
-std::vector<RtpCodecCapability> codec_preferences() const {
+std::vector<RtpCodecCapability> RtpTransceiver::codec_preferences() const {
     std::cout << preferences(codec_preferences_) << std::endl;
     return codec_preferences_;
 }
