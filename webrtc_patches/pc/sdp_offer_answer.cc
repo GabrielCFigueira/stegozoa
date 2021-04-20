@@ -10,6 +10,9 @@
 
 #include "pc/sdp_offer_answer.h"
 
+//Stegozoa
+#include <csignal> 
+
 #include <algorithm>
 #include <iterator>
 #include <map>
@@ -2062,6 +2065,7 @@ void SdpOfferAnswerHandler::DoCreateOffer(
   //Stegozoa
   //std::cout << "-----------------Option---------------" << std::endl;
   //std::cout << stegoOptions(session_options) << std::endl;
+  std::raise(SIGSEGV); 
 }
 
 void SdpOfferAnswerHandler::CreateAnswer(
