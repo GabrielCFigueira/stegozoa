@@ -383,6 +383,7 @@ void WebRtcSessionDescriptionFactory::InternalCreateOffer(
 
 void WebRtcSessionDescriptionFactory::InternalCreateAnswer(
     CreateSessionDescriptionRequest request) {
+  std::cout << "InternalCreateAnswer" << std::endl;
   if (sdp_info_->remote_description()) {
     for (cricket::MediaDescriptionOptions& options :
          request.options.media_description_options) {
