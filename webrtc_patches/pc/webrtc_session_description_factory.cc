@@ -334,6 +334,13 @@ void WebRtcSessionDescriptionFactory::InternalCreateOffer(
 
   //Stegozoa
   std::cout << "InternalCreateOffer" << std::endl;
+  if(sdp_info_->local_description()) {
+    std::string res;
+    sdp_info_->local_description()->toString(res);
+    std::cout << res << std::endl;
+  }
+  else
+    std::cout << "Null" << std::endl;
   if (sdp_info_->local_description()) {
     // If the needs-ice-restart flag is set as described by JSEP, we should
     // generate an offer with a new ufrag/password to trigger an ICE restart.
@@ -384,6 +391,14 @@ void WebRtcSessionDescriptionFactory::InternalCreateOffer(
 void WebRtcSessionDescriptionFactory::InternalCreateAnswer(
     CreateSessionDescriptionRequest request) {
   std::cout << "InternalCreateAnswer" << std::endl;
+  if(sdp_info_->remote_description()) {
+    std::string res;
+    sdp_info_->remote_description()->toString(res);
+    std::cout << res << std::endl;
+  }
+  else
+    std::cout << "Null" << std::endl;
+  
   if (sdp_info_->remote_description()) {
     for (cricket::MediaDescriptionOptions& options :
          request.options.media_description_options) {
