@@ -336,7 +336,7 @@ void WebRtcSessionDescriptionFactory::InternalCreateOffer(
   std::cout << "InternalCreateOffer" << std::endl;
   if(sdp_info_->local_description()) {
     std::string res;
-    sdp_info_->local_description()->toString(res);
+    sdp_info_->local_description()->ToString(res);
     std::cout << res << std::endl;
   }
   else
@@ -393,7 +393,7 @@ void WebRtcSessionDescriptionFactory::InternalCreateAnswer(
   std::cout << "InternalCreateAnswer" << std::endl;
   if(sdp_info_->remote_description()) {
     std::string res;
-    sdp_info_->remote_description()->toString(res);
+    sdp_info_->remote_description()->ToString(res);
     std::cout << res << std::endl;
   }
   else
