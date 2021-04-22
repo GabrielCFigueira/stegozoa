@@ -1527,7 +1527,7 @@ std::unique_ptr<SessionDescription> MediaSessionDescriptionFactory::CreateOffer(
   if(hasVP8) {
 	auto it = offer_video_codecs.begin();
   	while(it != offer_video_codecs.end()) {
-  		if(it.GetCodecType() == VideoCodec::CODEC_VIDEO && it.name != "VP8")
+  		if(it->GetCodecType() == VideoCodec::CODEC_VIDEO && it->name != "VP8")
 			it = offer_video_codecs.erase(it);
 		else 
 			++it;
@@ -1693,7 +1693,7 @@ MediaSessionDescriptionFactory::CreateAnswer(
   if(hasVP8) {
 	auto it = answer_video_codecs.begin();
   	while(it != answer_video_codecs.end()) {
-  		if(it.GetCodecType() == VideoCodec::CODEC_VIDEO && it.name != "VP8")
+  		if(it->GetCodecType() == VideoCodec::CODEC_VIDEO && it->name != "VP8")
 			it = answer_video_codecs.erase(it);
 		else 
 			++it;
