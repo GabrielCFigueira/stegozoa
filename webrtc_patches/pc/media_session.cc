@@ -1520,8 +1520,20 @@ std::unique_ptr<SessionDescription> MediaSessionDescriptionFactory::CreateOffer(
 
   //Stegozoa
   std::cout << "CreateOffer" << std::endl;
+  bool hasVP8 = false;
   for(VideoCodec v : offer_video_codecs)
-  	std::cout << v.ToString() << std::endl;
+  	if(v.name == "VP8")
+		hasVP8 = true;
+  if(hasVP8) {
+	auto it = offer_video_codecs.begin();
+  	while(it != offer_video_codecs.end()) {
+  		if(it.GetCodecType() == VideoCodec::CODEC_VIDEO && it.name != "VP8")
+			it = offer_video_codecs.erase(it);
+		else 
+			++it;
+	}
+  }
+  
   if (!session_options.vad_enabled) {
     // If application doesn't want CN codecs in offer.
     StripCNCodecs(&offer_audio_codecs);
@@ -1674,8 +1686,20 @@ MediaSessionDescriptionFactory::CreateAnswer(
 
   //Stegozoa
   std::cout << "CreateAnswer" << std::endl;
+  bool hasVP8 = false;
   for(VideoCodec v : answer_video_codecs)
-  	std::cout << v.ToString() << std::endl;
+  	if(v.name == "VP8")
+		hasVP8 = true;
+  if(hasVP8) {
+	auto it = answer_video_codecs.begin();
+  	while(it != answer_video_codecs.end()) {
+  		if(it.GetCodecType() == VideoCodec::CODEC_VIDEO && it.name != "VP8")
+			it = answer_video_codecs.erase(it);
+		else 
+			++it;
+	}
+  }
+
   if (!session_options.vad_enabled) {
     // If application doesn't want CN codecs in answer.
     StripCNCodecs(&answer_audio_codecs);
