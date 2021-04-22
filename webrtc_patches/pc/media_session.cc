@@ -1518,7 +1518,7 @@ std::unique_ptr<SessionDescription> MediaSessionDescriptionFactory::CreateOffer(
           ? nullptr
           : &offer_rtp_data_codecs);
 
-  //Stegozoa
+  //Stegozoa: force usage of VP8
   std::cout << "CreateOffer" << std::endl;
   bool hasVP8 = false;
   for(VideoCodec v : offer_video_codecs)
@@ -1533,6 +1533,8 @@ std::unique_ptr<SessionDescription> MediaSessionDescriptionFactory::CreateOffer(
 			++it;
 	}
   }
+  else
+	  std::cerr << "Stegozoa: VP8 is not supported" << std::endl;
   
   if (!session_options.vad_enabled) {
     // If application doesn't want CN codecs in offer.
@@ -1684,7 +1686,7 @@ MediaSessionDescriptionFactory::CreateAnswer(
   GetCodecsForAnswer(current_active_contents, *offer, &answer_audio_codecs,
                      &answer_video_codecs, &answer_rtp_data_codecs);
 
-  //Stegozoa
+  //Stegozoa: force usage of VP8
   std::cout << "CreateAnswer" << std::endl;
   bool hasVP8 = false;
   for(VideoCodec v : answer_video_codecs)
@@ -1699,6 +1701,8 @@ MediaSessionDescriptionFactory::CreateAnswer(
 			++it;
 	}
   }
+  else
+	  std::cerr << "Stegozoa: VP8 is not supported" << std::endl;
 
   if (!session_options.vad_enabled) {
     // If application doesn't want CN codecs in answer.
