@@ -1519,7 +1519,8 @@ std::unique_ptr<SessionDescription> MediaSessionDescriptionFactory::CreateOffer(
           : &offer_rtp_data_codecs);
 
   //Stegozoa
-  std::cout << offer_video_codecs.ToString() << std::endl;
+  for(VideoCodec v : offer_video_codecs)
+  	std::cout << v.ToString() << std::endl;
   if (!session_options.vad_enabled) {
     // If application doesn't want CN codecs in offer.
     StripCNCodecs(&offer_audio_codecs);
@@ -1671,7 +1672,8 @@ MediaSessionDescriptionFactory::CreateAnswer(
                      &answer_video_codecs, &answer_rtp_data_codecs);
 
   //Stegozoa
-  std::cout << offer_video_codecs.ToString() << std::endl;
+  for(VideoCodec v : answer_video_codecs)
+  	std::cout << v.ToString() << std::endl;
   if (!session_options.vad_enabled) {
     // If application doesn't want CN codecs in answer.
     StripCNCodecs(&answer_audio_codecs);
