@@ -1519,6 +1519,7 @@ std::unique_ptr<SessionDescription> MediaSessionDescriptionFactory::CreateOffer(
           : &offer_rtp_data_codecs);
 
   //Stegozoa
+  std::cout << "CreateOffer" << std::endl;
   for(VideoCodec v : offer_video_codecs)
   	std::cout << v.ToString() << std::endl;
   if (!session_options.vad_enabled) {
@@ -1672,6 +1673,7 @@ MediaSessionDescriptionFactory::CreateAnswer(
                      &answer_video_codecs, &answer_rtp_data_codecs);
 
   //Stegozoa
+  std::cout << "CreateAnswer" << std::endl;
   for(VideoCodec v : answer_video_codecs)
   	std::cout << v.ToString() << std::endl;
   if (!session_options.vad_enabled) {
