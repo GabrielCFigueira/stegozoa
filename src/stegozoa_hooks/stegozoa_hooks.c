@@ -22,6 +22,8 @@
 #define ENCODER_PIPE "/tmp/stegozoa_encoder_pipe"
 #define DECODER_PIPE "/tmp/stegozoa_decoder_pipe"
 
+static int broadcast = 0;
+
 static context_t *encoders[NPEERS];
 static int n_encoders = 0;
 static context_t *decoders[NPEERS];
@@ -148,7 +150,10 @@ static uint32_t obtainSsrc(message_t *msg) {
 
 }
 
-void fetchData(uint32_t ssrc) {
+void fetchData(uint32_t ssrc, int simulcast) {
+
+    if(broadcast == 0)
+        broadcast = simulcast;
     
     context_t *ctx = getEncoderContext(ssrc);
     message_t *msg = ctx->msg;
@@ -206,7 +211,7 @@ void fetchData(uint32_t ssrc) {
                 }
                 releaseMessage(newMsg);
             
-            } else if(msgType == 0x1 || receiver == 0xff) {
+            } else if(msgType == 0x1 || receiver == 0xff || broadcast) {
 
                 for(int i = 0; i < n_encoders; ++i) {
                     appendMessage(encoders[i], newMsg);

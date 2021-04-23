@@ -295,6 +295,7 @@ typedef struct VP8_COMP {
   short *qcoeff;
   char *eobs;
   uint32_t ssrc;
+  int simulcast;
 
   VP8_COMMON common;
   vp8_writer bc[9]; /* one boolcoder for each partition */

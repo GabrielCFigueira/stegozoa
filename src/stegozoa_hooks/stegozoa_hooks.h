@@ -22,7 +22,7 @@ typedef struct context {
 } context_t;
 
 
-void fetchData(uint32_t ssrc);
+void fetchData(uint32_t ssrc, int simulcast);
 
 int writeQdctLsb(short *qcoeff, int has_y2_block, uint32_t ssrc);
 int readQdctLsb(short *qcoeff, int has_y2_block, uint32_t ssrc);

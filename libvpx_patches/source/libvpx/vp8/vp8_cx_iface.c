@@ -826,6 +826,7 @@ static vpx_codec_err_t vp8e_encode(vpx_codec_alg_priv_t *ctx,
 
   //Stegozoa
   ctx->cpi->ssrc = img->ssrc;
+  ctx->cpi->simulcast = (ctx->cpi->oxcf.mr_total_resolutions > 1);
 
   if (!ctx->cfg.rc_target_bitrate) {
 #if CONFIG_MULTI_RES_ENCODING
