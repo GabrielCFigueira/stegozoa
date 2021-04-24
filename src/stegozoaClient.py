@@ -3,6 +3,7 @@ import libstegozoa
 import os
 import socket
 import threading
+import sys
 
 socketPath = "/tmp/stegozoa_client_socket"
 
@@ -27,9 +28,14 @@ thread = threading.Thread(target=send, args=())
 thread.start()
 thread = threading.Thread(target=receive, args=())
 thread.start()
-
+libstegozoa.initialize()
 
 if __name__ == "__main__":
+    if len(sys.argv) > 1:
+        myId = int(sys.argv[1])
+    else:
+        myId = 1
+    libstegozoa.connect(myId)
     while True:
         conn.send(bytes("why are we still here... just to suffer?", ascii))
         print(conn.recv(10000))
