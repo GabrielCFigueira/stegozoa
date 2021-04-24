@@ -7,7 +7,7 @@ import sys
 
 socketPath = "/tmp/stegozoa_client_socket"
 
-server = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+server = socket.socket(socket.AF_UNIX, socket.SOCK_SOCK_DGRAM)
 
 server.bind(socketPath)
 server.listen(1)
@@ -30,7 +30,7 @@ thread.start()
 libstegozoa.initialize()
 
 if __name__ == "__main__":
-    client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+    client = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
     client.connect(socketPath)
     if len(sys.argv) > 1:
         myId = int(sys.argv[1])
