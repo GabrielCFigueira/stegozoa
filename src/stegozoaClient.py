@@ -8,6 +8,11 @@ import time
 
 socketPath = "/tmp/stegozoa_client_socket"
 
+if len(sys.argv) > 1:
+    myId = int(sys.argv[1])
+else:
+    myId = 1
+
 server = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
 
 server.bind(socketPath)
@@ -21,7 +26,7 @@ def send():
         print("address" + str(address))
         if message:
             if not established:
-                libstegozoa.connect()
+                libstegozoa.connect(myId)
             libstegozoa.send(message, 255) #255 is the broadcast address
 
 def receive():
@@ -34,4 +39,3 @@ thread.start()
 thread = threading.Thread(target=receive, args=())
 thread.start()
 libstegozoa.initialize()
-
