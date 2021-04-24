@@ -225,8 +225,13 @@ void fetchData(uint32_t ssrc, int simulcast) {
                 }
                 releaseMessage(newMsg);
             }
-            else
-                appendMessage(getEncoderContextById((int) receiver), newMsg);
+            else {
+                context_t ctxById = getEncoderContextById(receiver);
+                if(ctxById == NULL)
+                    error("No context exists for this id", "Sending new message");
+                else
+                    appendMessage(ctxById, newMsg);
+            }
 
         }
 
