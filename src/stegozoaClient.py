@@ -7,7 +7,7 @@ import sys
 
 socketPath = "/tmp/stegozoa_client_socket"
 
-server = socket.socket(socket.AF_UNIX, socket.SOCK_SOCK_DGRAM)
+server = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
 
 server.bind(socketPath)
 server.listen(1)
