@@ -10,11 +10,12 @@ socketPath = "/tmp/stegozoa_client_socket"
 server = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
 
 server.bind(socketPath)
-server.listen(1)
+#server.listen(1)
 
 def send():
     while True:
-        message = server.recv(10000)
+        message, address = server.recvfrom(10000)
+        print("address" + str(address))
         if message:
             libstegozoa.send(message, 255) #255 is the broadcast address
 
@@ -39,4 +40,5 @@ if __name__ == "__main__":
     libstegozoa.connect(myId)
     while True:
         client.send(bytes("why are we still here... just to suffer?", ascii))
-        print(client.recv(10000))
+        message, address = client.recvfrom(10000)
+        print(message)
