@@ -4,6 +4,7 @@ import os
 import socket
 import threading
 import sys
+import time
 
 socketPath = "/tmp/stegozoa_client_socket"
 
@@ -37,6 +38,8 @@ if __name__ == "__main__":
         myId = int(sys.argv[1])
     else:
         myId = 1
+
+    time.sleep(15)
     libstegozoa.connect(myId)
     while True:
         client.send(bytes("why are we still here... just to suffer?", ascii))
