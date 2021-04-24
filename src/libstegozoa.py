@@ -126,13 +126,8 @@ def send(byteArray, receiver):
 
 
 def receive():
-    global established, messageQueue
-    if not established:
-        raise "Must establish connection first"
-
-    response = messageQueue.get()
-
-    return response
+    global messageQueue
+    return messageQueue.get()
 
 
 def getPeers():
