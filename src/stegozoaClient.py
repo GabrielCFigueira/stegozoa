@@ -11,18 +11,17 @@ server = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
 
 server.bind(socketPath)
 server.listen(1)
-conn, addr = server.accept()
 
 def send():
     while True:
-        message = conn.recv(10000)
+        message = server.recv(10000)
         if message:
             libstegozoa.send(message, 255) #255 is the broadcast address
 
 def receive():
     while True:
         message = libstegozoa.receive()
-        conn.send(message)
+        server.send(message)
 
 thread = threading.Thread(target=send, args=())
 thread.start()
@@ -31,11 +30,13 @@ thread.start()
 libstegozoa.initialize()
 
 if __name__ == "__main__":
+    client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+    client.connect(socketPath)
     if len(sys.argv) > 1:
         myId = int(sys.argv[1])
     else:
         myId = 1
     libstegozoa.connect(myId)
     while True:
-        conn.send(bytes("why are we still here... just to suffer?", ascii))
-        print(conn.recv(10000))
+        client.send(bytes("why are we still here... just to suffer?", ascii))
+        print(client.recv(10000))
