@@ -196,7 +196,7 @@ void fetchData(uint32_t ssrc, int simulcast) {
         
         if(size > MSG_SIZE) {
             error("Message too big", "Parsing the header of the new message");
-            relaseMessage(newMsg);
+            releaseMessage(newMsg);
 
         } else if(read_bytes != size) {
             error(strerror(errno), "Trying to read from the encoder pipe after reading the header!");
