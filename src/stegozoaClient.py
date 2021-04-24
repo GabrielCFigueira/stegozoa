@@ -42,6 +42,6 @@ if __name__ == "__main__":
     time.sleep(15)
     libstegozoa.connect(myId)
     while True:
-        client.send(bytes("why are we still here... just to suffer?", ascii))
+        client.send(bytes("why are we still here... just to suffer?", 'ascii'))
         message, address = client.recvfrom(10000)
         print(message)
