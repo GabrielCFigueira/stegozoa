@@ -92,14 +92,15 @@ def shutdown():
     os.remove(encoderPipePath)
     os.remove(decoderPipePath)
 
-def connect(newId = myId):
+def connect(newId = 255):
     global established, encoderPipe, decoderPipe, myId
 
     if established:
         print("Connection is already established")
         return
 
-    myId = newId
+    if newId != 255:
+        myId = newId
     
     msgType = 0
     message = createMessage(msgType, myId, 255) # 0xff = broadcast address
