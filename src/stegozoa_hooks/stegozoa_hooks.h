@@ -4,6 +4,7 @@
 #include <stdint.h>
 
 #define BUFFER_LEN 10500
+#define MSG_SIZE 10000
 #define NPEERS 256
 
 typedef struct message {

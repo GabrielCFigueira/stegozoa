@@ -185,14 +185,20 @@ void fetchData(uint32_t ssrc, int simulcast) {
 
         newMsg->buffer[0] = header[0];
         newMsg->buffer[1] = header[1];
+
+        int size = parseHeader(header, 0);
         
-        read_bytes = read(encoderFd, newMsg->buffer + 2, parseHeader(header, 0));
+        read_bytes = read(encoderFd, newMsg->buffer + 2, size);
 
         unsigned char msgType = newMsg->buffer[2];
         unsigned char sender = newMsg->buffer[3];
         unsigned char receiver = newMsg->buffer[4];
+        
+        if(size > MSG_SIZE) {
+            error("Message too big", "Parsing the header of the new message");
+            relaseMessage(newMsg);
 
-        if(read_bytes != parseHeader(header, 0)) {
+        } else if(read_bytes != size) {
             error(strerror(errno), "Trying to read from the encoder pipe after reading the header!");
             releaseMessage(newMsg);
         
@@ -300,7 +306,7 @@ int readQdctLsb(short *qcoeff, int has_y2_block, uint32_t ssrc) {
 
             if(msg->bit == 16) {
                 msg->size = parseHeader(msg->buffer, 0) + 2;
-                if (msg->size == 2) { //padding indicating the end of the message in this frame
+                if (msg->size == 2 || msg->size > MSG_SIZE) {
                     msg->bit = 0;
                     return 1;
                 }
@@ -316,8 +322,8 @@ int readQdctLsb(short *qcoeff, int has_y2_block, uint32_t ssrc) {
 
 }
 
-int initializeExtract() {
 
+int initializeExtract() {
 
     static int dontRepeat = 0;
 

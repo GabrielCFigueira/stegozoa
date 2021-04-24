@@ -3,6 +3,7 @@ import time
 import threading
 import queue
 import sys
+import signal
 
 decoderPipePath = "/tmp/stegozoa_decoder_pipe"
 encoderPipePath = "/tmp/stegozoa_encoder_pipe"
@@ -37,8 +38,12 @@ def receiveMessage():
 
         message = body[3:] #payload
         print("Header size: " + str(size))
+
+        if size > 10000: #header must be corrupted, discard
+            print("Corrupted message!") #TODO crc verification?
+            continue
         
-        if msgType == 0:
+        elif msgType == 0:
             message = createMessage(1, myId, sender, message) #message is the ssrc in this case, must be sent back
             encoderPipe.write(message)
             encoderPipe.flush()
@@ -51,10 +56,17 @@ def receiveMessage():
             continue
 
         elif msgType == 2:
-            if receiver == myId:
+            if receiver == myId or receiver == 255: #255 is the broadcast address
                 messageQueue.put(message)
-            
 
+def sigInt_handler(signum,frame):
+    global encoderPipePath, decoderPipePath
+    os.remove(encoderPipePath)
+    os.remove(decoderPipePath)
+    exit(0)
+
+
+#---------------------API begins here---------------------------------
 
 def initialize():
 
@@ -62,12 +74,12 @@ def initialize():
     try:
         os.mkfifo(encoderPipePath)
     except Exception as oe: 
-        raise ValueError(oe)
+        raise
 
     try:
         os.mkfifo(decoderPipePath)
     except Exception as oe: 
-        raise ValueError(oe)
+        raise
 
     encoderPipe = open(encoderPipePath, 'wb')
     decoderPipe = open(decoderPipePath, 'rb')
@@ -80,16 +92,15 @@ def shutdown():
     os.remove(encoderPipePath)
     os.remove(decoderPipePath)
 
-
-#---------------------API begins here---------------------------------
-
-def connect():
+def connect(newId = myId):
     global established, encoderPipe, decoderPipe, myId
 
     if established:
         print("Connection is already established")
         return
 
+    myId = newId
+    
     msgType = 0
     message = createMessage(msgType, myId, 255) # 0xff = broadcast address
 
@@ -104,6 +115,9 @@ def send(byteArray, receiver):
         raise "Must establish connection first"
     
     #TODO validate packet size (cant be bigger than 10000?)
+    if len(byteArray) > 10000:
+        raise ValueError("message must be smaller or equal to 10000 bytes")
+
     message = createMessage(2, myId, receiver, byteArray)
 
     encoderPipe.write(message)
@@ -131,6 +145,7 @@ if __name__ == "__main__":
         myId = int(sys.argv[1])
     else:
         myId = 1
+    signal.signal(signal.SIGINT,sigInt_handler)
     initialize()
     #connect(newId)
     #while len(getPeers()) < 1:
