@@ -28,6 +28,7 @@ def send():
         if message:
             if not established:
                 libstegozoa.connect(myId)
+                established = True
             libstegozoa.send(message, 255) #255 is the broadcast address
 
 def receive():
