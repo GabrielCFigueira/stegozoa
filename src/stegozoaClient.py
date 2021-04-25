@@ -48,8 +48,8 @@ def receive():
 
         
 
+libstegozoa.initialize()
 thread = threading.Thread(target=send, args=())
 thread.start()
 thread = threading.Thread(target=receive, args=())
 thread.start()
-libstegozoa.initialize()
