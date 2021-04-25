@@ -13,17 +13,18 @@ if len(sys.argv) > 1:
 else:
     myId = 1
 
-server = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
+server = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
 
 server.bind(socketPath)
-#server.listen(1)
+server.listen(1)
 
 established = False
 
+server_socket, address = server.accept()
+
 def send():
     while True:
-        message, address = server.recvfrom(10000)
-        print("address" + str(address))
+        message = server_socket.recv(10000)
         if message:
             if not established:
                 libstegozoa.connect(myId)
@@ -32,7 +33,7 @@ def send():
 def receive():
     while True:
         message = libstegozoa.receive()
-        server.send(message)
+        server_socket.send(message)
 
 thread = threading.Thread(target=send, args=())
 thread.start()
