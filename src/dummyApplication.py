@@ -9,7 +9,7 @@ socketPath = "/tmp/stegozoa_client_socket"
 client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
 client.connect(socketPath)
 
-start = time.clock()
+start = time.time()
 data = 0
 
 for i in range(200):
@@ -17,6 +17,6 @@ for i in range(200):
     message = client.recv(10000)
     data += len(message)
 
-end = time.clock()
+end = time.time()
 print("data: " + str(data) + " time: " + str(end - start))
 print("Throughput: " + str(data / (end - start)))
