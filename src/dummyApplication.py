@@ -18,4 +18,5 @@ for i in range(200):
     data += len(message)
 
 end = time.clock()
+print("data: " + str(data) + " time: " + str(end - start))
 print("Throughput: " + str(data / (end - start)))
