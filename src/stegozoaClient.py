@@ -36,6 +36,7 @@ server.bind(socketPath)
 server.listen(1)
 
 
+libstegozoa.initialize()
 server_socket, address = server.accept()
 
 def send():
@@ -76,7 +77,6 @@ def receive():
 
         
 
-libstegozoa.initialize()
 thread = threading.Thread(target=send, args=())
 thread.start()
 thread = threading.Thread(target=receive, args=())
