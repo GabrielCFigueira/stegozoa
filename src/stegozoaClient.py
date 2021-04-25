@@ -33,8 +33,9 @@ def send():
         try:
             message = server_socket.recv(10000)
         except socket.error as e:
+            print("socket error" + str(server_socket.fileno()))
             mutex.acquire()
-            if server_socket.fileno == -1:
+            if server_socket.fileno() == -1:
                 server_socket.close()
                 server_socket, address = server.accept()
             mutex.release()
@@ -53,8 +54,9 @@ def receive():
         try:
             server_socket.send(message)
         except socket.error as e:
+            print("socket error" + str(server_socket.fileno()))
             mutex.acquire()
-            if server_socket.fileno == -1:
+            if server_socket.fileno() == -1:
                 server_socket.close()
                 server_socket, address = server.accept()
             mutex.release()
