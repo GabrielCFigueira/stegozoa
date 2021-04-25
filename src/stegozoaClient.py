@@ -8,6 +8,21 @@ import time
 
 socketPath = "/tmp/stegozoa_client_socket"
 
+def is_socket_closed(sock):
+    try:
+    # this will try to read bytes without blocking and also without removing them from buffer (peek only)
+        data = sock.recv(16, socket.MSG_DONTWAIT | socket.MSG_PEEK)
+    if len(data) == 0:
+        return True
+    except BlockingIOError:
+        return False  # socket is open and reading from it would block
+    except ConnectionResetError:
+        return True  # socket was closed for some other reason
+    except Exception as e:
+        print("unexpected exception when checking if a socket is closed")
+        return False
+    return False
+
 if len(sys.argv) > 1:
     myId = int(sys.argv[1])
 else:
@@ -33,12 +48,10 @@ def send():
         try:
             message = server_socket.recv(10000)
         except socket.error as e:
-            print("socket error" + str(server_socket.fileno()))
             mutex.acquire()
-            #if server_socket.fileno() == -1:
-            server_socket.close()
-            server_socket, address = server.accept()
-            print("lets try to release the socket")
+            if is_socket_closed(server_socket):
+                server_socket.close()
+                server_socket, address = server.accept()
             mutex.release()
         
         if message:
@@ -53,14 +66,12 @@ def receive():
         message = libstegozoa.receive()
 
         try:
-            server_socket.send(message)
+            server_socket.sendall(message)
         except socket.error as e:
-            print("socket error" + str(server_socket.fileno()))
             mutex.acquire()
-            #if server_socket.fileno() == -1:
-            server_socket.close()
-            server_socket, address = server.accept()
-            print("lets try to release the socket")
+            if is_socket_closed(server_socket):
+                server_socket.close()
+                server_socket, address = server.accept()
             mutex.release()
 
         
