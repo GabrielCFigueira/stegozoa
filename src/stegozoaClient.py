@@ -38,6 +38,7 @@ def send():
             if server_socket.fileno() == -1:
                 server_socket.close()
                 server_socket, address = server.accept()
+            print("lets try to release the socket")
             mutex.release()
         
         if message:
@@ -59,6 +60,7 @@ def receive():
             if server_socket.fileno() == -1:
                 server_socket.close()
                 server_socket, address = server.accept()
+            print("lets try to release the socket")
             mutex.release()
 
         
