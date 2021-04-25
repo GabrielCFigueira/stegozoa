@@ -15,23 +15,29 @@ else:
 
 server = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
 
+mutex = threading.Lock()
+
 server.bind(socketPath)
 server.listen(1)
 
-established = False
 
 server_socket, address = server.accept()
 
 def send():
-    global server_socket, myId, established
+    global server_socket, myId
+
+    established = False
     while True:
         message = ''
         
         try:
             message = server_socket.recv(10000)
         except socket.error as e:
-            server_socket.close()
-            server_socket, address = server.accept()
+            mutex.acquire()
+            if server_socket.fileno == -1:
+                server_socket.close()
+                server_socket, address = server.accept()
+            mutex.release()
         
         if message:
             if not established:
@@ -47,8 +53,11 @@ def receive():
         try:
             server_socket.send(message)
         except socket.error as e:
-            server_socket.close()
-            server_socket, address = server.accept()
+            mutex.acquire()
+            if server_socket.fileno == -1:
+                server_socket.close()
+                server_socket, address = server.accept()
+            mutex.release()
 
         
 
