@@ -25,11 +25,14 @@ server_socket, address = server.accept()
 def send():
     global server_socket, myId, established
     while True:
-        if server_socket.fileno() == -1:
+        message = ''
+        
+        try:
+            message = server_socket.recv(10000)
+        except SocketError as e:
             server_socket.close()
             server_socket, address = server.accept()
-
-        message = server_socket.recv(10000)
+        
         if message:
             if not established:
                 libstegozoa.connect(myId)
@@ -37,14 +40,15 @@ def send():
             libstegozoa.send(message, 255) #255 is the broadcast address
 
 def receive():
-    global server_socket, myId
+    global server_socket
     while True:
-        if server_socket.fileno() == -1:
+        message = libstegozoa.receive()
+
+        try:
+            server_socket.send(message)
+        except SocketError as e:
             server_socket.close()
             server_socket, address = server.accept()
-
-        message = libstegozoa.receive()
-        server_socket.send(message)
 
         
 
