@@ -24,6 +24,10 @@ server_socket, address = server.accept()
 
 def send():
     while True:
+        if server_socket.fileno() == -1:
+            server_socket.close()
+            server_socket, address = server.accept()
+
         message = server_socket.recv(10000)
         if message:
             if not established:
@@ -33,8 +37,14 @@ def send():
 
 def receive():
     while True:
+        if server_socket.fileno() == -1:
+            server_socket.close()
+            server_socket, address = server.accept()
+
         message = libstegozoa.receive()
         server_socket.send(message)
+
+        
 
 thread = threading.Thread(target=send, args=())
 thread.start()
