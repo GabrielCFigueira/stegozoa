@@ -13,7 +13,7 @@ start = time.time()
 data = 0
 
 for i in range(200):
-    client.send(bytes("why are we still here... just to suffer?", 'ascii'))
+    client.send(bytes("why are we still here... just to suffer?" * 200, 'ascii'))
     message = client.recv(10000)
     data += len(message)
 
