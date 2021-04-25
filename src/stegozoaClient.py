@@ -29,7 +29,7 @@ def send():
         
         try:
             message = server_socket.recv(10000)
-        except SocketError as e:
+        except socket.error as e:
             server_socket.close()
             server_socket, address = server.accept()
         
@@ -46,7 +46,7 @@ def receive():
 
         try:
             server_socket.send(message)
-        except SocketError as e:
+        except socket.error as e:
             server_socket.close()
             server_socket, address = server.accept()
 
