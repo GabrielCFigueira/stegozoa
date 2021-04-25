@@ -23,6 +23,7 @@ established = False
 server_socket, address = server.accept()
 
 def send():
+    global server_socket, myId, established
     while True:
         if server_socket.fileno() == -1:
             server_socket.close()
@@ -36,6 +37,7 @@ def send():
             libstegozoa.send(message, 255) #255 is the broadcast address
 
 def receive():
+    global server_socket, myId
     while True:
         if server_socket.fileno() == -1:
             server_socket.close()
