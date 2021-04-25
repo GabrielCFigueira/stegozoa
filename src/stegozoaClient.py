@@ -34,12 +34,12 @@ def send():
             message = server_socket.recv(10000)
         except socket.error as e:
             print("socket error" + str(server_socket.fileno()))
-            #mutex.acquire()
+            mutex.acquire()
             #if server_socket.fileno() == -1:
             server_socket.close()
             server_socket, address = server.accept()
             print("lets try to release the socket")
-            #mutex.release()
+            mutex.release()
         
         if message:
             if not established:
@@ -56,12 +56,12 @@ def receive():
             server_socket.send(message)
         except socket.error as e:
             print("socket error" + str(server_socket.fileno()))
-            #mutex.acquire()
+            mutex.acquire()
             #if server_socket.fileno() == -1:
             server_socket.close()
             server_socket, address = server.accept()
             print("lets try to release the socket")
-            #mutex.release()
+            mutex.release()
 
         
 
