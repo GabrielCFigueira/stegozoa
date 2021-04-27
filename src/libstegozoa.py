@@ -143,7 +143,7 @@ if __name__ == "__main__":
         myId = 1
     signal.signal(signal.SIGINT,sigInt_handler)
     initialize()
-    connect(newId)
+    connect(myId)
     while len(getPeers()) < 1:
         time.sleep(0.5)
     message = "Why are we still here... just to suffer"
