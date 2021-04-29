@@ -1313,8 +1313,6 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
     xd->mode_info_context++;
   }
 
-  fprintf(stdout, "Decoded frame Ssrc: %lu. Current Frame: %d.", (unsigned long) pbi->ssrc, pbi->common.current_video_frame);
-  fflush(stdout);
   vpx_free(pbi->qcoeff);
 
   return 0;
