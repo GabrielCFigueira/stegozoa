@@ -904,6 +904,8 @@ void vp8_encode_frame(VP8_COMP *cpi) {
     int rate = 0;
     int embbedData = 0;
 
+    int bits = 0;
+
     //read new messages from pipe
     if(isEmbbedInitialized())
         fetchData(cpi->ssrc, cpi->simulcast);
@@ -929,6 +931,11 @@ void vp8_encode_frame(VP8_COMP *cpi) {
                 else
                     embbedData += rate;
             }
+            
+            for(int i = 0; i < 384 + has_y2_block * 16; i++)
+                if(qcoeff[i] != 1 && qcoeff[i] != 0 && (!has_y2_block || i % 16 != 0 || i > 255))
+                    bits++;
+            
         
             vp8_tokenize_mb(cpi, x, &tp, qcoeff, eobs);
 
@@ -946,7 +953,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
     end = clock();
     //printf("Time spent generating tokens %d: %lf\n", cm->current_video_frame, ((double) end - start) / CLOCKS_PER_SEC);
     //Stegozoa: embedding capacity
-    fprintf(stdout, "Ssrc: %lu. Current Frame: %d. Embbed data: %d\n", (unsigned long) cpi->ssrc, cpi->common.current_video_frame, embbedData);
+    fprintf(stdout, "Ssrc: %lu. Current Frame: %d. Embbed data: %d. Capacity: %d\n", (unsigned long) cpi->ssrc, cpi->common.current_video_frame, embbedData, bits);
     fflush(stdout);
     
     
