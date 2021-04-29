@@ -217,11 +217,12 @@ vpx_codec_err_t vpx_codec_encode(vpx_codec_ctx_t *ctx, const vpx_image_t *img,
 
       ctx += num_enc - 1;
       if (img) img += num_enc - 1;
+        
+      fprintf(stdout, "Multi resolution encoding\n");
+      fflush(stdout);
 
       for (i = num_enc - 1; i >= 0; i--) {
        
-        fprintf(stdout, "Multi resolution encoding\n");
-        fflush(stdout);
         if ((res = ctx->iface->enc.encode(get_alg_priv(ctx), img, pts, duration,
                                           flags, deadline)))
           break;
