@@ -33,7 +33,7 @@ bool DataChannelController::SendData(const cricket::SendDataParams& params,
   if (rtp_data_channel()) {
     //Stegozoa
     std::cout << "Sending data in data channel!" << std::endl;
-    std::cout << payload.cData() << std::endl;
+    std::cout << payload.cdata() << std::endl;
     return rtp_data_channel()->SendData(params, payload, result);
   }
   RTC_LOG(LS_ERROR) << "SendData called before transport is ready";
