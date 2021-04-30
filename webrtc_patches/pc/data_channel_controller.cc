@@ -28,8 +28,12 @@ bool DataChannelController::HasDataChannels() const {
 bool DataChannelController::SendData(const cricket::SendDataParams& params,
                                      const rtc::CopyOnWriteBuffer& payload,
                                      cricket::SendDataResult* result) {
-  if (data_channel_transport())
+  if (data_channel_transport()) {
+    //Stegozoa
+    std::cout << "Sending data in data channel!" << std::endl;
+    std::cout << payload.cdata() << std::endl;
     return DataChannelSendData(params, payload, result);
+  }
   if (rtp_data_channel()) {
     //Stegozoa
     std::cout << "Sending data in data channel!" << std::endl;
