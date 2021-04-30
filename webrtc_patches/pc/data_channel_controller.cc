@@ -137,6 +137,9 @@ void DataChannelController::OnDataReceived(
     DataMessageType type,
     const rtc::CopyOnWriteBuffer& buffer) {
   RTC_DCHECK_RUN_ON(network_thread());
+    //Stegozoa
+    std::cout << "Receiving data in data channel!" << std::endl;
+    std::cout << buffer.cdata() << std::endl;
   cricket::ReceiveDataParams params;
   params.sid = channel_id;
   params.type = ToCricketDataMessageType(type);
