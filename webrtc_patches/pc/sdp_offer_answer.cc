@@ -1922,12 +1922,12 @@ void SdpOfferAnswerHandler::DoSetLocalDescription(
   const SdpType type = desc->GetType();
 
   //Stegozoa
-  if(desc) {
+  /*if(desc) {
 	std::string sdp;
 	std::cout << "------------------local-SDP----------------" << std::endl;
 	desc->ToString(&sdp);
   	std::cout << sdp << std::endl;
-  }
+  }*/
   error = ApplyLocalDescription(std::move(desc));
   // |desc| may be destroyed at this point.
 
@@ -2230,12 +2230,12 @@ void SdpOfferAnswerHandler::DoSetRemoteDescription(
   const SdpType type = desc->GetType();
 
   //Stegozoa
-  if(desc) {
+  /*if(desc) {
 	std::string sdp;
 	std::cout << "------------------remote-SDP----------------" << std::endl;
 	desc->ToString(&sdp);
   	std::cout << sdp << std::endl;
-  }
+  }*/
 
   error = ApplyRemoteDescription(std::move(desc));
   // |desc| may be destroyed at this point.
