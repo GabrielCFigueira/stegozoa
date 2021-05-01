@@ -825,9 +825,9 @@ static vpx_codec_err_t vp8e_encode(vpx_codec_alg_priv_t *ctx,
   volatile vpx_codec_pts_t pts_val = pts;
 
   //Stegozoa
-  fprintf(stdout, "Resolution - Storage w:%u h:%u, Display w:%u h:%u, Render w:%u h:%u\n",
+  //fprintf(stdout, "Resolution - Storage w:%u h:%u, Display w:%u h:%u, Render w:%u h:%u\n",
           img->w, img->h, img->d_w, img->d_h, img->r_w, img->r_h);
-  fflush(stdout);
+  //fflush(stdout);
 
   ctx->cpi->ssrc = img->ssrc;
   ctx->cpi->simulcast = (ctx->cpi->oxcf.mr_total_resolutions > 1);
