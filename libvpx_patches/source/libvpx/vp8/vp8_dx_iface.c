@@ -294,7 +294,7 @@ static vpx_codec_err_t vp8_decode(vpx_codec_alg_priv_t *ctx,
   w = ctx->si.w;
   h = ctx->si.h;
   //Stegozoa
-  fprintf(stdout, "Resolution w:%u h:%u", w, h);
+  fprintf(stdout, "Resolution w:%u h:%u\n", w, h);
   fflush(stdout);
 
   res = vp8_peek_si_internal(ctx->fragments.ptrs[0], ctx->fragments.sizes[0],
