@@ -278,7 +278,7 @@ static vpx_codec_err_t vp8_decode(vpx_codec_alg_priv_t *ctx,
   unsigned int w, h;
 
   //Stegozoa: cheekly obtain the ssrc
-  int ssrc = *((int *) user_priv);
+  uint32_t ssrc = *((uint32_t *) user_priv);
 
   if (!ctx->fragments.enabled && (data == NULL && data_sz == 0)) {
     return 0;
@@ -294,7 +294,7 @@ static vpx_codec_err_t vp8_decode(vpx_codec_alg_priv_t *ctx,
   w = ctx->si.w;
   h = ctx->si.h;
   //Stegozoa
-  fprintf(stdout, "Resolution w:%u h:%u\n", w, h);
+  fprintf(stdout, "Ssrc: %lu Resolution w:%u h:%u\n", (unsigned long) ssrc, w, h);
   fflush(stdout);
 
   res = vp8_peek_si_internal(ctx->fragments.ptrs[0], ctx->fragments.sizes[0],
