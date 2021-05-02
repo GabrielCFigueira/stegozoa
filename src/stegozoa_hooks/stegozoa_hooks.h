@@ -3,9 +3,9 @@
 
 #include <stdint.h>
 
-#define BUFFER_LEN 10500
-#define MSG_SIZE 10000
-#define NPEERS 256
+#define BUFFER_LEN 17000
+#define MSG_SIZE 16378 //2*16 - 6
+#define NPEERS 16
 
 typedef struct message {
 	unsigned char buffer[BUFFER_LEN];

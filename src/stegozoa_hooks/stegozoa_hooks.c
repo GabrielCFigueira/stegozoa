@@ -40,6 +40,10 @@ static int extractInitialized = 0;
 static pthread_t thread;
 static pthread_mutex_t barrier_mutex;
 
+static uint32_t constant = 0xC76E;
+
+
+
 
 
 static void error(char *errorMsg, char *when) {
@@ -68,7 +72,7 @@ static void releaseMessage(message_t *message) {
     free(message);
 }
 
-static int parseHeader(unsigned char array[], int index) {
+static int parseSize(unsigned char array[], int index) {
     int res = 0;
 
     res = (res | array[index + 1]) << 8;
@@ -125,27 +129,22 @@ static message_t *copyMessage(message_t *msg) {
     return newMsg;
 }
 
-static void insertSsrc(message_t *msg, uint32_t ssrc) {
-    int size = parseHeader(msg->buffer, 0) + 4; //32 bits = 4 bytes
-    msg->size += 4;
+static void insertConstant(uint32_t constant, unsigned char buffer) {
+    buffer[0] = constant & 0xff;
+    buffer[1] = (constant >> 8) & 0xff;
+    buffer[2] = (constant >> 16) & 0xff;
+    buffer[3] = (constant >> 24) & 0xff;
 
-    msg->buffer[0] = size & 0xff;
-    msg->buffer[1] = (size >> 8) & 0xff;
-
-    msg->buffer[5] = ssrc & 0xff;
-    msg->buffer[6] = (ssrc >> 8) & 0xff;
-    msg->buffer[7] = (ssrc >> 16) & 0xff;
-    msg->buffer[8] = (ssrc >> 24) & 0xff;
 }
 
-static uint32_t obtainSsrc(message_t *msg) {
+static uint32_t obtainConstant(unsigned char buffer) {
     uint32_t ssrc = 0;
 
     //probably unnecessary, but must make sure I can shift 24 bits correctly
-    uint32_t ssrc1 = (uint32_t) msg->buffer[5];
-    uint32_t ssrc2 = (uint32_t) msg->buffer[6];
-    uint32_t ssrc3 = (uint32_t) msg->buffer[7];
-    uint32_t ssrc4 = (uint32_t) msg->buffer[8];
+    uint32_t ssrc1 = (uint32_t) buffer[0];
+    uint32_t ssrc2 = (uint32_t) buffer[1];
+    uint32_t ssrc3 = (uint32_t) buffer[2];
+    uint32_t ssrc4 = (uint32_t) buffer[3];
     
     ssrc += ssrc1;
     ssrc += ssrc2 << 8;
@@ -155,6 +154,16 @@ static uint32_t obtainSsrc(message_t *msg) {
     return ssrc;
 
 }
+
+static void insertSsrc(message_t *msg, uint32_t ssrc) {
+    msg->size += 4;
+
+    msg->buffer[4] = msg->size & 0xff;
+    msg->buffer[5] = (msg->size >> 8) & 0xff;
+    
+    insertConstant(ssrc, msg->buffer + 9);
+}
+
 
 static void *fetchDataThread(void *args) {
     
@@ -171,16 +180,17 @@ static void *fetchDataThread(void *args) {
 
             message_t *newMsg = newMessage();
 
-            newMsg->buffer[0] = header[0];
-            newMsg->buffer[1] = header[1];
+            insertConstant(constant, newMsg->buffer);
+            newMsg->buffer[4] = header[0];
+            newMsg->buffer[5] = header[1];
 
-            int size = parseHeader(header, 0);
+            int size = parseSize(header, 0);
             
-            read_bytes = read(encoderFd, newMsg->buffer + 2, size);
+            read_bytes = read(encoderFd, newMsg->buffer + 6, size);
 
-            unsigned char msgType = newMsg->buffer[2];
-            unsigned char sender = newMsg->buffer[3];
-            unsigned char receiver = newMsg->buffer[4];
+            unsigned char msgType = newMsg->buffer[6];
+            unsigned char sender = newMsg->buffer[7];
+            unsigned char receiver = newMsg->buffer[8];
 
             if(pthread_mutex_lock(&barrier_mutex)) {
                 error("Who knows", "Trying to acquire the lock");
@@ -196,7 +206,7 @@ static void *fetchDataThread(void *args) {
                 releaseMessage(newMsg);
             
             } else {
-                newMsg->size = read_bytes + 2;
+                newMsg->size = read_bytes + 6; //constant + size header (4 + 2)
                 printf("Consegui ler %d bytes\n", read_bytes);
                 fflush(stdout);
                 
@@ -258,9 +268,10 @@ void flushEncoder(uint32_t ssrc, int simulcast) {
 
         if(ctx->msg == NULL) {
             ctx->msg = newMessage();
-            ctx->msg->buffer[0] = '\0';
-            ctx->msg->buffer[1] = '\0';
-            ctx->msg->size = 2;
+            insertConstant(constant, ctx->msg->buffer);
+            ctx->msg->buffer[5] = '\0';
+            ctx->msg->buffer[6] = '\0';
+            ctx->msg->size = 6;
         }
     } 
     
@@ -303,19 +314,17 @@ static void flushDecoder(uint32_t ssrc) {
     int n_bytes;
     msg->bit = 0; //should be 0
 
-    unsigned char msgType = msg->buffer[2];
-    unsigned char sender = msg->buffer[3];
-    unsigned char receiver = msg->buffer[4];
+    unsigned char msgType = msg->buffer[6];
+    unsigned char sender = msg->buffer[7];
+    unsigned char receiver = msg->buffer[8];
 
     if(msgType == 0x1 && receiver == senderId) {
-        uint32_t localSsrc = obtainSsrc(msg);
+        uint32_t localSsrc = obtainConstant(msg->buffer + 9);
         context_t *ctx = getEncoderContext(localSsrc);
         ctx->id[ctx->n_ids++] = (int) sender;
-        fprintf(stdout, "My ssrc: %lu. Id: %d\n", (unsigned long) localSsrc, (int) sender);
-        fflush(stdout);
     }
 
-    n_bytes = write(decoderFd, msg->buffer, msg->size);
+    n_bytes = write(decoderFd, msg->buffer + 4, msg->size);
 
     if(n_bytes == -1)
         error(strerror(errno), "Trying to write to the decoder pipe");
@@ -334,10 +343,18 @@ int readQdctLsb(short *qcoeff, int has_y2_block, uint32_t ssrc) {
         if(qcoeff[i] != 1 && qcoeff[i] != 0 && (!has_y2_block || MOD16(i) != 0 || i > 255)) {
             setBit(msg->buffer, msg->bit, getLsb(qcoeff[i]));
             msg->bit++;
-
-            if(msg->bit == 16) {
-                msg->size = parseHeader(msg->buffer, 0) + 2;
-                if (msg->size == 2 || msg->size > MSG_SIZE) {
+            
+            if(msg->bit == 32) { //future idea: completely discard the newConstant, by making sure it is always fully contained in a frame TODO
+                uint32_t newConstant = obtainConstant(msg->buffer);
+                if(newConstant != constant) {
+                    newConstant = newConstant << 1;
+                    insertConstant(newConstant, msg->buffer);
+                    msg->bit--;
+                }
+            }
+            else if(msg->bit == 48) {
+                msg->size = parseHeader(msg->buffer, 0) + 6;
+                if (msg->size == 6 || msg->size > MSG_SIZE) {
                     msg->bit = 0;
                     return 1;
                 }
