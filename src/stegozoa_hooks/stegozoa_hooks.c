@@ -347,7 +347,10 @@ int readQdctLsb(short *qcoeff, int has_y2_block, uint32_t ssrc) {
             if(msg->bit == 32) { //future idea: completely discard the newConstant, by making sure it is always fully contained in a frame TODO
                 uint32_t newConstant = obtainConstant(msg->buffer);
                 if(newConstant != constant) {
+                    printf("Invalid constant %x", newConstant);
                     newConstant = newConstant << 1;
+                    printf(" New constant %x\n", newConstant);
+                    fflush(stdout);
                     insertConstant(newConstant, msg->buffer);
                     msg->bit--;
                 }
@@ -359,7 +362,7 @@ int readQdctLsb(short *qcoeff, int has_y2_block, uint32_t ssrc) {
                     return 1;
                 }
             }
-            else if(msg->bit == msg->size * 8 && msg->bit > 16) {
+            else if(msg->bit == msg->size * 8 && msg->bit > 48) {
                 flushDecoder(ssrc);
                 return 1;
             }
