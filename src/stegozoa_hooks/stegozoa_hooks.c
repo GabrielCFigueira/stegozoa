@@ -6,6 +6,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <pthread.h>
 
 
 #define MASK 0xFE
@@ -35,6 +36,11 @@ static int encoderFd;
 static int decoderFd;
 static int embbedInitialized = 0;
 static int extractInitialized = 0;
+
+static pthread_t thread;
+static pthread_mutex_t barrier_mutex;
+
+
 
 static void error(char *errorMsg, char *when) {
     fprintf(stderr, "Stegozoa hooks error: %s when: %s\n", errorMsg, when);
@@ -150,7 +156,93 @@ static uint32_t obtainSsrc(message_t *msg) {
 
 }
 
-void fetchData(uint32_t ssrc, int simulcast) {
+static void *fetchDataThread(void *args) {
+    
+    while(1) {
+        unsigned char header[2];
+        int read_bytes = read(encoderFd, header, 2);
+
+        if(read_bytes != 2) {
+            error(strerror(errno), "Trying to read from the encoder pipe");
+            read_bytes = 0;
+        }
+
+        if (read_bytes > 0) {
+
+            message_t *newMsg = newMessage();
+
+            newMsg->buffer[0] = header[0];
+            newMsg->buffer[1] = header[1];
+
+            int size = parseHeader(header, 0);
+            
+            read_bytes = read(encoderFd, newMsg->buffer + 2, size);
+
+            unsigned char msgType = newMsg->buffer[2];
+            unsigned char sender = newMsg->buffer[3];
+            unsigned char receiver = newMsg->buffer[4];
+
+            if(pthread_mutex_lock(&barrier_mutex)) {
+                error("Who knows", "Trying to acquire the lock");
+                continue; //should abort
+            }
+            
+            if(size > MSG_SIZE) {
+                error("Message too big", "Parsing the header of the new message");
+                releaseMessage(newMsg);
+
+            } else if(read_bytes != size) {
+                error(strerror(errno), "Trying to read from the encoder pipe after reading the header!");
+                releaseMessage(newMsg);
+            
+            } else {
+                newMsg->size = read_bytes + 2;
+                printf("Consegui ler %d bytes\n", read_bytes);
+                fflush(stdout);
+                
+                if(msgType == 0x0) {
+                    senderId = sender;
+                    message_t *tempMsg;
+                    for(int i = 0; i < n_encoders; ++i) {
+                        tempMsg = copyMessage(newMsg);
+                        insertSsrc(tempMsg, encoders[i]->ssrc);
+                        appendMessage(encoders[i], tempMsg);
+                    }
+                    releaseMessage(newMsg);
+                
+                } else if(msgType == 0x1 || receiver == 0xff || broadcast) {
+
+                    for(int i = 0; i < n_encoders; ++i) {
+                        appendMessage(encoders[i], newMsg);
+                        newMsg = copyMessage(newMsg);
+                    }
+                    releaseMessage(newMsg);
+                }
+                else {
+                    context_t *ctxById = getEncoderContextById(receiver);
+                    if(ctxById == NULL)
+                        error("No context exists for this id", "Sending new message");
+                    else
+                        appendMessage(ctxById, newMsg);
+                }
+
+            }
+
+            if(pthread_mutex_unlock(&barrier_mutex)) {
+                error("Who knows", "Trying to release the lock");
+                continue; //should abort
+            }
+        }
+    }
+
+}
+
+void flushEncoder(uint32_t ssrc, int simulcast) {
+
+    if(pthread_mutex_lock(&barrier_mutex)) {
+        error("Who knows", "Trying to acquire the lock");
+        return; //should abort
+    }
 
     if(broadcast == 0)
         broadcast = simulcast;
@@ -160,88 +252,22 @@ void fetchData(uint32_t ssrc, int simulcast) {
     
     if(msg->bit == msg->size * 8) { //discard current message
 
-        if(msg->next != NULL) {
-            message_t *temp = msg;
-            ctx->msg = msg->next;
-            releaseMessage(temp);
-        } else {
-            releaseMessage(msg);
-            ctx->msg = NULL;
+        message_t *temp = msg;
+        ctx->msg = msg->next;
+        releaseMessage(temp);
+
+        if(msg == NULL) {
+            ctx->msg = newMessage();
+            ctx->msg->buffer[0] = '\0';
+            ctx->msg->buffer[1] = '\0';
+            ctx->msg->size = 2;
         }
     } 
     
-    unsigned char header[2];
-    int read_bytes = read(encoderFd, header, 2);
-
-    if(read_bytes != 2) {
-        if(errno != EAGAIN) // read would block, no need to show this error
-            error(strerror(errno), "Trying to read from the encoder pipe");
-        read_bytes = 0;
-    }
-
-    if (read_bytes > 0) {
-
-        message_t *newMsg = newMessage();
-
-        newMsg->buffer[0] = header[0];
-        newMsg->buffer[1] = header[1];
-
-        int size = parseHeader(header, 0);
-        
-        read_bytes = read(encoderFd, newMsg->buffer + 2, size);
-
-        unsigned char msgType = newMsg->buffer[2];
-        unsigned char sender = newMsg->buffer[3];
-        unsigned char receiver = newMsg->buffer[4];
-        
-        if(size > MSG_SIZE) {
-            error("Message too big", "Parsing the header of the new message");
-            releaseMessage(newMsg);
-
-        } else if(read_bytes != size) {
-            error(strerror(errno), "Trying to read from the encoder pipe after reading the header!");
-            releaseMessage(newMsg);
-        
-        } else {
-            newMsg->size = read_bytes + 2;
-            printf("Consegui ler %d bytes\n", read_bytes);
-            fflush(stdout);
             
-            if(msgType == 0x0) {
-                senderId = sender;
-                message_t *tempMsg;
-                for(int i = 0; i < n_encoders; ++i) {
-                    tempMsg = copyMessage(newMsg);
-                    insertSsrc(tempMsg, encoders[i]->ssrc);
-                    appendMessage(encoders[i], tempMsg);
-                }
-                releaseMessage(newMsg);
-            
-            } else if(msgType == 0x1 || receiver == 0xff || broadcast) {
-
-                for(int i = 0; i < n_encoders; ++i) {
-                    appendMessage(encoders[i], newMsg);
-                    newMsg = copyMessage(newMsg);
-                }
-                releaseMessage(newMsg);
-            }
-            else {
-                context_t *ctxById = getEncoderContextById(receiver);
-                if(ctxById == NULL)
-                    error("No context exists for this id", "Sending new message");
-                else
-                    appendMessage(ctxById, newMsg);
-            }
-
-        }
-
-    }
-    
-    if(ctx->msg == NULL) {
-        ctx->msg = newMessage();
-        ctx->msg->buffer[0] = '\0';
-        ctx->msg->buffer[1] = '\0';
-        ctx->msg->size = 2;
+    if(pthread_mutex_unlock(&barrier_mutex)) {
+        error("Who knows", "Trying to release the lock");
+        return; //should abort
     }
 
 }
@@ -332,7 +358,7 @@ int initializeExtract() {
 
     static int dontRepeat = 0;
 
-    decoderFd = open(DECODER_PIPE, O_WRONLY | O_NONBLOCK);
+    decoderFd = open(DECODER_PIPE, O_WRONLY);
     if(decoderFd < 1) {
         if(!dontRepeat)
             error(strerror(errno), "Trying to open the decoder pipe for writing");
@@ -350,14 +376,24 @@ int initializeEmbbed() {
 
     static int dontRepeat = 0;
 
-    encoderFd = open(ENCODER_PIPE, O_RDONLY | O_NONBLOCK);
+    encoderFd = open(ENCODER_PIPE, O_RDONLY);
     if(encoderFd < 1) {
         if(!dontRepeat)
             error(strerror(errno), "Trying to open the encoder pipe for reading");
         dontRepeat = 1;
         return 1;
     }
-
+    
+    else if(pthread_create(&thread, NULL, fetchDataThread, NULL)) {
+        error("Who knows", "Creating the encoder thread");
+        return 1;
+    }
+    
+    if(pthread_mutex_init(&barrier_mutex, NULL) != 0) {
+        error("Who knows", "Initializing mutex");
+        return 1;
+    }
+    
     dontRepeat = 0;
     embbedInitialized = 1;
     

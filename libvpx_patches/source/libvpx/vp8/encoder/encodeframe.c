@@ -906,9 +906,8 @@ void vp8_encode_frame(VP8_COMP *cpi) {
 
     int bits = 0;
 
-    //read new messages from pipe
     if(isEmbbedInitialized())
-        fetchData(cpi->ssrc, cpi->simulcast);
+        flushEncoder(cpi->ssrc, cpi->simulcast);
 
     for (mb_row = 0; mb_row < cm->mb_rows; ++mb_row) {
 
