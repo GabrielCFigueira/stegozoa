@@ -324,7 +324,7 @@ static void flushDecoder(uint32_t ssrc) {
         ctx->id[ctx->n_ids++] = (int) sender;
     }
 
-    n_bytes = write(decoderFd, msg->buffer + 4, msg->size);
+    n_bytes = write(decoderFd, msg->buffer + 4, msg->size - 4);
 
     if(n_bytes == -1)
         error(strerror(errno), "Trying to write to the decoder pipe");
@@ -357,6 +357,8 @@ int readQdctLsb(short *qcoeff, int has_y2_block, uint32_t ssrc) {
             }
             else if(msg->bit == 48) {
                 msg->size = parseSize(msg->buffer, 0) + 6;
+                printf("Decoder: Size received %d\n", msg->size);
+                fflush(stdout);
                 if (msg->size == 6 || msg->size > MSG_SIZE) {
                     msg->bit = 0;
                     return 1;
