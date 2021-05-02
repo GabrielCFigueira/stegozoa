@@ -129,7 +129,7 @@ static message_t *copyMessage(message_t *msg) {
     return newMsg;
 }
 
-static void insertConstant(uint32_t constant, unsigned char[] buffer) {
+static void insertConstant(uint32_t constant, unsigned char buffer[]) {
     buffer[0] = constant & 0xff;
     buffer[1] = (constant >> 8) & 0xff;
     buffer[2] = (constant >> 16) & 0xff;
@@ -137,7 +137,7 @@ static void insertConstant(uint32_t constant, unsigned char[] buffer) {
 
 }
 
-static uint32_t obtainConstant(unsigned char[] buffer) {
+static uint32_t obtainConstant(unsigned char buffer[]) {
     uint32_t ssrc = 0;
 
     //probably unnecessary, but must make sure I can shift 24 bits correctly
