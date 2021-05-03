@@ -61,10 +61,9 @@ def receiveMessage():
     while True:
 
         header = decoderPipe.read(2) #size header
-        bodySize = parseSize(header)
-        size = bodySize + 2 #full packet
+        size = parseSize(header)
         
-        body = decoderPipe.read(bodySize) #message body
+        body = decoderPipe.read(size) #message body
         msgType = body[0] #message type
         sender = body[1] #sender
         receiver = body[2] #receiver
@@ -73,7 +72,7 @@ def receiveMessage():
 
         message = body[3:size - 4] #payload
         crc = body[size - 4:] #crc
-        print("Header size: " + str(bodySize))
+        print("Header size: " + str(size))
 
         if not validateCRC(header + body[:size - 4], parseCRC(crc)): 
             print("Corrupted message!")
