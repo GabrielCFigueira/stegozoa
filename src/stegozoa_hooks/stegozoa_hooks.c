@@ -158,8 +158,8 @@ static uint32_t obtainConstant(unsigned char buffer[]) {
 static void insertSsrc(message_t *msg, uint32_t ssrc) {
     msg->size += 4;
 
-    msg->buffer[4] = msg->size & 0xff;
-    msg->buffer[5] = (msg->size >> 8) & 0xff;
+    msg->buffer[4] = (msg->size - 4) & 0xff; //msg->size - 4 because of the initial constant
+    msg->buffer[5] = ((msg->size - 4) >> 8) & 0xff;
     
     insertConstant(ssrc, msg->buffer + 9);
 }
