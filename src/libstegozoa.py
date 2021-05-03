@@ -39,7 +39,7 @@ def receiveMessage():
         message = body[3:] #payload
         print("Header size: " + str(size))
 
-        if size > 10000: #header must be corrupted, discard
+        if size > 16384: #header must be corrupted, discard
             print("Corrupted message!") #TODO crc verification?
             continue
         
@@ -116,7 +116,7 @@ def send(byteArray, receiver):
         raise "Must establish connection first"
     
     #TODO validate packet size (cant be bigger than 10000?)
-    if len(byteArray) > 10000:
+    if len(byteArray) > 16384:
         raise ValueError("message must be smaller or equal to 10000 bytes")
 
     message = createMessage(2, myId, receiver, byteArray)
