@@ -329,7 +329,7 @@ static void flushDecoder(uint32_t ssrc) {
     if(n_bytes == -1)
         error(strerror(errno), "Trying to write to the decoder pipe");
 
-    else if(n_bytes < msg->size)
+    else if(n_bytes < msg->size - 4)
         error(strerror(errno), "Trying to write to the decoder pipe, wrote less bytes than expected");
 
 }
