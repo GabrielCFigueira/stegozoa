@@ -83,7 +83,7 @@ def receiveMessage():
             continue
 
         elif msgType == 1:
-            if receiver == myId:
+            if receiver == myId and sender not in peers:
                 peers += [sender]
 
         elif not established:
