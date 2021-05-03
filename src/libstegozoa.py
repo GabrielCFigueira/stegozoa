@@ -79,7 +79,6 @@ def receiveMessage():
         
         if not validateCRC(header + body[:size - 4], crc): 
             print("Corrupted message!")
-            print(header + body)
             continue
 
         elif msgType == 1:
@@ -90,12 +89,9 @@ def receiveMessage():
             continue
 
         elif msgType == 2:
-            print("put in queue!")
             if receiver == myId or receiver == 255: #255 is the broadcast address
                 messageQueue.put(message)
 
-        print("msgType: " + str(msgType))
-        print("receiver: " + str(receiver))
 
 
 def sigInt_handler(signum,frame):
