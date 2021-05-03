@@ -5,6 +5,8 @@ import queue
 import sys
 import signal
 
+import crccheck
+
 decoderPipePath = "/tmp/stegozoa_decoder_pipe"
 encoderPipePath = "/tmp/stegozoa_encoder_pipe"
 established = False
@@ -13,34 +15,66 @@ peers = []
 myId = 255
 
 
+def parseCRC(crc):
+    res = int(crc[0])
+    res += int(crc[1] << 8)
+    res += int(crc[1] << 16)
+    res += int(crc[1] << 24)
+    return res
 
-def createMessage(msgType, sender, receiver, byteArray = bytes(0)):
-    size = len(byteArray) + 3
-    l1 = bytes([size & 0xff])
-    l2 = bytes([(size & 0xff00) >> 8])
-    return l1 + l2 + bytes([msgType]) + bytes([sender]) + bytes([receiver]) + byteArray
+def validateCRC(message, crc):
+    return crccheck.crc.Crc32.calc(message) == crc
 
-def parseHooksHeader(header): #header: string with two chars
+def createCRC(message):
+    crc = crccheck.crc.Crc32.calc(message)
+    l1 = bytes([crc & 0xff])
+    l2 = bytes([(crc & 0xff00) >> 8])
+    l3 = bytes([(crc & 0xff0000) >> 16])
+    l4 = bytes([(crc & 0xff000000) >> 24])
+    return l1 + l2 + l3 + l4
+
+
+def parseSize(header): #header: string with two chars
     size = int(header[0]) + (int(header[1]) << 8)
     return size
+
+def createSize(number):
+    l1 = bytes([number & 0xff])
+    l2 = bytes([(number & 0xff00) >> 8])
+    return l1 + l2
+
+
+def createMessage(msgType, sender, receiver, byteArray = bytes(0)):
+
+    message = bytes([msgType]) + bytes([sender]) + bytes([receiver]) + byteArray
+    size = createSize(len(message) + 4) # + 4 is the crc
+    message = size + message + createCRC(message)
+    
+    return message
+
+
+
 
 def receiveMessage():
     global messageQueue, established, decoderPipe, peers
     while True:
 
         header = decoderPipe.read(2) #size header
-        size = parseHooksHeader(header)
+        size = parseSize(header)
         
         body = decoderPipe.read(size) #message body
         msgType = body[0] #message type
         sender = body[1] #sender
         receiver = body[2] #receiver
 
-        message = body[3:] #payload
+
+
+        message = body[3:size - 4] #payload
+        crc = body[size - 4:] #crc
         print("Header size: " + str(size))
 
-        if size > 16378: #header must be corrupted, discard
-            print("Corrupted message!") #TODO crc verification?
+        if validateCRC(header + body[:size - 4], parseCRC(crc)): 
+            print("Corrupted message!")
             continue
         
         elif msgType == 0:
