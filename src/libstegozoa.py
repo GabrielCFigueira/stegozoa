@@ -76,6 +76,7 @@ def receiveMessage():
 
         if not validateCRC(header + body[:size - 4], parseCRC(crc)): 
             print("Corrupted message!")
+            print(header + body)
             continue
         
         elif msgType == 0:
@@ -140,6 +141,8 @@ def connect(newId = 255):
     msgType = 0
     message = createMessage(msgType, myId, 255) # 0xff = broadcast address
 
+    print("Sent:")
+    print(message)
     encoderPipe.write(message)
     encoderPipe.flush()
 
