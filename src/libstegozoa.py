@@ -94,6 +94,9 @@ def receiveMessage():
             if receiver == myId or receiver == 255: #255 is the broadcast address
                 messageQueue.put(message)
 
+        print("msgType: " + str(msgType))
+        print("receiver: " + str(receiver))
+
 
 def sigInt_handler(signum,frame):
     global encoderPipePath, decoderPipePath
