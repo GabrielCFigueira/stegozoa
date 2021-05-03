@@ -181,6 +181,6 @@ if __name__ == "__main__":
     while len(getPeers()) < 1:
         time.sleep(0.5)
     message = "Why are we still here... just to suffer"
-    send(bytes(message * 100, 'utf-8'), getPeers()[0])
+    send(bytes(message, 'utf-8'), getPeers()[0])
     print(receive())
 
