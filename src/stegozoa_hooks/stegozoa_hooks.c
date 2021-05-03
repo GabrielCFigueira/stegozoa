@@ -345,6 +345,7 @@ int readQdctLsb(short *qcoeff, int has_y2_block, uint32_t ssrc) {
             msg->bit++;
             
             if(msg->bit == 32) { //future idea: completely discard the newConstant, by making sure it is always fully contained in a frame TODO
+                printf("Constant discarded: %x\n", newConstant);
                 uint32_t newConstant = obtainConstant(msg->buffer);
                 if(newConstant != constant) {
                     newConstant = newConstant << 1;
