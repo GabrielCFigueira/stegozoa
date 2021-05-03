@@ -37,12 +37,15 @@ def createSize(number):
     return l1 + l2
 
 
-def createMessage(msgType, sender, receiver, byteArray = bytes(0)):
+def createMessage(msgType, sender, receiver, byteArray = bytes(0), crc = False):
 
     message = bytes([msgType]) + bytes([sender]) + bytes([receiver]) + byteArray
-    size = createSize(len(message) + 4) # + 4 is the crc
-    message = size + message
-    message = message + createCRC(message)
+    if crc:
+        size = createSize(len(message) + 4) # + 4 is the crc
+        message = size + message
+        message = message + createCRC(message)
+    else:
+        message = createSize(len(message)) + message
     
     return message
 
@@ -67,15 +70,16 @@ def receiveMessage():
         crc = body[size - 4:] #crc
         print("Header size: " + str(size))
 
-        if not validateCRC(header + body[:size - 4], crc): 
+        
+        if msgType == 0: #type 0 messages dont need crc, they should be small enough
+            message = createMessage(1, myId, sender, message, True) #message is the ssrc in this case, must be sent back
+            encoderPipe.write(message)
+            encoderPipe.flush()
+        
+        elif not validateCRC(header + body[:size - 4], crc): 
             print("Corrupted message!")
             print(header + body)
             continue
-        
-        elif msgType == 0:
-            message = createMessage(1, myId, sender, message) #message is the ssrc in this case, must be sent back
-            encoderPipe.write(message)
-            encoderPipe.flush()
 
         elif msgType == 1:
             if receiver == myId:
@@ -87,6 +91,7 @@ def receiveMessage():
         elif msgType == 2:
             if receiver == myId or receiver == 255: #255 is the broadcast address
                 messageQueue.put(message)
+
 
 def sigInt_handler(signum,frame):
     global encoderPipePath, decoderPipePath
@@ -148,10 +153,7 @@ def send(byteArray, receiver):
     if len(byteArray) > 16375: #header + payload <= 16384
         raise ValueError("message must be smaller or equal to 10000 bytes")
 
-    message = createMessage(2, myId, receiver, byteArray)
-
-    print("Sent:")
-    print(message)
+    message = createMessage(2, myId, receiver, byteArray, True)
 
     encoderPipe.write(message)
     encoderPipe.flush()
