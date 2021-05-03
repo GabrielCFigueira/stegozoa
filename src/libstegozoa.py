@@ -22,9 +22,6 @@ def parseCRC(crc):
     res += int(crc[3] << 24)
     return res
 
-def validateCRC(message, crc):
-    return crccheck.crc.Crc32.calc(message) == crc
-
 def createCRC(message):
     crc = crccheck.crc.Crc32.calc(message)
     l1 = bytes([crc & 0xff])
@@ -32,6 +29,9 @@ def createCRC(message):
     l3 = bytes([(crc & 0xff0000) >> 16])
     l4 = bytes([(crc & 0xff000000) >> 24])
     return l1 + l2 + l3 + l4
+
+def validateCRC(message, crc):
+    return createCRC(message) == crc
 
 
 def parseSize(header): #header: string with two chars
