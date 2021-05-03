@@ -48,7 +48,8 @@ def createMessage(msgType, sender, receiver, byteArray = bytes(0)):
 
     message = bytes([msgType]) + bytes([sender]) + bytes([receiver]) + byteArray
     size = createSize(len(message) + 4) # + 4 is the crc
-    message = size + message + createCRC(message)
+    message = size + message
+    message = message + createCRC(message)
     
     return message
 
