@@ -90,6 +90,7 @@ def receiveMessage():
             continue
 
         elif msgType == 2:
+            print("put in queue!")
             if receiver == myId or receiver == 255: #255 is the broadcast address
                 messageQueue.put(message)
 
