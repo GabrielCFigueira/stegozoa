@@ -18,8 +18,8 @@ myId = 255
 def parseCRC(crc):
     res = int(crc[0])
     res += int(crc[1] << 8)
-    res += int(crc[1] << 16)
-    res += int(crc[1] << 24)
+    res += int(crc[2] << 16)
+    res += int(crc[3] << 24)
     return res
 
 def validateCRC(message, crc):
@@ -73,7 +73,7 @@ def receiveMessage():
         crc = body[size - 4:] #crc
         print("Header size: " + str(size))
 
-        if validateCRC(header + body[:size - 4], parseCRC(crc)): 
+        if not validateCRC(header + body[:size - 4], parseCRC(crc)): 
             print("Corrupted message!")
             continue
         
