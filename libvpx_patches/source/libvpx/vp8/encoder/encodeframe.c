@@ -952,8 +952,8 @@ void vp8_encode_frame(VP8_COMP *cpi) {
     end = clock();
     //printf("Time spent generating tokens %d: %lf\n", cm->current_video_frame, ((double) end - start) / CLOCKS_PER_SEC);
     //Stegozoa: embedding capacity
-    fprintf(stdout, "Ssrc: %lu. Current Frame: %d. Embbed data: %d. Capacity: %d\n", (unsigned long) cpi->ssrc, cpi->common.current_video_frame, embbedData, bits);
-    fflush(stdout);
+    //fprintf(stdout, "Ssrc: %lu. Current Frame: %d. Embbed data: %d. Capacity: %d\n", (unsigned long) cpi->ssrc, cpi->common.current_video_frame, embbedData, bits);
+    //fflush(stdout);
     
     
     cpi->tok_count = (unsigned int)(tp - cpi->tok);
