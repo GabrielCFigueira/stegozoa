@@ -17,7 +17,8 @@ for i in range(200):
     message = client.recv(10000)
     if message != bytes("why are we still here... just to suffer?" * 200, 'ascii'):
         print("Corrupted!")
-    data += len(message)
+    else:
+        data += len(message)
 
 end = time.time()
 print("data: " + str(data) + " time: " + str(end - start))
