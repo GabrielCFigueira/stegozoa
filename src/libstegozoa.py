@@ -58,25 +58,26 @@ def receiveMessage():
 
         header = decoderPipe.read(2) #size header
         size = parseSize(header)
+        print("Header size: " + str(size))
         
         body = decoderPipe.read(size) #message body
         msgType = body[0] #message type
         sender = body[1] #sender
         receiver = body[2] #receiver
 
-        
-
-        message = body[3:size - 4] #payload
-        crc = body[size - 4:] #crc
-        print("Header size: " + str(size))
-
-        
         if msgType == 0: #type 0 messages dont need crc, they should be small enough
             message = createMessage(1, myId, sender, message, True) #message is the ssrc in this case, must be sent back
             encoderPipe.write(message)
             encoderPipe.flush()
+            continue
         
-        elif not validateCRC(header + body[:size - 4], crc): 
+
+        message = body[3:size - 4] #payload
+        crc = body[size - 4:] #crc
+
+        
+        
+        if not validateCRC(header + body[:size - 4], crc): 
             print("Corrupted message!")
             print(header + body)
             continue
