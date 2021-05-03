@@ -15,13 +15,6 @@ peers = []
 myId = 255
 
 
-def parseCRC(crc):
-    res = int(crc[0])
-    res += int(crc[1] << 8)
-    res += int(crc[2] << 16)
-    res += int(crc[3] << 24)
-    return res
-
 def createCRC(message):
     crc = crccheck.crc.Crc32.calc(message)
     l1 = bytes([crc & 0xff])
@@ -74,7 +67,7 @@ def receiveMessage():
         crc = body[size - 4:] #crc
         print("Header size: " + str(size))
 
-        if not validateCRC(header + body[:size - 4], parseCRC(crc)): 
+        if not validateCRC(header + body[:size - 4], crc): 
             print("Corrupted message!")
             print(header + body)
             continue
@@ -141,8 +134,6 @@ def connect(newId = 255):
     msgType = 0
     message = createMessage(msgType, myId, 255) # 0xff = broadcast address
 
-    print("Sent:")
-    print(message)
     encoderPipe.write(message)
     encoderPipe.flush()
 
@@ -158,6 +149,9 @@ def send(byteArray, receiver):
         raise ValueError("message must be smaller or equal to 10000 bytes")
 
     message = createMessage(2, myId, receiver, byteArray)
+
+    print("Sent:")
+    print(message)
 
     encoderPipe.write(message)
     encoderPipe.flush()
