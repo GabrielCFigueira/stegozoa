@@ -138,20 +138,30 @@ static void insertConstant(uint32_t constant, unsigned char buffer[]) {
 }
 
 static uint32_t obtainConstant(unsigned char buffer[]) {
-    uint32_t ssrc = 0;
+    uint32_t constant = 0;
 
     //probably unnecessary, but must make sure I can shift 24 bits correctly
-    uint32_t ssrc1 = (uint32_t) buffer[0];
-    uint32_t ssrc2 = (uint32_t) buffer[1];
-    uint32_t ssrc3 = (uint32_t) buffer[2];
-    uint32_t ssrc4 = (uint32_t) buffer[3];
+    uint32_t constant1 = (uint32_t) buffer[0];
+    uint32_t constant2 = (uint32_t) buffer[1];
+    uint32_t constant3 = (uint32_t) buffer[2];
+    uint32_t constant4 = (uint32_t) buffer[3];
     
-    ssrc += ssrc1;
-    ssrc += ssrc2 << 8;
-    ssrc += ssrc3 << 16;
-    ssrc += ssrc4 << 24;
+    constant += constant1;
+    constant += constant2 << 8;
+    constant += constant3 << 16;
+    constant += constant4 << 24;
 
-    return ssrc;
+    return constant;
+
+}
+
+static void shiftConstant(unsigned char buffer[]) { //the constant is in a 4 byte array
+    
+    buffer[0] = (buffer[0] >> 1) | (buffer[1] << 7);
+    buffer[1] = (buffer[1] >> 1) | (buffer[2] << 7);
+    buffer[2] = (buffer[2] >> 1) | (buffer[3] << 7);
+    buffer[3] = buffer[3] >> 1;
+
 
 }
 
@@ -348,8 +358,7 @@ int readQdctLsb(short *qcoeff, int has_y2_block, uint32_t ssrc) {
                 uint32_t newConstant = obtainConstant(msg->buffer);
                 printf("Ssrc: %lu Constant: %x\n", (unsigned long) ssrc, newConstant);
                 if(newConstant != constant) {
-                    newConstant = newConstant >> 1;
-                    insertConstant(newConstant, msg->buffer);
+                    shiftConstant(msg->buffer);
                     msg->bit--;
                 }
             }
