@@ -97,7 +97,7 @@ def receiveMessage():
             if receiver == myId or receiver == 255: #255 is the broadcast address
                 messageQueue.put(message)
 
-        print("Ratio: " + str(success * 1.0 / (success + insuccess)
+        print("Ratio: " + str(success * 1.0 / (success + insuccess)))
 
 
 
