@@ -14,6 +14,9 @@ messageQueue = queue.Queue()
 peers = []
 myId = 255
 
+success = 0
+insuccess = 0
+
 
 def createCRC(message):
     crc = crccheck.crc.Crc32.calc(message)
@@ -53,7 +56,7 @@ def createMessage(msgType, sender, receiver, byteArray = bytes(0), crc = False):
 
 
 def receiveMessage():
-    global messageQueue, established, decoderPipe, peers
+    global messageQueue, established, decoderPipe, peers, success, insuccess
     while True:
 
         header = decoderPipe.read(2) #size header
@@ -75,11 +78,13 @@ def receiveMessage():
         message = body[3:size - 4] #payload
         crc = body[size - 4:] #crc
 
-        
+        success = success + 1
         
         if not validateCRC(header + body[:size - 4], crc): 
             print("Corrupted message!")
-            continue
+            insuccess = insuccess + 1
+            success = success - 1
+            #continue
 
         elif msgType == 1:
             if receiver == myId and sender not in peers:
@@ -91,6 +96,8 @@ def receiveMessage():
         elif msgType == 2:
             if receiver == myId or receiver == 255: #255 is the broadcast address
                 messageQueue.put(message)
+
+        print("Ratio: " + str(success * 1.0 / (success + insuccess)
 
 
 
