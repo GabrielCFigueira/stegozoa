@@ -356,7 +356,6 @@ int readQdctLsb(short *qcoeff, int has_y2_block, uint32_t ssrc) {
             
             if(msg->bit == 32) { //future idea: completely discard the newConstant, by making sure it is always fully contained in a frame TODO
                 uint32_t newConstant = obtainConstant(msg->buffer);
-                printf("Ssrc: %lu Constant: %x\n", (unsigned long) ssrc, newConstant);
                 if(newConstant != constant) {
                     shiftConstant(msg->buffer);
                     msg->bit--;
