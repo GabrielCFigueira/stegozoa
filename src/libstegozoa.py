@@ -79,7 +79,6 @@ def receiveMessage():
         
         if not validateCRC(header + body[:size - 4], crc): 
             print("Corrupted message!")
-            print(body)
             continue
 
         elif msgType == 1:
