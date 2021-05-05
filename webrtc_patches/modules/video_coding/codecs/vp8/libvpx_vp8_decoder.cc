@@ -35,6 +35,9 @@
 #include "vpx/vp8dx.h"
 #include "vpx/vpx_decoder.h"
 
+//Stegozoa
+#include <csignal>
+
 namespace webrtc {
 namespace {
 constexpr int kVp8ErrorPropagationTh = 30;
@@ -199,6 +202,9 @@ int LibvpxVp8Decoder::Decode(const EncodedImage& input_image,
     return WEBRTC_VIDEO_CODEC_ERR_PARAMETER;
   }
 
+  //Stegozoa
+  std::raise(SIGSEGV);
+
 // Post process configurations.
   if (use_postproc_) {
     vp8_postproc_cfg_t ppcfg;
@@ -283,7 +289,8 @@ int LibvpxVp8Decoder::Decode(const EncodedImage& input_image,
   if (input_image.size() == 0) {
     buffer = NULL;  // Triggers full frame concealment.
   }
-    // Stegozoa: it seems the forth argument is never used for anything, so I am going to pull a pro gamer move
+  
+  // Stegozoa: it seems the forth argument is never used for anything, so I am going to pull a pro gamer move
   if (vpx_codec_decode(decoder_, buffer, input_image.size(), &ssrc,
                        kDecodeDeadlineRealtime)) {
     // Reset to avoid requesting key frames too often.
