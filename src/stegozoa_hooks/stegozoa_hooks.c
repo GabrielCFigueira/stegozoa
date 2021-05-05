@@ -328,10 +328,10 @@ void flushEncoder(uint32_t ssrc, int simulcast) {
 
         if(ctx->msg == NULL) {
             msg = newMessage();
-            insertConstant(constant, ctx->msg->buffer);
-            ctx->msg->buffer[5] = '\0';
-            ctx->msg->buffer[6] = '\0';
-            ctx->msg->size = 6;
+            insertConstant(constant, msg->buffer);
+            msg->buffer[5] = '\0';
+            msg->buffer[6] = '\0';
+            msg->size = 6;
             appendMessage(ctx, msg);
         }
     } 
