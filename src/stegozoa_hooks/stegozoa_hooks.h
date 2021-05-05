@@ -5,7 +5,7 @@
 
 #define BUFFER_LEN 17000
 #define MSG_SIZE 16378 //2*16 - 6
-#define NPEERS 16
+#define NPEERS 256
 
 typedef struct message {
 	unsigned char buffer[BUFFER_LEN];
@@ -18,6 +18,7 @@ typedef struct message {
 typedef struct context {
 	message_t *msg;
 	uint32_t ssrc;
+	int n_msg;
 	int id[NPEERS];
 	int n_ids;
 } context_t;

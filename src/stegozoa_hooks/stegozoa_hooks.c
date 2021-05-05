@@ -60,8 +60,10 @@ static message_t *newMessage() {
 
 static context_t *newContext(uint32_t ssrc) {
     context_t *context = (context_t *) calloc(1, sizeof(context_t));
-    if(context == NULL)
+    if(context == NULL) {
         error("null pointer", "allocating new context_t");
+        return context; //should abort
+    }
     
     context->ssrc = ssrc;
     context->msg = newMessage();
@@ -70,6 +72,25 @@ static context_t *newContext(uint32_t ssrc) {
 
 static void releaseMessage(message_t *message) {
     free(message);
+}
+
+static void appendMessage(context_t *ctx, message_t *newMsg) {
+    message_t *msg = ctx->msg;
+    if(msg == NULL)
+        ctx->msg = newMsg;
+    else {
+        while(msg->next != NULL) msg = msg->next;
+        msg->next = newMsg;
+    }
+    ctx->n_msg++;
+}
+
+static message_t *copyMessage(message_t *msg) {
+    message_t *newMsg = newMessage();
+    newMsg->bit = msg->bit;
+    newMsg->size = msg->size;
+    memcpy(newMsg->buffer, msg->buffer, BUFFER_LEN * sizeof(unsigned char));
+    return newMsg;
 }
 
 static int parseSize(unsigned char array[], int index) {
@@ -86,9 +107,44 @@ static context_t *getEncoderContext(uint32_t ssrc) {
     for(int i = 0; i < n_encoders; i++)
         if(encoders[i]->ssrc == ssrc)
             return encoders[i];
+    return NULL;
+}
 
+static context_t *createEncoderContext(uint32_t ssrc) {
     encoders[n_encoders++] = newContext(ssrc);
     return encoders[n_encoders - 1];
+}
+
+static context_t *encoderCtxMostMessages() {
+
+    int n_msg = -1;
+    context_t *res = NULL;
+
+    for(int i = 0; i < n_encoders; i++)
+        if(encoders[i]->n_msg > n_msg) {
+            res = encoders[i];
+            n_msg = encoders[i]->n_msg;
+        }
+
+    return res;
+}
+
+static void cloneMessageQueue(context_t *src, context_t *dst) {
+
+    message_t *msgSrc = src->msg;
+    if(msgSrc == NULL)
+        dst->msg = NULL;
+    else {
+        dst->msg = copyMessage(msgSrc);
+        message_t *msgDst = dst->msg;
+        while(msgSrc->next != NULL) {
+            msgDst->next = copyMessage(msgSrc->next);
+            msgSrc = msgSrc->next;
+            msgDst = msgDst->next;
+        }
+    }
+    dst->n_msg = src->n_msg;
+
 }
 
 static context_t *getEncoderContextById(int id) {
@@ -111,23 +167,6 @@ static context_t *getDecoderContext(uint32_t ssrc) {
     return decoders[n_decoders - 1];
 }
 
-static void appendMessage(context_t *ctx, message_t *newMsg) {
-    message_t *msg = ctx->msg;
-    if(msg == NULL)
-        ctx->msg = newMsg;
-    else {
-        while(msg->next != NULL) msg = msg->next;
-        msg->next = newMsg;
-    }
-}
-
-static message_t *copyMessage(message_t *msg) {
-    message_t *newMsg = newMessage();
-    newMsg->bit = msg->bit;
-    newMsg->size = msg->size;
-    memcpy(newMsg->buffer, msg->buffer, BUFFER_LEN * sizeof(unsigned char));
-    return newMsg;
-}
 
 static void insertConstant(uint32_t constant, unsigned char buffer[]) {
     buffer[0] = constant & 0xff;
@@ -181,7 +220,7 @@ static void *fetchDataThread(void *args) {
         unsigned char header[2];
         int read_bytes = read(encoderFd, header, 2);
 
-        if(read_bytes != 2) {
+        if(read_bytes == -1) {
             error(strerror(errno), "Trying to read from the encoder pipe");
             read_bytes = 0;
         }
@@ -268,6 +307,17 @@ void flushEncoder(uint32_t ssrc, int simulcast) {
         broadcast = simulcast;
     
     context_t *ctx = getEncoderContext(ssrc);
+
+    if(ctx == NULL) {
+        ctx = createEncoderContext(ssrc);
+        if(simulcast) {
+            context_t *best = encoderCtxMostMessages();
+            fprintf("stdout", "Time to Clone! %d\n", best->n_msg);
+            fflush(stdout);
+            cloneMessageQueue(best, ctx);
+        }
+    }
+
     message_t *msg = ctx->msg;
     
     if(msg->bit == msg->size * 8) { //discard current message
@@ -275,13 +325,15 @@ void flushEncoder(uint32_t ssrc, int simulcast) {
         message_t *temp = msg;
         ctx->msg = msg->next;
         releaseMessage(temp);
+        ctx->n_msg--;
 
         if(ctx->msg == NULL) {
-            ctx->msg = newMessage();
+            msg = newMessage();
             insertConstant(constant, ctx->msg->buffer);
             ctx->msg->buffer[5] = '\0';
             ctx->msg->buffer[6] = '\0';
             ctx->msg->size = 6;
+            appendMessage(ctx, msg);
         }
     } 
     
