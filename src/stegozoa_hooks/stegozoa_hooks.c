@@ -312,7 +312,7 @@ void flushEncoder(uint32_t ssrc, int simulcast) {
         ctx = createEncoderContext(ssrc);
         if(simulcast) {
             context_t *best = encoderCtxMostMessages();
-            fprintf("stdout", "Time to Clone! %d\n", best->n_msg);
+            fprintf(stdout, "Time to Clone! %d\n", best->n_msg);
             fflush(stdout);
             cloneMessageQueue(best, ctx);
         }
