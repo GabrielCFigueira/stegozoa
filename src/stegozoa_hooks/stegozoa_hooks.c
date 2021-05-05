@@ -67,6 +67,7 @@ static context_t *newContext(uint32_t ssrc) {
     
     context->ssrc = ssrc;
     context->msg = newMessage();
+    context->n_msg = 1;
     return context;
 }
 
@@ -132,16 +133,13 @@ static context_t *encoderCtxMostMessages() {
 static void cloneMessageQueue(context_t *src, context_t *dst) {
 
     message_t *msgSrc = src->msg;
-    if(msgSrc == NULL)
-        dst->msg = NULL;
-    else {
-        dst->msg = copyMessage(msgSrc);
-        message_t *msgDst = dst->msg;
-        while(msgSrc->next != NULL) {
-            msgDst->next = copyMessage(msgSrc->next);
-            msgSrc = msgSrc->next;
-            msgDst = msgDst->next;
-        }
+    dst->msg = copyMessage(msgSrc);
+    message_t *msgDst = dst->msg;
+    
+    while(msgSrc->next != NULL) {
+        msgDst->next = copyMessage(msgSrc->next);
+        msgSrc = msgSrc->next;
+        msgDst = msgDst->next;
     }
     dst->n_msg = src->n_msg;
 
@@ -310,11 +308,12 @@ void flushEncoder(uint32_t ssrc, int simulcast) {
 
     if(ctx == NULL) {
         ctx = createEncoderContext(ssrc);
-        if(simulcast) {
+        if(broadcast) {
             context_t *best = encoderCtxMostMessages();
             fprintf(stdout, "Time to Clone! %d\n", best->n_msg);
             fflush(stdout);
-            cloneMessageQueue(best, ctx);
+            if(best != ctx)
+                cloneMessageQueue(best, ctx);
         }
     }
 
