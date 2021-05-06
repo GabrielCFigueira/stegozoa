@@ -267,6 +267,8 @@ RtpPacketSinkInterface* RtpDemuxer::ResolveSink(
   if (!has_rsid) {
     has_rsid = packet.GetExtension<RtpStreamId>(&packet_rsid);
   }
+  //Stegozoa
+  std::cout << "RSID: " << has_rsid << std::endl;
   uint32_t ssrc = packet.Ssrc();
 
   // The BUNDLE spec says to drop any packets with unknown MIDs, even if the
@@ -380,8 +382,6 @@ RtpPacketSinkInterface* RtpDemuxer::ResolveSinkByMidRsid(
 RtpPacketSinkInterface* RtpDemuxer::ResolveSinkByRsid(const std::string& rsid,
                                                       uint32_t ssrc) {
   const auto it = sink_by_rsid_.find(rsid);
-  //Stegozoa
-  std::cout << "RSID: " << rsid << std::endl;
   if (it != sink_by_rsid_.end()) {
     RtpPacketSinkInterface* sink = it->second;
     AddSsrcSinkBinding(ssrc, sink);
