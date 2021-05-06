@@ -800,9 +800,6 @@ void RtpVideoStreamReceiver2::OnAssembledFrame(
   const absl::optional<RTPVideoHeader::GenericDescriptorInfo>& descriptor =
       frame->GetRtpVideoHeader().generic;
   
-  //Stegozoa
-  const RTPVideoHeader &header = frame->GetRtpVideoHeader(); 
-  std::cout << header.simulcastIdx << " w: " << header.width << " h:" << header.height << /*" Frame id:" << header.generic->frame_id <<*/ std::endl;
 
   if (loss_notification_controller_ && descriptor) {
     loss_notification_controller_->OnAssembledFrame(
@@ -979,6 +976,11 @@ void RtpVideoStreamReceiver2::ReceivePacket(const RtpPacketReceived& packet) {
     return;
   }
 
+  //Stegozoa
+  RTPHeader header;
+  packet.GetHeader(&header);
+  std::cout << "Seq number: " << header->sequenceNumber << " ssrc: " << header->ssrc << " Stream id: " header->extension.stream_id << std::endl;
+  
   OnReceivedPayloadData(std::move(parsed_payload->video_payload), packet,
                         parsed_payload->video_header);
 }
