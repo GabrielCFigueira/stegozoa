@@ -579,8 +579,7 @@ void VideoReceiveStream2::OnCompleteFrame(
     rtp_video_stream_receiver_.FrameContinuous(last_continuous_pid);
 
   //Stegozoa
-  video_coding::EncodedFrame *ptr = frame;
-  video_coding::RtpFrameObject> *rtpFrame = static_cast<video_coding::RtpFrameObject>(ptr);
+  video_coding::RtpFrameObject> *rtpFrame = static_cast<video_coding::RtpFrameObject>(frame.get());
   const RTPVideoHeader &header = rtpFrame->GetRtpVideoHeader(); 
   std::cout << header.simulcastIdx << " w: " << header.width << " h:" << header.height << " Frame id:" << header.generic->frame_id << std::endl;
   
