@@ -306,7 +306,6 @@ RtpPacketSinkInterface* RtpDemuxer::ResolveSink(
   }
   //Stegozoa
   std::cout << "RSID: " << rsid << std::endl;
-  uint32_t ssrc = packet.Ssrc();
 
   // If MID and/or RSID is specified, prioritize that for demuxing the packet.
   // The motivation behind the BUNDLE algorithm is that we trust these are used
