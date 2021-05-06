@@ -17,6 +17,9 @@
 #include "rtc_base/logging.h"
 #include "rtc_base/strings/string_builder.h"
 
+//Stegozoa
+#include <iostream>
+
 namespace webrtc {
 namespace {
 
