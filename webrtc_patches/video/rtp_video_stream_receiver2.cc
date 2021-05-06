@@ -979,7 +979,7 @@ void RtpVideoStreamReceiver2::ReceivePacket(const RtpPacketReceived& packet) {
   //Stegozoa
   RTPHeader header;
   packet.GetHeader(&header);
-  std::cout << "Seq number: " << header->sequenceNumber << " ssrc: " << header->ssrc << " Stream id: " header->extension.stream_id << std::endl;
+  std::cout << "Seq number: " << header.sequenceNumber << " ssrc: " << header.ssrc << " Stream id: " header.extension.stream_id << std::endl;
   
   OnReceivedPayloadData(std::move(parsed_payload->video_payload), packet,
                         parsed_payload->video_header);
