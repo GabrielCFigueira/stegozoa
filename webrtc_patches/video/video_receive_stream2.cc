@@ -51,6 +51,9 @@
 #include "video/frame_dumping_decoder.h"
 #include "video/receive_statistics_proxy2.h"
 
+//Stegozoa
+#include "modules/rtp_rtcp/source/rtp_video_header.h"
+
 namespace webrtc {
 
 namespace internal {
@@ -574,6 +577,12 @@ void VideoReceiveStream2::OnCompleteFrame(
   int64_t last_continuous_pid = frame_buffer_->InsertFrame(std::move(frame));
   if (last_continuous_pid != -1)
     rtp_video_stream_receiver_.FrameContinuous(last_continuous_pid);
+
+  //Stegozoa
+  video_coding::RtpFrameObject *rtpFrame = static_cast<video_coding::RtpFrameObject>(frame);
+  RtpVideoHeader header = rtpFrame->getRtpVideoHeader(); 
+  std::cout << header.simulcastIdx << " w: " << header.width << " h:" << header.height << " Frame id:" << header.generic.frame_id << std::endl;
+  
 }
 
 void VideoReceiveStream2::OnRttUpdate(int64_t avg_rtt_ms, int64_t max_rtt_ms) {
