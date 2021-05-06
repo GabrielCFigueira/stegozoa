@@ -267,9 +267,6 @@ RtpPacketSinkInterface* RtpDemuxer::ResolveSink(
   if (!has_rsid) {
     has_rsid = packet.GetExtension<RtpStreamId>(&packet_rsid);
   }
-  //Stegozoa
-  std::cout << "RSID: " << has_rsid << std::endl;
-  uint32_t ssrc = packet.Ssrc();
 
   // The BUNDLE spec says to drop any packets with unknown MIDs, even if the
   // SSRC is known/latched.
@@ -306,6 +303,9 @@ RtpPacketSinkInterface* RtpDemuxer::ResolveSink(
       rsid = &it->second;
     }
   }
+  //Stegozoa
+  std::cout << "RSID: " << rsid << std::endl;
+  uint32_t ssrc = packet.Ssrc();
 
   // If MID and/or RSID is specified, prioritize that for demuxing the packet.
   // The motivation behind the BUNDLE algorithm is that we trust these are used
