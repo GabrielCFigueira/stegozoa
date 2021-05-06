@@ -35,9 +35,6 @@
 #include "vpx/vp8dx.h"
 #include "vpx/vpx_decoder.h"
 
-//Stegozoa
-#include <csignal>
-
 namespace webrtc {
 namespace {
 constexpr int kVp8ErrorPropagationTh = 30;
@@ -201,9 +198,6 @@ int LibvpxVp8Decoder::Decode(const EncodedImage& input_image,
       propagation_cnt_ = 0;
     return WEBRTC_VIDEO_CODEC_ERR_PARAMETER;
   }
-
-  //Stegozoa
-  std::raise(SIGSEGV);
 
 // Post process configurations.
   if (use_postproc_) {
