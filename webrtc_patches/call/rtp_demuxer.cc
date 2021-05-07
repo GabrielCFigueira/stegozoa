@@ -351,7 +351,7 @@ RtpPacketSinkInterface* RtpDemuxer::ResolveSink(
   const auto ssrc_sink_it = sink_by_ssrc_.find(ssrc);
   if (ssrc_sink_it != sink_by_ssrc_.end()) {
     //Stegozoa
-    std::cout << "ssrc" << std::endl;
+    std::cout << "ssrc" << ssrc_sink_it->second << std::endl;
     return ssrc_sink_it->second;
   }
 
