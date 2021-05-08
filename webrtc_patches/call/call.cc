@@ -1394,9 +1394,9 @@ PacketReceiver::DeliveryStatus Call::DeliverRtp(MediaType media_type,
   } else if (media_type == MediaType::VIDEO) {
     parsed_packet.set_payload_type_frequency(kVideoPayloadTypeFrequency);
     //Stegozoa
-    RTPHeader header;
-    parsed_packet.GetHeader(&header);
-    std::cout << "Seq number: " << header.sequenceNumber << " ssrc: " << header.ssrc << " Stream id: " << header.extension.stream_id << "address: " << this << std::endl;
+    //RTPHeader header;
+    //parsed_packet.GetHeader(&header);
+    //std::cout << "Seq number: " << header.sequenceNumber << " ssrc: " << header.ssrc << " Stream id: " << header.extension.stream_id << "address: " << this << std::endl;
     if (video_receiver_controller_.OnRtpPacket(parsed_packet)) {
       received_bytes_per_second_counter_.Add(length);
       received_video_bytes_per_second_counter_.Add(length);
