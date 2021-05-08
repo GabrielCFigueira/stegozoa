@@ -350,11 +350,10 @@ RtpPacketSinkInterface* RtpDemuxer::ResolveSink(
   // between streams.
   const auto ssrc_sink_it = sink_by_ssrc_.find(ssrc);
   if (ssrc_sink_it != sink_by_ssrc_.end()) {
-    //Stegozoa
   //Stegozoa
-  RTPHeader header;
-  packet.GetHeader(&header);
-  std::cout << "Seq number: " << header.sequenceNumber << " ssrc: " << header.ssrc << " Stream id: " << header.extension.stream_id << "address: " << this << std::endl;
+  //RTPHeader header;
+  //packet.GetHeader(&header);
+  //std::cout << "Seq number: " << header.sequenceNumber << " ssrc: " << header.ssrc << " Stream id: " << header.extension.stream_id << "address: " << this << std::endl;
     return ssrc_sink_it->second;
   }
 
