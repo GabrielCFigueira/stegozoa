@@ -216,8 +216,8 @@ static void shiftConstant(unsigned char buffer[]) { //the constant is in a 4 byt
 static void insertSsrc(message_t *msg, uint32_t ssrc) {
     msg->size += 4;
 
-    msg->buffer[4] = (msg->size - 4) & 0xff; //msg->size - 4 because of the initial constant
-    msg->buffer[5] = ((msg->size - 4) >> 8) & 0xff;
+    msg->buffer[4] = (msg->size - 6) & 0xff; //msg->size - 6 because of the initial constant and size header
+    msg->buffer[5] = ((msg->size - 6) >> 8) & 0xff;
     
     insertConstant(ssrc, msg->buffer + 11);
 }
