@@ -86,6 +86,17 @@ static void appendMessage(context_t *ctx, message_t *newMsg) {
     ctx->n_msg++;
 }
 
+static void insertMessage(context_t *ctx, message_t *newMsg) {
+    message_t *msg = ctx->msg;
+    if(msg == NULL)
+        ctx->msg = newMsg;
+    else {
+        newMsg->next = msg->next;
+        msg->next = newMsg;
+    }
+    ctx->n_msg++;
+}
+
 static message_t *copyMessage(message_t *msg) {
     message_t *newMsg = newMessage();
     newMsg->bit = msg->bit;
@@ -267,6 +278,24 @@ static void *fetchDataThread(void *args) {
                     }
                     releaseMessage(newMsg);
                 
+                } else if(msgType == 0x3) {
+                    if(receiver = 0xff || broadcast) {
+                       
+                        for(int i = 0; i < n_encoders; ++i) {
+                            insertMessage(encoders[i], newMsg);
+                            newMsg = copyMessage(newMsg);
+                        }
+                        releaseMessage(newMsg);
+
+                    } else {
+                        context_t *ctxById = getEncoderContextById(receiver);
+                        if(ctxById == NULL)
+                            error("No context exists for this id", "Sending new message");
+                        else
+                            insertMessage(ctxById, newMsg);
+                    }
+                    
+                
                 } else if(msgType == 0x1 || receiver == 0xff || broadcast) {
 
                     for(int i = 0; i < n_encoders; ++i) {
@@ -274,8 +303,8 @@ static void *fetchDataThread(void *args) {
                         newMsg = copyMessage(newMsg);
                     }
                     releaseMessage(newMsg);
-                }
-                else {
+
+                } else {
                     context_t *ctxById = getEncoderContextById(receiver);
                     if(ctxById == NULL)
                         error("No context exists for this id", "Sending new message");
@@ -290,6 +319,25 @@ static void *fetchDataThread(void *args) {
                 continue; //should abort
             }
         }
+    }
+
+}
+
+static void discardMessage(context_t *ctx) {
+    
+    message_t *msg = ctx->msg;
+    ctx->msg = msg->next;
+    releaseMessage(msg);
+
+    ctx->n_msg--;
+
+    if(ctx->msg == NULL) {
+        msg = newMessage();
+        insertConstant(constant, msg->buffer);
+        msg->buffer[5] = '\0';
+        msg->buffer[6] = '\0';
+        msg->size = 6;
+        appendMessage(ctx, msg);
     }
 
 }
@@ -319,22 +367,8 @@ void flushEncoder(uint32_t ssrc, int simulcast) {
 
     message_t *msg = ctx->msg;
     
-    if(msg->bit == msg->size * 8) { //discard current message
-
-        message_t *temp = msg;
-        ctx->msg = msg->next;
-        releaseMessage(temp);
-        ctx->n_msg--;
-
-        if(ctx->msg == NULL) {
-            msg = newMessage();
-            insertConstant(constant, msg->buffer);
-            msg->buffer[5] = '\0';
-            msg->buffer[6] = '\0';
-            msg->size = 6;
-            appendMessage(ctx, msg);
-        }
-    } 
+    if(msg->bit == msg->size * 8) //discard current message
+        discardMessage(ctx);
     
             
     if(pthread_mutex_unlock(&barrier_mutex)) {
@@ -347,9 +381,10 @@ void flushEncoder(uint32_t ssrc, int simulcast) {
 
 int writeQdctLsb(short *qcoeff, int has_y2_block, uint32_t ssrc) {
 
-    message_t *msg = getEncoderContext(ssrc)->msg;
+    context_t *ctx = getEncoderContext(ssrc);
+    message_t *msg = ctx->msg;
     
-    if(msg->bit == msg->size * 8)
+    if(msg->bit == msg->size * 8 && msg->size == 6)
         return -1;
     
     int oldBitEnc = msg->bit;
@@ -357,11 +392,30 @@ int writeQdctLsb(short *qcoeff, int has_y2_block, uint32_t ssrc) {
     //future idea: loop unroll
     for(int i = 0; i < 384 + has_y2_block * 16; i++) {
         if(qcoeff[i] != 1 && qcoeff[i] != 0 && (!has_y2_block || MOD16(i) != 0 || i > 255)) {
+            
+            if(msg->bit == msg->size * 8) {
+                if(msg->size == 6)
+                    break;
+                else {
+                    
+                    if(pthread_mutex_lock(&barrier_mutex)) {
+                        error("Who knows", "Trying to acquire the lock");
+                        return -1; //should abort
+                    }
+                    
+                    discardMessage(ctx);
+                    
+                    if(pthread_mutex_unlock(&barrier_mutex)) {
+                        error("Who knows", "Trying to release the lock");
+                        return -1; //should abort
+                    }
+
+                }
+            }
+
             qcoeff[i] = (qcoeff[i] & 0xFFFE) | getBit(msg->buffer, msg->bit);
             msg->bit++;
             
-            if(msg->bit == msg->size * 8)
-                break;
         } 
     }
 
@@ -405,7 +459,7 @@ int readQdctLsb(short *qcoeff, int has_y2_block, uint32_t ssrc) {
             setBit(msg->buffer, msg->bit, getLsb(qcoeff[i]));
             msg->bit++;
             
-            if(msg->bit == 32) { //future idea: completely discard the newConstant, by making sure it is always fully contained in a frame TODO
+            if(msg->bit == 32) {
                 uint32_t newConstant = obtainConstant(msg->buffer);
                 if(newConstant != constant) {
                     shiftConstant(msg->buffer);
@@ -419,10 +473,8 @@ int readQdctLsb(short *qcoeff, int has_y2_block, uint32_t ssrc) {
                     return 1;
                 }
             }
-            else if(msg->bit == msg->size * 8 && msg->bit > 48) {
+            else if(msg->bit == msg->size * 8 && msg->bit > 48)
                 flushDecoder(ssrc);
-                return 1;
-            }
         }
             
     }
