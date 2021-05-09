@@ -387,7 +387,7 @@ int writeQdctLsb(short *qcoeff, int has_y2_block, uint32_t ssrc) {
     if(msg->bit == msg->size * 8 && msg->size == 6)
         return -1;
     
-    int oldBitEnc = msg->bit;
+    int rate = 0;
 
     //future idea: loop unroll
     for(int i = 0; i < 384 + has_y2_block * 16; i++) {
@@ -415,11 +415,12 @@ int writeQdctLsb(short *qcoeff, int has_y2_block, uint32_t ssrc) {
 
             qcoeff[i] = (qcoeff[i] & 0xFFFE) | getBit(msg->buffer, msg->bit);
             msg->bit++;
+            rate++;
             
         } 
     }
 
-    return msg->bit - oldBitEnc;
+    return rate;
     
 }
 
