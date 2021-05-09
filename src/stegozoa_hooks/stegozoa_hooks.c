@@ -219,7 +219,7 @@ static void insertSsrc(message_t *msg, uint32_t ssrc) {
     msg->buffer[4] = (msg->size - 4) & 0xff; //msg->size - 4 because of the initial constant
     msg->buffer[5] = ((msg->size - 4) >> 8) & 0xff;
     
-    insertConstant(ssrc, msg->buffer + 9);
+    insertConstant(ssrc, msg->buffer + 11);
 }
 
 
@@ -435,7 +435,7 @@ static void flushDecoder(uint32_t ssrc) {
     unsigned char receiver = msg->buffer[8];
 
     if(msgType == 0x1 && receiver == senderId) {
-        uint32_t localSsrc = obtainConstant(msg->buffer + 9);
+        uint32_t localSsrc = obtainConstant(msg->buffer + 11);
         context_t *ctx = getEncoderContext(localSsrc);
         ctx->id[ctx->n_ids++] = (int) sender;
     }
