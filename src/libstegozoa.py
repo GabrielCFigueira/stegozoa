@@ -75,7 +75,7 @@ def receiveMessage():
         print("Syn: " + str(msgSyn))
 
         if msgType == 0: #type 0 messages dont need crc, they should be small enough
-            message = createMessage(1, myId, sender, body[3:size], True) #message is the ssrc in this case, must be sent back
+            message = createMessage(1, myId, sender, body[5:size], True) #message is the ssrc in this case, must be sent back
             encoderPipe.write(message)
             encoderPipe.flush()
             continue
