@@ -17,6 +17,8 @@ myId = 255
 success = 0
 insuccess = 0
 
+syn = 0
+
 
 def createCRC(message):
     crc = crccheck.crc.Crc32.calc(message)
@@ -41,8 +43,9 @@ def createSize(number):
 
 
 def createMessage(msgType, sender, receiver, byteArray = bytes(0), crc = False):
-
-    message = bytes([msgType]) + bytes([sender]) + bytes([receiver]) + byteArray
+    global syn
+    message = bytes([msgType]) + bytes([sender]) + bytes([receiver]) + createSize(syn) + byteArray
+    syn += 1 #TODO mutex
     if crc:
         size = createSize(len(message) + 4) # + 4 is the crc
         message = size + message
@@ -67,6 +70,9 @@ def receiveMessage():
         msgType = body[0] #message type
         sender = body[1] #sender
         receiver = body[2] #receiver
+        msgSyn = parseSize(body[3:5]) #syn
+
+        print("Syn: " + str(msgSyn))
 
         if msgType == 0: #type 0 messages dont need crc, they should be small enough
             message = createMessage(1, myId, sender, body[3:size], True) #message is the ssrc in this case, must be sent back
@@ -75,17 +81,15 @@ def receiveMessage():
             continue
         
 
-        message = body[3:size - 4] #payload
+        message = body[5:size - 4] #payload
         crc = body[size - 4:] #crc
 
         success = success + 1
         
         if not validateCRC(header + body[:size - 4], crc): 
             print("Corrupted message!")
-            print(header + body)
             insuccess = insuccess + 1
             success = success - 1
-            #continue
 
         elif msgType == 1:
             if receiver == myId and sender not in peers:
