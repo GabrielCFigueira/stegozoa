@@ -47,7 +47,7 @@ def send():
         message = ''
         
         try:
-            message = server_socket.recv(2048)
+            message = server_socket.recv(256)
         except socket.error as e:
             mutex.acquire()
             if is_socket_closed(server_socket):
