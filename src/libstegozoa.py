@@ -19,6 +19,20 @@ insuccess = 0
 
 syn = 0
 
+messageToSend = {}
+
+class synQueue:
+
+    def __init__(self):
+        self.queue = {}
+        self.syn = 0
+
+    def addMessage(self, message):
+        if len(self.queue) > 1000:
+            pass # remove smaller element
+        self.queue[syn] = message
+        syn += 1
+
 
 def createCRC(message):
     crc = crccheck.crc.Crc32.calc(message)
@@ -32,27 +46,34 @@ def validateCRC(message, crc):
     return createCRC(message) == crc
 
 
-def parseSize(header): #header: string with two chars
+def parse2byte(header): #header: string with two chars
     size = int(header[0]) + (int(header[1]) << 8)
     return size
 
-def createSize(number):
+def create2byte(number):
     l1 = bytes([number & 0xff])
     l2 = bytes([(number & 0xff00) >> 8])
     return l1 + l2
 
 
 def createMessage(msgType, sender, receiver, byteArray = bytes(0), crc = False):
-    global syn
-    message = bytes([msgType]) + bytes([sender]) + bytes([receiver]) + createSize(syn) + byteArray
-    syn += 1 #TODO mutex
+    global messageToSend
+
+    if receiver not in messageToSend:
+        messageToSend[receiver] = synQueue()
+
+    syn = messageToSend[receiver].syn
+
+    message = bytes([msgType]) + bytes([sender]) + bytes([receiver]) + create2byte(syn) + byteArray
     if crc:
-        size = createSize(len(message) + 4) # + 4 is the crc
+        size = create2byte(len(message) + 4) # + 4 is the crc
         message = size + message
         message = message + createCRC(message)
     else:
-        message = createSize(len(message)) + message
+        message = create2byte(len(message)) + message
     
+    messageToSend[receiver].addMessage(message)
+
     return message
 
 
@@ -63,14 +84,14 @@ def receiveMessage():
     while True:
 
         header = decoderPipe.read(2) #size header
-        size = parseSize(header)
+        size = parse2byte(header)
         print("Header size: " + str(size))
         
         body = decoderPipe.read(size) #message body
         msgType = body[0] #message type
         sender = body[1] #sender
         receiver = body[2] #receiver
-        msgSyn = parseSize(body[3:5]) #syn
+        msgSyn = parse2byte(body[3:5]) #syn
 
         print("Syn: " + str(msgSyn))
 
