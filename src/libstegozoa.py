@@ -31,7 +31,7 @@ class synQueue:
         if len(self.queue) > 1000:
             pass # remove smaller element
         self.queue[syn] = message
-        syn += 1
+        self.syn += 1
 
 
 def createCRC(message):
