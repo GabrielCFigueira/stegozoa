@@ -20,18 +20,7 @@ insuccess = 0
 syn = 0
 
 messageToSend = {}
-
-class synQueue:
-
-    def __init__(self):
-        self.queue = {}
-        self.syn = 0
-
-    def addMessage(self, message):
-        if len(self.queue) > 1000:
-            pass # remove smaller element
-        self.queue[syn] = message
-        self.syn += 1
+messageToReceive = {}
 
 
 def createCRC(message):
@@ -56,13 +45,8 @@ def create2byte(number):
     return l1 + l2
 
 
-def createMessage(msgType, sender, receiver, byteArray = bytes(0), crc = False):
+def createMessage(msgType, sender, receiver, syn = 0, byteArray = bytes(0), crc = False):
     global messageToSend
-
-    if receiver not in messageToSend:
-        messageToSend[receiver] = synQueue()
-
-    syn = messageToSend[receiver].syn
 
     message = bytes([msgType]) + bytes([sender]) + bytes([receiver]) + create2byte(syn) + byteArray
     if crc:
@@ -72,15 +56,81 @@ def createMessage(msgType, sender, receiver, byteArray = bytes(0), crc = False):
     else:
         message = create2byte(len(message)) + message
     
-    messageToSend[receiver].addMessage(message)
-
     return message
 
 
 
 
+class sendQueue:
+
+    def __init__(self):
+        self.queue = {}
+        self.syn = 0
+
+    def addMessage(self, message):
+        if len(self.queue) > 1000:
+            del(self.queue[min(self.queue)])
+        self.queue[syn] = message
+        self.syn += 1 #TODO mutex
+
+    def getSyn(self):
+        return self.syn & 0xffff # syn is 16 bits
+            
+
+class recvQueue:
+
+    def __init__(self):
+        self.queue = {}
+        self.syn = 0
+
+    def addMessage(self, message, sender, syn):
+        global messageQueue, messageToSend
+
+        if syn != self.syn:
+            self.queue[syn] = message
+            #possible retransmission needed?
+
+            message = bytes(0)
+            for i in range(self.syn, syn + 1): #TODO 65536 to 0
+                message += create2byte(i)
+
+            response = createMessage(3, myId, sender, messageToSend[receiver].getSyn(), message, True)
+            encoderPipe.write(message)
+            encoderPipe.flush()
+        
+        else:
+            messageQueue.put(message)
+            syn = (syn + 1) & 0xff
+            for key in sorted(self.queue.keys()):
+                if key == self.syn:
+                    messageQueue.put(self.queue[key])
+                    syn = (syn + 1) & 0xff
+                else:
+                    break
+
+
+
+
+def retransmit(receiver, synArray):
+    global messageToSend, myId
+
+    synList = []
+    for i in range(0, len(synArray), 2):
+        synList += [parse2byte(synArray[i:i+2])]
+
+
+    for syn in synList:
+        message = messageToSend[receiver][syn]
+        if message:
+            message = createMessage(4, myId, receiver, syn, message, True)
+            encoderPipe.write(message)
+            encoderPipe.flush()
+
+
+
+
 def receiveMessage():
-    global messageQueue, established, decoderPipe, peers, success, insuccess
+    global messageToSend, established, decoderPipe, peers, success, insuccess
     while True:
 
         header = decoderPipe.read(2) #size header
@@ -96,7 +146,10 @@ def receiveMessage():
         print("Syn: " + str(msgSyn))
 
         if msgType == 0: #type 0 messages dont need crc, they should be small enough
-            message = createMessage(1, myId, sender, body[5:size], True) #message is the ssrc in this case, must be sent back
+            if receiver not in messageToSend:
+                messageToSend[receiver] = synQueue()
+            
+            message = createMessage(1, myId, sender, 0, body[5:size], True) #message is the ssrc in this case, must be sent back
             encoderPipe.write(message)
             encoderPipe.flush()
             continue
@@ -111,17 +164,31 @@ def receiveMessage():
             print("Corrupted message!")
             insuccess = insuccess + 1
             success = success - 1
+            continue
 
-        elif msgType == 1:
+
+        if receiver not in messageToSend:
+            messageToSend[receiver] = synQueue()
+        
+    
+
+        if msgType == 1:
             if receiver == myId and sender not in peers:
                 peers += [sender]
 
         elif not established:
             continue
 
-        elif msgType == 2:
+        elif msgType == 2 or msgType == 4:
             if receiver == myId or receiver == 255: #255 is the broadcast address
-                messageQueue.put(message)
+                if sender not in messageToReceive:
+                    messageToReceive[sender] = recvQueue()
+                messageToReceive[sender].addMessage(message, syn)
+
+
+        elif msgType == 3:
+            retransmit(sender, message)
+
 
         print("Ratio: " + str(success * 1.0 / (success + insuccess)))
 
@@ -161,7 +228,7 @@ def shutdown():
     os.remove(decoderPipePath)
 
 def connect(newId = 255):
-    global established, encoderPipe, decoderPipe, myId
+    global established, encoderPipe, myId
 
     if established:
         print("Connection is already established")
@@ -178,8 +245,9 @@ def connect(newId = 255):
 
     established = True
 
+
 def send(byteArray, receiver):
-    global established, encoderPipe
+    global established, encoderPipe, messageToSend
     if not established:
         raise "Must establish connection first"
     
@@ -187,7 +255,13 @@ def send(byteArray, receiver):
     if len(byteArray) > 16375: #header + payload <= 16384
         raise ValueError("message must be smaller or equal to 10000 bytes")
 
-    message = createMessage(2, myId, receiver, byteArray, True)
+    if receiver not in messageToSend:
+        messageToSend[receiver] = synQueue()
+
+    syn = messageToSend[receiver].getSyn()
+    messageToSend[receiver].addMessage(byteArray)
+
+    message = createMessage(2, myId, receiver, syn, byteArray, True)
 
     encoderPipe.write(message)
     encoderPipe.flush()
