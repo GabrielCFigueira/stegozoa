@@ -278,7 +278,7 @@ static void *fetchDataThread(void *args) {
                     }
                     releaseMessage(newMsg);
                 
-                } else if(msgType == 0x3) {
+                } else if(msgType == 0x3 || msgType == 0x4) {
                     if(receiver == 0xff || broadcast) {
                        
                         for(int i = 0; i < n_encoders; ++i) {
