@@ -169,6 +169,8 @@ def receiveMessage():
 
         if receiver not in messageToSend:
             messageToSend[receiver] = synQueue()
+        if sender not in messageToReceive:
+            messageToReceive[sender] = recvQueue()
         
     
 
@@ -181,8 +183,6 @@ def receiveMessage():
 
         elif msgType == 2 or msgType == 4:
             if receiver == myId or receiver == 255: #255 is the broadcast address
-                if sender not in messageToReceive:
-                    messageToReceive[sender] = recvQueue()
                 messageToReceive[sender].addMessage(message, syn)
 
 
