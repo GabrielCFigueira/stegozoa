@@ -168,7 +168,7 @@ def receiveMessage():
 
 
         if receiver not in messageToSend:
-            messageToSend[receiver] = synQueue()
+            messageToSend[receiver] = sendQueue()
         if sender not in messageToReceive:
             messageToReceive[sender] = recvQueue()
         
