@@ -147,7 +147,7 @@ def receiveMessage():
 
         if msgType == 0: #type 0 messages dont need crc, they should be small enough
             if receiver not in messageToSend:
-                messageToSend[receiver] = synQueue()
+                messageToSend[receiver] = sendQueue()
             
             message = createMessage(1, myId, sender, 0, body[5:size], True) #message is the ssrc in this case, must be sent back
             encoderPipe.write(message)
@@ -256,7 +256,7 @@ def send(byteArray, receiver):
         raise ValueError("message must be smaller or equal to 10000 bytes")
 
     if receiver not in messageToSend:
-        messageToSend[receiver] = synQueue()
+        messageToSend[receiver] = sendQueue()
 
     syn = messageToSend[receiver].getSyn()
     messageToSend[receiver].addMessage(byteArray)
