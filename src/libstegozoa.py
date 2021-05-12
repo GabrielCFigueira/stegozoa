@@ -183,7 +183,7 @@ def receiveMessage():
 
         elif msgType == 2 or msgType == 4:
             if receiver == myId or receiver == 255: #255 is the broadcast address
-                messageToReceive[sender].addMessage(message, syn)
+                messageToReceive[sender].addMessage(message, receiver, syn)
 
 
         elif msgType == 3:
