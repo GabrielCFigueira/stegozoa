@@ -93,13 +93,9 @@ class recvQueue:
             for i in range(self.syn, syn + 1): #TODO 65536 to 0
                 message += create2byte(i)
 
-
-
             response = createMessage(3, myId, sender, 0, message, True)
             
-            print(response)
-
-            encoderPipe.write(message)
+            encoderPipe.write(response)
             encoderPipe.flush()
         
         elif syn == self.syn:
