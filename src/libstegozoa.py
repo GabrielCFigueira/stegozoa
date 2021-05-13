@@ -129,8 +129,8 @@ class recvQueue:
             for key in sorted(self.queue.keys()):
                 if key == self.syn:
 
-                    if syn in self.retransmissions:
-                        del(self.retransmissions[syn])
+                    if key in self.retransmissions:
+                        del(self.retransmissions[key])
 
                     messageQueue.put(self.queue[key])
                     self.syn = (self.syn + 1) & 0xffff
