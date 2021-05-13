@@ -90,6 +90,8 @@ class recvQueue:
             self.queue[syn] = message
             #possible retransmission needed?
 
+            print("Retransmission!")
+
             message = bytes(0)
             for i in range(self.syn, syn + 1): #TODO 65536 to 0
                 message += create2byte(i)
