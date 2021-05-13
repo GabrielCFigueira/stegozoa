@@ -85,7 +85,8 @@ class recvQueue:
 
     def addMessage(self, message, sender, syn):
         global messageQueue, messageToSend
-
+        
+        print("Expected syn: " + str(self.syn))
         if syn != self.syn:
             self.queue[syn] = message
             #possible retransmission needed?
