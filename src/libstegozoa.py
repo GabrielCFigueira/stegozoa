@@ -55,6 +55,18 @@ def createMessage(msgType, sender, receiver, syn = 0, byteArray = bytes(0), crc 
     return message
 
 
+def processRetransmission(syn, retransmissions, message):
+    while True:
+        
+        if syn in retransmissions: #TODO mutex
+            encoderPipe.write(response)
+            encoderPipe.flush()
+        else:
+            break
+
+        time.sleep(2)
+
+
 
 
 class sendQueue:
@@ -74,13 +86,14 @@ class sendQueue:
 
     def getMessage(self, syn):
         return self.queue[syn]
-            
+
 
 class recvQueue:
 
     def __init__(self):
         self.queue = {}
         self.syn = 0
+        self.retransmissions = {}
 
     def addMessage(self, message, sender, receiver, syn):
         global messageQueue
@@ -92,44 +105,53 @@ class recvQueue:
 
             print("Retransmission!")
 
-            message = bytes(0)
-            for i in range(self.syn, syn + 1): #TODO 65536 to 0
-                message += create2byte(i)
+            for i in range(syn - 1, self.syn - 1, -1): #TODO 65536 to 0
+                
+                if i in self.retransmissions:
+                    continue
+                else:
+                    self.retransmissions[i] = i
 
-            response = createMessage(3, receiver, sender, 0, message, True)
-            
-            encoderPipe.write(response)
-            encoderPipe.flush()
-        
+                response = createMessage(3, receiver, sender, 0, create2byte(i), True)                
+                
+                thread = threading.Thread(target=processRetransmission, args=(i, self.retransmissions, response)) #TODO thread join
+                thread.start() #have single thread doing this? TODO
+
+
         elif syn == self.syn:
+
+            if syn in self.retransmissions:
+                del(self.retransmissions[syn])
+
             messageQueue.put(message)
             self.syn = (self.syn + 1) & 0xffff
+
             for key in sorted(self.queue.keys()):
-                print("Key: " + str(key))
                 if key == self.syn:
+
+                    if syn in self.retransmissions:
+                        del(self.retransmissions[syn])
+
                     messageQueue.put(self.queue[key])
                     self.syn = (self.syn + 1) & 0xffff
+
                 else:
                     break
 
 
 
 
-def retransmit(receiver, synArray):
+def retransmit(receiver, synBytes):
     global messageToSend, myId
 
-    synList = []
-    for i in range(0, len(synArray), 2):
-        synList += [parse2byte(synArray[i:i+2])]
-
+    syn = parse2byte(synBytes)
     print("Retransmission request!")
 
-    for syn in synList:
-        message = messageToSend[receiver].getMessage(syn)
-        if message:
-            message = createMessage(4, myId, receiver, syn, message, True)
-            encoderPipe.write(message)
-            encoderPipe.flush()
+    message = messageToSend[receiver].getMessage(syn)
+    if message:
+        message = createMessage(4, myId, receiver, syn, message, True)
+        encoderPipe.write(message)
+        encoderPipe.flush()
 
 
 
