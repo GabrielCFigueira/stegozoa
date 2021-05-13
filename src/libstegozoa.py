@@ -93,17 +93,17 @@ class recvQueue:
             for i in range(self.syn, syn + 1): #TODO 65536 to 0
                 message += create2byte(i)
 
-            response = createMessage(3, myId, sender, messageToSend[receiver].getSyn(), message, True)
+            response = createMessage(3, myId, sender, messageToSend[sender].getSyn(), message, True)
             encoderPipe.write(message)
             encoderPipe.flush()
         
         else:
             messageQueue.put(message)
-            syn = (syn + 1) & 0xff
+            self.syn = (self.syn + 1) & 0xff
             for key in sorted(self.queue.keys()):
                 if key == self.syn:
                     messageQueue.put(self.queue[key])
-                    syn = (syn + 1) & 0xff
+                    self.syn = (self.syn + 1) & 0xff
                 else:
                     break
 
