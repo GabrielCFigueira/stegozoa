@@ -71,6 +71,9 @@ class sendQueue:
 
     def getSyn(self):
         return self.syn & 0xffff # syn is 16 bits
+
+    def getMessage(self, syn):
+        return self.queue[syn]
             
 
 class recvQueue:
@@ -122,7 +125,7 @@ def retransmit(receiver, synArray):
     print("Retransmission request!")
 
     for syn in synList:
-        message = messageToSend[receiver][syn]
+        message = messageToSend[receiver].getMessage(syn)
         if message:
             message = createMessage(4, myId, receiver, syn, message, True)
             encoderPipe.write(message)
