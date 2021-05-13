@@ -59,7 +59,7 @@ def processRetransmission(syn, retransmissions, message):
     while True:
         
         if syn in retransmissions: #TODO mutex
-            encoderPipe.write(response)
+            encoderPipe.write(message)
             encoderPipe.flush()
         else:
             break
