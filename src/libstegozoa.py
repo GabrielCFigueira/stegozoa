@@ -14,10 +14,6 @@ messageQueue = queue.Queue()
 peers = []
 myId = 255
 
-success = 0
-insuccess = 0
-
-syn = 0
 
 messageToSend = {}
 messageToReceive = {}
@@ -133,7 +129,11 @@ def retransmit(receiver, synArray):
 
 
 def receiveMessage():
-    global messageToSend, established, decoderPipe, peers, success, insuccess
+    global messageToSend, established, decoderPipe, peers
+
+    success = 0
+    insuccess = 0
+    
     while True:
 
         header = decoderPipe.read(2) #size header
@@ -186,7 +186,7 @@ def receiveMessage():
 
         elif msgType == 2 or msgType == 4:
             if receiver == myId or receiver == 255: #255 is the broadcast address
-                messageToReceive[sender].addMessage(message, receiver, syn)
+                messageToReceive[sender].addMessage(message, receiver, msgSyn)
 
 
         elif msgType == 3:
