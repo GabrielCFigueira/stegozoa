@@ -93,7 +93,12 @@ class recvQueue:
             for i in range(self.syn, syn + 1): #TODO 65536 to 0
                 message += create2byte(i)
 
+
+
             response = createMessage(3, myId, sender, 0, message, True)
+            
+            print(response)
+
             encoderPipe.write(message)
             encoderPipe.flush()
         
@@ -131,7 +136,7 @@ def retransmit(receiver, synArray):
 
 
 def receiveMessage():
-    global messageToSend, established, decoderPipe, peers
+    global messageToSend, established, decoderPipe, encoderPipe, peers
 
     success = 0
     insuccess = 0
@@ -151,8 +156,8 @@ def receiveMessage():
         print("Syn: " + str(msgSyn))
 
         if msgType == 0: #type 0 messages dont need crc, they should be small enough
-            if receiver not in messageToSend:
-                messageToSend[receiver] = sendQueue()
+            if sender not in messageToSend:
+                messageToSend[sender] = sendQueue()
             
             message = createMessage(1, myId, sender, 0, body[5:size], True) #message is the ssrc in this case, must be sent back
             encoderPipe.write(message)
@@ -172,8 +177,8 @@ def receiveMessage():
             continue
 
 
-        if receiver not in messageToSend:
-            messageToSend[receiver] = sendQueue()
+        if sender not in messageToSend:
+            messageToSend[sender] = sendQueue()
         if sender not in messageToReceive:
             messageToReceive[sender] = recvQueue()
         
@@ -188,7 +193,7 @@ def receiveMessage():
 
         elif msgType == 2 or msgType == 4:
             if receiver == myId or receiver == 255: #255 is the broadcast address
-                messageToReceive[sender].addMessage(message, receiver, msgSyn)
+                messageToReceive[sender].addMessage(message, sender, msgSyn)
 
 
         elif msgType == 3:
