@@ -82,7 +82,7 @@ class recvQueue:
         self.queue = {}
         self.syn = 0
 
-    def addMessage(self, message, sender, syn):
+    def addMessage(self, message, sender, receiver, syn):
         global messageQueue
         
         print("Expected syn: " + str(self.syn))
@@ -96,7 +96,7 @@ class recvQueue:
             for i in range(self.syn, syn + 1): #TODO 65536 to 0
                 message += create2byte(i)
 
-            response = createMessage(3, myId, sender, 0, message, True)
+            response = createMessage(3, receiver, sender, 0, message, True)
             
             encoderPipe.write(response)
             encoderPipe.flush()
@@ -192,7 +192,7 @@ def receiveMessage():
 
         elif msgType == 2 or msgType == 4:
             if receiver == myId or receiver == 255: #255 is the broadcast address
-                messageToReceive[sender].addMessage(message, sender, msgSyn)
+                messageToReceive[sender].addMessage(message, sender, receiver, msgSyn)
 
 
         elif msgType == 3:
