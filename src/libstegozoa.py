@@ -83,7 +83,7 @@ class recvQueue:
         global messageQueue, messageToSend
         
         print("Expected syn: " + str(self.syn))
-        if syn != self.syn:
+        if syn > self.syn:
             self.queue[syn] = message
             #possible retransmission needed?
 
@@ -97,10 +97,11 @@ class recvQueue:
             encoderPipe.write(message)
             encoderPipe.flush()
         
-        else:
+        elif syn == self.syn:
             messageQueue.put(message)
             self.syn = (self.syn + 1) & 0xff
             for key in sorted(self.queue.keys()):
+                print("Key: " + str(key))
                 if key == self.syn:
                     messageQueue.put(self.queue[key])
                     self.syn = (self.syn + 1) & 0xff
