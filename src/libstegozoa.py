@@ -80,7 +80,7 @@ class recvQueue:
         self.syn = 0
 
     def addMessage(self, message, sender, syn):
-        global messageQueue, messageToSend
+        global messageQueue
         
         print("Expected syn: " + str(self.syn))
         if syn > self.syn:
@@ -93,18 +93,18 @@ class recvQueue:
             for i in range(self.syn, syn + 1): #TODO 65536 to 0
                 message += create2byte(i)
 
-            response = createMessage(3, myId, sender, messageToSend[sender].getSyn(), message, True)
+            response = createMessage(3, myId, sender, 0, message, True)
             encoderPipe.write(message)
             encoderPipe.flush()
         
         elif syn == self.syn:
             messageQueue.put(message)
-            self.syn = (self.syn + 1) & 0xff
+            self.syn = (self.syn + 1) & 0xffff
             for key in sorted(self.queue.keys()):
                 print("Key: " + str(key))
                 if key == self.syn:
                     messageQueue.put(self.queue[key])
-                    self.syn = (self.syn + 1) & 0xff
+                    self.syn = (self.syn + 1) & 0xffff
                 else:
                     break
 
