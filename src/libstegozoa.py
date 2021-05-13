@@ -66,7 +66,7 @@ class sendQueue:
     def addMessage(self, message):
         if len(self.queue) > 1000:
             del(self.queue[min(self.queue)])
-        self.queue[syn] = message
+        self.queue[self.syn] = message
         self.syn += 1 #TODO mutex
 
     def getSyn(self):
