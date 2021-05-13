@@ -118,6 +118,7 @@ def retransmit(receiver, synArray):
     for i in range(0, len(synArray), 2):
         synList += [parse2byte(synArray[i:i+2])]
 
+    print("Retransmission request!")
 
     for syn in synList:
         message = messageToSend[receiver][syn]
