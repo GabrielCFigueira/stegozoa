@@ -105,9 +105,9 @@ class recvQueue:
 
             print("Retransmission!")
 
-            for i in range(syn - 1, self.syn - 1, -1): #TODO 65536 to 0
+            for i in range(self.syn, syn): #TODO 65536 to 0
                 
-                if i in self.retransmissions:
+                if i in self.retransmissions or i in self.queue:
                     continue
                 else:
                     self.retransmissions[i] = i
