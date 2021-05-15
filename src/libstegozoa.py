@@ -64,7 +64,7 @@ def processRetransmission(syn, retransmissions, message):
         else:
             break
 
-        time.sleep(2)
+        time.sleep(5)
 
 
 
