@@ -151,7 +151,7 @@ def retransmit(receiver, synBytes):
     global messageToSend, myId
 
     syn = parse2byte(synBytes)
-    print("Retransmission request!")
+    print("Retransmission request! " + str(syn))
 
     message = messageToSend[receiver].getMessage(syn)
     if message:
