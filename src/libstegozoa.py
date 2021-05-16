@@ -158,10 +158,10 @@ class recvQueue:
                 del(self.queue[syn])
             self.syn = (self.syn + 1) & 0xffff
 
-            first = dict(filter(lambda x: x >= self.syn, self.queue.keys()))
-            second = dict(filter(lambda x: x < self.syn, self.queue.keys())) #in case of wrap around 65536
+            first = list(filter(lambda x: x >= self.syn, self.queue.keys()))
+            second = list(filter(lambda x: x < self.syn, self.queue.keys())) #in case of wrap around 65536
 
-            for key in sorted(first.keys()):
+            for key in sorted(first):
                 if key == self.syn:
 
                     messageQueue.put(self.queue[key])
@@ -171,7 +171,7 @@ class recvQueue:
                 else:
                     break
             
-            for key in sorted(second.keys()):
+            for key in sorted(second):
                 if key == self.syn:
 
                     messageQueue.put(self.queue[key])
