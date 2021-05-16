@@ -57,14 +57,15 @@ def createMessage(msgType, sender, receiver, syn = 0, byteArray = bytes(0), crc 
 
 def processRetransmission(syn, retransmissions, message):
     while True:
-        
+       
+        size = len(retransmissions)
         if syn in retransmissions: #TODO mutex
             encoderPipe.write(message)
             encoderPipe.flush()
         else:
             break
 
-        time.sleep(5)
+        time.sleep(2 + size)
 
 
 
