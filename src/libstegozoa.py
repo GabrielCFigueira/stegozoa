@@ -60,7 +60,7 @@ def processRetransmission(syn, retransmissions, mutex, message):
        
         mutex.acquire()
         size = len(retransmissions)
-        if syn in retransmissions: #TODO mutex
+        if syn in retransmissions:
             encoderPipe.write(message)
             encoderPipe.flush()
         else:
@@ -123,20 +123,24 @@ class recvQueue:
         
         self.mutex.acquire()
         print("Expected syn: " + str(self.syn))
-        if syn > self.syn:
+        if syn > self.syn or syn + 65536 - self.syn < 1000:
             self.queue[syn] = message
             print("Retransmission!")
-
-            for i in range(self.syn, syn): #TODO 65536 to 0
+            
+            if syn < self.syn: #wrap around 65536
+                syn += 65536
+            for i in range(self.syn, syn):
                 
-                if i in self.retransmissions or i in self.queue:
+                actualSyn = i & 0xffff
+
+                if actualSyn in self.retransmissions or actualSyn in self.queue:
                     continue
                 else:
-                    self.retransmissions[i] = i
+                    self.retransmissions[actualSyn] = actualSyn
 
-                response = createMessage(3, receiver, sender, 0, create2byte(i), True)                
+                response = createMessage(3, receiver, sender, 0, create2byte(actualSyn), True)
                 
-                thread = threading.Thread(target=processRetransmission, args=(i, self.retransmissions, self.mutex, response)) #TODO thread join
+                thread = threading.Thread(target=processRetransmission, args=(actualSyn, self.retransmissions, self.mutex, response))
                 thread.start() #have single thread doing this? TODO
 
 
