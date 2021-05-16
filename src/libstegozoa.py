@@ -125,6 +125,10 @@ class recvQueue:
         print("Expected syn: " + str(self.syn))
         if syn > self.syn and abs(syn - self.syn) < 1000 or syn + 65536 - self.syn < 1000:
             self.queue[syn] = message
+
+            if syn in self.retransmissions:
+                del(self.retransmissions[syn])
+
             print("Retransmission!")
             
             if syn < self.syn: #wrap around 65536
@@ -157,14 +161,8 @@ class recvQueue:
             for key in self.queue.keys(): #they should be sorted, as they are inserted orderly
                 if key == self.syn:
 
-                    if key in self.retransmissions:
-                        del(self.retransmissions[key])
-
                     messageQueue.put(self.queue[key])
-                    
-                    if key in self.queue:
-                        del(self.queue[key])
-                    
+                    del(self.queue[key])
                     self.syn = (self.syn + 1) & 0xffff
 
                 else:
