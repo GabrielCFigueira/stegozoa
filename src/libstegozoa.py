@@ -147,8 +147,8 @@ class recvQueue:
                     break
 
         else:
-            duplicates += 1
-            print("Duplicates: " + str(duplicates))
+            self.duplicates += 1
+            print("Duplicates: " + str(self.duplicates))
 
 
 
