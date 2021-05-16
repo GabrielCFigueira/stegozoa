@@ -65,7 +65,7 @@ def processRetransmission(syn, retransmissions, message):
         else:
             break
 
-        time.sleep(101 - 100 * (0.995 ** size))
+        time.sleep(103 - 100 * (0.995 ** size))
 
 
 
@@ -95,6 +95,7 @@ class recvQueue:
         self.queue = {}
         self.syn = 0
         self.retransmissions = {}
+        self.duplicates = 0
 
     def addMessage(self, message, sender, receiver, syn):
         global messageQueue
@@ -144,6 +145,10 @@ class recvQueue:
 
                 else:
                     break
+
+        else:
+            duplicates += 1
+            print("Duplicates: " + str(duplicates))
 
 
 
