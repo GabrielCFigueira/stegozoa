@@ -18,6 +18,8 @@ myId = 255
 messageToSend = {}
 messageToReceive = {}
 
+globalMutex = threading.Lock()
+
 
 def createCRC(message):
     crc = crccheck.crc.Crc32.calc(message)
@@ -86,12 +88,8 @@ class sendQueue:
         if len(self.queue) > 1000:
             del(self.queue[min(self.queue)])
         self.queue[self.syn] = message
+        syn = self.syn & 0xffff
         self.syn += 1
-        self.mutex.release()
-
-    def getSyn(self):
-        self.mutex.acquire()
-        syn = self.syn & 0xffff # syn is 16 bits
         self.mutex.release()
         return syn
 
@@ -206,7 +204,7 @@ def retransmit(receiver, synBytes):
 
 
 def receiveMessage():
-    global messageToSend, established, decoderPipe, encoderPipe, peers
+    global messageToSend, established, decoderPipe, encoderPipe, peers, globalMutex
 
     success = 0
     insuccess = 0
@@ -215,7 +213,6 @@ def receiveMessage():
 
         header = decoderPipe.read(2) #size header
         size = parse2byte(header)
-        print("Header size: " + str(size))
         
         body = decoderPipe.read(size) #message body
         msgType = body[0] #message type
@@ -226,8 +223,11 @@ def receiveMessage():
         print("Syn: " + str(msgSyn))
 
         if msgType == 0: #type 0 messages dont need crc, they should be small enough
+
+            globalMutex.acquire()
             if sender not in messageToSend:
                 messageToSend[sender] = sendQueue()
+            globalMutex.release()
             
             message = createMessage(1, myId, sender, 0, body[5:size], True) #message is the ssrc in this case, must be sent back
             encoderPipe.write(message)
@@ -246,11 +246,12 @@ def receiveMessage():
             success = success - 1
             continue
 
-
+        globalMutex.acquire()
         if sender not in messageToSend:
             messageToSend[sender] = sendQueue()
         if sender not in messageToReceive:
             messageToReceive[sender] = recvQueue()
+        globalMutex.release()
         
     
 
@@ -327,7 +328,7 @@ def connect(newId = 255):
 
 
 def send(byteArray, receiver):
-    global established, encoderPipe, messageToSend
+    global established, encoderPipe, messageToSend, globalMutex
     if not established:
         raise "Must establish connection first"
     
@@ -335,11 +336,12 @@ def send(byteArray, receiver):
     if len(byteArray) > 16375: #header + payload <= 16384
         raise ValueError("message must be smaller or equal to 10000 bytes")
 
+    globalMutex.acquire()
     if receiver not in messageToSend:
         messageToSend[receiver] = sendQueue()
+    globalMutex.release()
 
-    syn = messageToSend[receiver].getSyn()
-    messageToSend[receiver].addMessage(byteArray)
+    syn = messageToSend[receiver].addMessage(byteArray)
 
     message = createMessage(2, myId, receiver, syn, byteArray, True)
 
