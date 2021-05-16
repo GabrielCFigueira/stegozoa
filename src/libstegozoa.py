@@ -82,7 +82,7 @@ class sendQueue:
         self.mutex = threading.Lock() 
 
     def addMessage(self, message):
-        self.mutex.aqcuire()
+        self.mutex.acquire()
         if len(self.queue) > 1000:
             del(self.queue[min(self.queue)])
         self.queue[self.syn] = message
@@ -90,13 +90,13 @@ class sendQueue:
         self.mutex.release()
 
     def getSyn(self):
-        self.mutex.aqcuire()
+        self.mutex.acquire()
         syn = self.syn & 0xffff # syn is 16 bits
         self.mutex.release()
         return syn
 
     def getMessage(self, syn):
-        self.mutex.aqcuire()
+        self.mutex.acquire()
         least = min(self.queue) / 65536
         most = max(self.queue) / 65536
         if self.queue.has_key(least * 65536 + syn):
