@@ -97,8 +97,8 @@ class sendQueue:
 
     def getMessage(self, syn):
         self.mutex.acquire()
-        least = min(self.queue) / 65536
-        most = max(self.queue) / 65536
+        least = min(self.queue) // 65536
+        most = max(self.queue) // 65536
         if self.queue.get(least * 65536 + syn):
             message = self.queue[least * 65536 + syn]
         elif self.queue.get(most * 65536 + syn):
