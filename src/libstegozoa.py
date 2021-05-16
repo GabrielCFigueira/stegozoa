@@ -196,6 +196,7 @@ def retransmit(receiver, synBytes):
 
     message = messageToSend[receiver].getMessage(syn)
     if message:
+        print("Retransmitting! " + str(syn))
         message = createMessage(4, myId, receiver, syn, message, True)
         encoderPipe.write(message)
         encoderPipe.flush()
