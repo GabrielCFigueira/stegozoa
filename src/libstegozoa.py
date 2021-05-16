@@ -189,7 +189,7 @@ class recvQueue:
 
 
 def retransmit(receiver, synBytes):
-    global messageToSend, myId
+    global messageToSend, myId, encoderPipe
 
     syn = parse2byte(synBytes)
     print("Retransmission request! " + str(syn))
@@ -218,9 +218,9 @@ def receiveMessage():
         msgType = body[0] #message type
         sender = body[1] #sender
         receiver = body[2] #receiver
-        msgSyn = parse2byte(body[3:5]) #syn
+        syn = parse2byte(body[3:5]) #syn
 
-        print("Syn: " + str(msgSyn))
+        print("Syn: " + str(syn))
 
         if msgType == 0: #type 0 messages dont need crc, they should be small enough
 
@@ -264,7 +264,7 @@ def receiveMessage():
 
         elif msgType == 2 or msgType == 4:
             if receiver == myId or receiver == 255: #255 is the broadcast address
-                messageToReceive[sender].addMessage(message, sender, receiver, msgSyn)
+                messageToReceive[sender].addMessage(message, sender, receiver, syn)
 
 
         elif msgType == 3:
