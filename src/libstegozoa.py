@@ -123,7 +123,7 @@ class recvQueue:
         
         self.mutex.acquire()
         print("Expected syn: " + str(self.syn))
-        if syn > self.syn or syn + 65536 - self.syn < 1000:
+        if syn > self.syn and abs(syn - self.syn) < 1000 or syn + 65536 - self.syn < 1000:
             self.queue[syn] = message
             print("Retransmission!")
             
