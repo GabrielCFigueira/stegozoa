@@ -267,7 +267,8 @@ def receiveMessage():
 
 
         elif msgType == 3:
-            retransmit(sender, message)
+            if receiver == myId:
+                retransmit(sender, message)
 
 
         print("Ratio: " + str(success * 1.0 / (success + insuccess)))
