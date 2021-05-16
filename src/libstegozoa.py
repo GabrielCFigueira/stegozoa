@@ -154,7 +154,7 @@ class recvQueue:
                 del(self.queue[syn])
             self.syn = (self.syn + 1) & 0xffff
 
-            for key in sorted(self.queue.keys()):
+            for key in self.queue.keys(): #they should be sorted, as they are inserted orderly
                 if key == self.syn:
 
                     if key in self.retransmissions:
