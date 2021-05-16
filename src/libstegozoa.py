@@ -85,7 +85,7 @@ class sendQueue:
 
     def addMessage(self, message):
         self.mutex.acquire()
-        if len(self.queue) > 1000:
+        if len(self.queue) > 10000:
             del(self.queue[min(self.queue)])
         self.queue[self.syn] = message
         syn = self.syn & 0xffff
@@ -121,7 +121,7 @@ class recvQueue:
         
         self.mutex.acquire()
         print("Expected syn: " + str(self.syn))
-        if syn > self.syn and abs(syn - self.syn) < 1000 or syn + 65536 - self.syn < 1000:
+        if syn > self.syn and abs(syn - self.syn) < 10000 or syn + 65536 - self.syn < 10000:
             self.queue[syn] = message
 
             if syn in self.retransmissions:
@@ -195,11 +195,9 @@ def retransmit(receiver, synBytes):
     print("Retransmission request! " + str(syn))
 
     message = messageToSend[receiver].getMessage(syn)
-    if message:
-        print("Retransmitting! " + str(syn))
-        message = createMessage(4, myId, receiver, syn, message, True)
-        encoderPipe.write(message)
-        encoderPipe.flush()
+    message = createMessage(4, myId, receiver, syn, message, True)
+    encoderPipe.write(message)
+    encoderPipe.flush()
 
 
 
