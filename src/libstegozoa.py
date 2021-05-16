@@ -55,15 +55,19 @@ def createMessage(msgType, sender, receiver, syn = 0, byteArray = bytes(0), crc 
     return message
 
 
-def processRetransmission(syn, retransmissions, message):
+def processRetransmission(syn, retransmissions, mutex, message):
     while True:
        
+        mutex.acquire()
         size = len(retransmissions)
         if syn in retransmissions: #TODO mutex
             encoderPipe.write(message)
             encoderPipe.flush()
         else:
-            break
+            mutex.release()
+            return
+
+        mutex.release()
 
         time.sleep(103 - 100 * (0.995 ** size))
 
@@ -75,18 +79,34 @@ class sendQueue:
     def __init__(self):
         self.queue = {}
         self.syn = 0
+        self.mutex = threading.Lock() 
 
     def addMessage(self, message):
+        self.mutex.aqcuire()
         if len(self.queue) > 1000:
             del(self.queue[min(self.queue)])
         self.queue[self.syn] = message
-        self.syn += 1 #TODO mutex
+        self.syn += 1
+        self.mutex.release()
 
     def getSyn(self):
-        return self.syn & 0xffff # syn is 16 bits
+        self.mutex.aqcuire()
+        syn = self.syn & 0xffff # syn is 16 bits
+        self.mutex.release()
+        return syn
 
     def getMessage(self, syn):
-        return self.queue[syn]
+        self.mutex.aqcuire()
+        least = min(self.queue) / 65536
+        most = max(self.queue) / 65536
+        if self.queue.has_key(least * 65536 + syn):
+            message = self.queue[least * 65536 + syn]
+        elif self.queue.has_key(most * 65536 + syn):
+            message = self.queue[most * 65536 + syn]
+        else:
+            message = bytes(0)
+        self.mutex.release()
+        return message
 
 
 class recvQueue:
@@ -96,15 +116,15 @@ class recvQueue:
         self.syn = 0
         self.retransmissions = {}
         self.duplicates = 0
+        self.mutex = threading.Lock()
 
     def addMessage(self, message, sender, receiver, syn):
         global messageQueue
         
+        self.mutex.acquire()
         print("Expected syn: " + str(self.syn))
         if syn > self.syn:
             self.queue[syn] = message
-            #possible retransmission needed?
-
             print("Retransmission!")
 
             for i in range(self.syn, syn): #TODO 65536 to 0
@@ -116,7 +136,7 @@ class recvQueue:
 
                 response = createMessage(3, receiver, sender, 0, create2byte(i), True)                
                 
-                thread = threading.Thread(target=processRetransmission, args=(i, self.retransmissions, response)) #TODO thread join
+                thread = threading.Thread(target=processRetransmission, args=(i, self.retransmissions, self.mutex, response)) #TODO thread join
                 thread.start() #have single thread doing this? TODO
 
 
@@ -149,6 +169,8 @@ class recvQueue:
         else:
             self.duplicates += 1
             print("Duplicates: " + str(self.duplicates))
+
+        self.mutex.release()
 
 
 
