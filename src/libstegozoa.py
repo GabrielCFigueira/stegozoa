@@ -78,7 +78,7 @@ class sendQueue:
 
     def __init__(self):
         self.queue = {}
-        self.syn = 0
+        self.syn = 65500
         self.mutex = threading.Lock() 
 
     def addMessage(self, message):
@@ -113,7 +113,7 @@ class recvQueue:
 
     def __init__(self):
         self.queue = {}
-        self.syn = 0
+        self.syn = 65500
         self.retransmissions = {}
         self.duplicates = 0
         self.mutex = threading.Lock()
