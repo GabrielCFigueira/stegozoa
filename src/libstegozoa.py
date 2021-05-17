@@ -263,6 +263,7 @@ def receiveMessage():
         payload = parsedMessage['payload']
         crc = parsedMessage['crc']
 
+        print("Size: " + str(size))
         print("Syn: " + str(syn))
 
         if msgType == 0: #type 0 messages dont need crc, they should be small enough
@@ -382,7 +383,7 @@ def send(byteArray, receiver):
     globalMutex.release()
 
     array = bytes(0)
-    for i in range(0, len(byteArray) - 512, 512):
+    for i in range(0, len(byteArray) - 512, 512): #TODO concurreny issues
         array = byteArray[i:i+512]
 
         syn = messageToSend[receiver].addMessage(byteArray, 0)
