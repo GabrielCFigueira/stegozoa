@@ -10,6 +10,7 @@ import crccheck
 decoderPipePath = "/tmp/stegozoa_decoder_pipe"
 encoderPipePath = "/tmp/stegozoa_encoder_pipe"
 established = False
+fragmentQueue = queue.Queue()
 messageQueue = queue.Queue()
 peers = []
 myId = 15
@@ -17,6 +18,7 @@ myId = 15
 
 messageToSend = {}
 messageToReceive = {}
+
 
 globalMutex = threading.Lock()
 
@@ -76,7 +78,17 @@ def processRetransmission(syn, retransmissions, mutex, message):
 
         time.sleep(103 - 100 * (0.995 ** size))
 
+def addFragment(message, frag):
+    global fragmentQueue, messageQueue
 
+    if frag = 0:
+        res = bytes(0)
+        while not fragmentQueue.empty(): #TODO mutex
+            res += fragmentQueue.get()
+        res += message
+        messageQueue.put(res)
+    else:
+        fragmentQueue.put(message)
 
 
 class sendQueue:
@@ -132,18 +144,20 @@ class recvQueue:
 
     def __init__(self):
         self.queue = {}
+        self.frags = {}
         self.syn = 65500
         self.retransmissions = {}
         self.duplicates = 0
         self.mutex = threading.Lock()
 
-    def addMessage(self, message, sender, receiver, syn):
+    def addMessage(self, message, sender, receiver, frag, syn):
         global messageQueue
         
         self.mutex.acquire()
         print("Expected syn: " + str(self.syn))
         if syn > self.syn and abs(syn - self.syn) < 10000 or syn + 65536 - self.syn < 10000:
             self.queue[syn] = message
+            self.frags[syn] = frag
 
             if syn in self.retransmissions:
                 del(self.retransmissions[syn])
@@ -172,9 +186,8 @@ class recvQueue:
             if syn in self.retransmissions:
                 del(self.retransmissions[syn])
 
-            messageQueue.put(message)
-            if syn in self.queue:
-                del(self.queue[syn])
+            addFragment(message, frag)
+            
             self.syn = (self.syn + 1) & 0xffff
 
             first = list(filter(lambda x: x >= self.syn, self.queue.keys()))
@@ -183,8 +196,9 @@ class recvQueue:
             for key in sorted(first):
                 if key == self.syn:
 
-                    messageQueue.put(self.queue[key])
+                    addFragment(self.queue[key], self.frag[key])
                     del(self.queue[key])
+                    del(self.frag[key])
                     self.syn = (self.syn + 1) & 0xffff
 
                 else:
@@ -193,8 +207,9 @@ class recvQueue:
             for key in sorted(second):
                 if key == self.syn:
 
-                    messageQueue.put(self.queue[key])
+                    addFragment(self.queue[key], self.frag[key])
                     del(self.queue[key])
+                    del(self.frag[key])
                     self.syn = (self.syn + 1) & 0xffff
 
                 else:
