@@ -323,7 +323,7 @@ def receiveMessage():
 
         elif msgType == 2 or msgType == 4:
             if receiver == myId or receiver == 15: #15 is the broadcast address
-                messageToReceive[key].addMessage(payload, sender, receiver, syn)
+                messageToReceive[key].addMessage(payload, sender, receiver, frag, syn)
 
 
         elif msgType == 3:
