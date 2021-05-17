@@ -386,7 +386,7 @@ def send(byteArray, receiver):
     for i in range(0, len(byteArray) - 2048, 2048): #TODO concurreny issues
         array = byteArray[i:i+2048]
 
-        syn = messageToSend[receiver].addMessage(byteArray, 0)
+        syn = messageToSend[receiver].addMessage(array, 1)
 
         message = createMessage(2, myId, receiver, 1, syn, array, True)
 
