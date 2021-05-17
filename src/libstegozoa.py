@@ -43,10 +43,8 @@ def create2byte(number):
     return l1 + l2
 
 
-def createMessage(msgType, sender, receiver, syn = 0, byteArray = bytes(0), crc = False):
+def createMessage(msgType, sender, receiver, frag = 0, syn = 0, byteArray = bytes(0), crc = False):
     global messageToSend
-
-    frag = 0 # for now
 
     flags = bytes([((msgType & 0x7) << 5) | ((frag & 0x1) << 4)])
     flags += bytes([((sender & 0xf) << 4) | (receiver & 0xf)])
@@ -85,14 +83,19 @@ class sendQueue:
 
     def __init__(self):
         self.queue = {}
+        self.frag = {}
         self.syn = 65500
         self.mutex = threading.Lock() 
 
-    def addMessage(self, message):
+    def addMessage(self, message, frag):
         self.mutex.acquire()
         if len(self.queue) > 10000:
             del(self.queue[min(self.queue)])
+            del(self.frag[min(self.frag)])
+
         self.queue[self.syn] = message
+        self.frag[self.syn] = frag
+
         syn = self.syn & 0xffff
         self.syn += 1
         self.mutex.release()
@@ -110,6 +113,19 @@ class sendQueue:
             message = bytes(0)
         self.mutex.release()
         return message
+    
+    def getFrag(self, syn):
+        self.mutex.acquire()
+        least = min(self.queue) // 65536
+        most = max(self.queue) // 65536
+        if self.frag.get(least * 65536 + syn):
+            frag = self.frag[least * 65536 + syn]
+        elif self.frag.get(most * 65536 + syn):
+            frag = self.frag[most * 65536 + syn]
+        else:
+            frag = 0
+        self.mutex.release()
+        return frag
 
 
 class recvQueue:
@@ -145,7 +161,7 @@ class recvQueue:
                 else:
                     self.retransmissions[actualSyn] = actualSyn
 
-                response = createMessage(3, receiver, sender, 0, create2byte(actualSyn), True)
+                response = createMessage(3, receiver, sender, 0, 0, create2byte(actualSyn), True)
                 
                 thread = threading.Thread(target=processRetransmission, args=(actualSyn, self.retransmissions, self.mutex, response))
                 thread.start() #have single thread doing this? TODO
@@ -200,7 +216,8 @@ def retransmit(receiver, synBytes):
     print("Retransmission request! " + str(syn))
 
     message = messageToSend[receiver].getMessage(syn)
-    message = createMessage(4, myId, receiver, syn, message, True)
+    frag = messageToSend[receiver].getFrag(syn)
+    message = createMessage(4, myId, receiver, frag, syn, message, True)
     encoderPipe.write(message)
     encoderPipe.flush()
 
@@ -255,7 +272,7 @@ def receiveMessage():
                 messageToSend[sender] = sendQueue()
             globalMutex.release()
             
-            message = createMessage(1, myId, sender, 0, payload, True) #payload is the ssrc in this case, must be sent back
+            message = createMessage(1, myId, sender, 0, 0, payload, True) #payload is the ssrc in this case, must be sent back
             encoderPipe.write(message)
             encoderPipe.flush()
             continue
@@ -359,18 +376,27 @@ def send(byteArray, receiver):
     if not established:
         raise "Must establish connection first"
     
-    #TODO validate packet size (cant be bigger than 10000?)
-    if len(byteArray) > 16375: #header + payload <= 16384
-        raise ValueError("message must be smaller or equal to 10000 bytes")
-
     globalMutex.acquire()
     if receiver not in messageToSend:
         messageToSend[receiver] = sendQueue()
     globalMutex.release()
 
-    syn = messageToSend[receiver].addMessage(byteArray)
+    array = bytes(0)
+    for i in range(0, len(byteArray) - 512, 512):
+        array = byteArray[i:i+512]
 
-    message = createMessage(2, myId, receiver, syn, byteArray, True)
+        syn = messageToSend[receiver].addMessage(byteArray, 0)
+
+        message = createMessage(2, myId, receiver, 1, syn, byteArray, True)
+
+        encoderPipe.write(message)
+        encoderPipe.flush()
+        array = byteArray[i+512:i+1024] #needed for last fragment
+
+    #last fragment
+    syn = messageToSend[receiver].addMessage(array, 0)
+
+    message = createMessage(2, myId, receiver, 0, syn, byteArray, True)
 
     encoderPipe.write(message)
     encoderPipe.flush()
