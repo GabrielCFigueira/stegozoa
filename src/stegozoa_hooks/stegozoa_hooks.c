@@ -246,11 +246,11 @@ static void *fetchDataThread(void *args) {
             
             read_bytes = read(encoderFd, newMsg->buffer + 6, size);
 
-            unsigned char *flags = newMsg->buffer[6];
+            unsigned char *flags = newMsg->buffer + 6;
 
 
             int msgType = (flags[0] & 0xe0) >> 5;
-            int frag = (flags[0] & 0x10) >> 4;
+            //int frag = (flags[0] & 0x10) >> 4;
             int sender = (flags[1] & 0xf0) >> 4;
             int receiver = (flags[1] & 0xf);
 
@@ -434,10 +434,10 @@ static void flushDecoder(uint32_t ssrc) {
     int n_bytes;
     msg->bit = 0; //should be 0
 
-    unsigned char *flags = msg->buffer[6];
+    unsigned char *flags = msg->buffer + 6;
 
     int msgType = (flags[0] & 0xe0) >> 5;
-    int frag = (flags[0] & 0x10) >> 4;
+    //int frag = (flags[0] & 0x10) >> 4;
     int sender = (flags[1] & 0xf0) >> 4;
     int receiver = (flags[1] & 0xf);
 
