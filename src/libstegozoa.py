@@ -246,6 +246,10 @@ def receiveMessage():
         payload = parsedMessage['payload']
         crc = parsedMessage['crc']
 
+        print('msgType: ' + str(msgType))
+        print('sender: ' + str(sender))
+        print('receiver: ' + str(receiver))
+
         print("Syn: " + str(syn))
 
         if msgType == 0: #type 0 messages dont need crc, they should be small enough
