@@ -388,7 +388,7 @@ def send(byteArray, receiver):
 
         syn = messageToSend[receiver].addMessage(byteArray, 0)
 
-        message = createMessage(2, myId, receiver, 1, syn, byteArray, True)
+        message = createMessage(2, myId, receiver, 1, syn, array, True)
 
         encoderPipe.write(message)
         encoderPipe.flush()
@@ -397,7 +397,7 @@ def send(byteArray, receiver):
     #last fragment
     syn = messageToSend[receiver].addMessage(array, 0)
 
-    message = createMessage(2, myId, receiver, 0, syn, byteArray, True)
+    message = createMessage(2, myId, receiver, 0, syn, array, True)
 
     encoderPipe.write(message)
     encoderPipe.flush()
