@@ -283,7 +283,7 @@ static void *fetchDataThread(void *args) {
                     releaseMessage(newMsg);
                 
                 } else if(msgType == 3 || msgType == 4) {
-                    if(receiver == 0xff || broadcast) {
+                    if(receiver == 15 || broadcast) { // 15 is the broadcast address
                        
                         for(int i = 0; i < n_encoders; ++i) {
                             insertMessage(encoders[i], newMsg);

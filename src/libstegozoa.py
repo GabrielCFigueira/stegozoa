@@ -12,7 +12,7 @@ encoderPipePath = "/tmp/stegozoa_encoder_pipe"
 established = False
 messageQueue = queue.Queue()
 peers = []
-myId = 255
+myId = 15
 
 
 messageToSend = {}
@@ -289,7 +289,7 @@ def receiveMessage():
             continue
 
         elif msgType == 2 or msgType == 4:
-            if receiver == myId or receiver == 255: #255 is the broadcast address
+            if receiver == myId or receiver == 15: #15 is the broadcast address
                 messageToReceive[sender].addMessage(payload, sender, receiver, syn)
 
 
@@ -335,18 +335,18 @@ def shutdown():
     os.remove(encoderPipePath)
     os.remove(decoderPipePath)
 
-def connect(newId = 255):
+def connect(newId = 15):
     global established, encoderPipe, myId
 
     if established:
         print("Connection is already established")
         return
 
-    if newId != 255:
+    if newId != 15:
         myId = newId
     
     msgType = 0
-    message = createMessage(msgType, myId, 255) # 0xff = broadcast address
+    message = createMessage(msgType, myId, 15) # 0xf = broadcast address
 
     encoderPipe.write(message)
     encoderPipe.flush()

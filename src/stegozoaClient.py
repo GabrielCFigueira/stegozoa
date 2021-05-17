@@ -59,7 +59,7 @@ def send():
             if not established:
                 libstegozoa.connect(myId)
                 established = True
-            libstegozoa.send(message, 255) #255 is the broadcast address
+            libstegozoa.send(message, 15) #15 is the broadcast address
 
 def receive():
     global server_socket
