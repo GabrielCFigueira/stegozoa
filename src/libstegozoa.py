@@ -246,10 +246,6 @@ def receiveMessage():
         payload = parsedMessage['payload']
         crc = parsedMessage['crc']
 
-        print('msgType: ' + str(msgType))
-        print('sender: ' + str(sender))
-        print('receiver: ' + str(receiver))
-
         print("Syn: " + str(syn))
 
         if msgType == 0: #type 0 messages dont need crc, they should be small enough
@@ -275,8 +271,12 @@ def receiveMessage():
         globalMutex.acquire()
         if sender not in messageToSend:
             messageToSend[sender] = sendQueue()
-        if sender not in messageToReceive:
-            messageToReceive[sender] = recvQueue()
+
+        key = sender
+        if receiver == 15:
+            key += 15
+        if key not in messageToReceive:
+            messageToReceive[key] = recvQueue()
         globalMutex.release()
         
     
@@ -290,7 +290,7 @@ def receiveMessage():
 
         elif msgType == 2 or msgType == 4:
             if receiver == myId or receiver == 15: #15 is the broadcast address
-                messageToReceive[sender].addMessage(payload, sender, receiver, syn)
+                messageToReceive[key].addMessage(payload, sender, receiver, syn)
 
 
         elif msgType == 3:
