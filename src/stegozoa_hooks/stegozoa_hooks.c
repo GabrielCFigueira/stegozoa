@@ -30,7 +30,7 @@ static int n_encoders = 0;
 static context_t *decoders[NPEERS];
 static int n_decoders = 0;
 
-static unsigned char senderId;
+static int senderId;
 
 static int encoderFd;
 static int decoderFd;
@@ -219,7 +219,7 @@ static void insertSsrc(message_t *msg, uint32_t ssrc) {
     msg->buffer[4] = (msg->size - 6) & 0xff; //msg->size - 6 because of the initial constant and size header
     msg->buffer[5] = ((msg->size - 6) >> 8) & 0xff;
     
-    insertConstant(ssrc, msg->buffer + 11);
+    insertConstant(ssrc, msg->buffer + 10);
 }
 
 
@@ -246,9 +246,13 @@ static void *fetchDataThread(void *args) {
             
             read_bytes = read(encoderFd, newMsg->buffer + 6, size);
 
-            unsigned char msgType = newMsg->buffer[6];
-            unsigned char sender = newMsg->buffer[7];
-            unsigned char receiver = newMsg->buffer[8];
+            unsigned char *flags = newMsg->buffer[6];
+
+
+            int msgType = (flags[0] & 0xe0) >> 5;
+            int frag = (flags[0] & 0x10) >> 4;
+            int sender = (flags[1] & 0xf0) >> 4;
+            int receiver = (flags[1] & 0xf);
 
             if(pthread_mutex_lock(&barrier_mutex)) {
                 error("Who knows", "Trying to acquire the lock");
@@ -268,7 +272,7 @@ static void *fetchDataThread(void *args) {
                 printf("Consegui ler %d bytes\n", read_bytes);
                 fflush(stdout);
                 
-                if(msgType == 0x0) {
+                if(msgType == 0) {
                     senderId = sender;
                     message_t *tempMsg;
                     for(int i = 0; i < n_encoders; ++i) {
@@ -278,7 +282,7 @@ static void *fetchDataThread(void *args) {
                     }
                     releaseMessage(newMsg);
                 
-                } else if(msgType == 0x3 || msgType == 0x4) {
+                } else if(msgType == 3 || msgType == 4) {
                     if(receiver == 0xff || broadcast) {
                        
                         for(int i = 0; i < n_encoders; ++i) {
@@ -430,12 +434,15 @@ static void flushDecoder(uint32_t ssrc) {
     int n_bytes;
     msg->bit = 0; //should be 0
 
-    unsigned char msgType = msg->buffer[6];
-    unsigned char sender = msg->buffer[7];
-    unsigned char receiver = msg->buffer[8];
+    unsigned char *flags = msg->buffer[6];
 
-    if(msgType == 0x1 && receiver == senderId) {
-        uint32_t localSsrc = obtainConstant(msg->buffer + 11);
+    int msgType = (flags[0] & 0xe0) >> 5;
+    int frag = (flags[0] & 0x10) >> 4;
+    int sender = (flags[1] & 0xf0) >> 4;
+    int receiver = (flags[1] & 0xf);
+
+    if(msgType == 1 && receiver == senderId) {
+        uint32_t localSsrc = obtainConstant(msg->buffer + 10);
         context_t *ctx = getEncoderContext(localSsrc);
         ctx->id[ctx->n_ids++] = (int) sender;
     }

@@ -46,7 +46,12 @@ def create2byte(number):
 def createMessage(msgType, sender, receiver, syn = 0, byteArray = bytes(0), crc = False):
     global messageToSend
 
-    message = bytes([msgType]) + bytes([sender]) + bytes([receiver]) + create2byte(syn) + byteArray
+    frag = 0 # for now
+
+    flags = bytes([((msgType & 0x7) << 5) | ((frag & 0x1) << 4)])
+    flags += bytes([((sender & 0xf) << 4) | (receiver & 0xf)])
+
+    message = flags + create2byte(syn) + byteArray
     if crc:
         size = create2byte(len(message) + 4) # + 4 is the crc
         message = size + message
@@ -199,6 +204,23 @@ def retransmit(receiver, synBytes):
     encoderPipe.write(message)
     encoderPipe.flush()
 
+def parseMessage(message):
+
+    size = parse2byte(message[0:2])
+    msgType = (message[2] & 0xe0) >> 5
+    frag = (message[2] & 0x10) >> 4
+    sender = (message[3] & 0xf0) >> 4
+    receiver = (message[3] & 0xf)
+    syn = parse2byte(message[4:6])
+
+    if msgType == 0:
+        payload = message[6:size + 2] # + 2 counting the size header
+        crc = bytes(0)
+    else:
+        payload = message[6:size + 2 - 4] # + 2 counting the size header
+        crc = message[size + 2 - 4:size + 2]
+
+    return {'size': size, 'msgType' : msgType, 'frag' : frag, 'sender' : sender, 'receiver' : receiver, 'syn' : syn, 'payload' : payload, 'crc' : crc}
 
 
 
@@ -214,10 +236,15 @@ def receiveMessage():
         size = parse2byte(header)
         
         body = decoderPipe.read(size) #message body
-        msgType = body[0] #message type
-        sender = body[1] #sender
-        receiver = body[2] #receiver
-        syn = parse2byte(body[3:5]) #syn
+        
+        parsedMessage = parseMessage(header + body)
+        msgType = parsedMessage['msgType']
+        frag = parsedMessage['frag']
+        sender = parsedMessage['sender']
+        receiver = parsedMessage['receiver']
+        syn = parsedMessage['syn']
+        payload = parsedMessage['payload']
+        crc = parsedMessage['crc']
 
         print("Syn: " + str(syn))
 
@@ -228,15 +255,11 @@ def receiveMessage():
                 messageToSend[sender] = sendQueue()
             globalMutex.release()
             
-            message = createMessage(1, myId, sender, 0, body[5:size], True) #message is the ssrc in this case, must be sent back
+            message = createMessage(1, myId, sender, 0, payload, True) #payload is the ssrc in this case, must be sent back
             encoderPipe.write(message)
             encoderPipe.flush()
             continue
         
-
-        message = body[5:size - 4] #payload
-        crc = body[size - 4:] #crc
-
         success = success + 1
         
         if not validateCRC(header + body[:size - 4], crc): 
@@ -263,12 +286,12 @@ def receiveMessage():
 
         elif msgType == 2 or msgType == 4:
             if receiver == myId or receiver == 255: #255 is the broadcast address
-                messageToReceive[sender].addMessage(message, sender, receiver, syn)
+                messageToReceive[sender].addMessage(payload, sender, receiver, syn)
 
 
         elif msgType == 3:
             if receiver == myId:
-                retransmit(sender, message)
+                retransmit(sender, payload)
 
 
         print("Ratio: " + str(success * 1.0 / (success + insuccess)))
