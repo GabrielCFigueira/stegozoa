@@ -144,7 +144,7 @@ class recvQueue:
 
     def __init__(self):
         self.queue = {}
-        self.frags = {}
+        self.frag = {}
         self.syn = 65500
         self.retransmissions = {}
         self.duplicates = 0
@@ -157,7 +157,7 @@ class recvQueue:
         print("Expected syn: " + str(self.syn))
         if syn > self.syn and abs(syn - self.syn) < 10000 or syn + 65536 - self.syn < 10000:
             self.queue[syn] = message
-            self.frags[syn] = frag
+            self.frag[syn] = frag
 
             if syn in self.retransmissions:
                 del(self.retransmissions[syn])
