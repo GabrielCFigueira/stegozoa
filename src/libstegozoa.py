@@ -81,7 +81,7 @@ def processRetransmission(syn, retransmissions, mutex, message):
 def addFragment(message, frag):
     global fragmentQueue, messageQueue
 
-    if frag = 0:
+    if frag == 0:
         res = bytes(0)
         while not fragmentQueue.empty(): #TODO mutex
             res += fragmentQueue.get()
