@@ -398,8 +398,8 @@ def send(byteArray, receiver):
     globalMutex.release()
 
     array = bytes(0)
-    for i in range(0, len(byteArray) - 2048, 2048): #TODO concurreny issues
-        array = byteArray[i:i+2048]
+    for i in range(0, len(byteArray) - 1024, 1024): #TODO concurreny issues
+        array = byteArray[i:i+1024]
 
         syn = messageToSend[receiver].addMessage(array, 1)
 
@@ -407,7 +407,7 @@ def send(byteArray, receiver):
 
         encoderPipe.write(message)
         encoderPipe.flush()
-        array = byteArray[i+2048:i+4096] #needed for last fragment
+        array = byteArray[i+1024:i+2048] #needed for last fragment
 
     #last fragment
     syn = messageToSend[receiver].addMessage(array, 0)
