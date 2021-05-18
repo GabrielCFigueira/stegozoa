@@ -323,6 +323,8 @@ static void *fetchDataThread(void *args) {
                 continue; //should abort
             }
         }
+
+        sleep(0.05);
     }
 
 }
