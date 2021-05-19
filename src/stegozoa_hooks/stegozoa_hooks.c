@@ -334,7 +334,7 @@ static void *fetchDataThread(void *args) {
             }
         }
 
-        usleep(50000);
+        usleep(10000);
     }
 
 }
