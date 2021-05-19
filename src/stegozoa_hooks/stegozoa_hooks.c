@@ -162,6 +162,14 @@ static void cloneMessageQueue(context_t *src, context_t *dst) {
 
 }
 
+static int containsId(context_t *ctx, int id) {
+
+    for(int i = 0; i < ctx->n_ids; i++)
+        if(ctx->id[i] == id)
+            return 1;
+    return 0;
+}
+
 static context_t *getEncoderContextById(int id) {
 
     for(int i = 0; i < n_encoders; i++)
@@ -465,9 +473,9 @@ static void flushDecoder(uint32_t ssrc) {
 
     if(msgType == 1 && receiver == senderId) {
         uint32_t localSsrc = obtainConstant(msg->buffer + 10);
-        fprintf(stdout, "New id: %d, ssrc: %lu\n", sender, (unsigned long) localSsrc);
         context_t *ctx = getEncoderContext(localSsrc);
-        ctx->id[ctx->n_ids++] = sender;
+        if(!containsId(ctx, sender)
+            ctx->id[ctx->n_ids++] = sender;
     }
 
     n_bytes = write(decoderFd, msg->buffer + 4, msg->size - 4);

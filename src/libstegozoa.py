@@ -244,6 +244,16 @@ def broadcastKeepalive():
 
         sendMutex.release()
 
+def broadcastConnect():
+
+    while True:
+        time.sleep(5)
+
+        message = createMessage(msgType, myId, 15) # 0xf = broadcast address
+    
+        encoderPipe.write(message)
+        encoderPipe.flush()
+
 
 def retransmit(receiver, synBytes):
     global messageToSend, myId, encoderPipe, sendMutex
