@@ -1199,7 +1199,7 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
   memcpy(cpi->qcoeff + 400 * (mb_row * cpi->common.mb_cols + mb_col), xd->qcoeff, 400 * sizeof(short));
   memcpy(cpi->eobs + 25 * (mb_row * cpi->common.mb_cols + mb_col), xd->eobs, 25 * sizeof(char));
             
-  has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
+  int has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
           xd->mode_info_context->mbmi.mode != SPLITMV);
   
   for(int i = 0; i < 384 + has_y2_block * 16; i++)
@@ -1378,7 +1378,7 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
     memcpy(cpi->eobs + 25 * (mb_row * cpi->common.mb_cols + mb_col), xd->eobs, 25 * sizeof(char));
   
 
-    has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
+    int has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
           xd->mode_info_context->mbmi.mode != SPLITMV);
   
     for(int i = 0; i < 384 + has_y2_block * 16; i++)
