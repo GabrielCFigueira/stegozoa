@@ -142,13 +142,21 @@ static context_t *encoderCtxMostMessages() {
 static void cloneMessageQueue(context_t *src, context_t *dst) {
 
     message_t *msgSrc = src->msg;
-    dst->msg = copyMessage(msgSrc);
-    message_t *msgDst = dst->msg;
     
-    while(msgSrc->next != NULL) {
-        msgDst->next = copyMessage(msgSrc->next);
-        msgSrc = msgSrc->next;
-        msgDst = msgDst->next;
+    if(msgSrc == NULL)
+        dst->msg = NULL;
+
+    else {
+    
+        dst->msg = copyMessage(msgSrc);
+        message_t *msgDst = dst->msg;
+       
+         
+        while(msgSrc->next != NULL) {
+            msgDst->next = copyMessage(msgSrc->next);
+            msgSrc = msgSrc->next;
+            msgDst = msgDst->next;
+        }
     }
     dst->n_msg = src->n_msg;
 
