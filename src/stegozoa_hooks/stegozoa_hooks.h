@@ -3,8 +3,8 @@
 
 #include <stdint.h>
 
-#define BUFFER_LEN 1038 //msg size + constant + size header
-#define MSG_SIZE 1032 //2*10 + header (minus constant and size)
+#define BUFFER_LEN 1038
+#define MSG_SIZE 1038 //2*10 + header (14 bytes)
 #define NPEERS 256
 
 typedef struct message {
