@@ -337,15 +337,6 @@ static void discardMessage(context_t *ctx) {
 
     ctx->n_msg--;
 
-    if(ctx->msg == NULL) {
-        msg = newMessage();
-        insertConstant(constant, msg->buffer);
-        msg->buffer[5] = '\0';
-        msg->buffer[6] = '\0';
-        msg->size = 6;
-        appendMessage(ctx, msg);
-    }
-
 }
 
 void flushEncoder(uint32_t ssrc, int simulcast) {
@@ -360,6 +351,7 @@ void flushEncoder(uint32_t ssrc, int simulcast) {
     
     context_t *ctx = getEncoderContext(ssrc);
 
+
     if(ctx == NULL) {
         ctx = createEncoderContext(ssrc);
         if(broadcast) {
@@ -371,9 +363,11 @@ void flushEncoder(uint32_t ssrc, int simulcast) {
         }
     }
 
+
+
     message_t *msg = ctx->msg;
     
-    if(msg->bit == msg->size * 8) //discard current message
+    if(msg == NULL || msg->bit == msg->size * 8) //discard current message
         discardMessage(ctx);
     
             
@@ -387,12 +381,22 @@ void flushEncoder(uint32_t ssrc, int simulcast) {
 
 int writeQdctLsb(short *qcoeff, int has_y2_block, uint32_t ssrc) {
 
+    
+    if(pthread_mutex_lock(&barrier_mutex)) {
+        error("Who knows", "Trying to acquire the lock");
+        return -1; //should abort
+    }
+
     context_t *ctx = getEncoderContext(ssrc);
     message_t *msg = ctx->msg;
-    
-    if(msg->bit == msg->size * 8 && msg->size == 6)
+    if(msg == NULL)
         return -1;
     
+    if(pthread_mutex_unlock(&barrier_mutex)) {
+        error("Who knows", "Trying to release the lock");
+        return -1; //should abort
+    }
+
     int rate = 0;
 
     //future idea: loop unroll
@@ -400,23 +404,25 @@ int writeQdctLsb(short *qcoeff, int has_y2_block, uint32_t ssrc) {
         if(qcoeff[i] != 1 && qcoeff[i] != 0 && (!has_y2_block || MOD16(i) != 0 || i > 255)) {
             
             if(msg->bit == msg->size * 8) {
-                if(msg->size == 6)
-                    break;
-                else {
-                    
-                    if(pthread_mutex_lock(&barrier_mutex)) {
-                        error("Who knows", "Trying to acquire the lock");
-                        return -1; //should abort
-                    }
-                    
-                    discardMessage(ctx);
-                    
-                    if(pthread_mutex_unlock(&barrier_mutex)) {
-                        error("Who knows", "Trying to release the lock");
-                        return -1; //should abort
-                    }
-
+                
+                int mustBreak = 0; 
+                if(pthread_mutex_lock(&barrier_mutex)) {
+                    error("Who knows", "Trying to acquire the lock");
+                    return -1; //should abort
                 }
+                
+                discardMessage(ctx);
+                if(ctx->msg == NULL)
+                    mustBreak = 1;
+                
+                if(pthread_mutex_unlock(&barrier_mutex)) {
+                    error("Who knows", "Trying to release the lock");
+                    return -1; //should abort
+                }
+
+                if(mustBreak)
+                    break;
+
             }
 
             qcoeff[i] = (qcoeff[i] & 0xFFFE) | getBit(msg->buffer, msg->bit);
@@ -478,7 +484,8 @@ int readQdctLsb(short *qcoeff, int has_y2_block, uint32_t ssrc) {
             }
             else if(msg->bit == 48) {
                 msg->size = parseSize(msg->buffer + 4, 0) + 6;
-                if (msg->size == 6 || msg->size > MSG_SIZE) {
+                if (msg->size > MSG_SIZE) {
+                    error("Message size too big", "When extracting bits from qcoeff");
                     msg->bit = 0;
                     return 1;
                 }
