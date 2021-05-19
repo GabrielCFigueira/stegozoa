@@ -434,8 +434,8 @@ if __name__ == "__main__":
     else:
         myId = 1
     signal.signal(signal.SIGINT,sigInt_handler)
-    initialize()
-    connect(myId)
+    initialize(myId)
+    connect()
     #while len(getPeers()) < 1:
     #    time.sleep(0.5)
     message = "Why are we still here... just to suffer"
