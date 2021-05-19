@@ -178,8 +178,12 @@ static context_t *getDecoderContext(uint32_t ssrc) {
         if(decoders[i]->ssrc == ssrc)
             return decoders[i];
 
-    decoders[n_decoders++] = newContext(ssrc);
-    return decoders[n_decoders - 1];
+    context_t *ctx = newContext(ssrc);
+    ctx->msg = newMessage();
+    ctx->n_msg = 1;
+    decoders[n_decoders++] = ctx;
+    
+    return ctx;
 }
 
 
