@@ -425,7 +425,7 @@ def connect():
     thread = threading.Thread(target=broadcastKeepalive, args=())
     thread.start()
     
-    thread = threading.Thread(target=broadcastConnection, args=())
+    thread = threading.Thread(target=broadcastConnect, args=())
     thread.start()
 
 
