@@ -36,7 +36,7 @@ server.bind(socketPath)
 server.listen(1)
 
 
-libstegozoa.initialize()
+libstegozoa.initialize(myId)
 server_socket, address = server.accept()
 
 def send():
@@ -57,7 +57,7 @@ def send():
         
         if message:
             if not established:
-                libstegozoa.connect(myId)
+                libstegozoa.connect()
                 established = True
             libstegozoa.send(message, 15) #15 is the broadcast address
 

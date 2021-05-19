@@ -344,9 +344,9 @@ def sigInt_handler(signum,frame):
 
 #---------------------API begins here---------------------------------
 
-def initialize():
+def initialize(newId):
 
-    global encoderPipe, decoderPipe, encoderPipePath, decoderPipePath
+    global encoderPipe, decoderPipe, encoderPipePath, decoderPipePath, myId
     try:
         os.mkfifo(encoderPipePath)
     except Exception as oe: 
@@ -363,21 +363,20 @@ def initialize():
     thread = threading.Thread(target=receiveMessage, args=())
     thread.start()
 
+    myId = newId
+
 def shutdown():
     global encoderPipePath, decoderPipePath
     os.remove(encoderPipePath)
     os.remove(decoderPipePath)
 
-def connect(newId = 15):
+def connect():
     global established, encoderPipe, myId
 
     if established:
         print("Connection is already established")
         return
 
-    if newId != 15:
-        myId = newId
-    
     msgType = 0
     message = createMessage(msgType, myId, 15) # 0xf = broadcast address
 
