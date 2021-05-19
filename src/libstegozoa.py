@@ -313,8 +313,8 @@ def receiveMessage():
         payload = parsedMessage['payload']
         crc = parsedMessage['crc']
 
-        print("Size: " + str(size))
         print("Syn: " + str(syn))
+        print("MsgType: " + str(msgType))
 
         if msgType == 0: #type 0 messages dont need crc, they should be small enough
 
@@ -423,6 +423,9 @@ def connect():
     established = True
 
     thread = threading.Thread(target=broadcastKeepalive, args=())
+    thread.start()
+    
+    thread = threading.Thread(target=broadcastConnection, args=())
     thread.start()
 
 
