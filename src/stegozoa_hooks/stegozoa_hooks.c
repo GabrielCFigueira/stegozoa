@@ -465,8 +465,9 @@ static void flushDecoder(uint32_t ssrc) {
 
     if(msgType == 1 && receiver == senderId) {
         uint32_t localSsrc = obtainConstant(msg->buffer + 10);
+        fprintf(stdout, "New id: %d, ssrc: %lu\n", sender, (unsigned long) localSsrc);
         context_t *ctx = getEncoderContext(localSsrc);
-        ctx->id[ctx->n_ids++] = (int) sender;
+        ctx->id[ctx->n_ids++] = sender;
     }
 
     n_bytes = write(decoderFd, msg->buffer + 4, msg->size - 4);
