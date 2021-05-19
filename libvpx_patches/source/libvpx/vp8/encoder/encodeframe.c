@@ -906,8 +906,6 @@ void vp8_encode_frame(VP8_COMP *cpi) {
 
     int bits = 0;
 
-    fprintf(stdout, "frame\n");
-    fflush(stdout);
     if(isEmbbedInitialized())
         flushEncoder(cpi->ssrc, cpi->simulcast);
 
@@ -925,8 +923,6 @@ void vp8_encode_frame(VP8_COMP *cpi) {
             has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
                       xd->mode_info_context->mbmi.mode != SPLITMV);
            
-            fprintf(stdout, "mbrow\n");
-            fflush(stdout);
             if(embbed) {
                 rate = writeQdctLsb(qcoeff, has_y2_block, cpi->ssrc);
                 if(rate == -1)

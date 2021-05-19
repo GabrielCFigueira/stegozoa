@@ -339,8 +339,6 @@ static void discardMessage(context_t *ctx) {
 
 void flushEncoder(uint32_t ssrc, int simulcast) {
 
-    fprintf(stdout, "before lock\n");
-    fflush(stdout);
     if(pthread_mutex_lock(&barrier_mutex)) {
         error("Who knows", "Trying to acquire the lock");
         return; //should abort
@@ -351,8 +349,6 @@ void flushEncoder(uint32_t ssrc, int simulcast) {
     
     context_t *ctx = getEncoderContext(ssrc);
 
-    fprintf(stdout, "after lock\n");
-    fflush(stdout);
 
     if(ctx == NULL) {
         ctx = createEncoderContext(ssrc);
@@ -372,22 +368,19 @@ void flushEncoder(uint32_t ssrc, int simulcast) {
     if(msg != NULL && msg->bit == msg->size * 8) //discard current message
         discardMessage(ctx);
     
-    fprintf(stdout, "before unlock\n");
-    fflush(stdout);
             
     if(pthread_mutex_unlock(&barrier_mutex)) {
         error("Who knows", "Trying to release the lock");
         return; //should abort
     }
-    fprintf(stdout, "after unlock\n");
-    fflush(stdout);
 
 }
 
 
 int writeQdctLsb(short *qcoeff, int has_y2_block, uint32_t ssrc) {
 
-    
+   
+    int leave = 0; 
     if(pthread_mutex_lock(&barrier_mutex)) {
         error("Who knows", "Trying to acquire the lock");
         return -1; //should abort
@@ -396,12 +389,15 @@ int writeQdctLsb(short *qcoeff, int has_y2_block, uint32_t ssrc) {
     context_t *ctx = getEncoderContext(ssrc);
     message_t *msg = ctx->msg;
     if(msg == NULL)
-        return -1;
+        leave = 1;
     
     if(pthread_mutex_unlock(&barrier_mutex)) {
         error("Who knows", "Trying to release the lock");
         return -1; //should abort
     }
+
+    if(leave)
+        return -1;
 
     int rate = 0;
 
