@@ -906,6 +906,8 @@ void vp8_encode_frame(VP8_COMP *cpi) {
 
     int bits = 0;
 
+    fprintf(stdout, "frame\n");
+    fflush(stdout);
     if(isEmbbedInitialized())
         flushEncoder(cpi->ssrc, cpi->simulcast);
 
