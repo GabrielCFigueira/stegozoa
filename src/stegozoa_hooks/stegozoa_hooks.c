@@ -66,8 +66,6 @@ static context_t *newContext(uint32_t ssrc) {
     }
     
     context->ssrc = ssrc;
-    context->msg = newMessage();
-    context->n_msg = 1;
     return context;
 }
 
@@ -367,7 +365,7 @@ void flushEncoder(uint32_t ssrc, int simulcast) {
 
     message_t *msg = ctx->msg;
     
-    if(msg == NULL || msg->bit == msg->size * 8) //discard current message
+    if(msg != NULL && msg->bit == msg->size * 8) //discard current message
         discardMessage(ctx);
     
             
