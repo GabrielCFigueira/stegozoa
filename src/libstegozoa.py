@@ -83,6 +83,9 @@ def processRetransmission(syn, retransmissions, mutex, message):
 def addFragment(message, frag):
     global fragmentQueue, messageQueue
 
+    if len(message) == 0:
+        return
+
     if frag == 0:
         res = bytes(0)
         while not fragmentQueue.empty(): #TODO mutex
@@ -234,8 +237,8 @@ def broadcastKeepalive():
         sendMutex.acquire()
 
         for receiver in messageToSend:
-            syn = messageToSend[receiver].addMessage(bytes(0))
-            message = createMessage(5, myId, receiver, 0, syn, bytes(0), True)
+            syn = messageToSend[receiver].addMessage(bytes(0), 0)
+            message = createMessage(2, myId, receiver, 0, syn, bytes(0), True)
             encoderPipe.write(message)
             encoderPipe.flush()
 
@@ -345,7 +348,7 @@ def receiveMessage():
         elif not established:
             continue
 
-        elif msgType == 2 or msgType == 4 or msgType == 5:
+        elif msgType == 2 or msgType == 4:
             if receiver == myId or receiver == 15: #15 is the broadcast address
                 messageToReceive[key].addMessage(payload, sender, receiver, frag, syn)
 
