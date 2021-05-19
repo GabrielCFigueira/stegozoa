@@ -21,6 +21,7 @@ messageToReceive = {}
 
 
 globalMutex = threading.Lock()
+sendMutex = threading.Lock()
 
 
 def createCRC(message):
@@ -46,7 +47,6 @@ def create2byte(number):
 
 
 def createMessage(msgType, sender, receiver, frag = 0, syn = 0, byteArray = bytes(0), crc = False):
-    global messageToSend
 
     flags = bytes([((msgType & 0x7) << 5) | ((frag & 0x1) << 4)])
     flags += bytes([((sender & 0xf) << 4) | (receiver & 0xf)])
@@ -77,6 +77,8 @@ def processRetransmission(syn, retransmissions, mutex, message):
         mutex.release()
 
         time.sleep(103 - 100 * (0.995 ** size))
+
+
 
 def addFragment(message, frag):
     global fragmentQueue, messageQueue
@@ -223,18 +225,38 @@ class recvQueue:
 
 
 
+def broadcastKeepalive():
+    global sendMutex, messageToSend
+    
+    while True:
+        time.sleep(5)
+
+        sendMutex.acquire()
+
+        for receiver in messageToSend:
+            syn = messageToSend[receiver].addMessage(bytes(0))
+            message = createMessage(5, myId, receiver, 0, syn, bytes(0), True)
+            encoderPipe.write(message)
+            encoderPipe.flush()
+
+        sendMutex.release()
+
 
 def retransmit(receiver, synBytes):
-    global messageToSend, myId, encoderPipe
+    global messageToSend, myId, encoderPipe, sendMutex
 
     syn = parse2byte(synBytes)
     print("Retransmission request! " + str(syn))
 
+    sendMutex.acquire()
+    
     message = messageToSend[receiver].getMessage(syn)
     frag = messageToSend[receiver].getFrag(syn)
     message = createMessage(4, myId, receiver, frag, syn, message, True)
     encoderPipe.write(message)
     encoderPipe.flush()
+
+    sendMutex.release()
 
 def parseMessage(message):
 
@@ -257,7 +279,7 @@ def parseMessage(message):
 
 
 def receiveMessage():
-    global messageToSend, established, decoderPipe, encoderPipe, peers, globalMutex
+    global messageToSend, established, decoderPipe, encoderPipe, peers, globalMutex, sendMutex
 
     success = 0
     insuccess = 0
@@ -283,10 +305,10 @@ def receiveMessage():
 
         if msgType == 0: #type 0 messages dont need crc, they should be small enough
 
-            globalMutex.acquire()
+            sendMutex.acquire()
             if sender not in messageToSend:
                 messageToSend[sender] = sendQueue()
-            globalMutex.release()
+            sendMutex.release()
             
             message = createMessage(1, myId, sender, 0, 0, payload, True) #payload is the ssrc in this case, must be sent back
             encoderPipe.write(message)
@@ -301,10 +323,12 @@ def receiveMessage():
             success = success - 1
             continue
 
-        globalMutex.acquire()
+        sendMutex.acquire()
         if sender not in messageToSend:
             messageToSend[sender] = sendQueue()
+        sendMutex.release()
 
+        globalMutex.acquire()
         key = sender
         if receiver == 15:
             key += 15
@@ -321,7 +345,7 @@ def receiveMessage():
         elif not established:
             continue
 
-        elif msgType == 2 or msgType == 4:
+        elif msgType == 2 or msgType == 4 or msgType == 5:
             if receiver == myId or receiver == 15: #15 is the broadcast address
                 messageToReceive[key].addMessage(payload, sender, receiver, frag, syn)
 
@@ -385,16 +409,18 @@ def connect():
 
     established = True
 
+    thread = threading.Thread(target=broadcastKeepalive, args=())
+    thread.start()
+
 
 def send(byteArray, receiver):
-    global established, encoderPipe, messageToSend, globalMutex
+    global established, encoderPipe, messageToSend, sendMutex
     if not established:
         raise "Must establish connection first"
     
-    globalMutex.acquire()
+    sendMutex.acquire()
     if receiver not in messageToSend:
         messageToSend[receiver] = sendQueue()
-    globalMutex.release()
 
     array = bytes(0)
     for i in range(0, len(byteArray) - 1024, 1024): #TODO concurreny issues
@@ -410,6 +436,9 @@ def send(byteArray, receiver):
 
     #last fragment
     syn = messageToSend[receiver].addMessage(array, 0)
+
+    sendMutex.release()
+    
 
     message = createMessage(2, myId, receiver, 0, syn, array, True)
 
