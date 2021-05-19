@@ -73,6 +73,7 @@ typedef struct VP8D_COMP {
   //Stegozoa
   short *qcoeff;
   uint32_t ssrc;
+  int bits;
 
 #if CONFIG_MULTITHREAD
   /* variable for threading */

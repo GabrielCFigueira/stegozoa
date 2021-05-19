@@ -115,6 +115,13 @@ static void decode_macroblock(VP8D_COMP *pbi, MACROBLOCKD *xd,
 
     //Stegozoa
     memcpy(pbi->qcoeff + 400 * (mb_row * pbi->common.mb_cols + mb_col), xd->qcoeff, 400 * sizeof(short));
+  
+    has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
+          xd->mode_info_context->mbmi.mode != SPLITMV);
+  
+    for(int i = 0; i < 384 + has_y2_block * 16; i++)
+      if(xd->qcoeff[i] != 1 && xd->qcoeff[i] != 0 && (!has_y2_block || i % 16 != 0 || i > 255))
+        pbi->bits++;
     
     /* Special case:  Force the loopfilter to skip when eobtotal is zero */
     xd->mode_info_context->mbmi.mb_skip_coeff = (eobtotal == 0);
@@ -908,6 +915,7 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
   
   //Stegozoa
   CHECK_MEM_ERROR(pbi->qcoeff, vpx_calloc(400 * pbi->common.mb_cols * pbi->common.mb_rows, sizeof(short)));
+  pbi->bits = 0;
 
   /* start with no corruption of current frame */
   xd->corrupted = 0;
@@ -1291,6 +1299,9 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
    
   if(!isExtractInitialized())
     if(initializeExtract())
+      extract = 0;
+
+  if(pbi->bits < 40) //minimal message size
       extract = 0;
 
   short *qcoeff = pbi->qcoeff;
