@@ -249,7 +249,7 @@ def broadcastConnect():
     while True:
         time.sleep(5)
 
-        message = createMessage(msgType, myId, 15) # 0xf = broadcast address
+        message = createMessage(0, myId, 15) # 0xf = broadcast address
     
         encoderPipe.write(message)
         encoderPipe.flush()
