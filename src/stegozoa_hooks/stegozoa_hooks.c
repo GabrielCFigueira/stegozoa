@@ -310,7 +310,7 @@ static void *fetchDataThread(void *args) {
                     }
                     
                 
-                } else if(msgType == 0x1 || receiver == 0xff || broadcast) {
+                } else if(msgType == 1 || receiver == 15 || broadcast) {
 
                     for(int i = 0; i < n_encoders; ++i) {
                         appendMessage(encoders[i], newMsg);
