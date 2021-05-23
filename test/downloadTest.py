@@ -1,6 +1,6 @@
 import socket
 import time
-
+import signal
 
 def sigInt_handler(signum,frame):
     global start, data

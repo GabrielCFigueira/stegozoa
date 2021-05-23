@@ -1,8 +1,6 @@
 import socket
 import time
 
-
-
 socketPath = "/tmp/stegozoa_client_socket"
 
 
