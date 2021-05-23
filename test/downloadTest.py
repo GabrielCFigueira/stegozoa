@@ -18,8 +18,6 @@ signal.signal(signal.SIGINT,sigInt_handler)
 client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
 client.connect(socketPath)
     
-client.send(bytes("Hello", 'ascii'))
-
 start = time.time()
 data = 0
 
