@@ -490,31 +490,47 @@ static void flushDecoder(uint32_t ssrc) {
 
 int readQdctLsb(short *qcoeff, int has_y2_block, uint32_t ssrc) {
 
+    fprintf(stdout, "1\n");
+    fflush(stdout);
     message_t *msg = getDecoderContext(ssrc)->msg;
+    fprintf(stdout, "2\n");
+    fflush(stdout);
 
     //optimization idea: loop unroll
     for(int i = 0; i < 384 + has_y2_block * 16; i++) {
         if(qcoeff[i] != 1 && qcoeff[i] != 0 && (!has_y2_block || MOD16(i) != 0 || i > 255)) {
+            fprintf(stdout, "3\n");
+            fflush(stdout);
             setBit(msg->buffer, msg->bit, getLsb(qcoeff[i]));
             msg->bit++;
             
             if(msg->bit == 32) {
+                fprintf(stdout, "4\n");
+                fflush(stdout);
                 uint32_t newConstant = obtainConstant(msg->buffer);
                 if(newConstant != constant) {
                     shiftConstant(msg->buffer);
                     msg->bit--;
                 }
+                fprintf(stdout, "5\n");
+                fflush(stdout);
             }
             else if(msg->bit == 48) {
+                fprintf(stdout, "6\n");
+                fflush(stdout);
                 msg->size = parseSize(msg->buffer + 4, 0) + 6;
                 if (msg->size > MSG_SIZE) {
                     error("Message size too big", "When extracting bits from qcoeff");
                     msg->bit = 0;
                     return 1;
                 }
+                fprintf(stdout, "7\n");
+                fflush(stdout);
             }
             else if(msg->bit == msg->size * 8 && msg->bit > 48)
                 flushDecoder(ssrc);
+            fprintf(stdout, "8\n");
+            fflush(stdout);
         }
             
     }
