@@ -519,7 +519,7 @@ int readQdctLsb(short *qcoeff, int has_y2_block, uint32_t ssrc) {
                 fprintf(stdout, "6\n");
                 fflush(stdout);
                 msg->size = parseSize(msg->buffer + 4, 0) + 6;
-                if (msg->size > MSG_SIZE) {
+                if (msg->size >= MSG_SIZE) {
                     error("Message size too big", "When extracting bits from qcoeff");
                     msg->bit = 0;
                     return 1;
