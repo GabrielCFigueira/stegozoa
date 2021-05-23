@@ -59,6 +59,11 @@ def send():
                 server_socket.close()
                 server_socket, address = server.accept()
             mutex.release()
+        except Exception as e:
+            print("What?" + str(e))
+            while True:
+                pass
+
         
         if message:
             if not established:
