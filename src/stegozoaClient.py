@@ -26,9 +26,10 @@ def is_socket_closed(sock):
         return False  # socket is open and reading from it would block
     except ConnectionResetError:
         return True  # socket was closed for some other reason
+    except socket.error:
+        return True # socket error
     except Exception as e:
         print("unexpected exception when checking if a socket is closed")
-        print(e)
         return False
     return False
 
