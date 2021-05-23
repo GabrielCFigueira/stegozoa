@@ -14,6 +14,7 @@ def sigInt_handler(signum,frame):
     os.remove(libstegozoa.encoderPipePath)
     os.remove(libstegozoa.decoderPipePath)
     os.remove(socketPath)
+    exit(0)
 
 def is_socket_closed(sock):
     try:
