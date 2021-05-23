@@ -5,6 +5,7 @@ import socket
 import threading
 import sys
 import time
+import signal
 
 socketPath = "/tmp/stegozoa_client_socket"
 
