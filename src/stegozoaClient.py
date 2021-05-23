@@ -49,9 +49,11 @@ def send():
     while True:
         message = ''
         
+        print("Send")
         try:
             message = server_socket.recv(8000)
         except socket.error as e:
+            print("Socket Error!")
             mutex.acquire()
             if is_socket_closed(server_socket):
                 server_socket.close()
@@ -68,10 +70,12 @@ def receive():
     global server_socket
     while True:
         message = libstegozoa.receive()
+        print("Receive!")
 
         try:
             server_socket.sendall(message)
         except socket.error as e:
+            print("Socket Error!")
             mutex.acquire()
             if is_socket_closed(server_socket):
                 server_socket.close()

@@ -433,6 +433,8 @@ def send(byteArray, receiver):
     global established, encoderPipe, messageToSend, sendMutex
     if not established:
         raise "Must establish connection first"
+    elif len(byteArray) == 0:
+        raise "Message must have length bigger than 0"
     
     sendMutex.acquire()
     if receiver not in messageToSend:
