@@ -38,7 +38,6 @@ def newConnection(server_socket):
     global mutex
     mutex.acquire()
     if is_socket_closed(server_socket):
-        server_socket.close()
         server_socket, address = server.accept()
     mutex.release()
 
