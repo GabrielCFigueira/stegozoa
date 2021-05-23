@@ -9,7 +9,6 @@ import crccheck
 
 decoderPipePath = "/tmp/stegozoa_decoder_pipe"
 encoderPipePath = "/tmp/stegozoa_encoder_pipe"
-established = False
 fragmentQueue = queue.Queue()
 messageQueue = queue.Queue()
 peers = []
@@ -292,7 +291,7 @@ def parseMessage(message):
 
 
 def receiveMessage():
-    global messageToSend, established, decoderPipe, encoderPipe, peers, globalMutex, sendMutex
+    global messageToSend, decoderPipe, encoderPipe, peers, globalMutex, sendMutex
 
     success = 0
     insuccess = 0
@@ -355,9 +354,6 @@ def receiveMessage():
             if receiver == myId and sender not in peers:
                 peers += [sender]
 
-        elif not established:
-            continue
-
         elif msgType == 2 or msgType == 4:
             if receiver == myId or receiver == 15: #15 is the broadcast address
                 messageToReceive[key].addMessage(payload, sender, receiver, frag, syn)
@@ -371,6 +367,20 @@ def receiveMessage():
         print("Ratio: " + str(success * 1.0 / (success + insuccess)))
 
 
+def connect():
+    global encoderPipe, myId
+
+    msgType = 0
+    message = createMessage(msgType, myId, 15) # 0xf = broadcast address
+
+    encoderPipe.write(message)
+    encoderPipe.flush()
+
+    thread = threading.Thread(target=broadcastKeepalive, args=())
+    thread.start()
+    
+    thread = threading.Thread(target=broadcastConnect, args=())
+    thread.start()
 
 def sigInt_handler(signum,frame):
     global encoderPipePath, decoderPipePath
@@ -401,39 +411,20 @@ def initialize(newId):
     thread.start()
 
     myId = newId
+    connect()
+
 
 def shutdown():
     global encoderPipePath, decoderPipePath
     os.remove(encoderPipePath)
     os.remove(decoderPipePath)
 
-def connect():
-    global established, encoderPipe, myId
-
-    if established:
-        print("Connection is already established")
-        return
-
-    msgType = 0
-    message = createMessage(msgType, myId, 15) # 0xf = broadcast address
-
-    encoderPipe.write(message)
-    encoderPipe.flush()
-
-    established = True
-
-    thread = threading.Thread(target=broadcastKeepalive, args=())
-    thread.start()
-    
-    thread = threading.Thread(target=broadcastConnect, args=())
-    thread.start()
 
 
 def send(byteArray, receiver):
-    global established, encoderPipe, messageToSend, sendMutex
-    if not established:
-        raise "Must establish connection first"
-    elif len(byteArray) == 0:
+    global encoderPipe, messageToSend, sendMutex
+    
+    if len(byteArray) == 0:
         raise "Message must have length bigger than 0"
     
     sendMutex.acquire()

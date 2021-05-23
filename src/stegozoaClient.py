@@ -45,9 +45,7 @@ def newConnection():
 def send():
     global server_socket, myId
 
-    established = False
     while True:
-        message = ''
         
         try:
             message = server_socket.recv(4096)
@@ -55,9 +53,6 @@ def send():
             newConnection()
 
         if message:
-            if not established:
-                libstegozoa.connect()
-                established = True
             libstegozoa.send(message, 15) #15 is the broadcast address
         else:
             newConnection()
