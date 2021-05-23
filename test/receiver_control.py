@@ -138,7 +138,7 @@ def StegozoaPingTest():
     return "Starting Ping Test"
 
 @app.route('/downloadTest', methods=['POST'])
-def StegozoaPingTest():
+def StegozoaDownloadTest():
     args = "python3 " + stegozoa_test_folder_location + "uploadTest.py"
     devnull = open(os.devnull, 'wb')
     sub.Popen(args, shell = True, stdout=devnull, stderr=devnull)
