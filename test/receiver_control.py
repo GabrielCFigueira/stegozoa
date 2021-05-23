@@ -145,7 +145,7 @@ def StegozoaPingTest():
     return "Starting Download Test"
 
 @app.route('/killDownloadTest', methods=['POST'])
-def StegozoaPingTest():
+def killDonwloadTest():
     PrintColored("Killing Download Test", 'red')
     os.system("pkill -f uploadTest")
     return "Killing Download Test"
