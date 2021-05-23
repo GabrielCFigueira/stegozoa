@@ -24,6 +24,16 @@ def is_socket_closed(sock):
         return False
     return False
 
+mutex = threading.Lock()
+
+def newConnection(server_socket):
+    global mutex
+    mutex.acquire()
+    if is_socket_closed(server_socket):
+        server_socket.close()
+        server_socket, address = server.accept()
+    mutex.release()
+
 if len(sys.argv) > 1:
     myId = int(sys.argv[1])
 else:
@@ -33,7 +43,6 @@ signal.signal(signal.SIGINT,libstegozoa.sigInt_handler)
 
 server = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
 
-mutex = threading.Lock()
 
 server.bind(socketPath)
 server.listen(1)
@@ -42,6 +51,8 @@ server.listen(1)
 libstegozoa.initialize(myId)
 server_socket, address = server.accept()
 
+
+
 def send():
     global server_socket, myId
 
@@ -49,43 +60,29 @@ def send():
     while True:
         message = ''
         
-        print("Send")
         try:
-            message = server_socket.recv(8000)
+            message = server_socket.recv(4096)
         except socket.error as e:
-            print("Socket Error!")
-            mutex.acquire()
-            if is_socket_closed(server_socket):
-                server_socket.close()
-                server_socket, address = server.accept()
-            mutex.release()
-        except Exception as e:
-            print("What?" + str(e))
-            while True:
-                pass
+            newConnection(server_socket)
 
-        
         if message:
             if not established:
                 libstegozoa.connect()
                 established = True
             libstegozoa.send(message, 15) #15 is the broadcast address
+        else:
+            newConnection(server_socket)
+
 
 def receive():
     global server_socket
     while True:
         message = libstegozoa.receive()
-        print("Receive!")
 
         try:
             server_socket.sendall(message)
         except socket.error as e:
-            print("Socket Error!")
-            mutex.acquire()
-            if is_socket_closed(server_socket):
-                server_socket.close()
-                server_socket, address = server.accept()
-            mutex.release()
+            newConnection(server_socket)
 
         
 
