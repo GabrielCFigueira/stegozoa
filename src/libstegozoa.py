@@ -376,7 +376,6 @@ def sigInt_handler(signum,frame):
     global encoderPipePath, decoderPipePath
     os.remove(encoderPipePath)
     os.remove(decoderPipePath)
-    exit(0)
 
 
 #---------------------API begins here---------------------------------

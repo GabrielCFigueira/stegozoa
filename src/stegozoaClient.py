@@ -9,6 +9,12 @@ import signal
 
 socketPath = "/tmp/stegozoa_client_socket"
 
+def sigInt_handler(signum,frame):
+    global socketPath
+    os.remove(libstegozoa.encoderPipePath)
+    os.remove(libstegozoa.decoderPipePath)
+    os.remove(socketPath)
+
 def is_socket_closed(sock):
     try:
     # this will try to read bytes without blocking and also without removing them from buffer (peek only)
@@ -21,10 +27,10 @@ def is_socket_closed(sock):
         return True  # socket was closed for some other reason
     except Exception as e:
         print("unexpected exception when checking if a socket is closed")
+        print(e)
         return False
     return False
 
-mutex = threading.Lock()
 
 def newConnection(server_socket):
     global mutex
@@ -33,24 +39,6 @@ def newConnection(server_socket):
         server_socket.close()
         server_socket, address = server.accept()
     mutex.release()
-
-if len(sys.argv) > 1:
-    myId = int(sys.argv[1])
-else:
-    myId = 1
-
-signal.signal(signal.SIGINT,libstegozoa.sigInt_handler)
-
-server = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-
-
-server.bind(socketPath)
-server.listen(1)
-
-
-libstegozoa.initialize(myId)
-server_socket, address = server.accept()
-
 
 
 def send():
@@ -84,7 +72,28 @@ def receive():
         except socket.error as e:
             newConnection(server_socket)
 
-        
+
+
+
+signal.signal(signal.SIGINT,sigInt_handler)
+mutex = threading.Lock()
+
+if len(sys.argv) > 1:
+    myId = int(sys.argv[1])
+else:
+    myId = 1
+
+signal.signal(signal.SIGINT,libstegozoa.sigInt_handler)
+
+server = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+
+
+server.bind(socketPath)
+server.listen(1)
+
+
+libstegozoa.initialize(myId)
+server_socket, address = server.accept()
 
 thread = threading.Thread(target=send, args=())
 thread.start()
