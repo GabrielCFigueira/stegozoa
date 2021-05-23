@@ -34,8 +34,8 @@ def is_socket_closed(sock):
     return False
 
 
-def newConnection(server_socket):
-    global mutex
+def newConnection():
+    global mutex, server_socket
     mutex.acquire()
     if is_socket_closed(server_socket):
         server_socket, address = server.accept()
@@ -52,7 +52,7 @@ def send():
         try:
             message = server_socket.recv(4096)
         except socket.error as e:
-            newConnection(server_socket)
+            newConnection()
 
         if message:
             if not established:
@@ -60,7 +60,7 @@ def send():
                 established = True
             libstegozoa.send(message, 15) #15 is the broadcast address
         else:
-            newConnection(server_socket)
+            newConnection()
 
 
 def receive():
@@ -71,7 +71,7 @@ def receive():
         try:
             server_socket.sendall(message)
         except socket.error as e:
-            newConnection(server_socket)
+            newConnection()
 
 
 
