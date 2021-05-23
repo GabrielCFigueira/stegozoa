@@ -85,7 +85,6 @@ if len(sys.argv) > 1:
 else:
     myId = 1
 
-signal.signal(signal.SIGINT,libstegozoa.sigInt_handler)
 
 server = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
 
