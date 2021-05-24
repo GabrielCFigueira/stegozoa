@@ -490,7 +490,7 @@ def SampleStegozoaExact(sample_index, config, baseline, network_condition, chrom
         SaveStegozoaDownloadResult(stegozoa_cap_folder + baseline + "/" + network_condition[2] + "/" + chat_sample[:-4].replace(" ", "") + "_" + str(i), True)
 
         print "[P] Killing Remote Download Test"
-        RestCall("killDownloadTest")
+        RESTCall("killDownloadTest")
 
         print "[P] Killing Stegozoa"
         KillStegozoa(stegozoa_cap_folder + baseline + "/" + network_condition[2] + "/" + chat_sample[:-4].replace(" ", "") + "_" + str(i), True)
