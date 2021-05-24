@@ -437,27 +437,21 @@ def send(byteArray, receiver):
         messageToSend[receiver] = sendQueue()
 
     array = bytes(0)
-    for i in range(0, len(byteArray) - 1024, 1024): #TODO concurreny issues
+    for i in range(0, len(byteArray), 1024):
         array = byteArray[i:i+1024]
 
-        syn = messageToSend[receiver].addMessage(array, 1)
+        frag = 1
+        if i + 1024 >= len(byteArray):
+            frag = 0
 
-        message = createMessage(2, myId, receiver, 1, syn, array, True)
+        syn = messageToSend[receiver].addMessage(array, frag)
+
+        message = createMessage(2, myId, receiver, frag, syn, array, True)
 
         encoderPipe.write(message)
         encoderPipe.flush()
-        array = byteArray[i+1024:i+2048] #needed for last fragment
-
-    #last fragment
-    syn = messageToSend[receiver].addMessage(array, 0)
 
     sendMutex.release()
-    
-
-    message = createMessage(2, myId, receiver, 0, syn, array, True)
-
-    encoderPipe.write(message)
-    encoderPipe.flush()
 
 
 def receive():
