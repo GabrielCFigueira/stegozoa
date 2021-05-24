@@ -159,11 +159,10 @@ def StegozoaDownloadTest(create_log):
     args = "python3 " + stegozoa_test_folder_location + "downloadTest.py"
     if(create_log):
         log = open('download_log', 'w')
-        p = sub.Popen(args, shell = True, stdout=log, stderr=log)
+        sub.Popen(args, shell = True, stdout=log, stderr=log)
     else:
         devnull = open(os.devnull, 'wb')
-        p = sub.Popen(args, shell = True, stdout=devnull, stderr=devnull)
-    p.wait()
+        sub.Popen(args, shell = True, stdout=devnull, stderr=devnull)
 
 def SaveStegozoaDownloadResult(sample, log_created):
     os.system("pkill -SIGINT -f downloadTest")
@@ -451,7 +450,7 @@ def SampleStegozoaExact(sample_index, config, baseline, network_condition, chrom
 
         #Ping test first, without traffic capture
         
-        print "[P] Starting Ping Test"
+        print "[P] Performing Ping Test"
         RESTCall("pingTest")
         StegozoaPingTest(True)
         time.sleep(5) #just to be sure
@@ -469,7 +468,7 @@ def SampleStegozoaExact(sample_index, config, baseline, network_condition, chrom
         #Start Stegozoa data transmission after tcpdump start
         print "[P] Starting Stegozoa data transmission"
         StegozoaDownloadTest(True)
-        RestCall("downloadTest")
+        RESTCall("downloadTest")
         
         #Wait for tcpdump to finish
         print "[P] Waiting for traffic capture to finish..."
