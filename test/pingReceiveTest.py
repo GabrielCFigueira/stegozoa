@@ -11,5 +11,5 @@ client.connect(socketPath)
     
 
 for i in range(50):
-    message = client.recv(5)
+    message = client.recv(1024)
     client.send(bytes("World", 'ascii'))

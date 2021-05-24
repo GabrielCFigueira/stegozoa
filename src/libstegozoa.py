@@ -91,6 +91,7 @@ def addFragment(message, frag):
             res += fragmentQueue.get()
         res += message
         messageQueue.put(res)
+        print("Delivered message!")
     else:
         fragmentQueue.put(message)
 
