@@ -127,7 +127,7 @@ def startStegozoa():
 @app.route('/killStegozoa', methods=['POST'])
 def killStegozoa():
     PrintColored("Killing Stegozoa", 'red')
-    os.system("pkill -f stegozoaClient")
+    os.system("pkill -SIGINT -f stegozoaClient")
     return "Killing Stegozoa"
 
 @app.route('/pingTest', methods=['POST'])
@@ -147,7 +147,7 @@ def StegozoaDownloadTest():
 @app.route('/killDownloadTest', methods=['POST'])
 def killDonwloadTest():
     PrintColored("Killing Download Test", 'red')
-    os.system("pkill -f uploadTest")
+    os.system("pkill -SIGINT -f uploadTest")
     return "Killing Download Test"
 
 @app.route('/compileChromiumVersions', methods=['POST'])
