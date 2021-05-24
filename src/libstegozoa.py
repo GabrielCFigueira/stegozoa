@@ -82,8 +82,6 @@ def processRetransmission(syn, retransmissions, mutex, message):
 def addFragment(message, frag):
     global fragmentQueue, messageQueue
 
-    print("Message: ")
-    print(message)
 
     if len(message) == 0:
         return
@@ -94,7 +92,6 @@ def addFragment(message, frag):
             res += fragmentQueue.get()
         res += message
         messageQueue.put(res)
-        print("Delivered message!")
     else:
         fragmentQueue.put(message)
 
@@ -379,13 +376,13 @@ def connect():
 
     encoderPipe.write(message)
     encoderPipe.flush()
-    """
+    
     thread = threading.Thread(target=broadcastKeepalive, args=())
     thread.start()
     
     thread = threading.Thread(target=broadcastConnect, args=())
     thread.start()
-    """
+    
 
 def sigInt_handler(signum,frame):
     global encoderPipePath, decoderPipePath
