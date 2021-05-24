@@ -14,8 +14,7 @@ def PrintColored(string, color):
 #################################################################################
 # Useful definitions
 
-SRC_IP = "192.168.50.103"
-DST_IP = "192.168.51.104"
+SRC_IP = "192.168.51.101"
 NETWORK_INTERFACE_1 = "enp0s8"
 NETWORK_INTERFACE_2 = "enp0s9"
 
