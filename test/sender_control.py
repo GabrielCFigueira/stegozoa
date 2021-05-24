@@ -452,7 +452,7 @@ def SampleStegozoaExact(sample_index, config, baseline, network_condition, chrom
         #Ping test first, without traffic capture
         
         print "[P] Starting Ping Test"
-        RestCall("pingTest")
+        RESTCall("pingTest")
         StegozoaPingTest(True)
         time.sleep(5) #just to be sure
         SaveStegozoaPingResult(stegozoa_cap_folder + baseline + "/" + network_condition[2] + "/" + chat_sample[:-4].replace(" ", "") + "_" + str(i), True)
