@@ -375,12 +375,13 @@ def connect():
 
     encoderPipe.write(message)
     encoderPipe.flush()
-
+    """
     thread = threading.Thread(target=broadcastKeepalive, args=())
     thread.start()
     
     thread = threading.Thread(target=broadcastConnect, args=())
     thread.start()
+    """
 
 def sigInt_handler(signum,frame):
     global encoderPipePath, decoderPipePath
