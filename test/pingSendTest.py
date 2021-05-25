@@ -16,4 +16,4 @@ for i in range(20):
     print("RTT: " + str(end - start))
     total += end - start
 
-print("Average RTT: " + str(total / 50))
+print("Average RTT: " + str(total / 20))
