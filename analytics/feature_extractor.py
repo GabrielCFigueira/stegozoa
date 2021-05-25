@@ -958,7 +958,7 @@ if __name__ == "__main__":
 
 
     ######################### Configure Accordingly ################################
-    data_folder = "/home/vagrant/SharedFolder/ProtozoaCaps/" + cap_folder_name + "/"
+    data_folder = "/home/vagrant/SharedFolder/StegozoaCaps/" + cap_folder_name + "/"
     ################################################################################
 
 
@@ -966,7 +966,7 @@ if __name__ == "__main__":
     baselines = os.listdir(data_folder)
     baselines = [e for e in baselines if ".DS_Store" not in e]
 
-    #For kinds of traffic (Protozoa | Regular versions)
+    #For kinds of traffic (Stegozoa | Regular versions)
     for b in baselines:
         PrintColored("Analyzing " + b + " Baseline", "yellow")
         profiles = os.listdir(data_folder + "/" + b)
