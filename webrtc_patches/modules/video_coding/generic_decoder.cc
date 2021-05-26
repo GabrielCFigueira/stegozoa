@@ -248,7 +248,7 @@ int32_t VCMGenericDecoder::InitDecode(const VideoCodec* settings,
 }
 
 //Stegozoa: ssrc
-int32_t VCMGenericDecoder::Decode(const VCMEncodedFrame& frame, Timestamp now, uint32_t ssrc) {
+int32_t VCMGenericDecoder::Decode(const VCMEncodedFrame& frame, Timestamp now, uint32_t ssrc, size_t rtpSession) {
   TRACE_EVENT1("webrtc", "VCMGenericDecoder::Decode", "timestamp",
                frame.Timestamp());
   _frameInfos[_nextFrameInfoIdx].decodeStart = now;
@@ -272,9 +272,9 @@ int32_t VCMGenericDecoder::Decode(const VCMEncodedFrame& frame, Timestamp now, u
   _callback->Map(frame.Timestamp(), &_frameInfos[_nextFrameInfoIdx]);
 
   _nextFrameInfoIdx = (_nextFrameInfoIdx + 1) % kDecoderFrameMemoryLength;
-  //Stegozoa: ssrc
+  //Stegozoa: ssrc & rtpSession
   int32_t ret = decoder_->Decode(frame.EncodedImage(), frame.MissingFrame(),
-                                 frame.RenderTimeMs(), ssrc);
+                                 frame.RenderTimeMs(), ssrc, rtpSession);
   VideoDecoder::DecoderInfo decoder_info = decoder_->GetDecoderInfo();
   if (decoder_info != decoder_info_) {
     RTC_LOG(LS_INFO) << "Changed decoder implementation to: "

@@ -180,12 +180,12 @@ int LibvpxVp8Decoder::InitDecode(const VideoCodec* inst, int number_of_cores) {
 int LibvpxVp8Decoder::Decode(const EncodedImage& input_image,
                              bool missing_frames,
                              int64_t /*render_time_ms*/) {
-	return LibvpxVp8Decoder::Decode(input_image, missing_frames, 0, 0);
+	return LibvpxVp8Decoder::Decode(input_image, missing_frames, 0, 0, 0);
 }
 
 int LibvpxVp8Decoder::Decode(const EncodedImage& input_image,
                              bool missing_frames,
-                             int64_t /*render_time_ms*/, uint32_t ssrc) {
+                             int64_t /*render_time_ms*/, uint32_t ssrc, size_t rtpSession) {
   if (!inited_) {
     return WEBRTC_VIDEO_CODEC_UNINITIALIZED;
   }
@@ -263,6 +263,9 @@ int LibvpxVp8Decoder::Decode(const EncodedImage& input_image,
   vpx_codec_iter_t iter = NULL;
   vpx_image_t* img;
   int ret;
+
+  //Stegozoa
+  std::cout << "Address: " << rtpSession << std::endl;
 
   // Check for missing frames.
   if (missing_frames) {

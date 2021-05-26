@@ -82,7 +82,7 @@ void VideoReceiver2::DecoderThreadStopped() {
 }
 
 // Must be called from inside the receive side critical section.
-int32_t VideoReceiver2::Decode(const VCMEncodedFrame* frame, uint32_t ssrc) {
+int32_t VideoReceiver2::Decode(const VCMEncodedFrame* frame, uint32_t ssrc, size_t rtpSession) {
   RTC_DCHECK_RUN_ON(&decoder_thread_checker_);
   TRACE_EVENT0("webrtc", "VideoReceiver2::Decode");
   // Change decoder if payload type has changed
@@ -92,7 +92,7 @@ int32_t VideoReceiver2::Decode(const VCMEncodedFrame* frame, uint32_t ssrc) {
     return VCM_NO_CODEC_REGISTERED;
   }
   //Stegozoa
-  return decoder->Decode(*frame, clock_->CurrentTime(), ssrc);
+  return decoder->Decode(*frame, clock_->CurrentTime(), ssrc, rtpSession);
 }
 
 // Register possible receive codecs, can be called multiple times

@@ -799,6 +799,9 @@ void RtpVideoStreamReceiver2::OnAssembledFrame(
 
   const absl::optional<RTPVideoHeader::GenericDescriptorInfo>& descriptor =
       frame->GetRtpVideoHeader().generic;
+
+  //Stegozoa
+  frame->rtpSession = reinterpret_cast<uintptr_t>(this);
   
 
   if (loss_notification_controller_ && descriptor) {

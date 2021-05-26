@@ -677,7 +677,7 @@ void VideoReceiveStream2::HandleEncodedFrame(
 
   //Stegozoa: pass ssrc
   uint32_t ssrc = config_.rtp.remote_ssrc;
-  int decode_result = video_receiver_.Decode(frame.get(), ssrc);
+  int decode_result = video_receiver_.Decode(frame.get(), ssrc, frame->rtpSession);
   if (decode_result == WEBRTC_VIDEO_CODEC_OK ||
       decode_result == WEBRTC_VIDEO_CODEC_OK_REQUEST_KEYFRAME) {
     keyframe_required_ = false;
