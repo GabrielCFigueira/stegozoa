@@ -1697,8 +1697,6 @@ void WebRtcVideoChannel::OnPacketReceived(rtc::CopyOnWriteBuffer packet,
       break;
   }
 
-  //Stegozoa
-  std::cout << "address: " << this << std::endl;
   uint32_t ssrc = 0;
   if (!GetRtpSsrc(packet.cdata(), packet.size(), &ssrc)) {
     return;

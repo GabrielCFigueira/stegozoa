@@ -17,8 +17,6 @@
 #include "rtc_base/logging.h"
 #include "rtc_base/strings/string_builder.h"
 
-//Stegozoa
-#include <iostream>
 
 namespace webrtc {
 namespace {
@@ -321,8 +319,6 @@ RtpPacketSinkInterface* RtpDemuxer::ResolveSink(
 
     // RSID is scoped to a given MID if both are included.
     if (rsid != nullptr) {
-    //Stegozoa
-    std::cout << "mid" << std::endl;
       RtpPacketSinkInterface* sink_by_mid_rsid =
           ResolveSinkByMidRsid(*mid, *rsid, ssrc);
       if (sink_by_mid_rsid != nullptr) {
@@ -338,8 +334,6 @@ RtpPacketSinkInterface* RtpDemuxer::ResolveSink(
 
   // RSID can be used without MID as long as they are unique.
   if (rsid != nullptr) {
-    //Stegozoa
-    std::cout << "rsid" << std::endl;
     RtpPacketSinkInterface* sink_by_rsid = ResolveSinkByRsid(*rsid, ssrc);
     if (sink_by_rsid != nullptr) {
       return sink_by_rsid;
@@ -350,15 +344,9 @@ RtpPacketSinkInterface* RtpDemuxer::ResolveSink(
   // between streams.
   const auto ssrc_sink_it = sink_by_ssrc_.find(ssrc);
   if (ssrc_sink_it != sink_by_ssrc_.end()) {
-  //Stegozoa
-  //RTPHeader header;
-  //packet.GetHeader(&header);
-  //std::cout << "Seq number: " << header.sequenceNumber << " ssrc: " << header.ssrc << " Stream id: " << header.extension.stream_id << "address: " << this << std::endl;
     return ssrc_sink_it->second;
   }
 
-  //Stegozoa
-  std::cout << "payload" << std::endl;
   // Legacy senders will only signal payload type, support that as last resort.
   return ResolveSinkByPayloadType(packet.PayloadType(), ssrc);
 }

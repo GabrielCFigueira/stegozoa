@@ -19,9 +19,6 @@
 #include <utility>
 #include <vector>
 
-//Stegozoa
-#include <iostream>
-
 #include "absl/types/optional.h"
 #include "api/rtc_event_log/rtc_event_log.h"
 #include "api/transport/network_control.h"
@@ -1393,10 +1390,6 @@ PacketReceiver::DeliveryStatus Call::DeliverRtp(MediaType media_type,
     }
   } else if (media_type == MediaType::VIDEO) {
     parsed_packet.set_payload_type_frequency(kVideoPayloadTypeFrequency);
-    //Stegozoa
-    //RTPHeader header;
-    //parsed_packet.GetHeader(&header);
-    //std::cout << "Seq number: " << header.sequenceNumber << " ssrc: " << header.ssrc << " Stream id: " << header.extension.stream_id << "address: " << this << std::endl;
     if (video_receiver_controller_.OnRtpPacket(parsed_packet)) {
       received_bytes_per_second_counter_.Add(length);
       received_video_bytes_per_second_counter_.Add(length);

@@ -976,8 +976,6 @@ void RtpVideoStreamReceiver2::ReceivePacket(const RtpPacketReceived& packet) {
     return;
   }
 
-  //Stegozoa
-  //std::cout << "something actually happened!" << std::endl; 
   OnReceivedPayloadData(std::move(parsed_payload->video_payload), packet,
                         parsed_payload->video_header);
 }

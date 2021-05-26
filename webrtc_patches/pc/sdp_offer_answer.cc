@@ -10,9 +10,6 @@
 
 #include "pc/sdp_offer_answer.h"
 
-//Stegozoa
-#include <csignal> 
-
 #include <algorithm>
 #include <iterator>
 #include <map>
@@ -1921,13 +1918,6 @@ void SdpOfferAnswerHandler::DoSetLocalDescription(
   // which may destroy it before returning.
   const SdpType type = desc->GetType();
 
-  //Stegozoa
-  if(desc) {
-	std::string sdp;
-	std::cout << "------------------local-SDP----------------" << std::endl;
-	desc->ToString(&sdp);
-  	std::cout << sdp << std::endl;
-  }
   error = ApplyLocalDescription(std::move(desc));
   // |desc| may be destroyed at this point.
 
@@ -1980,41 +1970,6 @@ void SdpOfferAnswerHandler::DoSetLocalDescription(
   // completed.
   transport_controller()->MaybeStartGathering();
 }
-
-//Stegozoa
-/*static std::string preferences(std::vector<RtpCodecCapability> codec_preferences) {
-	
-	std::string res;
-	for(unsigned long i = 0; i < codec_preferences.size(); ++i) {
-		res += codec_preferences[i].mime_type();
-		for(std::pair<std::string, std::string> element : codec_preferences[i].parameters)
-			res += element.first + element.second;
-		res += codec_preferences[i].max_temporal_layer_extensions;
-		res += codec_preferences[i].max_spatial_layer_extensions;
-		res += codec_preferences[i].svc_multi_stream_support;
-	}
-	return res;
-
-}
-//Stegozoa
-static std::string stegoOptions(cricket::MediaSessionOptions &options) {
-	std::string res;
-	for(cricket::MediaDescriptionOptions m : options.media_description_options) {
-		res += m.mid + "\n";
-		res += "SenderOptions\n";
-		for(cricket::SenderOptions s : m.sender_options) {
-			res += s.track_id + "\n";
-			for(std::string str : s.stream_ids)
-				res += str + "\n";
-			res += std::to_string(s.simulcast_layers.size()) + "\n";
-			res += std::to_string(s.num_sim_layers) + "\n";
-		}
-		res += preferences(m.codec_preferences) + "\n";
-	}
-	return res;
-
-}*/
-
 
 
 void SdpOfferAnswerHandler::DoCreateOffer(
@@ -2069,10 +2024,6 @@ void SdpOfferAnswerHandler::DoCreateOffer(
   cricket::MediaSessionOptions session_options;
   GetOptionsForOffer(options, &session_options);
   webrtc_session_desc_factory_->CreateOffer(observer, options, session_options);
-  //Stegozoa
-  //std::cout << "-----------------Option---------------" << std::endl;
-  //std::cout << stegoOptions(session_options) << std::endl;
-  //std::raise(SIGSEGV); 
 }
 
 void SdpOfferAnswerHandler::CreateAnswer(
@@ -2228,14 +2179,6 @@ void SdpOfferAnswerHandler::DoSetRemoteDescription(
   // Grab the description type before moving ownership to
   // ApplyRemoteDescription, which may destroy it before returning.
   const SdpType type = desc->GetType();
-
-  //Stegozoa
-  if(desc) {
-	std::string sdp;
-	std::cout << "------------------remote-SDP----------------" << std::endl;
-	desc->ToString(&sdp);
-  	std::cout << sdp << std::endl;
-  }
 
   error = ApplyRemoteDescription(std::move(desc));
   // |desc| may be destroyed at this point.
@@ -2487,42 +2430,18 @@ SdpOfferAnswerHandler::current_local_description() const {
 const SessionDescriptionInterface*
 SdpOfferAnswerHandler::current_remote_description() const {
   RTC_DCHECK_RUN_ON(signaling_thread());
-  //Stegozoa
-  /*std::string sdp;
-  SessionDescriptionInterface *sdi = current_remote_description_.get();
-  if(sdi) {
-	std::cout << "------------------remote-SDP----------------" << std::endl;
-	sdi->ToString(&sdp);
-  	std::cout << sdp << std::endl;
-  }*/
   return current_remote_description_.get();
 }
 
 const SessionDescriptionInterface*
 SdpOfferAnswerHandler::pending_local_description() const {
   RTC_DCHECK_RUN_ON(signaling_thread());
-  //Stegozoa
-  /*std::string sdp;
-  SessionDescriptionInterface *sdi = pending_local_description_.get();
-  if(sdi && 0) {
-	std::cout << "------------------local-SDP----------------" << std::endl;
-	sdi->ToString(&sdp);
-  	std::cout << sdp << std::endl;
-  }*/
   return pending_local_description_.get();
 }
 
 const SessionDescriptionInterface*
 SdpOfferAnswerHandler::pending_remote_description() const {
   RTC_DCHECK_RUN_ON(signaling_thread());
-  //Stegozoa
-  /*std::string sdp;
-  SessionDescriptionInterface *sdi = pending_remote_description_.get();
-  if(sdi) {
-	std::cout << "------------------remote-SDP----------------" << std::endl;
-	sdi->ToString(&sdp);
-  	std::cout << sdp << std::endl;
-  }*/
   return pending_remote_description_.get();
 }
 

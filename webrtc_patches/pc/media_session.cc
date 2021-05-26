@@ -1534,7 +1534,7 @@ std::unique_ptr<SessionDescription> MediaSessionDescriptionFactory::CreateOffer(
 	}
   }
   else
-	  std::cerr << "Stegozoa: VP8 is not supported" << std::endl;
+  	std::cerr << "Stegozoa: VP8 is not supported" << std::endl;
   
   if (!session_options.vad_enabled) {
     // If application doesn't want CN codecs in offer.

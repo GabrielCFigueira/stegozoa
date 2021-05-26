@@ -15,8 +15,6 @@
 #include "pc/peer_connection.h"
 #include "pc/sctp_utils.h"
 
-//Stegozoa
-#include <iostream>
 
 namespace webrtc {
 
@@ -29,15 +27,9 @@ bool DataChannelController::SendData(const cricket::SendDataParams& params,
                                      const rtc::CopyOnWriteBuffer& payload,
                                      cricket::SendDataResult* result) {
   if (data_channel_transport()) {
-    //Stegozoa
-    std::cout << "Sending data in data channel!" << std::endl;
-    std::cout << payload.cdata() << std::endl;
     return DataChannelSendData(params, payload, result);
   }
   if (rtp_data_channel()) {
-    //Stegozoa
-    std::cout << "Sending data in data channel!" << std::endl;
-    std::cout << payload.cdata() << std::endl;
     return rtp_data_channel()->SendData(params, payload, result);
   }
   RTC_LOG(LS_ERROR) << "SendData called before transport is ready";
@@ -137,9 +129,6 @@ void DataChannelController::OnDataReceived(
     DataMessageType type,
     const rtc::CopyOnWriteBuffer& buffer) {
   RTC_DCHECK_RUN_ON(network_thread());
-    //Stegozoa
-    std::cout << "Receiving data in data channel!" << std::endl;
-    std::cout << buffer.cdata() << std::endl;
   cricket::ReceiveDataParams params;
   params.sid = channel_id;
   params.type = ToCricketDataMessageType(type);
