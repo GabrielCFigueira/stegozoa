@@ -9,7 +9,7 @@ from flask import request
 from termcolor import colored 
 from automate import automateChromium, gracefullyCloseChromium
 
-from chromium_factory import *
+#from chromium_factory import *
 
 def PrintColored(string, color):
     print(colored(string, color))
