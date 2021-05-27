@@ -50,9 +50,6 @@ class RtpFrameObject : public EncodedFrame {
 
   uint8_t* mutable_data() { return image_buffer_->data(); }
 
-  //Stegozoa
-  size_t rtpSession;
-
  private:
   // Reference for mutable access.
   rtc::scoped_refptr<EncodedImageBuffer> image_buffer_;
