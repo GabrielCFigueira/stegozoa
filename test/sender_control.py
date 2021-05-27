@@ -522,8 +522,8 @@ if __name__ == "__main__":
 
     for network_condition in network_conditions:
         for baseline in baselines:
-            for i in range(0,250):
+            for i in range(0,247):
                 SampleRegularExact(0 + i, "/home/vagrant/SharedFolder/StegozoaCaps/RegularTraffic_1/", baseline, network_condition)
-                SampleStegozoaExact(250 + i, "/home/vagrant/SharedFolder/StegozoaCaps/StegozoaTraffic/", baseline, network_condition, chromium_builds[0])
+                SampleStegozoaExact(247 + i, "/home/vagrant/SharedFolder/StegozoaCaps/StegozoaTraffic/", baseline, network_condition, chromium_builds[0])
 
 
