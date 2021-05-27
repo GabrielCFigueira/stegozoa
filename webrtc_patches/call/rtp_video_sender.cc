@@ -15,9 +15,6 @@
 #include <string>
 #include <utility>
 
-//Stegozoa
-#include <iostream>
-
 #include "absl/algorithm/container.h"
 #include "absl/strings/match.h"
 #include "api/array_view.h"
