@@ -499,7 +499,7 @@ int readQdctLsb(short *qcoeff, int has_y2_block, uint32_t ssrc) {
     //optimization idea: loop unroll
     for(int i = 0; i < 384 + has_y2_block * 16; i++) {
         if(qcoeff[i] != 1 && qcoeff[i] != 0 && (!has_y2_block || MOD16(i) != 0 || i > 255)) {
-            fprintf(stdout, "msg->bit: %d, msg->size: %d\n", msg->bit, msg->size);
+            fprintf(stdout, "1msg->bit: %d, msg->size: %d\n", msg->bit, msg->size * 8);
             fflush(stdout);
             setBit(msg->buffer, msg->bit, getLsb(qcoeff[i]));
             msg->bit++;
@@ -521,6 +521,8 @@ int readQdctLsb(short *qcoeff, int has_y2_block, uint32_t ssrc) {
             }
             else if(msg->bit == msg->size * 8 && msg->bit > 48)
                 flushDecoder(ssrc);
+            fprintf(stdout, "2msg->bit: %d, msg->size: %d\n", msg->bit, msg->size * 8);
+            fflush(stdout);
         }
             
     }
