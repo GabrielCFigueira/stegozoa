@@ -958,7 +958,7 @@ if __name__ == "__main__":
 
 
     ######################### Configure Accordingly ################################
-    data_folder = "/home/vagrant/SharedFolder/StegozoaCaps/" + cap_folder_name + "/"
+    data_folder = "/home/vagrant/SharedFolder/StegozoaCaps/" #+ cap_folder_name + "/" TODO
     ################################################################################
 
 
