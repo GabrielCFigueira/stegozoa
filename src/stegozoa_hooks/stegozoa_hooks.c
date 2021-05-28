@@ -504,6 +504,8 @@ int readQdctLsb(short *qcoeff, int has_y2_block, uint32_t ssrc) {
             setBit(msg->buffer, msg->bit, getLsb(qcoeff[i]));
             msg->bit++;
             
+            fprintf(stdout, "2msg->bit: %d, msg->size: %d\n", msg->bit, msg->size * 8);
+            fflush(stdout);
             if(msg->bit == 32) {
                 uint32_t newConstant = obtainConstant(msg->buffer);
                 if(newConstant != constant) {
@@ -521,7 +523,7 @@ int readQdctLsb(short *qcoeff, int has_y2_block, uint32_t ssrc) {
             }
             else if(msg->bit == msg->size * 8 && msg->bit > 48)
                 flushDecoder(ssrc);
-            fprintf(stdout, "2msg->bit: %d, msg->size: %d\n", msg->bit, msg->size * 8);
+            fprintf(stdout, "3msg->bit: %d, msg->size: %d\n", msg->bit, msg->size * 8);
             fflush(stdout);
         }
             
