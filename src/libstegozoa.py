@@ -274,6 +274,11 @@ def retransmit(receiver, synBytes):
 def parseMessage(message):
 
     size = parse2byte(message[0:2])
+
+    if size < 4:
+        print("Unexpected message size")
+        return None
+
     msgType = (message[2] & 0xe0) >> 5
     frag = (message[2] & 0x10) >> 4
     sender = (message[3] & 0xf0) >> 4
@@ -284,6 +289,9 @@ def parseMessage(message):
         payload = message[6:size + 2] # + 2 counting the size header
         crc = bytes(0)
     else:
+        if size < 8:
+            print("Unexpected message size")
+            return None
         payload = message[6:size + 2 - 4] # + 2 counting the size header
         crc = message[size + 2 - 4:size + 2]
 
@@ -305,6 +313,10 @@ def receiveMessage():
         body = decoderPipe.read(size) #message body
         
         parsedMessage = parseMessage(header + body)
+        
+        if not parsedMessage:
+            continue
+
         msgType = parsedMessage['msgType']
         frag = parsedMessage['frag']
         sender = parsedMessage['sender']
