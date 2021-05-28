@@ -55,7 +55,7 @@ headless_env['DISPLAY'] = ':0'
 network_conditions = [
     
     #No changes to the network
-    [[None], [None], "regular.regular"],
+    [[None], [None], "regular.regular"]]
     """
     #2ms, 5ms, 10ms
     #Variation of RTT between VM1 / VM3
@@ -78,7 +78,7 @@ network_conditions = [
     [["netem delay 25ms 2ms distribution normal"], ["netem delay 25ms 2ms distribution normal"],   "delay_50.delay_50"],
     [["netem delay 25ms 2ms distribution normal"], ["netem delay 50ms 5ms distribution normal"],   "delay_50.delay_100"],
     """
-]
+#]
 
 #################################################################################
 
