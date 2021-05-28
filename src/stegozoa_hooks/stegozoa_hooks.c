@@ -490,17 +490,17 @@ static void flushDecoder(uint32_t ssrc) {
 
 int readQdctLsb(short *qcoeff, int has_y2_block, uint32_t ssrc) {
 
-    //fprintf(stdout, "1\n");
-    //fflush(stdout);
+    fprintf(stdout, "readQdct\n");
+    fflush(stdout);
     message_t *msg = getDecoderContext(ssrc)->msg;
-    //fprintf(stdout, "2\n");
-    //fflush(stdout);
+    fprintf(stdout, "msg address: %x\n", msg);
+    fflush(stdout);
 
     //optimization idea: loop unroll
     for(int i = 0; i < 384 + has_y2_block * 16; i++) {
         if(qcoeff[i] != 1 && qcoeff[i] != 0 && (!has_y2_block || MOD16(i) != 0 || i > 255)) {
-            //fprintf(stdout, "3\n");
-            //fflush(stdout);
+            fprintf(stdout, "msg->bit: %d, msg->size: %d\n", msg->bit, msg->size);
+            fflush(stdout);
             setBit(msg->buffer, msg->bit, getLsb(qcoeff[i]));
             msg->bit++;
             
