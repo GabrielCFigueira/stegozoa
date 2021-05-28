@@ -18,8 +18,8 @@ for i in range(200):
     if message != bytes("why are we still here... just to suffer?" * 200, 'ascii'):
         print("Corrupted!")
     else:
-        data += len(message)
+        data += len(message) * 8
 
 end = time.time()
-print("data: " + str(data) + " time: " + str(end - start))
-print("Throughput: " + str(data / (end - start)))
+print("data(bits): " + str(data) + " time: " + str(end - start))
+print("Throughput(bits/s): " + str(data / (end - start)))
