@@ -520,6 +520,11 @@ int readQdctLsb(short *qcoeff, int has_y2_block, uint32_t ssrc) {
                     msg->bit = 0;
                     return 1;
                 }
+                else if(msg->size == 6) {
+                    error("Message with 0 size", "When extracting bits from qcoeff");
+                    msg->bit = 0;
+                    return 1;
+                }
             }
             else if(msg->bit == msg->size * 8 && msg->bit > 48)
                 flushDecoder(ssrc);
