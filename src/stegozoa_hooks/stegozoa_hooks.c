@@ -458,7 +458,7 @@ int writeQdctLsb(short *qcoeff, int has_y2_block, uint32_t ssrc) {
     
 }
 
-static void flushDecoder(uint32_t ssrc) {
+void flushDecoder(uint32_t ssrc) {
 
     message_t *msg = getDecoderContext(ssrc)->msg;
     int n_bytes;
