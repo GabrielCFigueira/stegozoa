@@ -1519,7 +1519,6 @@ std::unique_ptr<SessionDescription> MediaSessionDescriptionFactory::CreateOffer(
           : &offer_rtp_data_codecs);
 
   //Stegozoa: force usage of VP8
-  std::cout << "CreateOffer" << std::endl;
   bool hasVP8 = false;
   for(VideoCodec v : offer_video_codecs)
   	if(v.name == "VP8")
@@ -1687,7 +1686,6 @@ MediaSessionDescriptionFactory::CreateAnswer(
                      &answer_video_codecs, &answer_rtp_data_codecs);
 
   //Stegozoa: force usage of VP8
-  std::cout << "CreateAnswer" << std::endl;
   bool hasVP8 = false;
   for(VideoCodec v : answer_video_codecs)
   	if(v.name == "VP8")

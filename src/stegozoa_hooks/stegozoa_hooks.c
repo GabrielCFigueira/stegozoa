@@ -374,8 +374,6 @@ void flushEncoder(uint32_t ssrc, int simulcast) {
         ctx = createEncoderContext(ssrc);
         if(broadcast) {
             context_t *best = encoderCtxMostMessages();
-            fprintf(stdout, "Time to Clone! %d\n", best->n_msg);
-            fflush(stdout);
             if(best != ctx)
                 cloneMessageQueue(best, ctx);
         }
@@ -460,11 +458,7 @@ int writeQdctLsb(short *qcoeff, int has_y2_block, uint32_t ssrc) {
 
 void flushDecoder(uint32_t ssrc) {
 
-    fprintf(stdout, "flushDecoder ssrc: %lu\n", (unsigned long) ssrc);
-    fflush(stdout);
     message_t *msg = getDecoderContext(ssrc)->msg;
-    fprintf(stdout, "msg address: %x\n", msg);
-    fflush(stdout);
     int n_bytes;
     msg->bit = 0; //should be 0
 
@@ -474,15 +468,11 @@ void flushDecoder(uint32_t ssrc) {
     //int frag = (flags[0] & 0x10) >> 4;
     int sender = (flags[1] & 0xf0) >> 4;
     int receiver = (flags[1] & 0xf);
-    fprintf(stdout, "msg type: %d\n", msgType);
-    fflush(stdout);
 
     if(msgType == 1 && receiver == senderId) {
         uint32_t localSsrc = obtainConstant(msg->buffer + 10);
         context_t *ctx = getEncoderContext(localSsrc);
-        fprintf(stdout, "ctx address: %x\n", ctx);
-        fflush(stdout);
-        if(!containsId(ctx, sender))
+        if(ctx != NULL && !containsId(ctx, sender))
             ctx->id[ctx->n_ids++] = sender;
     }
 
@@ -498,22 +488,14 @@ void flushDecoder(uint32_t ssrc) {
 
 int readQdctLsb(short *qcoeff, int has_y2_block, uint32_t ssrc) {
 
-    //fprintf(stdout, "readQdct\n");
-    //fflush(stdout);
     message_t *msg = getDecoderContext(ssrc)->msg;
-    //fprintf(stdout, "msg address: %x\n", msg);
-    //fflush(stdout);
 
     //optimization idea: loop unroll
     for(int i = 0; i < 384 + has_y2_block * 16; i++) {
         if(qcoeff[i] != 1 && qcoeff[i] != 0 && (!has_y2_block || MOD16(i) != 0 || i > 255)) {
-            //fprintf(stdout, "1msg->bit: %d, msg->size: %d\n", msg->bit, msg->size * 8);
-            //fflush(stdout);
             setBit(msg->buffer, msg->bit, getLsb(qcoeff[i]));
             msg->bit++;
             
-            //fprintf(stdout, "2msg->bit: %d, msg->size: %d\n", msg->bit, msg->size * 8);
-            //fflush(stdout);
             if(msg->bit == 32) {
                 uint32_t newConstant = obtainConstant(msg->buffer);
                 if(newConstant != constant) {
@@ -536,8 +518,6 @@ int readQdctLsb(short *qcoeff, int has_y2_block, uint32_t ssrc) {
             }
             else if(msg->bit == msg->size * 8 && msg->bit > 48)
                 flushDecoder(ssrc);
-            //fprintf(stdout, "3msg->bit: %d, msg->size: %d\n", msg->bit, msg->size * 8);
-            //fflush(stdout);
         }
             
     }
