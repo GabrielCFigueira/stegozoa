@@ -480,6 +480,8 @@ void flushDecoder(uint32_t ssrc) {
     if(msgType == 1 && receiver == senderId) {
         uint32_t localSsrc = obtainConstant(msg->buffer + 10);
         context_t *ctx = getEncoderContext(localSsrc);
+        fprintf(stdout, "ctx address: %x\n", ctx);
+        fflush(stdout);
         if(!containsId(ctx, sender))
             ctx->id[ctx->n_ids++] = sender;
     }
