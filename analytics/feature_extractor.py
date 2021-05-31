@@ -910,7 +910,7 @@ def FeatureExtractionCombined(sampleFolder, cap_folder, baseline, featureFolder,
 def profile_processing(network_condition_type, profile_type, b, data_folder):
     cfgs = [
         # start_time, end_time, baseline_size
-        [0, 30, 250],
+        [0, 30, 246],
     ]
     network_condition = network_condition_type
     profile = profile_type
@@ -918,7 +918,7 @@ def profile_processing(network_condition_type, profile_type, b, data_folder):
     PrintColored("Analyzing " + network_condition + " Network Condition", "yellow")
     samples_folder = data_folder + "/" + b + "/" + profile + "/" + network_condition
 
-    #For different splits of baseline sizes (currently half of each dataset = 250 samples)
+    #For different splits of baseline sizes (currently half of each dataset = 246 samples)
     for cfg in cfgs:
         start_time = cfg[0]
         end_time = cfg[1]
