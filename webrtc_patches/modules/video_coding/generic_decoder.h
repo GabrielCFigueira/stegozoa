@@ -105,7 +105,7 @@ class VCMGenericDecoder {
    * inputVideoBuffer reference to encoded video frame
    */
   //Stegozoa: ssrc
-  int32_t Decode(const VCMEncodedFrame& inputFrame, Timestamp now, uint32_t ssrc = 0, size_t rtpSession = 0);
+  int32_t Decode(const VCMEncodedFrame& inputFrame, Timestamp now, uint32_t ssrc = 0, void *rtpSession = 0);
 
   /**
    * Set decode callback. Deregistering while decoding is illegal.

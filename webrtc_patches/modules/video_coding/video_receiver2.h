@@ -39,7 +39,7 @@ class VideoReceiver2 {
   int32_t RegisterReceiveCallback(VCMReceiveCallback* receiveCallback);
 
   //Stegozoa: ssrc
-  int32_t Decode(const webrtc::VCMEncodedFrame* frame, uint32_t ssrc = 0, size_t rtpSession = 0);
+  int32_t Decode(const webrtc::VCMEncodedFrame* frame, uint32_t ssrc = 0, void *rtpSession = 0);
 
   // Notification methods that are used to check our internal state and validate
   // threading assumptions. These are called by VideoReceiveStream.

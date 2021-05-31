@@ -84,7 +84,7 @@ class EncodedFrame : public webrtc::VCMEncodedFrame {
   bool is_last_spatial_layer = true;
 
   //Stegozoa
-  size_t rtpSession;
+  void *rtpSession;
 };
 
 }  // namespace video_coding
