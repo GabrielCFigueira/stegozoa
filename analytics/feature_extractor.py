@@ -34,21 +34,6 @@ def FeatureExtractionCombined(sampleFolder, cap_folder, baseline, featureFolder,
     if not os.path.exists(feature_set_folder_stats):
         os.makedirs(feature_set_folder_stats)
 
-    feature_set_folder_out_stats = "extractedFeatures/" + cap_folder + "/" + baseline_name + "/" + profile + "/" + network_condition + '/OutStats_' + str(start_time) + '_' + str(
-        end_time) + "_" + str(baseline_size) + "/" + featureFolder
-    if not os.path.exists(feature_set_folder_out_stats):
-        os.makedirs(feature_set_folder_out_stats)
-
-    feature_set_folder_in_stats = "extractedFeatures/" + cap_folder + "/" + baseline_name + "/" + profile + "/" + network_condition + '/InStats_' + str(start_time) + '_' + str(
-        end_time) + "_" + str(baseline_size) + "/" + featureFolder
-    if not os.path.exists(feature_set_folder_in_stats):
-        os.makedirs(feature_set_folder_in_stats)
-
-    feature_set_folder_time_stats = "extractedFeatures/" + cap_folder + "/" + baseline_name + "/" + profile + "/" + network_condition + '/TimeStats_' + str(start_time) + '_' + str(
-        end_time) + "_" + str(baseline_size) + "/" + featureFolder
-    if not os.path.exists(feature_set_folder_time_stats):
-        os.makedirs(feature_set_folder_time_stats)
-
     feature_set_folder_pl = "extractedFeatures/" + cap_folder + "/" + baseline_name + "/" + profile + "/" + network_condition + '/PL_' + str(start_time) + '_' + str(end_time) + "_" + str(
         baseline_size) + "/" + featureFolder
     if not os.path.exists(feature_set_folder_pl):
@@ -167,7 +152,7 @@ def FeatureExtractionCombined(sampleFolder, cap_folder, baseline, featureFolder,
                         udp_protocols_seen.add(str(udp_hdr.data[0]) + ", " + str(udp_hdr.data[1]))
                         totalPackets += 1
 
-                        # If source is recipient
+                        # If source is caller
                         if (src_ip_addr_str == SOURCE_IP):
                             totalPacketsOut += 1
                             absTimesOut.append(ts)
@@ -190,7 +175,7 @@ def FeatureExtractionCombined(sampleFolder, cap_folder, baseline, featureFolder,
                                 in_current_burst = 0
                                 in_current_burst_size = 0
                                 in_current_burst_start = 0
-                        # If source is caller
+                        # If source is recipient
                         else:
                             totalPacketsIn += 1
                             packetSizesIn.append(len(buf))
