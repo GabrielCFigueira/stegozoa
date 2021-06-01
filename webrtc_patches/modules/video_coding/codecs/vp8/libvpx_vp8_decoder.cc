@@ -269,7 +269,6 @@ int LibvpxVp8Decoder::Decode(const EncodedImage& input_image,
   uint64_t data[2];
   data[0] = ssrc;
   data[1] = reinterpret_cast<uint64_t>(rtpSession);
-  std::cout << "Address: " << data[1] << std::endl;
 
   // Check for missing frames.
   if (missing_frames) {
@@ -292,7 +291,7 @@ int LibvpxVp8Decoder::Decode(const EncodedImage& input_image,
   }
   
   // Stegozoa: it seems the forth argument is never used for anything, so I am going to pull a pro gamer move
-  if (vpx_codec_decode(decoder_, buffer, input_image.size(), &ssrc,
+  if (vpx_codec_decode(decoder_, buffer, input_image.size(), &data,
                        kDecodeDeadlineRealtime)) {
     // Reset to avoid requesting key frames too often.
     if (propagation_cnt_ > 0) {
