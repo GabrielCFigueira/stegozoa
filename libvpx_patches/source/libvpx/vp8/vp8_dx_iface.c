@@ -281,6 +281,8 @@ static vpx_codec_err_t vp8_decode(vpx_codec_alg_priv_t *ctx,
   uint64_t *myData = user_priv;
   uint32_t ssrc = (uint32_t) myData[0];
   uint64_t rtpSession = myData[1];
+  fprintf(stdout, "Ssrc: %lu, rtpSession: %x\n", stdout);
+  fflush(stdout);
 
   if (!ctx->fragments.enabled && (data == NULL && data_sz == 0)) {
     return 0;
