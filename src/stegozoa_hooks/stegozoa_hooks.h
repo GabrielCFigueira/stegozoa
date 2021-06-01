@@ -28,7 +28,7 @@ typedef struct context {
 void flushEncoder(uint32_t ssrc, int simulcast);
 
 int writeQdctLsb(short *qcoeff, int has_y2_block, uint32_t ssrc);
-int readQdctLsb(short *qcoeff, int has_y2_block, uint32_t ssrc);
+int readQdctLsb(short *qcoeff, int has_y2_block, uint32_t ssrc, uint64_t rtpSession);
 
 int initializeEmbbed();
 int initializeExtract();

@@ -183,7 +183,7 @@ static context_t *getEncoderContextById(int id) {
 static context_t *getDecoderContext(uint32_t ssrc, uint64_t rtpSession) {
 
     for(int i = 0; i < n_decoders; i++)
-        if(decoders[i]->ssrc == ssrc && decoder[i]->rtpSession = rtpSession)
+        if(decoders[i]->ssrc == ssrc && decoders[i]->rtpSession == rtpSession)
             return decoders[i];
 
     context_t *ctx = newContext(ssrc);
