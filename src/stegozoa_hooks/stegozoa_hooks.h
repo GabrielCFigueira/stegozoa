@@ -18,6 +18,7 @@ typedef struct message {
 typedef struct context {
 	message_t *msg;
 	uint32_t ssrc;
+	uint64_t rtpSession;
 	int n_msg;
 	int id[NPEERS];
 	int n_ids;

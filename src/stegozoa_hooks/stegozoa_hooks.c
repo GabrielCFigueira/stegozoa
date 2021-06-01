@@ -180,15 +180,16 @@ static context_t *getEncoderContextById(int id) {
     return NULL;
 }
 
-static context_t *getDecoderContext(uint32_t ssrc) {
+static context_t *getDecoderContext(uint32_t ssrc, uint64_t rtpSession) {
 
     for(int i = 0; i < n_decoders; i++)
-        if(decoders[i]->ssrc == ssrc)
+        if(decoders[i]->ssrc == ssrc && decoder[i]->rtpSession = rtpSession)
             return decoders[i];
 
     context_t *ctx = newContext(ssrc);
     ctx->msg = newMessage();
     ctx->n_msg = 1;
+    ctx->rtpSession = rtpSession;
     decoders[n_decoders++] = ctx;
     
     return ctx;
@@ -456,9 +457,9 @@ int writeQdctLsb(short *qcoeff, int has_y2_block, uint32_t ssrc) {
     
 }
 
-static void flushDecoder(uint32_t ssrc) {
+static void flushDecoder(uint32_t ssrc, uint64_t rtpSession) {
 
-    message_t *msg = getDecoderContext(ssrc)->msg;
+    message_t *msg = getDecoderContext(ssrc, rtpSession)->msg;
     int n_bytes;
     msg->bit = 0; //should be 0
 
@@ -486,9 +487,9 @@ static void flushDecoder(uint32_t ssrc) {
 
 }
 
-int readQdctLsb(short *qcoeff, int has_y2_block, uint32_t ssrc) {
+int readQdctLsb(short *qcoeff, int has_y2_block, uint32_t ssrc, uint64_t rtpSession) {
 
-    message_t *msg = getDecoderContext(ssrc)->msg;
+    message_t *msg = getDecoderContext(ssrc, rtpSession)->msg;
 
     //optimization idea: loop unroll
     for(int i = 0; i < 384 + has_y2_block * 16; i++) {
@@ -517,7 +518,7 @@ int readQdctLsb(short *qcoeff, int has_y2_block, uint32_t ssrc) {
                 }
             }
             else if(msg->bit == msg->size * 8 && msg->bit > 48)
-                flushDecoder(ssrc);
+                flushDecoder(ssrc, rtpSession);
         }
             
     }
