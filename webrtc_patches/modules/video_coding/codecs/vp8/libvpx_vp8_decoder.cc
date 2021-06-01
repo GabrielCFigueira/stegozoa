@@ -266,12 +266,15 @@ int LibvpxVp8Decoder::Decode(const EncodedImage& input_image,
 
   //Stegozoa
   std::cout << "Address: " << rtpSession << std::endl;
+  uint64_t data[2];
+  data[0] = ssrc;
+  data[1] = rtpSession;
 
   // Check for missing frames.
   if (missing_frames) {
     // Call decoder with zero data length to signal missing frames.
     // Stegozoa: it seems the forth argument is never used for anything, so I am going to pull a pro gamer move
-    if (vpx_codec_decode(decoder_, NULL, 0, &ssrc, kDecodeDeadlineRealtime)) {
+    if (vpx_codec_decode(decoder_, NULL, 0, &data, kDecodeDeadlineRealtime)) {
       // Reset to avoid requesting key frames too often.
       if (propagation_cnt_ > 0)
         propagation_cnt_ = 0;
