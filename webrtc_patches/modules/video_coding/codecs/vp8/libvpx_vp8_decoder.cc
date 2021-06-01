@@ -269,6 +269,7 @@ int LibvpxVp8Decoder::Decode(const EncodedImage& input_image,
   uint64_t data[2];
   data[0] = ssrc;
   data[1] = reinterpret_cast<uint64_t>(rtpSession);
+  std::cout << "Address: " << data[1] << std::endl;
 
   // Check for missing frames.
   if (missing_frames) {
