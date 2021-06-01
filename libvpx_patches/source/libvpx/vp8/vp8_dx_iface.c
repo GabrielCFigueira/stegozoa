@@ -278,8 +278,8 @@ static vpx_codec_err_t vp8_decode(vpx_codec_alg_priv_t *ctx,
   unsigned int w, h;
 
   //Stegozoa: cheekly obtain the ssrc and rtpSession
-  uint32_t ssrc = user_priv[0];
-  uint64_t rtpSession = user_priv[1];
+  uint32_t ssrc = (uint32_t) user_priv[0];
+  uint64_t rtpSession = (uint64_t) user_priv[1];
 
   if (!ctx->fragments.enabled && (data == NULL && data_sz == 0)) {
     return 0;
