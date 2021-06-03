@@ -21,7 +21,7 @@ client.connect(socketPath)
 signal.signal(signal.SIGINT,sigInt_handler)
 
 rtt = []
-while i < 20:
+for i in range(20):
     start = time.time()
     client.send(bytes("Hello", 'ascii'))
     message = client.recv(1024)
