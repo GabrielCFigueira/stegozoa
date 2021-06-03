@@ -305,7 +305,7 @@ def SampleRegularExact(sample_index, config, baseline, network_condition):
             print "[P] Performing remote automation task"
             RESTCall("automateApp", webrtc_app)
         
-        time.sleep(10) # ping time
+        time.sleep(20) # ping time
         
         #Start Traffic Capture in sync
         now = time.time()
@@ -454,8 +454,9 @@ def SampleStegozoaExact(sample_index, config, baseline, network_condition, chrom
         print "[P] Performing Ping Test"
         RESTCall("pingTest")
         StegozoaPingTest(True)
-        time.sleep(10) # ping time
+        time.sleep(20) # ping time
         SaveStegozoaPingResult(stegozoa_cap_folder + baseline + "/" + network_condition[2] + "/" + chat_sample[:-4].replace(" ", "") + "_" + str(i), True)
+        RestCall("killPingTest")
 
         #Start Traffic Capture in sync
         now = time.time()

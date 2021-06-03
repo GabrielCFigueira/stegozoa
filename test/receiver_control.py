@@ -137,6 +137,12 @@ def StegozoaPingTest():
     sub.Popen(args, shell = True, stdout=devnull, stderr=devnull)
     return "Starting Ping Test"
 
+@app.route('/killPingTest', methods=['POST'])
+def killStegozoaPingTest():
+    PrintColored("Killing Ping Test", 'red')
+    os.system("pkill -SIGINT -f pingReceiveTest")
+    return "Killing Ping Test"
+
 @app.route('/downloadTest', methods=['POST'])
 def StegozoaDownloadTest():
     args = "python3 " + stegozoa_test_folder_location + "uploadTest.py"
