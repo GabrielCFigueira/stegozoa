@@ -343,7 +343,7 @@ static void *fetchDataThread(void *args) {
             }
         }
 
-        usleep(10000);
+        usleep(2000);
     }
 
 }

@@ -56,6 +56,8 @@ def send():
             libstegozoa.send(message, 15) #15 is the broadcast address
         else:
             newConnection()
+        
+        time.sleep(0.1)
 
 
 def receive():
