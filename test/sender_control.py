@@ -456,7 +456,7 @@ def SampleStegozoaExact(sample_index, config, baseline, network_condition, chrom
         StegozoaPingTest(True)
         time.sleep(20) # ping time
         SaveStegozoaPingResult(stegozoa_cap_folder + baseline + "/" + network_condition[2] + "/" + chat_sample[:-4].replace(" ", "") + "_" + str(i), True)
-        RestCall("killPingTest")
+        RESTCall("killPingTest")
 
         #Start Traffic Capture in sync
         now = time.time()
