@@ -140,7 +140,7 @@ static context_t *createEncoderContext(uint32_t ssrc) {
     return encoders[n_encoders - 1];
 }
 
-static context_t *encoderCtxMostMessages() {
+/*static context_t *encoderCtxMostMessages() {
 
     int n_msg = -1;
     context_t *res = NULL;
@@ -176,7 +176,7 @@ static void cloneMessageQueue(context_t *src, context_t *dst) {
     dst->n_msg = src->n_msg;
     printf("Time to clone! %d\n", src->n_msg);
 
-}
+}*/
 
 static int containsId(context_t *ctx, int id) {
 
