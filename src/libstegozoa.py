@@ -88,7 +88,7 @@ def addFragment(message, frag):
 
     if frag == 0:
         res = bytes(0)
-        while not fragmentQueue.empty(): #TODO mutex
+        while not fragmentQueue.empty():
             res += fragmentQueue.get()
         res += message
         messageQueue.put(res)
@@ -167,23 +167,29 @@ class recvQueue:
             if syn in self.retransmissions:
                 del(self.retransmissions[syn])
 
-            print("Retransmission!")
-            
-            if syn < self.syn: #wrap around 65536
-                syn += 65536
-            for i in range(self.syn, syn):
-                
-                actualSyn = i & 0xffff
 
-                if actualSyn in self.retransmissions or actualSyn in self.queue:
-                    continue
-                else:
-                    self.retransmissions[actualSyn] = actualSyn
+            if syn in self.queue:
+                self.duplicates += 1
+                print("Duplicates: " + str(self.duplicates))
+            else:
 
-                response = createMessage(3, receiver, sender, 0, 0, create2byte(actualSyn), True)
+                print("Retransmission!")
                 
-                thread = threading.Thread(target=processRetransmission, args=(actualSyn, self.retransmissions, self.mutex, response))
-                thread.start() #have single thread doing this? TODO
+                if syn < self.syn: #wrap around 65536
+                    syn += 65536
+                for i in range(self.syn, syn):
+                    
+                    actualSyn = i & 0xffff
+
+                    if actualSyn in self.retransmissions or actualSyn in self.queue:
+                        continue
+                    else:
+                        self.retransmissions[actualSyn] = actualSyn
+
+                    response = createMessage(3, receiver, sender, 0, 0, create2byte(actualSyn), True)
+                    
+                    thread = threading.Thread(target=processRetransmission, args=(actualSyn, self.retransmissions, self.mutex, response))
+                    thread.start() #have single thread doing this? TODO
 
 
         elif syn == self.syn:

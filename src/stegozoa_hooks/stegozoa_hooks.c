@@ -95,7 +95,8 @@ static void insertMessage(context_t *ctx, message_t *newMsg) {
             msg = msg->next;
 
             if(msg == NULL || (msg->msgType != 3 && msg->msgType != 4) || 
-               msg->msgType > newMsg->msgType || msg->receiverId < newMsg->receiverId) {
+               msg->msgType > newMsg->msgType || msg->receiverId < newMsg->receiverId || 
+               (msg->syn > newMsg->syn && msg->syn - newMsg->syn < 10000)) {
                 
                 previousMsg->next = newMsg;
                 newMsg->next = msg;
