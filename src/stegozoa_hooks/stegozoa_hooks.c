@@ -86,11 +86,23 @@ static void appendMessage(context_t *ctx, message_t *newMsg) {
 
 static void insertMessage(context_t *ctx, message_t *newMsg) {
     message_t *msg = ctx->msg;
+    message_t *previousMsg;
     if(msg == NULL)
         ctx->msg = newMsg;
     else {
-        newMsg->next = msg->next;
-        msg->next = newMsg;
+        do {
+            previousMsg = msg;
+            msg = msg->next;
+
+            if(msg == NULL || msg->msgType != 3 && msg->msgType != 4 || 
+               msg->msgType > newMsg->msgType || msg->receiverId < newMsg->receiverId || msg->syn > newMsg->syn) {
+                
+                previousMsg->next = newMsg;
+                newMsg->next = msg;
+                break;
+            }
+
+        } while (1);
     }
     ctx->n_msg++;
 }
@@ -99,6 +111,9 @@ static message_t *copyMessage(message_t *msg) {
     message_t *newMsg = newMessage();
     newMsg->bit = msg->bit;
     newMsg->size = msg->size;
+    newMsg->receiverId = msg->receiverId;
+    newMsg->syn = msg->syn;
+    newMsg->msgType = msg->msgType;
     memcpy(newMsg->buffer, msg->buffer, BUFFER_LEN * sizeof(unsigned char));
     return newMsg;
 }
@@ -272,6 +287,12 @@ static void *fetchDataThread(void *args) {
             //int frag = (flags[0] & 0x10) >> 4;
             int sender = (flags[1] & 0xf0) >> 4;
             int receiver = (flags[1] & 0xf);
+
+            unsigned int syn = parseSize(newMsg->buffer, 8);
+
+            newMsg->msgType = msgType;
+            newMsg->receiverId = receiver;
+            newMsg->syn = syn;
 
             if(pthread_mutex_lock(&barrier_mutex)) {
                 error("Who knows", "Trying to acquire the lock");

@@ -12,6 +12,10 @@ typedef struct message {
 	int bit;
 	int size;
 
+	int msgType;
+	int receiverId;
+	unsigned int syn;
+
 	struct message *next;
 } message_t;
 
