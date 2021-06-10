@@ -95,12 +95,16 @@ static void insertMessage(context_t *ctx, message_t *newMsg) {
             msg = msg->next;
 
             if(msg == NULL || (msg->msgType != 3 && msg->msgType != 4) || 
-               msg->msgType > newMsg->msgType || msg->receiverId < newMsg->receiverId || msg->syn > newMsg->syn) {
+               msg->msgType > newMsg->msgType || msg->receiverId < newMsg->receiverId) {
                 
                 previousMsg->next = newMsg;
                 newMsg->next = msg;
                 break;
-            }
+
+            } else if(msg->msgType == 4 && newMsg->msgType == 4 && 
+                    msg->receiverId == newMsg->receiverId && msg->syn == newMsg->syn) //remove duplicates
+                return;
+
 
         } while (1);
     }
