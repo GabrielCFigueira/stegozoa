@@ -161,17 +161,17 @@ class recvQueue:
         self.mutex.acquire()
         print("Expected syn: " + str(self.syn))
         if syn > self.syn and abs(syn - self.syn) < 10000 or syn + 65536 - self.syn < 10000:
-            self.queue[syn] = message
-            self.frag[syn] = frag
-
-            if syn in self.retransmissions:
-                del(self.retransmissions[syn])
 
 
             if syn in self.queue:
                 self.duplicates += 1
                 print("Duplicates: " + str(self.duplicates))
             else:
+                self.queue[syn] = message
+                self.frag[syn] = frag
+
+                if syn in self.retransmissions:
+                    del(self.retransmissions[syn])
 
                 print("Retransmission!")
                 
