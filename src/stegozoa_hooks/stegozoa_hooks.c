@@ -174,6 +174,7 @@ static void cloneMessageQueue(context_t *src, context_t *dst) {
         }
     }
     dst->n_msg = src->n_msg;
+    printf("Time to clone! %d\n", src->n_msg);
 
 }
 
