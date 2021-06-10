@@ -395,11 +395,11 @@ void flushEncoder(uint32_t ssrc, int simulcast) {
 
     if(ctx == NULL) {
         ctx = createEncoderContext(ssrc);
-        if(broadcast) {
+        /*if(broadcast) {
             context_t *best = encoderCtxMostMessages();
             if(best != ctx)
                 cloneMessageQueue(best, ctx);
-        }
+        }*/
     }
 
 
