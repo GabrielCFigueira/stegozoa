@@ -60,6 +60,15 @@ def createMessage(msgType, sender, receiver, frag = 0, syn = 0, byteArray = byte
     
     return message
 
+def sendMessage(message):
+    global encoderPipe, encoderPipePath
+
+    try:
+        encoderPipe.write(message)
+        encoderPipe.flush()
+    except Exception:
+        encoderPipe = open(encoderPipePath, 'wb')
+
 
 def processRetransmission(syn, retransmissions, mutex, message):
     while True:
@@ -67,8 +76,7 @@ def processRetransmission(syn, retransmissions, mutex, message):
         mutex.acquire()
         size = len(retransmissions)
         if syn in retransmissions:
-            encoderPipe.write(message)
-            encoderPipe.flush()
+            sendMessage(message)
         else:
             mutex.release()
             return
@@ -245,8 +253,7 @@ def broadcastKeepalive():
         for receiver in messageToSend:
             syn = messageToSend[receiver].addMessage(bytes(0), 0)
             message = createMessage(2, myId, receiver, 0, syn, bytes(0), True)
-            encoderPipe.write(message)
-            encoderPipe.flush()
+            sendMessage(message)
 
         sendMutex.release()
 
@@ -256,9 +263,7 @@ def broadcastConnect():
         time.sleep(5)
 
         message = createMessage(0, myId, 15) # 0xf = broadcast address
-    
-        encoderPipe.write(message)
-        encoderPipe.flush()
+        sendMessage(message)    
 
 
 def retransmit(receiver, synBytes):
@@ -272,8 +277,7 @@ def retransmit(receiver, synBytes):
     message = messageToSend[receiver].getMessage(syn)
     frag = messageToSend[receiver].getFrag(syn)
     message = createMessage(4, myId, receiver, frag, syn, message, True)
-    encoderPipe.write(message)
-    encoderPipe.flush()
+    sendMessage(message)
 
     sendMutex.release()
 
@@ -306,7 +310,7 @@ def parseMessage(message):
 
 
 def receiveMessage():
-    global messageToSend, decoderPipe, encoderPipe, peers, globalMutex, sendMutex
+    global messageToSend, decoderPipe, decoderPipePath, peers, globalMutex, sendMutex
 
     success = 0
     insuccess = 0
@@ -314,6 +318,9 @@ def receiveMessage():
     while True:
 
         header = decoderPipe.read(2) #size header
+        if(len(header) == 0):
+            decoderPipe = open(decoderPipePath, 'rb')
+            continue
         size = parse2byte(header)
         
         body = decoderPipe.read(size) #message body
@@ -342,8 +349,7 @@ def receiveMessage():
             sendMutex.release()
             
             message = createMessage(1, myId, sender, 0, 0, payload, True) #payload is the ssrc in this case, must be sent back
-            encoderPipe.write(message)
-            encoderPipe.flush()
+            sendMessage(message)
             continue
         
         success = success + 1
@@ -392,9 +398,8 @@ def connect():
     msgType = 0
     message = createMessage(msgType, myId, 15) # 0xf = broadcast address
 
-    encoderPipe.write(message)
-    encoderPipe.flush()
-    
+    sendMessage(message)
+
     thread = threading.Thread(target=broadcastKeepalive, args=())
     thread.start()
     
@@ -416,13 +421,15 @@ def initialize(newId):
     global encoderPipe, decoderPipe, encoderPipePath, decoderPipePath, myId
     try:
         os.mkfifo(encoderPipePath)
-    except Exception as oe: 
-        raise
+    except OSError as oe: 
+        if oe.errno != oe.EEXIST:
+            raise
 
     try:
         os.mkfifo(decoderPipePath)
-    except Exception as oe: 
-        raise
+    except OSError as oe: 
+        if oe.errno != oe.EEXIST:
+            raise
 
     encoderPipe = open(encoderPipePath, 'wb')
     decoderPipe = open(decoderPipePath, 'rb')
@@ -463,8 +470,7 @@ def send(byteArray, receiver):
 
         message = createMessage(2, myId, receiver, frag, syn, array, True)
 
-        encoderPipe.write(message)
-        encoderPipe.flush()
+        sendMessage(message)
 
     sendMutex.release()
 
