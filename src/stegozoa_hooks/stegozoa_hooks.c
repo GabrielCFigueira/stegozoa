@@ -427,6 +427,7 @@ int flushEncoder(unsigned char *message, uint32_t ssrc, int simulcast, int bits)
         
         for(int i = 0; i < n; i++) 
             message[toSend++] = getBit(msg->buffer, msg->bit++);
+        printf("msgbit after: %d\n", msg->bit);
 
         if(n != msgSize)
             break;
