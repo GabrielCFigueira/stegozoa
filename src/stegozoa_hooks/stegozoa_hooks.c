@@ -432,7 +432,7 @@ unsigned char *flushEncoder(uint32_t ssrc, int simulcast, int bits) {
         int n;
 
         if(toSend + msgSize > size)
-            n = size - toSend - msgSize;
+            n = size - toSend;
         else
             n = msgSize;
         
