@@ -389,7 +389,7 @@ unsigned char *flushEncoder(uint32_t ssrc, int simulcast, int bits) {
 
     if(pthread_mutex_lock(&barrier_mutex)) {
         error("Who knows", "Trying to acquire the lock");
-        return; //should abort
+        return NULL; //should abort
     }
 
     if(broadcast == 0)
@@ -419,7 +419,7 @@ unsigned char *flushEncoder(uint32_t ssrc, int simulcast, int bits) {
     if(bits < 40) {//size too small
         if(pthread_mutex_unlock(&barrier_mutex)) {
             error("Who knows", "Trying to release the lock");
-            return; //should abort
+            return NULL; //should abort
         }
         return message;    
     }
@@ -449,7 +449,7 @@ unsigned char *flushEncoder(uint32_t ssrc, int simulcast, int bits) {
             
     if(pthread_mutex_unlock(&barrier_mutex)) {
         error("Who knows", "Trying to release the lock");
-        return; //should abort
+        return NULL; //should abort
     }
 
     return message;

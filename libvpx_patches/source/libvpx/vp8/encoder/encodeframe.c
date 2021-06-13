@@ -908,7 +908,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
 
     if(isEmbbedInitialized()) {
         steganogram = flushEncoder(cpi->ssrc, cpi->simulcast, /*cpi->cover,*/ cpi->bits);
-        embeddedData = writeQdctLsb(cpi->positions, steganogram, qcoeff, cpi->bits);
+        embeddData = writeQdctLsb(cpi->positions, steganogram, qcoeff, cpi->bits);
     }
 
     for (mb_row = 0; mb_row < cm->mb_rows; ++mb_row) {
