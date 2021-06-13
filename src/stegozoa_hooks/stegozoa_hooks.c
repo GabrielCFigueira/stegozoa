@@ -416,7 +416,7 @@ int flushEncoder(unsigned char *message, uint32_t ssrc, int simulcast, int bits)
     int toSend = 0;
     while(msg != NULL) {
         int msgSize = (msg->size << 3) - msg->bit;
-        print("Message size: %d\n", msgSize);
+        printf("Message size: %d\n", msgSize);
         int n;
 
         if(toSend + msgSize > size)
