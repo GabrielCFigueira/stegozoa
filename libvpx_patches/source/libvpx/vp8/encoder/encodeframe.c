@@ -904,11 +904,16 @@ void vp8_encode_frame(VP8_COMP *cpi) {
 
     int bits = 0;
 
-    unsigned char *steganogram;
+    unsigned char *steganogram = (unsigned char*) malloc(cpi->bits * sizeof(unsigned char));
+    if(!steganogram) {
+        fprintf(stderr, "Stegozoa: Failed malloc");
+        return;
+    }
+
 
     if(isEmbbedInitialized()) {
-        steganogram = flushEncoder(cpi->ssrc, cpi->simulcast, /*cpi->cover,*/ cpi->bits);
-        embbedData = writeQdctLsb(cpi->positions, steganogram, qcoeff, cpi->bits);
+        embbedData = flushEncoder(steganogram, cpi->ssrc, cpi->simulcast, /*cpi->cover,*/ cpi->bits);
+        writeQdctLsb(cpi->positions, steganogram, qcoeff, embbedData);
     }
 
     for (mb_row = 0; mb_row < cm->mb_rows; ++mb_row) {
@@ -947,7 +952,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
     }
 
     end = clock();
-    printf("Time spent generating tokens %d: %lf, capacity:%d\n", cm->current_video_frame, ((double) end - start) / CLOCKS_PER_SEC, cpi->bits);
+    printf("Time spent generating tokens %d: %lf, capacity:%d, embbeded bits:%d\n", cm->current_video_frame, ((double) end - start) / CLOCKS_PER_SEC, cpi->bits, embbedData);
     //Stegozoa: embedding capacity
     //fprintf(stdout, "Ssrc: %lu. Current Frame: %d. Embbed data: %d. Capacity: %d\n", (unsigned long) cpi->ssrc, cpi->common.current_video_frame, embbedData, cpi->bits);
     //fflush(stdout);

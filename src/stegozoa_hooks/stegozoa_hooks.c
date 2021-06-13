@@ -385,11 +385,11 @@ static void discardMessage(context_t *ctx) {
 
 }
 
-unsigned char *flushEncoder(uint32_t ssrc, int simulcast, int bits) {
+int flushEncoder(unsigned char *message, uint32_t ssrc, int simulcast, int bits) {
 
     if(pthread_mutex_lock(&barrier_mutex)) {
         error("Who knows", "Trying to acquire the lock");
-        return NULL; //should abort
+        return 0; //should abort
     }
 
     if(broadcast == 0)
@@ -407,21 +407,14 @@ unsigned char *flushEncoder(uint32_t ssrc, int simulcast, int bits) {
         }*/
     }
 
-
     int size = bits;
-
-    unsigned char *message = (unsigned char*) malloc(size * sizeof(unsigned char));
-    if(!message) {
-        error("Null pointer", "Trying to malloc when flushing encoder");
-        return NULL;
-    }
 
     if(bits < 40) {//size too small
         if(pthread_mutex_unlock(&barrier_mutex)) {
             error("Who knows", "Trying to release the lock");
-            return NULL; //should abort
+            return 0; //should abort
         }
-        return message;    
+        return 0;    
     }
 
     message_t *msg = ctx->msg;
@@ -449,10 +442,10 @@ unsigned char *flushEncoder(uint32_t ssrc, int simulcast, int bits) {
             
     if(pthread_mutex_unlock(&barrier_mutex)) {
         error("Who knows", "Trying to release the lock");
-        return NULL; //should abort
+        return 0; //should abort
     }
 
-    return message;
+    return toSend;
 
 }
 
