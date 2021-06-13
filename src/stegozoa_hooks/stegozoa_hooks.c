@@ -385,7 +385,7 @@ static void discardMessage(context_t *ctx) {
 
 }
 
-void flushEncoder(uint32_t ssrc, int simulcast) {
+unsigned char *flushEncoder(uint32_t ssrc, int simulcast, int bits) {
 
     if(pthread_mutex_lock(&barrier_mutex)) {
         error("Who knows", "Trying to acquire the lock");
@@ -408,80 +408,63 @@ void flushEncoder(uint32_t ssrc, int simulcast) {
     }
 
 
+    int size = bits;
+
+    unsigned char *message = (unsigned char*) malloc(size * sizeof(unsigned char));
+    if(!message) {
+        error("Null pointer", "Trying to malloc when flushing encoder");
+        return NULL;
+    }
+
+    if(bits < 40) {//size too small
+        if(pthread_mutex_unlock(&barrier_mutex)) {
+            error("Who knows", "Trying to release the lock");
+            return; //should abort
+        }
+        return message;    
+    }
 
     message_t *msg = ctx->msg;
-    
-    if(msg != NULL && msg->bit == msg->size * 8) //discard current message
+
+    int toSend = 0;
+    while(msg != NULL) {
+        int msgSize = (msg->size << 3) - msg->bit;
+        int n;
+
+        if(toSend + msgSize > size)
+            n = size - toSend - msgSize;
+        else
+            n = msgSize;
+        
+        for(int i = 0; i < n; i++) 
+            message[toSend++] = getBit(msg->buffer, msg->bit++);
+
+        if(n != msgSize)
+            break;
+
+        msg = msg->next;
         discardMessage(ctx);
-    
+
+    }
             
     if(pthread_mutex_unlock(&barrier_mutex)) {
         error("Who knows", "Trying to release the lock");
         return; //should abort
     }
 
+    return message;
+
 }
 
 
-int writeQdctLsb(short *qcoeff, int has_y2_block, uint32_t ssrc) {
+int writeQdctLsb(int *positions, unsigned char *steganogram, short *qcoeff, int bits) {
 
-   
-    int leave = 0; 
-    if(pthread_mutex_lock(&barrier_mutex)) {
-        error("Who knows", "Trying to acquire the lock");
-        return -1; //should abort
+    for(int i = 0; i < bits; i++) {
+        int position = positions[i];
+        qcoeff[position] = (qcoeff[position] & 0xFFFE) | steganogram[i];
     }
 
-    context_t *ctx = getEncoderContext(ssrc);
-    message_t *msg = ctx->msg;
-    if(msg == NULL)
-        leave = 1;
-    
-    if(pthread_mutex_unlock(&barrier_mutex)) {
-        error("Who knows", "Trying to release the lock");
-        return -1; //should abort
-    }
-
-    if(leave)
-        return -1;
-
-    int rate = 0;
-
-    //future idea: loop unroll
-    for(int i = 0; i < 384 + has_y2_block * 16; i++) {
-        if(qcoeff[i] != 1 && qcoeff[i] != 0 && (!has_y2_block || MOD16(i) != 0 || i > 255)) {
-            
-            if(msg->bit == msg->size * 8) {
-                
-                int mustBreak = 0; 
-                if(pthread_mutex_lock(&barrier_mutex)) {
-                    error("Who knows", "Trying to acquire the lock");
-                    return -1; //should abort
-                }
-                
-                discardMessage(ctx);
-                if(ctx->msg == NULL)
-                    mustBreak = 1;
-                
-                if(pthread_mutex_unlock(&barrier_mutex)) {
-                    error("Who knows", "Trying to release the lock");
-                    return -1; //should abort
-                }
-
-                if(mustBreak)
-                    break;
-
-            }
-
-            qcoeff[i] = (qcoeff[i] & 0xFFFE) | getBit(msg->buffer, msg->bit);
-            msg->bit++;
-            rate++;
-            
-        } 
-    }
-
-    return rate;
-    
+    return bits;
 }
 
 static void flushDecoder(uint32_t ssrc, uint64_t rtpSession) {

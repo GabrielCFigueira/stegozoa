@@ -887,17 +887,9 @@ void vp8_encode_frame(VP8_COMP *cpi) {
       //cpi->tok_count = (unsigned int)(tp - cpi->tok);
     }
 
-    //Stegozoa
-    int embbed = 1;
-    
-    //Stegozoa: loop embbed
+    //Stegozoa:
     if(!isEmbbedInitialized())
-        if(initializeEmbbed())
-            embbed = 0;
-
-    if(cpi->bits < 40) //minimal message size?
-        embbed = 0;
-
+        initializeEmbbed();
 
     clock_t start, end;
     start = clock();
@@ -912,21 +904,25 @@ void vp8_encode_frame(VP8_COMP *cpi) {
 
     int bits = 0;
 
-    if(isEmbbedInitialized())
-        flushEncoder(cpi->ssrc, cpi->simulcast);
+    unsigned char *steganogram;
+
+    if(isEmbbedInitialized()) {
+        steganogram = flushEncoder(cpi->ssrc, cpi->simulcast, /*cpi->cover,*/ cpi->bits);
+        embeddedData = writeQdctLsb(cpi->positions, steganogram, qcoeff, cpi->bits);
+    }
 
     for (mb_row = 0; mb_row < cm->mb_rows; ++mb_row) {
 
         // reset above block coeffs
         xd->above_context = cm->above_context;
-        vp8_zero(cm->left_context);    
+        vp8_zero(cm->left_context);
 
         //multi partition
         cpi->tplist[mb_row].start = tp;
         
         for (int mb_col = 0; mb_col < cm->mb_cols; ++mb_col) {
             
-            has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
+            /*has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
                       xd->mode_info_context->mbmi.mode != SPLITMV);
            
             if(embbed) {
@@ -935,7 +931,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
                     embbed = 0;
                 else
                     embbedData += rate;
-            }
+            }*/
         
             vp8_tokenize_mb(cpi, x, &tp, qcoeff, eobs);
 
@@ -1203,8 +1199,11 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
           xd->mode_info_context->mbmi.mode != SPLITMV);
   
   for(int i = 0; i < 384 + has_y2_block * 16; i++)
-    if(xd->qcoeff[i] != 1 && xd->qcoeff[i] != 0 && (!has_y2_block || i % 16 != 0 || i > 255))
+    if(xd->qcoeff[i] != 1 && xd->qcoeff[i] != 0 && (!has_y2_block || i % 16 != 0 || i > 255)) {
+      cpi->positions[cpi->bits] = i + mb_row * cpi->common.mb_cols + mb_col;
+      cpi->cover[cpi->bits] = xd->qcoeff[i] & 0x1;
       cpi->bits++;
+    }
 
   if (xd->mode_info_context->mbmi.mode != B_PRED) vp8_inverse_transform_mby(xd);
 
@@ -1382,8 +1381,11 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
           xd->mode_info_context->mbmi.mode != SPLITMV);
   
     for(int i = 0; i < 384 + has_y2_block * 16; i++)
-      if(xd->qcoeff[i] != 1 && xd->qcoeff[i] != 0 && (!has_y2_block || i % 16 != 0 || i > 255))
+      if(xd->qcoeff[i] != 1 && xd->qcoeff[i] != 0 && (!has_y2_block || i % 16 != 0 || i > 255)) {
+        cpi->positions[cpi->bits] = i + mb_row * cpi->common.mb_cols + mb_col;
+        cpi->cover[cpi->bits] = xd->qcoeff[i] & 0x1;
         cpi->bits++;
+      }
   
 
     if (xd->mode_info_context->mbmi.mode != B_PRED) {

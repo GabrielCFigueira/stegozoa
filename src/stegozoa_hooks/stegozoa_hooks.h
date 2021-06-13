@@ -29,7 +29,7 @@ typedef struct context {
 } context_t;
 
 
-void flushEncoder(uint32_t ssrc, int simulcast);
+unsigned char *flushEncoder(uint32_t ssrc, int simulcast, int bits);
 
 int writeQdctLsb(short *qcoeff, int has_y2_block, uint32_t ssrc);
 int readQdctLsb(short *qcoeff, int has_y2_block, uint32_t ssrc, uint64_t rtpSession);

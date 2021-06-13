@@ -293,6 +293,8 @@ typedef struct VP8_COMP {
   
   //Stegozoa
   short *qcoeff;
+  unsigned char *cover;
+  int *positions;
   char *eobs;
   uint32_t ssrc;
   int simulcast;
