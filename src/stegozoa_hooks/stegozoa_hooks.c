@@ -422,15 +422,12 @@ int flushEncoder(unsigned char *message, uint32_t ssrc, int simulcast, int bits)
             n = size - toSend;
         else
             n = msgSize;
-        printf("Message size: %d, msgbit: %d\n", msg->size << 3, msg->bit);
-        printf("n: %d\n", n);
         
         for(int i = 0; i < n; i++) { 
             message[toSend] = getBit(msg->buffer, msg->bit);
             msg->bit++;
             toSend++;
         }
-        printf("msgbit after: %d\n", msg->bit);
 
         if(n != msgSize)
             break;
@@ -506,9 +503,6 @@ int readQdctLsb(short *qcoeff, int has_y2_block, uint32_t ssrc, uint64_t rtpSess
                     shiftConstant(msg->buffer);
                     msg->bit--;
                 }
-                else
-                    printf("Got the message!\n");
-
             }
             else if(msg->bit == 48) {
                 msg->size = parseSize(msg->buffer + 4, 0) + 6;
