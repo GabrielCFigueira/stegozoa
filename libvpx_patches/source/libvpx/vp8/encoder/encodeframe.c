@@ -760,6 +760,8 @@ void vp8_encode_frame(VP8_COMP *cpi) {
 #if CONFIG_MULTITHREAD
     if (vpx_atomic_load_acquire(&cpi->b_multi_threaded)) {
       int i;
+      //Stegozoa
+      printf("Thread alert!\n");
 
       vp8cx_init_mbrthread_data(cpi, x, cpi->mb_row_ei,
                                 cpi->encoding_thread_count);
