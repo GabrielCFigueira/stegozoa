@@ -16,7 +16,7 @@
 #define getLsb(num) (num & 0x1)
 #define rotate(byte, rotation) ((byte << rotation) | (byte >> (8 - rotation)))
 
-#define getBit(A, index) (getLsb(A[index / 8] >> (MOD8(index))))
+#define getBit(A, index) (getLsb(A[DIVIDE8(index)] >> (MOD8(index))))
 #define setBit(A, index, bit) \
     (A[DIVIDE8(index)] = (A[DIVIDE8(index)] & rotate(MASK, MOD8(index))) | (bit << MOD8(index)))
 
@@ -398,14 +398,8 @@ int flushEncoder(unsigned char *message, uint32_t ssrc, int simulcast, int bits)
     context_t *ctx = getEncoderContext(ssrc);
 
 
-    if(ctx == NULL) {
+    if(ctx == NULL)
         ctx = createEncoderContext(ssrc);
-        /*if(broadcast) {
-            context_t *best = encoderCtxMostMessages();
-            if(best != ctx)
-                cloneMessageQueue(best, ctx);
-        }*/
-    }
 
     int size = bits;
 
@@ -422,6 +416,7 @@ int flushEncoder(unsigned char *message, uint32_t ssrc, int simulcast, int bits)
     int toSend = 0;
     while(msg != NULL) {
         int msgSize = (msg->size << 3) - msg->bit;
+        print("Message size: %d\n", msgSize);
         int n;
 
         if(toSend + msgSize > size)
@@ -454,9 +449,7 @@ int writeQdctLsb(int *positions, unsigned char *steganogram, short *qcoeff, int 
 
     for(int i = 0; i < bits; i++) {
         int position = positions[i];
-        printf("Before: %d\n", qcoeff[position]);
         qcoeff[position] = (qcoeff[position] & 0xFFFE) | steganogram[i];
-        printf("After: %d\n", qcoeff[position]);
     }
     
     return bits;
@@ -508,6 +501,9 @@ int readQdctLsb(short *qcoeff, int has_y2_block, uint32_t ssrc, uint64_t rtpSess
                     shiftConstant(msg->buffer);
                     msg->bit--;
                 }
+                else
+                    printf("Got the message!\n");
+
             }
             else if(msg->bit == 48) {
                 msg->size = parseSize(msg->buffer + 4, 0) + 6;
