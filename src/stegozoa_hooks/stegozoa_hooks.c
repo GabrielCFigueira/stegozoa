@@ -457,9 +457,11 @@ int writeQdctLsb(int *positions, unsigned char *steganogram, short *qcoeff, int 
         printf("%d\n", position);
         qcoeff[position] = (qcoeff[position] & 0xFFFE) | steganogram[i];
     }
-
+    
+    if(bits > 0) {
     fflush(stdout);
     exit(0);
+    }
 
     return bits;
 }
