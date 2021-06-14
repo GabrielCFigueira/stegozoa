@@ -688,6 +688,8 @@ void vp8_encode_frame(VP8_COMP *cpi) {
 
   //Stegozoa
   cpi->bits = 0;
+  for(int i = 0; i < cm->mb_rows; i++)
+      cpi->row_bits[i] = 0;
 
   if (cpi->compressor_speed == 2) {
     if (cpi->oxcf.cpu_used < 0) {
