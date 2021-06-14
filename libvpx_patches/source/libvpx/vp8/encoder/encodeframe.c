@@ -906,14 +906,15 @@ void vp8_encode_frame(VP8_COMP *cpi) {
 
     int bits = 0;
 
+    for(int i = 0; i < cm->mb_rows; i++)
+        cpi->bits += cpi->row_bits[i];
+
     unsigned char *steganogram = (unsigned char*) malloc(cpi->bits * sizeof(unsigned char));
     if(!steganogram) {
         fprintf(stderr, "Stegozoa: Failed malloc");
         return;
     }
 
-    for(int i = 0; i < cm->mb_rows; i++)
-        cpi->bits += cpi->row_bits[i];
 
 
     if(isEmbbedInitialized()) {
