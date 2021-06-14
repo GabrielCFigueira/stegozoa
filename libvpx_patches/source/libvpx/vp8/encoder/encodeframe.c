@@ -1208,8 +1208,8 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
   
   for(int i = 0; i < 384 + has_y2_block * 16; i++)
     if(xd->qcoeff[i] != 1 && xd->qcoeff[i] != 0 && (!has_y2_block || i % 16 != 0 || i > 255)) {
-      cpi->positions[mb_row][cpi->bits] = i + (mb_row * cpi->common.mb_cols + mb_col) * 400;
-      cpi->cover[mb_row][cpi->bits] = xd->qcoeff[i] & 0x1;
+      cpi->positions[mb_row][cpi->row_bits[mb_row]] = i + (mb_row * cpi->common.mb_cols + mb_col) * 400;
+      cpi->cover[mb_row][cpi->row_bits[mb_row]] = xd->qcoeff[i] & 0x1;
       cpi->row_bits[mb_row]++;
     }
 
@@ -1390,9 +1390,9 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
   
     for(int i = 0; i < 384 + has_y2_block * 16; i++)
       if(xd->qcoeff[i] != 1 && xd->qcoeff[i] != 0 && (!has_y2_block || i % 16 != 0 || i > 255)) {
-      cpi->positions[mb_row][cpi->bits] = i + (mb_row * cpi->common.mb_cols + mb_col) * 400;
-      cpi->cover[mb_row][cpi->bits] = xd->qcoeff[i] & 0x1;
-      cpi->row_bits[mb_row]++;
+        cpi->positions[mb_row][cpi->row_bits[mb_row]] = i + (mb_row * cpi->common.mb_cols + mb_col) * 400;
+        cpi->cover[mb_row][cpi->row_bits[mb_row]] = xd->qcoeff[i] & 0x1;
+        cpi->row_bits[mb_row]++;
       }
   
 
