@@ -1791,8 +1791,8 @@ struct VP8_COMP *vp8_create_compressor(VP8_CONFIG *oxcf) {
   CHECK_MEM_ERROR(cpi->row_bits, vpx_calloc(cm->mb_rows, sizeof(int)));
   for(int i = 0; i < cm->mb_rows; i++) {
 
-    CHECK_MEM_ERROR(cpi->positions, vpx_calloc(400 * cm->mb_cols, sizeof(int)));
-    CHECK_MEM_ERROR(cpi->cover, vpx_calloc(400 * cm->mb_cols, sizeof(unsigned char)));
+    CHECK_MEM_ERROR(cpi->positions[i], vpx_calloc(400 * cm->mb_cols, sizeof(int)));
+    CHECK_MEM_ERROR(cpi->cover[i], vpx_calloc(400 * cm->mb_cols, sizeof(unsigned char)));
   }
 
   memcpy(cpi->base_skip_false_prob, vp8cx_base_skip_false_prob,
