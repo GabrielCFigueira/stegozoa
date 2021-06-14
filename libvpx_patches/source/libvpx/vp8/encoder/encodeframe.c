@@ -913,7 +913,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
     }
 
     for(int i = 0; i < cm->mb_rows; i++)
-        cpi->bits += cpi->row_bits[mb_row];
+        cpi->bits += cpi->row_bits[i];
 
 
     if(isEmbbedInitialized()) {
