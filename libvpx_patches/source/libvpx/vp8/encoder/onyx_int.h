@@ -292,13 +292,16 @@ typedef struct VP8_COMP {
   MACROBLOCK mb;
   
   //Stegozoa
+  unsigned char **cover;
+  int **positions;
+  int *row_bits;
+  int bits;
+
   short *qcoeff;
-  unsigned char *cover;
-  int *positions;
   char *eobs;
   uint32_t ssrc;
   int simulcast;
-  int bits;
+
 
   VP8_COMMON common;
   vp8_writer bc[9]; /* one boolcoder for each partition */

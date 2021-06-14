@@ -447,11 +447,20 @@ int flushEncoder(unsigned char *message, uint32_t ssrc, int simulcast, int bits)
 }
 
 
-int writeQdctLsb(int *positions, unsigned char *steganogram, short *qcoeff, int bits) {
+int writeQdctLsb(int **positions, int *row_bits, unsigned char *steganogram, short *qcoeff, int bits) {
+
+    int position;
+    int mb_row = 0;
+    int index = 0;
 
     for(int i = 0; i < bits; i++) {
-        int position = positions[i];
+        position = positions[mb_row][index++];
         qcoeff[position] = (qcoeff[position] & 0xFFFE) | steganogram[i];
+        
+        if(index == row_bits[mb_row]) {
+            mb_row++;
+            index = 0;
+        }
     }
     
     return bits;

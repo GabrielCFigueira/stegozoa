@@ -760,8 +760,6 @@ void vp8_encode_frame(VP8_COMP *cpi) {
 #if CONFIG_MULTITHREAD
     if (vpx_atomic_load_acquire(&cpi->b_multi_threaded)) {
       int i;
-      //Stegozoa
-      printf("Thread alert!\n");
 
       vp8cx_init_mbrthread_data(cpi, x, cpi->mb_row_ei,
                                 cpi->encoding_thread_count);
@@ -912,10 +910,13 @@ void vp8_encode_frame(VP8_COMP *cpi) {
         return;
     }
 
+    for(int i = 0; i < cm->mb_rows; i++)
+        cpi->bits += cpi->row_bits[mb_row];
+
 
     if(isEmbbedInitialized()) {
         embbedData = flushEncoder(steganogram, cpi->ssrc, cpi->simulcast, /*cpi->cover,*/ cpi->bits);
-        writeQdctLsb(cpi->positions, steganogram, qcoeff, embbedData);
+        writeQdctLsb(cpi->positions, cpi->row_bits, steganogram, qcoeff, embbedData);
     }
 
     for (mb_row = 0; mb_row < cm->mb_rows; ++mb_row) {
@@ -1207,9 +1208,9 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
   
   for(int i = 0; i < 384 + has_y2_block * 16; i++)
     if(xd->qcoeff[i] != 1 && xd->qcoeff[i] != 0 && (!has_y2_block || i % 16 != 0 || i > 255)) {
-      cpi->positions[cpi->bits] = i + (mb_row * cpi->common.mb_cols + mb_col) * 400;
-      cpi->cover[cpi->bits] = xd->qcoeff[i] & 0x1;
-      cpi->bits++;
+      cpi->positions[mb_row][cpi->bits] = i + (mb_row * cpi->common.mb_cols + mb_col) * 400;
+      cpi->cover[mb_row][cpi->bits] = xd->qcoeff[i] & 0x1;
+      cpi->row_bits[mb_row]++;
     }
 
   if (xd->mode_info_context->mbmi.mode != B_PRED) vp8_inverse_transform_mby(xd);
@@ -1389,9 +1390,9 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
   
     for(int i = 0; i < 384 + has_y2_block * 16; i++)
       if(xd->qcoeff[i] != 1 && xd->qcoeff[i] != 0 && (!has_y2_block || i % 16 != 0 || i > 255)) {
-        cpi->positions[cpi->bits] = i + (mb_row * cpi->common.mb_cols + mb_col) * 400;
-        cpi->cover[cpi->bits] = xd->qcoeff[i] & 0x1;
-        cpi->bits++;
+      cpi->positions[mb_row][cpi->bits] = i + (mb_row * cpi->common.mb_cols + mb_col) * 400;
+      cpi->cover[mb_row][cpi->bits] = xd->qcoeff[i] & 0x1;
+      cpi->row_bits[mb_row]++;
       }
   
 
