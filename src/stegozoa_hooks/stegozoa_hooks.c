@@ -415,9 +415,14 @@ static unsigned char *stc(int coverSize, unsigned char *steganogram, unsigned ch
     wght[0] = 0;
     for (int i = 1; i < hpow; i++)
         wght[i] = INFINITY;
+    
+    fprintf(stdout, "Before!\n");
+    fflush(stdout);
 
     unsigned char path[msgSize * w][hpow]; //TODO move to heap?
-
+    
+    fprintf(stdout, "We got here!\n");
+    fflush(stdout);
     float w0, w1;
     float *newwght = (float*) malloc(hpow * sizeof(float));
     float *temp;
