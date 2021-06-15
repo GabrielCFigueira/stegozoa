@@ -907,7 +907,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
     int bits = 0;
 
 
-    for(int i = 0; i < cm->mb_rows; i++) {
+    for(int i = 0; i < cm->mb_rows; i++)
         cpi->bits += cpi->row_bits[i];
 
     unsigned char *cover = (unsigned char*) malloc(cpi->bits * sizeof(unsigned char));
@@ -920,8 +920,8 @@ void vp8_encode_frame(VP8_COMP *cpi) {
     
     int index = 0;
     for(int i = 0; i < cm->mb_rows; i++)
-        for(int j = 0; j < cm->row_bits[i]; j++)
-            cover[index++] = cm->cover[i][j];
+        for(int j = 0; j < cpi->row_bits[i]; j++)
+            cover[index++] = cpi->cover[i][j];
 
 
     if(isEmbbedInitialized()) {

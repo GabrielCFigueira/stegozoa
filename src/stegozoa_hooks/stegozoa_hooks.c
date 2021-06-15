@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <pthread.h>
+#include <math.h>
 
 
 #define MASK 0xFE
@@ -423,11 +424,11 @@ static unsigned char *stc(int coverSize, unsigned char *steganogram, unsigned ch
 
     //Forward part of the Viterbi algorithm
 
-    for (int i = 0; i < numBlocks; i++) {
+    for (int i = 0; i < msgSize; i++) {
 
-        if (i >= numBlocks - (h - 1)) {
+        if (i >= msgSize - (h - 1)) {
             for (int j = 0; j < w; j++)
-                H[j] = H_hat[j] & ((1 << (numBlocks - i)) - 1);
+                H[j] = H_hat[j] & ((1 << (msgSize - i)) - 1);
             hpow = hpow >> 1;
         }
 
@@ -462,7 +463,7 @@ static unsigned char *stc(int coverSize, unsigned char *steganogram, unsigned ch
     int state = 0;
     indx--;
     indm--;
-    for (int i = numBlocks - 1; i >= 0; i--) {
+    for (int i = msgSize - 1; i >= 0; i--) {
         state = (state << 1) + message[indm];
         indm--;
 
@@ -472,9 +473,9 @@ static unsigned char *stc(int coverSize, unsigned char *steganogram, unsigned ch
             indx--;
         }
         
-        if (i >= numBlocks - (h - 1))
+        if (i >= msgSize - (h - 1))
             for (int j = 0; j < w; j++)
-                H[j] = H_hat[j] & ((1 << (numBlocks - i + 1)) - 1);
+                H[j] = H_hat[j] & ((1 << (msgSize - i + 1)) - 1);
     }
 
     free(wght);
@@ -611,9 +612,7 @@ static void deliverMessage(uint32_t ssrc, uint64_t rtpSession) {
 
 }
 
-int readQdctLsb(unsigned char* steganogram, int *index, short *qcoeff, int has_y2_block, uint32_t ssrc, uint64_t rtpSession) {
-
-    message_t *msg = getDecoderContext(ssrc, rtpSession)->msg;
+int readQdctLsb(unsigned char* steganogram, int *index, short *qcoeff, int has_y2_block) {
 
     //optimization idea: loop unroll
     for(int i = 0; i < 384 + has_y2_block * 16; i++) {
@@ -629,12 +628,12 @@ int readQdctLsb(unsigned char* steganogram, int *index, short *qcoeff, int has_y
 
 }
 
-void flushDecoder(steganogram, uint32_t ssrc, uint64_t rtpSession, int size) {
+void flushDecoder(unsigned char *steganogram, uint32_t ssrc, uint64_t rtpSession, int size) {
 
 
-    unsigned char *message = (unsigned char*) malloc(bits * sizeof(unsigned char));
+    unsigned char *message = (unsigned char*) malloc(size * sizeof(unsigned char));
 
-    reverseStc(steganogram, message, bits);
+    reverseStc(steganogram, message, size);
 
     message_t *msg = getDecoderContext(ssrc, rtpSession)->msg;
 

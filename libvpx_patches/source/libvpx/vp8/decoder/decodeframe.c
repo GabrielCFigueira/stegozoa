@@ -1319,7 +1319,7 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
                       xd->mode_info_context->mbmi.mode != SPLITMV);
       
       if(extract)
-        if(readQdctLsb(steganogram, &index, qcoeff, has_y2_block, pbi->ssrc, pbi->rtpSession))
+        if(readQdctLsb(steganogram, &index, qcoeff, has_y2_block))
           extract = 0;
       
       xd->mode_info_context++;
