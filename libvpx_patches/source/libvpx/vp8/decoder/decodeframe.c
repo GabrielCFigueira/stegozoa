@@ -1301,12 +1301,16 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
     if(initializeExtract())
       extract = 0;
 
+  unsigned char* steganogram = (unsigned char*) malloc(pbi->bits * sizeof(unsigned char));
   if(pbi->bits < 40) //minimal message size
       extract = 0;
+
 
   short *qcoeff = pbi->qcoeff;
   int has_y2_block;
   xd->mode_info_context = pc->mi;
+
+  int index = 0;
 
   for (int i = 0; i < pc->mb_rows; ++i) {
     for (int j = 0; j < pc->mb_cols; ++j) {
@@ -1315,7 +1319,7 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
                       xd->mode_info_context->mbmi.mode != SPLITMV);
       
       if(extract)
-        if(readQdctLsb(qcoeff, has_y2_block, pbi->ssrc, pbi->rtpSession))
+        if(readQdctLsb(steganogram, &index, qcoeff, has_y2_block, pbi->ssrc, pbi->rtpSession))
           extract = 0;
       
       xd->mode_info_context++;
@@ -1324,6 +1328,10 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
     xd->mode_info_context++;
   }
 
+  if(extract)
+      flushDecoder(pbi->ssrc, pbi->rtpSession);
+
+  vpx_free(steganogram);
   vpx_free(pbi->qcoeff);
 
   return 0;

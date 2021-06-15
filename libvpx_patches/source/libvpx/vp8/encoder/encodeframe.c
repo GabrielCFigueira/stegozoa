@@ -889,7 +889,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
       //cpi->tok_count = (unsigned int)(tp - cpi->tok);
     }
 
-    //Stegozoa:
+    //Stegozoa section -------------------------------------------
     if(!isEmbbedInitialized())
         initializeEmbbed();
 
@@ -906,21 +906,31 @@ void vp8_encode_frame(VP8_COMP *cpi) {
 
     int bits = 0;
 
-    for(int i = 0; i < cm->mb_rows; i++)
+
+    for(int i = 0; i < cm->mb_rows; i++) {
         cpi->bits += cpi->row_bits[i];
 
+    unsigned char *cover = (unsigned char*) malloc(cpi->bits * sizeof(unsigned char));
     unsigned char *steganogram = (unsigned char*) malloc(cpi->bits * sizeof(unsigned char));
-    if(!steganogram) {
+
+    if(!steganogram || !cover) {
         fprintf(stderr, "Stegozoa: Failed malloc");
         return;
     }
-
+    
+    int index = 0;
+    for(int i = 0; i < cm->mb_rows; i++)
+        for(int j = 0; j < cm->row_bits[i]; j++)
+            cover[index++] = cm->cover[i][j];
 
 
     if(isEmbbedInitialized()) {
-        embbedData = flushEncoder(steganogram, cpi->ssrc, cpi->simulcast, /*cpi->cover,*/ cpi->bits);
+        embbedData = flushEncoder(steganogram, cover, cpi->ssrc, cpi->simulcast, cpi->bits);
         writeQdctLsb(cpi->positions, cpi->row_bits, steganogram, qcoeff, embbedData);
     }
+
+    free(steganogram);
+    free(cover);
 
     for (mb_row = 0; mb_row < cm->mb_rows; ++mb_row) {
 
@@ -933,17 +943,6 @@ void vp8_encode_frame(VP8_COMP *cpi) {
         
         for (int mb_col = 0; mb_col < cm->mb_cols; ++mb_col) {
             
-            /*has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
-                      xd->mode_info_context->mbmi.mode != SPLITMV);
-           
-            if(embbed) {
-                rate = writeQdctLsb(qcoeff, has_y2_block, cpi->ssrc);
-                if(rate == -1)
-                    embbed = 0;
-                else
-                    embbedData += rate;
-            }*/
-        
             vp8_tokenize_mb(cpi, x, &tp, qcoeff, eobs);
 
             xd->above_context++;
@@ -959,10 +958,6 @@ void vp8_encode_frame(VP8_COMP *cpi) {
 
     end = clock();
     printf("Time spent generating tokens %d: %lf, capacity:%d, embbeded bits:%d\n", cm->current_video_frame, ((double) end - start) / CLOCKS_PER_SEC, cpi->bits, embbedData);
-    //Stegozoa: embedding capacity
-    //fprintf(stdout, "Ssrc: %lu. Current Frame: %d. Embbed data: %d. Capacity: %d\n", (unsigned long) cpi->ssrc, cpi->common.current_video_frame, embbedData, cpi->bits);
-    //fflush(stdout);
-    
     
     cpi->tok_count = (unsigned int)(tp - cpi->tok);
 

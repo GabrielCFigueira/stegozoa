@@ -145,44 +145,6 @@ static context_t *createEncoderContext(uint32_t ssrc) {
     return encoders[n_encoders - 1];
 }
 
-/*static context_t *encoderCtxMostMessages() {
-
-    int n_msg = -1;
-    context_t *res = NULL;
-
-    for(int i = 0; i < n_encoders; i++)
-        if(encoders[i]->n_msg > n_msg) {
-            res = encoders[i];
-            n_msg = encoders[i]->n_msg;
-        }
-
-    return res;
-}
-
-static void cloneMessageQueue(context_t *src, context_t *dst) {
-
-    message_t *msgSrc = src->msg;
-    
-    if(msgSrc == NULL)
-        dst->msg = NULL;
-
-    else {
-    
-        dst->msg = copyMessage(msgSrc);
-        message_t *msgDst = dst->msg;
-       
-         
-        while(msgSrc->next != NULL) {
-            msgDst->next = copyMessage(msgSrc->next);
-            msgSrc = msgSrc->next;
-            msgDst = msgDst->next;
-        }
-    }
-    dst->n_msg = src->n_msg;
-    printf("Time to clone! %d\n", src->n_msg);
-
-}*/
-
 static int containsId(context_t *ctx, int id) {
 
     for(int i = 0; i < ctx->n_ids; i++)
@@ -261,6 +223,7 @@ static void insertSsrc(message_t *msg, uint32_t ssrc) {
     
     insertConstant(ssrc, msg->buffer + 10);
 }
+
 
 
 static void *fetchDataThread(void *args) {
@@ -385,32 +348,8 @@ static void discardMessage(context_t *ctx) {
 
 }
 
-int flushEncoder(unsigned char *message, uint32_t ssrc, int simulcast, int bits) {
-
-    if(pthread_mutex_lock(&barrier_mutex)) {
-        error("Who knows", "Trying to acquire the lock");
-        return 0; //should abort
-    }
-
-    if(broadcast == 0)
-        broadcast = simulcast;
+static int obtainMessage(context_t *ctx, unsigned char *message, int size) {
     
-    context_t *ctx = getEncoderContext(ssrc);
-
-
-    if(ctx == NULL)
-        ctx = createEncoderContext(ssrc);
-
-    int size = bits;
-
-    if(bits < 40) {//size too small
-        if(pthread_mutex_unlock(&barrier_mutex)) {
-            error("Who knows", "Trying to release the lock");
-            return 0; //should abort
-        }
-        return 0;    
-    }
-
     message_t *msg = ctx->msg;
 
     int toSend = 0;
@@ -436,11 +375,187 @@ int flushEncoder(unsigned char *message, uint32_t ssrc, int simulcast, int bits)
         discardMessage(ctx);
 
     }
+
+    return toSend;
+}
+
+/*
+ * int h = 7;
+ * int w = 4;
+ * int H[] = {81, 95, 107, 121};
+ * int H_hat[] = {81, 95, 107, 121};
+ * int Ht[] = {15, 6, 4, 7, 13, 3, 15};
+ * */
+
+/*
+ * int h = 2;
+ * int w = 2;
+ * int H[] = {3, 2};
+ * int H_hat[] = {3, 2};
+ * int Ht[] = {2, 3};
+ * */
+
+int h = 7;
+int w = 2;
+int H[] = {71, 109};
+int H_hat[] = {71, 109};
+int Ht[] = {3, 2, 3, 1, 0, 1, 3};
+
+
+static unsigned char *stc(int coverSize, unsigned char *steganogram, unsigned char *message, unsigned char *cover) {
+
+    int indx = 0;
+    int indm = 0;
+    int hpow = 1 << h;
+
+    int msgSize = coverSize / w;
+
+    float *wght = (float*) malloc(hpow * sizeof(float));
+    wght[0] = 0;
+    for (int i = 1; i < hpow; i++)
+        wght[i] = INFINITY;
+
+    unsigned char path[msgSize * w][hpow]; //TODO move to heap?
+
+    float w0, w1;
+    float *newwght = (float*) malloc(hpow * sizeof(float));
+    float *temp;
+
+    //Forward part of the Viterbi algorithm
+
+    for (int i = 0; i < numBlocks; i++) {
+
+        if (i >= numBlocks - (h - 1)) {
+            for (int j = 0; j < w; j++)
+                H[j] = H_hat[j] & ((1 << (numBlocks - i)) - 1);
+            hpow = hpow >> 1;
+        }
+
+        for (int j = 0; j < w; j++) {
+            for (int k = 0; k < hpow; k++) {
+                w0 = wght[k] + cover[indx];
+                w1 = wght[k ^ H[j]] + (!cover[indx]);
+                path[indx][k] = w1 < w0;
+                newwght[k] = w1 < w0 ? w1 : w0;
+            }
             
+            indx++;
+            temp = wght;
+            wght = newwght;
+            newwght = temp;
+        
+        }
+
+        for (int j = 0; j < hpow >> 1; j++)
+            wght[j] = wght[(j << 1) + message[indm]];
+        
+        for (int j = hpow >> 1; j < hpow; j++)
+            wght[j] = INFINITY;
+
+        indm++;
+    }
+    
+    
+    //Backward part of the Viterbi algorithm
+
+    float embeddingCost = wght[0];
+    int state = 0;
+    indx--;
+    indm--;
+    for (int i = numBlocks - 1; i >= 0; i--) {
+        state = (state << 1) + message[indm];
+        indm--;
+
+        for (int j = w - 1; j >= 0; j--) {
+            steganogram[indx] = path[indx][state];
+            state = state ^ (steganogram[indx] ? H[j] : 0);
+            indx--;
+        }
+        
+        if (i >= numBlocks - (h - 1))
+            for (int j = 0; j < w; j++)
+                H[j] = H_hat[j] & ((1 << (numBlocks - i + 1)) - 1);
+    }
+
+    free(wght);
+    free(newwght);
+
+    for (int i = msgSize * w; i < coverSize; i++)
+        steganogram[i] = cover[i];
+
+    return steganogram;
+
+}
+
+static void reverseStc(unsigned char *steganogram, unsigned char* message, int coverSize) {
+
+    int line = 0;
+    for(int i = 0; i < h; i++)
+        line += Ht[i] << (w * i);
+
+    int msgSize = coverSize / w;
+
+    for(int i = 0; i < msgSize; i++) {
+        int mask = 1;
+        int index = 0;
+        int bit = 0;
+
+        for(int j = w * (i + 1) - 1; j > w * (i + 1 - h) - 1; j--) {
+
+            if (j < 0)
+                break;
+
+            bit ^= steganogram[j] & ((line & mask) >> index);
+            index++;
+            mask <<= 1;
+
+        }
+
+        message[i] = bit;
+    }
+
+}
+
+int flushEncoder(unsigned char *steganogram, unsigned char *cover, uint32_t ssrc, int simulcast, int size) {
+
+    if(pthread_mutex_lock(&barrier_mutex)) {
+        error("Who knows", "Trying to acquire the lock");
+        return 0; //should abort
+    }
+
+    if(broadcast == 0)
+        broadcast = simulcast;
+    
+    context_t *ctx = getEncoderContext(ssrc);
+
+
+    if(ctx == NULL)
+        ctx = createEncoderContext(ssrc);
+
+
+    if(size < 40) {//size too small
+        if(pthread_mutex_unlock(&barrier_mutex)) {
+            error("Who knows", "Trying to release the lock");
+            return 0; //should abort
+        }
+        return 0;    
+    }
+
+    int msgSize = size / w;
+
+    unsigned char *message = (unsigned char*) malloc(msgSize * sizeof(unsigned char));
+    
+    int toSend = obtainMessage(ctx, message, msgSize);
+
+
     if(pthread_mutex_unlock(&barrier_mutex)) {
         error("Who knows", "Trying to release the lock");
         return 0; //should abort
     }
+
+    stc(size, steganogram, message, cover);
+    free(message);
+
 
     return toSend;
 
@@ -466,11 +581,11 @@ int writeQdctLsb(int **positions, int *row_bits, unsigned char *steganogram, sho
     return bits;
 }
 
-static void flushDecoder(uint32_t ssrc, uint64_t rtpSession) {
+static void deliverMessage(uint32_t ssrc, uint64_t rtpSession) {
 
     message_t *msg = getDecoderContext(ssrc, rtpSession)->msg;
     int n_bytes;
-    msg->bit = 0; //should be 0
+    msg->bit = 0;
 
     unsigned char *flags = msg->buffer + 6;
 
@@ -496,43 +611,60 @@ static void flushDecoder(uint32_t ssrc, uint64_t rtpSession) {
 
 }
 
-int readQdctLsb(short *qcoeff, int has_y2_block, uint32_t ssrc, uint64_t rtpSession) {
+int readQdctLsb(unsigned char* steganogram, int *index, short *qcoeff, int has_y2_block, uint32_t ssrc, uint64_t rtpSession) {
 
     message_t *msg = getDecoderContext(ssrc, rtpSession)->msg;
 
     //optimization idea: loop unroll
     for(int i = 0; i < 384 + has_y2_block * 16; i++) {
         if(qcoeff[i] != 1 && qcoeff[i] != 0 && (!has_y2_block || MOD16(i) != 0 || i > 255)) {
-            setBit(msg->buffer, msg->bit, getLsb(qcoeff[i]));
-            msg->bit++;
             
-            if(msg->bit == 32) {
-                uint32_t newConstant = obtainConstant(msg->buffer);
-                if(newConstant != constant) {
-                    shiftConstant(msg->buffer);
-                    msg->bit--;
-                }
-            }
-            else if(msg->bit == 48) {
-                msg->size = parseSize(msg->buffer + 4, 0) + 6;
-                if (msg->size > MSG_SIZE) {
-                    error("Message size too big", "When extracting bits from qcoeff");
-                    msg->bit = 0;
-                    return 1;
-                }
-                else if(msg->size == 6) {
-                    error("Message with 0 size", "When extracting bits from qcoeff");
-                    msg->bit = 0;
-                    return 1;
-                }
-            }
-            else if(msg->bit == msg->size * 8 && msg->bit > 48)
-                flushDecoder(ssrc, rtpSession);
+            steganogram[*index] = getLsb(qcoeff[i]);
+            (*index)++;
+
         }
             
     }
     return 0;
 
+}
+
+void flushDecoder(steganogram, uint32_t ssrc, uint64_t rtpSession, int size) {
+
+
+    unsigned char *message = (unsigned char*) malloc(bits * sizeof(unsigned char));
+
+    reverseStc(steganogram, message, bits);
+
+    message_t *msg = getDecoderContext(ssrc, rtpSession)->msg;
+
+    for(int i = 0; i < size; i++) {
+        setBit(msg->buffer, msg->bit, message[i]);
+        msg->bit++;
+
+        if(msg->bit == 32) {
+            uint32_t newConstant = obtainConstant(msg->buffer);
+            if(newConstant != constant) {
+                shiftConstant(msg->buffer);
+                msg->bit--;
+            }
+        }
+        else if(msg->bit == 48) {
+            msg->size = parseSize(msg->buffer + 4, 0) + 6;
+            if (msg->size > MSG_SIZE) {
+                error("Message size too big", "When extracting bits from qcoeff");
+                msg->bit = 0;
+            }
+            else if(msg->size == 6) {
+                error("Message with 0 size", "When extracting bits from qcoeff");
+                msg->bit = 0;
+            }
+        }
+        else if(msg->bit == msg->size << 3 && msg->bit > 48)
+            delieverMessage(ssrc, rtpSession);
+    }
+
+    free(message);
 }
 
 
