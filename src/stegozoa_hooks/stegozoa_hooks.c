@@ -459,7 +459,7 @@ static unsigned char *stc(int coverSize, unsigned char *steganogram, unsigned ch
     
     //Backward part of the Viterbi algorithm
 
-    float embeddingCost = wght[0];
+    //float embeddingCost = wght[0];
     int state = 0;
     indx--;
     indm--;
@@ -660,7 +660,7 @@ void flushDecoder(unsigned char *steganogram, uint32_t ssrc, uint64_t rtpSession
             }
         }
         else if(msg->bit == msg->size << 3 && msg->bit > 48)
-            delieverMessage(ssrc, rtpSession);
+            deliverMessage(ssrc, rtpSession);
     }
 
     free(message);

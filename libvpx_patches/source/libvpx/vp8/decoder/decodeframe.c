@@ -1329,7 +1329,7 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
   }
 
   if(extract)
-      flushDecoder(pbi->ssrc, pbi->rtpSession);
+      flushDecoder(steganogram, pbi->ssrc, pbi->rtpSession, pbi->bits);
 
   vpx_free(steganogram);
   vpx_free(pbi->qcoeff);
