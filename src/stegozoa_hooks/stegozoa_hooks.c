@@ -446,6 +446,8 @@ static void stc(int coverSize, unsigned char *steganogram, unsigned char *messag
                 w1 = wght[k ^ H[j]] + !cover[indx];
                 path[indx * hpow + k] = w1 < w0;
                 newwght[k] = w1 < w0 ? w1 : w0;
+                printf("w1 < w0: %d\n", w1 < w0);
+                fflush(stdout);
             }
             
             indx++;
