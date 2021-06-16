@@ -416,6 +416,8 @@ static void stc(int coverSize, unsigned char *steganogram, unsigned char *messag
     for (int i = 1; i < hpow; i++)
         wght[i] = INFINITY;
     
+    printf("Before stack alloc\n");
+    fflush(stdout);
     unsigned char path[msgSize * w][hpow]; //TODO move to heap?
     
     float w0, w1;
@@ -460,6 +462,8 @@ static void stc(int coverSize, unsigned char *steganogram, unsigned char *messag
         indm++;
     }
     
+    printf("After first part\n");
+    fflush(stdout);
     
     //Backward part of the Viterbi algorithm
 
@@ -485,6 +489,8 @@ static void stc(int coverSize, unsigned char *steganogram, unsigned char *messag
     free(wght);
     free(newwght);
 
+    printf("After second part\n");
+    fflush(stdout);
     for (int i = msgSize * w; i < coverSize; i++)
         steganogram[i] = cover[i];
 
