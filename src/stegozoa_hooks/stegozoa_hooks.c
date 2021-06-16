@@ -513,7 +513,7 @@ static void stc(int coverSize, unsigned char *steganogram, unsigned char *messag
     for (int i = msgSize * w; i < coverSize; i++)
         steganogram[i] = cover[i];
 
-    for (int i = 0; i < msgSize * w, i++)
+    for (int i = 0; i < msgSize * w; i++)
         free(path[i]);
     free(path);
 
