@@ -420,7 +420,11 @@ static void stc(int coverSize, unsigned char *steganogram, unsigned char *messag
     
     printf("Before stack alloc\n");
     fflush(stdout);
-    unsigned char *path = (unsigned char*) malloc(msgSize * w * hpow * sizeof(unsigned char));
+    unsigned char **path = (unsigned char**) malloc(msgSize * w * sizeof(unsigned char*));
+
+    for(int i = 0; i < msgSize * w; i++)
+        path[i] = (unsigned char*) malloc(hpow * sizeof(unsigned char));
+
     //unsigned char path[msgSize * w][hpow];
     //
     if(path == NULL)
@@ -448,7 +452,7 @@ static void stc(int coverSize, unsigned char *steganogram, unsigned char *messag
 
                 w0 = wght[k] + cover[indx];
                 w1 = wght[k ^ H[j]] + !cover[indx];
-                path[indx * hpow + k] = w1 < w0;
+                path[indx][k] = w1 < w0;
                 newwght[k] = w1 < w0 ? w1 : w0;
             }
             
@@ -471,14 +475,14 @@ static void stc(int coverSize, unsigned char *steganogram, unsigned char *messag
     printf("After first part\n");
     fflush(stdout);
 
-    for(int i = 0; i < msgSize * w; i++) {
+/*    for(int i = 0; i < msgSize * w; i++) {
         fprintf(stdout, "i: %d\n", i);
         fflush(stdout);
         if(path[i] != 0 && path[i] != 1) {
             fprintf(stdout, "What is going on? i: %d, path[i]: %d\n", i, path[i]);
             fflush(stdout);
         }
-    }
+    }*/
     
     //Backward part of the Viterbi algorithm
 
@@ -491,7 +495,7 @@ static void stc(int coverSize, unsigned char *steganogram, unsigned char *messag
         indm--;
 
         for (int j = w - 1; j >= 0; j--) {
-            steganogram[indx] = path[indx * hpow + state];
+            steganogram[indx] = path[indx][state];
             state = state ^ (steganogram[indx] ? H[j] : 0);
             indx--;
         }
@@ -508,6 +512,10 @@ static void stc(int coverSize, unsigned char *steganogram, unsigned char *messag
     fflush(stdout);
     for (int i = msgSize * w; i < coverSize; i++)
         steganogram[i] = cover[i];
+
+    for (int i = 0; i < msgSize * w, i++)
+        free(path[i]);
+    free(path);
 
 }
 
