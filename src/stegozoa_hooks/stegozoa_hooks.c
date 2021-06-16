@@ -420,15 +420,11 @@ static void stc(int coverSize, unsigned char *steganogram, unsigned char *messag
     
     printf("Before stack alloc\n");
     fflush(stdout);
-    unsigned char **path = (unsigned char**) malloc(msgSize * w * sizeof(unsigned char*));
+    //unsigned char *tempPath = malloc(msgSize * w * hpow * sizeof(unsigned char*));
 
-    for(int i = 0; i < msgSize * w; i++)
-        path[i] = (unsigned char*) malloc(hpow * sizeof(unsigned char));
+    unsigned char (*path)[hpow] = malloc(msgSize * w * hpow * sizeof(unsigned char*));
 
     //unsigned char path[msgSize * w][hpow];
-    //
-    if(path == NULL)
-        printf("NULL!!!!");
 
     float w0, w1;
     float *newwght = (float*) malloc(hpow * sizeof(float));
@@ -513,8 +509,6 @@ static void stc(int coverSize, unsigned char *steganogram, unsigned char *messag
     for (int i = msgSize * w; i < coverSize; i++)
         steganogram[i] = cover[i];
 
-    for (int i = 0; i < msgSize * w; i++)
-        free(path[i]);
     free(path);
 
 }
