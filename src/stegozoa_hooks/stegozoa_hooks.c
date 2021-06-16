@@ -484,6 +484,8 @@ static void stc(int coverSize, unsigned char *steganogram, unsigned char *messag
         indm--;
 
         for (int j = w - 1; j >= 0; j--) {
+            printf("state: %d\n", state);
+            fflush(stdout);
             steganogram[indx] = path[indx * hpow + state];
             state = state ^ (steganogram[indx] ? H[j] : 0);
             indx--;
