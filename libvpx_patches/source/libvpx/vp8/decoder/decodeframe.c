@@ -1334,8 +1334,8 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
   if(extract)
       flushDecoder(steganogram, pbi->ssrc, pbi->rtpSession, pbi->bits);
 
-  if(pbi->bits < 40) //minimal message size
-    free(steganogram);
+  if(pbi->bits >= 40) //minimal message size
+    vpx_free(steganogram);
   vpx_free(pbi->qcoeff);
 
   return 0;
