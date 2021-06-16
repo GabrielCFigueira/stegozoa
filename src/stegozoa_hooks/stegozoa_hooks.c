@@ -396,11 +396,11 @@ static int obtainMessage(context_t *ctx, unsigned char *message, int size) {
  * int Ht[] = {2, 3};
  * */
 
-int h = 7;
-int w = 2;
+const int h = 7;
+const int w = 2;
 int H[] = {71, 109};
-int H_hat[] = {71, 109};
-int Ht[] = {3, 2, 3, 1, 0, 1, 3};
+const int H_hat[] = {71, 109};
+const int Ht[] = {3, 2, 3, 1, 0, 1, 3};
 
 
 static void stc(int coverSize, unsigned char *steganogram, unsigned char *message, unsigned char *cover) {
@@ -471,14 +471,14 @@ static void stc(int coverSize, unsigned char *steganogram, unsigned char *messag
     printf("After first part\n");
     fflush(stdout);
 
-/*    for(int i = 0; i < msgSize * w; i++) {
+    for(int i = 0; i < msgSize * w * (1 << h); i++) {
         fprintf(stdout, "i: %d\n", i);
         fflush(stdout);
         if(path[i] != 0 && path[i] != 1) {
             fprintf(stdout, "What is going on? i: %d, path[i]: %d\n", i, path[i]);
             fflush(stdout);
         }
-    }*/
+    }
     
     //Backward part of the Viterbi algorithm
 
