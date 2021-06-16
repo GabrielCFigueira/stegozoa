@@ -422,7 +422,7 @@ static void stc(int coverSize, unsigned char *steganogram, unsigned char *messag
     fflush(stdout);
     //unsigned char *tempPath = malloc(msgSize * w * hpow * sizeof(unsigned char*));
 
-    unsigned char (*path)[hpow] = malloc(msgSize * w * hpow * sizeof(unsigned char*));
+    unsigned char (*path)[hpow] = malloc(msgSize * w * hpow * sizeof(unsigned char));
 
     //unsigned char path[msgSize * w][hpow];
 
