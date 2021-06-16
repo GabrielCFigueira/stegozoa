@@ -426,7 +426,7 @@ static void stc(int coverSize, unsigned char *steganogram, unsigned char *messag
     float *newwght = (float*) malloc(hpow * sizeof(float));
     float *temp;
 
-    printf("STC coverSize: %d, msgSize: %d\n", coverSize, msgSize);
+    printf("STC coverSize: %d, msgSize: %d, allocsize: %d\n", coverSize, msgSize, msgSize * w * hpow);
     fflush(stdout);
 
     //Forward part of the Viterbi algorithm
