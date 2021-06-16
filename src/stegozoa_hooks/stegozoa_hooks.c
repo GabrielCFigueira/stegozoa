@@ -409,6 +409,8 @@ static void stc(int coverSize, unsigned char *steganogram, unsigned char *messag
     int indm = 0;
     int hpow = 1 << h;
 
+    printf("hpow: %d\n", hpow);
+
     int msgSize = coverSize / w;
 
     float *wght = (float*) malloc(hpow * sizeof(float));
