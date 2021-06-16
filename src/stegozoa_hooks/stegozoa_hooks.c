@@ -403,7 +403,7 @@ int H_hat[] = {71, 109};
 int Ht[] = {3, 2, 3, 1, 0, 1, 3};
 
 
-static unsigned char *stc(int coverSize, unsigned char *steganogram, unsigned char *message, unsigned char *cover) {
+static void stc(int coverSize, unsigned char *steganogram, unsigned char *message, unsigned char *cover) {
 
     int indx = 0;
     int indm = 0;
@@ -416,16 +416,13 @@ static unsigned char *stc(int coverSize, unsigned char *steganogram, unsigned ch
     for (int i = 1; i < hpow; i++)
         wght[i] = INFINITY;
     
-    fprintf(stdout, "Before!\n");
-    fflush(stdout);
-
     unsigned char path[msgSize * w][hpow]; //TODO move to heap?
     
-    fprintf(stdout, "We got here!\n");
-    fflush(stdout);
     float w0, w1;
     float *newwght = (float*) malloc(hpow * sizeof(float));
     float *temp;
+
+    printf("STC coverSize: %d, msgSize: %d\n", coverSize, msgSize);
 
     //Forward part of the Viterbi algorithm
 
@@ -439,8 +436,9 @@ static unsigned char *stc(int coverSize, unsigned char *steganogram, unsigned ch
 
         for (int j = 0; j < w; j++) {
             for (int k = 0; k < hpow; k++) {
+
                 w0 = wght[k] + cover[indx];
-                w1 = wght[k ^ H[j]] + (!cover[indx]);
+                w1 = wght[k ^ H[j]] + !cover[indx];
                 path[indx][k] = w1 < w0;
                 newwght[k] = w1 < w0 ? w1 : w0;
             }
@@ -488,8 +486,6 @@ static unsigned char *stc(int coverSize, unsigned char *steganogram, unsigned ch
 
     for (int i = msgSize * w; i < coverSize; i++)
         steganogram[i] = cover[i];
-
-    return steganogram;
 
 }
 
