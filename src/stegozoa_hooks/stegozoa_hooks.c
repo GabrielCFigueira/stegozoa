@@ -420,7 +420,7 @@ static void stc(int coverSize, unsigned char *steganogram, unsigned char *messag
     
     printf("Before stack alloc\n");
     fflush(stdout);
-    unsigned char *path = (unsigned char*) malloc(msgSize * hpow * sizeof(unsigned char));
+    unsigned char *path = (unsigned char*) malloc(msgSize * w * hpow * sizeof(unsigned char));
     
     float w0, w1;
     float *newwght = (float*) malloc(hpow * sizeof(float));
