@@ -1301,9 +1301,12 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
     if(initializeExtract())
       extract = 0;
 
-  unsigned char* steganogram = (unsigned char*) malloc(pbi->bits * sizeof(unsigned char));
+  unsigned char* steganogram;
+
   if(pbi->bits < 40) //minimal message size
       extract = 0;
+  else
+      steganogram = (unsigned char*) malloc(pbi->bits * sizeof(unsigned char));
 
 
   short *qcoeff = pbi->qcoeff;
@@ -1331,7 +1334,8 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
   if(extract)
       flushDecoder(steganogram, pbi->ssrc, pbi->rtpSession, pbi->bits);
 
-  vpx_free(steganogram);
+  if(pbi->bits < 40) //minimal message size
+    vpx_free(steganogram);
   vpx_free(pbi->qcoeff);
 
   return 0;
