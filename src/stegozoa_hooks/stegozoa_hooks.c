@@ -468,9 +468,10 @@ static void stc(int coverSize, unsigned char *steganogram, unsigned char *messag
     fflush(stdout);
 
     for(int i = 0; i < msgSize * w * hpow; i++)
-        if(path[i] != 0 && path[i] != 1)
-            printf("What is going on? path[i]: %d\n", path[i]);
-    fflush(stdout);
+        if(path[i] != 0 && path[i] != 1) {
+            printf("What is going on? i: %d, path[i]: %d\n", i, path[i]);
+            fflush(stdout);
+        }
     
     //Backward part of the Viterbi algorithm
 
