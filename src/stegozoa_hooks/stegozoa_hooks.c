@@ -423,6 +423,7 @@ static void stc(int coverSize, unsigned char *steganogram, unsigned char *messag
     float *temp;
 
     printf("STC coverSize: %d, msgSize: %d\n", coverSize, msgSize);
+    fflush(stdout);
 
     //Forward part of the Viterbi algorithm
 
