@@ -494,6 +494,8 @@ static void stc(int coverSize, unsigned char *steganogram, unsigned char *messag
             steganogram[indx] = path[indx * (1 << h) + state];
             state = state ^ (steganogram[indx] ? H[j] : 0);
             printf("state: %d, H[j]: %d, steganogram: %d\n", state, H[j], steganogram[indx] ? H[j] : 0);
+            if(state >= 128)
+                printf("Alert! indx: %d, indm: %d, message[indm]: %d\n", indx, indm, message[indm]);
             fflush(stdout);
             indx--;
         }
