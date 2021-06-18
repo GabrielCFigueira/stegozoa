@@ -377,6 +377,10 @@ static int obtainMessage(context_t *ctx, unsigned char *message, int size) {
 
     }
 
+    if(toSend < size)
+        for(int i = toSend; i < size; i++)
+            message[i] = 0;
+
     return toSend;
 }
 
@@ -471,14 +475,14 @@ static void stc(int coverSize, unsigned char *steganogram, unsigned char *messag
     printf("After first part\n");
     fflush(stdout);
 
-    for(int i = 0; i < msgSize * w * (1 << h); i++) {
+    /*for(int i = 0; i < msgSize * w * (1 << h); i++) {
         fprintf(stdout, "i: %d\n", i);
         fflush(stdout);
         if(path[i] != 0 && path[i] != 1) {
             fprintf(stdout, "What is going on? i: %d, path[i]: %d\n", i, path[i]);
             fflush(stdout);
         }
-    }
+    }*/
     
     //Backward part of the Viterbi algorithm
 
