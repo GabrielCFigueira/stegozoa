@@ -402,7 +402,6 @@ static int obtainMessage(context_t *ctx, unsigned char *message, int size) {
 
 const int h = 7;
 const int w = 2;
-int H[] = {71, 109};
 const int H_hat[] = {71, 109};
 const int Ht[] = {3, 2, 3, 1, 0, 1, 3};
 
@@ -412,6 +411,10 @@ static void stc(int coverSize, unsigned char *steganogram, unsigned char *messag
     int indx = 0;
     int indm = 0;
     int hpow = 1 << h;
+
+    int H[w];
+    for (int i = 0; i < w; i++)
+        H[i] = H_hat[i];
 
     printf("hpow: %d\n", hpow);
 
