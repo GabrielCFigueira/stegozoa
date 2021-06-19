@@ -574,7 +574,7 @@ int flushEncoder(unsigned char *steganogram, unsigned char *cover, uint32_t ssrc
             differences++;
 
     printf("CHECK! differences: %d\n", differences);
-    free(emmbedMessage);
+    free(embbedMessage);
     free(message);
 
 
