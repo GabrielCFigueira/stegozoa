@@ -416,8 +416,6 @@ static void stc(int coverSize, unsigned char *steganogram, unsigned char *messag
     for (int i = 0; i < w; i++)
         H[i] = H_hat[i];
 
-    printf("hpow: %d\n", hpow);
-
     int msgSize = coverSize / w;
 
     float *wght = (float*) malloc(hpow * sizeof(float));
@@ -425,20 +423,12 @@ static void stc(int coverSize, unsigned char *steganogram, unsigned char *messag
     for (int i = 1; i < hpow; i++)
         wght[i] = INFINITY;
     
-    printf("Before stack alloc\n");
-    fflush(stdout);
     unsigned char *path = malloc(msgSize * w * hpow * sizeof(unsigned char*));
-
-    //unsigned char (*path)[hpow] = malloc(msgSize * w * hpow * sizeof(unsigned char));
-
-    //unsigned char path[msgSize * w][hpow];
 
     float w0, w1;
     float *newwght = (float*) malloc(hpow * sizeof(float));
     float *temp;
 
-    printf("STC coverSize: %d, msgSize: %d, allocsize: %d\n", coverSize, msgSize, msgSize * w * hpow);
-    fflush(stdout);
 
     //Forward part of the Viterbi algorithm
 
@@ -475,18 +465,7 @@ static void stc(int coverSize, unsigned char *steganogram, unsigned char *messag
         indm++;
     }
     
-    printf("After first part\n");
-    fflush(stdout);
 
-    /*for(int i = 0; i < msgSize * w * (1 << h); i++) {
-        fprintf(stdout, "i: %d\n", i);
-        fflush(stdout);
-        if(path[i] != 0 && path[i] != 1) {
-            fprintf(stdout, "What is going on? i: %d, path[i]: %d\n", i, path[i]);
-            fflush(stdout);
-        }
-    }*/
-    
     //Backward part of the Viterbi algorithm
 
     //float embeddingCost = wght[0];
@@ -500,10 +479,6 @@ static void stc(int coverSize, unsigned char *steganogram, unsigned char *messag
         for (int j = w - 1; j >= 0; j--) {
             steganogram[indx] = path[indx * (1 << h) + state];
             state = state ^ (steganogram[indx] ? H[j] : 0);
-            printf("state: %d, H[j]: %d, steganogram: %d\n", state, H[j], steganogram[indx] ? H[j] : 0);
-            if(state >= 128)
-                printf("Alert! indx: %d, indm: %d, message[indm]: %d\n", indx, indm, message[indm]);
-            fflush(stdout);
             indx--;
         }
         
@@ -515,8 +490,6 @@ static void stc(int coverSize, unsigned char *steganogram, unsigned char *messag
     free(wght);
     free(newwght);
 
-    printf("After second part\n");
-    fflush(stdout);
     for (int i = msgSize * w; i < coverSize; i++)
         steganogram[i] = cover[i];
 
