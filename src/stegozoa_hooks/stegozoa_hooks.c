@@ -565,18 +565,7 @@ int flushEncoder(unsigned char *steganogram, unsigned char *cover, uint32_t ssrc
 
     stc(size, steganogram, message, cover);
 
-    unsigned char *embbedMessage = (unsigned char*) malloc(msgSize * sizeof(unsigned char));
-    reverseStc(steganogram, embbedMessage, size);
-
-    int differences = 0;
-    for (int i = 0; i < msgSize; i++)
-        if (embbedMessage[i] != message[i])
-            differences++;
-
-    printf("CHECK! differences: %d\n", differences);
-    free(embbedMessage);
     free(message);
-
 
     return toSend;
 
@@ -632,7 +621,7 @@ static void deliverMessage(uint32_t ssrc, uint64_t rtpSession) {
 
 }
 
-int readQdctLsb(unsigned char* steganogram, int *index, short *qcoeff, int has_y2_block) {
+void readQdctLsb(unsigned char* steganogram, int *index, short *qcoeff, int has_y2_block) {
 
     //optimization idea: loop unroll
     for(int i = 0; i < 384 + has_y2_block * 16; i++) {
@@ -644,7 +633,6 @@ int readQdctLsb(unsigned char* steganogram, int *index, short *qcoeff, int has_y
         }
             
     }
-    return 0;
 
 }
 
@@ -679,7 +667,7 @@ void flushDecoder(unsigned char *steganogram, uint32_t ssrc, uint64_t rtpSession
                 msg->bit = 0;
             }
         }
-        else if(msg->bit == msg->size << 3 && msg->bit > 48)
+        else if(msg->bit == msg->size * 8 && msg->bit > 48)
             deliverMessage(ssrc, rtpSession);
     }
 

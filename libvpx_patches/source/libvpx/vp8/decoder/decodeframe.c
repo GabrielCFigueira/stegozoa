@@ -1305,7 +1305,8 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
 
   if(pbi->bits < 40) //minimal message size
       extract = 0;
-  else
+  
+  if(extract)
       steganogram = (unsigned char*) malloc(pbi->bits * sizeof(unsigned char));
 
 
@@ -1330,11 +1331,12 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
     xd->mode_info_context++;
   }
 
-  if(extract)
+  if(extract) {
       flushDecoder(steganogram, pbi->ssrc, pbi->rtpSession, pbi->bits);
+      free(steganogram);
+      printf("Decoder, index: %d, pbi->bits: %d\n", index, pbi->bits);
+  }
 
-  if(pbi->bits >= 40) //minimal message size
-    free(steganogram);
   vpx_free(pbi->qcoeff);
 
   return 0;
