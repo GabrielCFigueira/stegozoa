@@ -564,6 +564,17 @@ int flushEncoder(unsigned char *steganogram, unsigned char *cover, uint32_t ssrc
     }
 
     stc(size, steganogram, message, cover);
+
+    unsigned char *embbedMessage = (unsigned char*) malloc(msgSize * sizeof(unsigned char));
+    reverseStc(steganogram, embbedMessage, size);
+
+    int differences = 0;
+    for (int i = 0; i < msgSize; i++)
+        if (embbedMessage[i] != message[i])
+            differences++;
+
+    printf("CHECK! differences: %d\n", differences);
+    free(emmbedMessage);
     free(message);
 
 
