@@ -369,7 +369,6 @@ static int obtainMessage(context_t *ctx, unsigned char *message, int size) {
         
         for(int i = 0; i < n; i++) { 
             message[toSend] = getBit(msg->buffer, msg->bit);
-            printf("%d", message[toSend]);
             msg->bit++;
             toSend++;
         }
@@ -510,6 +509,8 @@ static void reverseStc(unsigned char *steganogram, unsigned char* message, int c
 
     int msgSize = coverSize / w;
 
+    printf("ReverseStc:");
+
     for(int i = 0; i < msgSize; i++) {
         int mask = 1;
         int index = 0;
@@ -527,6 +528,7 @@ static void reverseStc(unsigned char *steganogram, unsigned char* message, int c
         }
 
         message[i] = bit;
+        printf("%d", bit);
     }
 
 }
