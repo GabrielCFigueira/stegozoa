@@ -385,17 +385,17 @@ static int obtainMessage(context_t *ctx, unsigned char *message, int size) {
 }
 
 /*
- * int h = 7;
- * int w = 4;
- * int H_hat[] = {81, 95, 107, 121};
- * int Ht[] = {15, 6, 4, 7, 13, 3, 15};
+ * const int h = 7;
+ * const int w = 4;
+ * const int H_hat[] = {81, 95, 107, 121};
+ * const int Ht[] = {15, 6, 4, 7, 13, 3, 15};
  * */
 
 /*
- * int h = 2;
- * int w = 2;
- * int H_hat[] = {3, 2};
- * int Ht[] = {2, 3};
+ * const int h = 7;
+ * const int w = 3;
+ * const int H_hat[] = {95, 101, 121};
+ * const int Ht[] = {7, 4, 6, 5, 5, 3, 7};
  * */
 
 const int h = 7;
