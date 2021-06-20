@@ -355,9 +355,6 @@ static int obtainMessage(context_t *ctx, unsigned char *message, int size) {
 
     int toSend = 0;
 
-    if(msg != NULL)
-    printf("Encoder. msg->bit(before): %d\n", msg->bit);
-
     while(msg != NULL) {
         int msgSize = (msg->size << 3) - msg->bit;
         int n;
@@ -384,9 +381,6 @@ static int obtainMessage(context_t *ctx, unsigned char *message, int size) {
     for(int i = toSend; i < size; i++)
         message[i] = 0;
     
-    if(msg != NULL)
-        printf("Encoder. msg->bit(after): %d\n", msg->bit);
-
     return toSend;
 }
 
@@ -509,8 +503,6 @@ static void reverseStc(unsigned char *steganogram, unsigned char* message, int c
 
     int msgSize = coverSize / w;
 
-    printf("ReverseStc:");
-
     for(int i = 0; i < msgSize; i++) {
         int mask = 1;
         int index = 0;
@@ -528,7 +520,6 @@ static void reverseStc(unsigned char *steganogram, unsigned char* message, int c
         }
 
         message[i] = bit;
-        printf("%d", bit);
     }
 
 }
@@ -626,8 +617,7 @@ void readQdctLsb(unsigned char* steganogram, int *index, short *qcoeff, int has_
             steganogram[*index] = getLsb(qcoeff[i]);
             (*index)++;
 
-        }
-            
+        }   
     }
 
 }
@@ -639,9 +629,11 @@ void flushDecoder(unsigned char *steganogram, uint32_t ssrc, uint64_t rtpSession
 
     reverseStc(steganogram, message, size);
 
+    int msgSize = size / w;
+
     message_t *msg = getDecoderContext(ssrc, rtpSession)->msg;
 
-    for(int i = 0; i < size; i++) {
+    for(int i = 0; i < msgSize; i++) {
         setBit(msg->buffer, msg->bit, message[i]);
         msg->bit++;
 
