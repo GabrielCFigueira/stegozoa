@@ -246,7 +246,7 @@ def broadcastKeepalive():
     global sendMutex, messageToSend
     
     while True:
-        time.sleep(5)
+        time.sleep(20)
 
         sendMutex.acquire()
 
@@ -260,7 +260,7 @@ def broadcastKeepalive():
 def broadcastConnect():
 
     while True:
-        time.sleep(5)
+        time.sleep(20)
 
         message = createMessage(0, myId, 15) # 0xf = broadcast address
         sendMessage(message)    
@@ -356,6 +356,7 @@ def receiveMessage():
         
         if not validateCRC(header + body[:size - 4], crc): 
             print("Corrupted message!")
+            print(header + body)
             insuccess = insuccess + 1
             success = success - 1
             continue
