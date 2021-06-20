@@ -355,7 +355,8 @@ static int obtainMessage(context_t *ctx, unsigned char *message, int size) {
 
     int toSend = 0;
 
-    printf("Decoder. msg->bit(before): %d\n", msg->bit);
+    if(msg != NULL)
+    printf("Encoder. msg->bit(before): %d\n", msg->bit);
 
     while(msg != NULL) {
         int msgSize = (msg->size << 3) - msg->bit;
@@ -383,7 +384,8 @@ static int obtainMessage(context_t *ctx, unsigned char *message, int size) {
     for(int i = toSend; i < size; i++)
         message[i] = 0;
     
-    printf("Decoder. msg->bit(after): %d\n", msg->bit);
+    if(msg != NULL)
+        printf("Encoder. msg->bit(after): %d\n", msg->bit);
 
     return toSend;
 }
