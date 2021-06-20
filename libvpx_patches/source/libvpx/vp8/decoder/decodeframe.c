@@ -1301,37 +1301,34 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
     if(initializeExtract())
       extract = 0;
 
-  unsigned char* steganogram;
-
   if(pbi->bits < 40) //minimal message size
       extract = 0;
   
-  if(extract)
-      steganogram = (unsigned char*) malloc(pbi->bits * sizeof(unsigned char));
-
-
-  short *qcoeff = pbi->qcoeff;
-  int has_y2_block;
-  xd->mode_info_context = pc->mi;
-
-  int index = 0;
-
-  for (int i = 0; i < pc->mb_rows; ++i) {
-    for (int j = 0; j < pc->mb_cols; ++j) {
-      
-      has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
-                      xd->mode_info_context->mbmi.mode != SPLITMV);
-      
-      if(extract)
-        readQdctLsb(steganogram, &index, qcoeff, has_y2_block);
-      
-      xd->mode_info_context++;
-      qcoeff += 400;
-    }
-    xd->mode_info_context++;
-  }
-
   if(extract) {
+      unsigned char *steganogram = (unsigned char*) malloc(pbi->bits * sizeof(unsigned char));
+
+
+      short *qcoeff = pbi->qcoeff;
+      int has_y2_block;
+      xd->mode_info_context = pc->mi;
+
+      int index = 0;
+
+      for (int i = 0; i < pc->mb_rows; ++i) {
+        for (int j = 0; j < pc->mb_cols; ++j) {
+          
+          has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
+                          xd->mode_info_context->mbmi.mode != SPLITMV);
+          
+          if(extract)
+            readQdctLsb(steganogram, &index, qcoeff, has_y2_block);
+          
+          xd->mode_info_context++;
+          qcoeff += 400;
+        }
+        xd->mode_info_context++;
+      }
+
       flushDecoder(steganogram, pbi->ssrc, pbi->rtpSession, pbi->bits);
       free(steganogram);
   }
