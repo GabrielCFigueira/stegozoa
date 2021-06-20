@@ -369,6 +369,7 @@ static int obtainMessage(context_t *ctx, unsigned char *message, int size) {
         
         for(int i = 0; i < n; i++) { 
             message[toSend] = getBit(msg->buffer, msg->bit);
+            printf("%d", message[toSend]);
             msg->bit++;
             toSend++;
         }
@@ -660,7 +661,7 @@ void flushDecoder(unsigned char *steganogram, uint32_t ssrc, uint64_t rtpSession
                 msg->bit = 0;
             }
         }
-        else if(msg->bit == msg->size * 8 && msg->bit > 48)
+        else if(msg->bit == msg->size << 3 && msg->bit > 48)
             deliverMessage(ssrc, rtpSession);
     }
 
