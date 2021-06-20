@@ -890,8 +890,10 @@ void vp8_encode_frame(VP8_COMP *cpi) {
     }
 
     //Stegozoa section -------------------------------------------
+    int embbed = 1;
     if(!isEmbbedInitialized())
-        initializeEmbbed();
+        if(initializeEmbbed())
+            embbed = 0;
 
     clock_t start, end;
     start = clock();
@@ -901,36 +903,32 @@ void vp8_encode_frame(VP8_COMP *cpi) {
     memset(cm->above_context, 0, sizeof(ENTROPY_CONTEXT_PLANES) * cm->mb_cols);
     xd->mode_info_context = cm->mi;
 
-    int rate = 0;
     int embbedData = 0;
-
-    int bits = 0;
-
 
     for(int i = 0; i < cm->mb_rows; i++)
         cpi->bits += cpi->row_bits[i];
 
-    unsigned char *cover = (unsigned char*) malloc(cpi->bits * sizeof(unsigned char));
-    unsigned char *steganogram = (unsigned char*) malloc(cpi->bits * sizeof(unsigned char));
+    if(emmbed && cpi->bits >= 40) {
+        unsigned char *cover = (unsigned char*) malloc(cpi->bits * sizeof(unsigned char));
+        unsigned char *steganogram = (unsigned char*) malloc(cpi->bits * sizeof(unsigned char));
 
-    if(!steganogram || !cover) {
-        fprintf(stderr, "Stegozoa: Failed malloc");
-        return;
-    }
-    
-    int index = 0;
-    for(int i = 0; i < cm->mb_rows; i++)
-        for(int j = 0; j < cpi->row_bits[i]; j++)
-            cover[index++] = cpi->cover[i][j];
+        if(!steganogram || !cover) {
+            fprintf(stderr, "Stegozoa: Failed malloc");
+            return;
+        }
+        
+        int index = 0;
+        for(int i = 0; i < cm->mb_rows; i++)
+            for(int j = 0; j < cpi->row_bits[i]; j++)
+                cover[index++] = cpi->cover[i][j];
 
 
-    if(isEmbbedInitialized()) {
         embbedData = flushEncoder(steganogram, cover, cpi->ssrc, cpi->simulcast, cpi->bits);
         writeQdctLsb(cpi->positions, cpi->row_bits, steganogram, qcoeff, cpi->bits);
-    }
 
-    free(steganogram);
-    free(cover);
+        free(steganogram);
+        free(cover);
+    }
 
     for (mb_row = 0; mb_row < cm->mb_rows; ++mb_row) {
 

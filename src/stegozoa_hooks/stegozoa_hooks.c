@@ -354,6 +354,9 @@ static int obtainMessage(context_t *ctx, unsigned char *message, int size) {
     message_t *msg = ctx->msg;
 
     int toSend = 0;
+
+    printf("Decoder. msg->bit(before): %d\n", msg->bit);
+
     while(msg != NULL) {
         int msgSize = (msg->size << 3) - msg->bit;
         int n;
@@ -377,9 +380,10 @@ static int obtainMessage(context_t *ctx, unsigned char *message, int size) {
 
     }
 
-    if(toSend < size)
-        for(int i = toSend; i < size; i++)
-            message[i] = 0;
+    for(int i = toSend; i < size; i++)
+        message[i] = 0;
+    
+    printf("Decoder. msg->bit(after): %d\n", msg->bit);
 
     return toSend;
 }
@@ -387,7 +391,6 @@ static int obtainMessage(context_t *ctx, unsigned char *message, int size) {
 /*
  * int h = 7;
  * int w = 4;
- * int H[] = {81, 95, 107, 121};
  * int H_hat[] = {81, 95, 107, 121};
  * int Ht[] = {15, 6, 4, 7, 13, 3, 15};
  * */
@@ -395,7 +398,6 @@ static int obtainMessage(context_t *ctx, unsigned char *message, int size) {
 /*
  * int h = 2;
  * int w = 2;
- * int H[] = {3, 2};
  * int H_hat[] = {3, 2};
  * int Ht[] = {2, 3};
  * */
@@ -542,19 +544,8 @@ int flushEncoder(unsigned char *steganogram, unsigned char *cover, uint32_t ssrc
     if(ctx == NULL)
         ctx = createEncoderContext(ssrc);
 
-
-    if(size < 40) {//size too small
-        if(pthread_mutex_unlock(&barrier_mutex)) {
-            error("Who knows", "Trying to release the lock");
-            return 0; //should abort
-        }
-        return 0;    
-    }
-
     int msgSize = size / w;
-
     unsigned char *message = (unsigned char*) malloc(msgSize * sizeof(unsigned char));
-    
     int toSend = obtainMessage(ctx, message, msgSize);
 
 
