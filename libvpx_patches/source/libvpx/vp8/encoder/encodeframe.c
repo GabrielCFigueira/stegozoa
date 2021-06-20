@@ -908,7 +908,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
     for(int i = 0; i < cm->mb_rows; i++)
         cpi->bits += cpi->row_bits[i];
 
-    if(emmbed && cpi->bits >= 40) {
+    if(embbed && cpi->bits >= 40) {
         unsigned char *cover = (unsigned char*) malloc(cpi->bits * sizeof(unsigned char));
         unsigned char *steganogram = (unsigned char*) malloc(cpi->bits * sizeof(unsigned char));
 
