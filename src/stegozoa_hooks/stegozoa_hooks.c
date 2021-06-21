@@ -498,6 +498,19 @@ static void stc(int coverSize, unsigned char *steganogram, unsigned char *messag
 
     free(path);
 
+    printf("Encoder. Steganogram size: %d\n", coverSize);
+
+    for (int i = 0; i < coverSize; i++)
+        printf("%d", steganogram[i]);
+    printf("\nEncoder. Message:\n");
+
+
+    for (int i = 0; i < msgSize; i++)
+        printf("%d", message[i]);
+    printf("\n");
+
+
+
 }
 
 static void reverseStc(unsigned char *steganogram, unsigned char* message, int coverSize) {
@@ -507,6 +520,12 @@ static void reverseStc(unsigned char *steganogram, unsigned char* message, int c
         line += Ht[i] << (w * i);
 
     int msgSize = coverSize / w;
+
+    printf("Decoder. Steganogram size: %d\n", coverSize);
+    for(int i = 0; i < coverSize; i++)
+        printf("%d", steganogram[i]);
+
+    printf("\nDecoder. Message:\n");
 
     for(int i = 0; i < msgSize; i++) {
         int mask = 1;
@@ -527,6 +546,7 @@ static void reverseStc(unsigned char *steganogram, unsigned char* message, int c
         message[i] = bit;
         printf("%d", message[i]);
     }
+    printf("\n");
 
 }
 
@@ -558,15 +578,6 @@ int flushEncoder(unsigned char *steganogram, unsigned char *cover, uint32_t ssrc
     }
 
     stc(size, steganogram, message, cover);
-
-    reverseStc(steganogram, tempMessage, size);
-    int differences = 0;
-    for (int i = 0; i < msgSize; i++)
-        if(message[i] != tempMessage[i])
-            differences++;
-
-    if(differences)
-        printf("Alert!!!!! differences: %d\n", differences);
 
     free(tempMessage);
 
