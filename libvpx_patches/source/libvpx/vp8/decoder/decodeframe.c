@@ -1307,6 +1307,8 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
   if(extract) {
       unsigned char *steganogram = (unsigned char*) malloc(pbi->bits * sizeof(unsigned char));
 
+      printf("Decoder: bits: %d\n", pbi->bits);
+
 
       short *qcoeff = pbi->qcoeff;
       int has_y2_block;
