@@ -616,8 +616,8 @@ static void deliverMessage(uint32_t ssrc, uint64_t rtpSession) {
 void readQdctLsb(unsigned char* steganogram, int *index, short *qcoeff, int has_y2_block) {
 
     //optimization idea: loop unroll
-    for(int i = 0; i < 384 /*+ has_y2_block * 16*/; i++) {
-        if(qcoeff[i] != 1 && qcoeff[i] != 0 && (/*!has_y2_block ||*/ MOD16(i) != 0 || i > 255)) {
+    for(int i = 0; i < 384 + has_y2_block * 16; i++) {
+        if(qcoeff[i] != 1 && qcoeff[i] != 0 && (!has_y2_block || MOD16(i) != 0 || i > 255)) {
             
             steganogram[*index] = getLsb(qcoeff[i]);
             (*index)++;
