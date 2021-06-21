@@ -117,7 +117,7 @@ static void insertMessage(context_t *ctx, message_t *newMsg) {
                 return;
             else if(msg->msgType == 3 && newMsg->msgType == 3 &&
                     msg->receiverId == newMsg->receiverId &&
-                    parse2size(msg->buffer, 10) == parse2size(newMsg->buffer, 10))
+                    parseSize(msg->buffer, 10) == parseSize(newMsg->buffer, 10))
                 return;
 
 
