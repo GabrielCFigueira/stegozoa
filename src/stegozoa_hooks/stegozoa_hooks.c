@@ -371,7 +371,6 @@ static int obtainMessage(context_t *ctx, unsigned char *message, int size) {
         
         for(int i = 0; i < n; i++) { 
             message[toSend] = getBit(msg->buffer, msg->bit);
-            printf("%d", message[toSend]);
             msg->bit++;
             toSend++;
         }
@@ -556,6 +555,8 @@ int flushEncoder(unsigned char *steganogram, unsigned char *cover, uint32_t ssrc
         error("Who knows", "Trying to release the lock");
         return 0; //should abort
     }
+    for(int i = 0; i < msgSize; i++)
+        printf("%d", message[i]);
 
     stc(size, steganogram, message, cover);
 
