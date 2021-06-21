@@ -51,6 +51,15 @@ static void error(char *errorMsg, char *when) {
     fprintf(stderr, "Stegozoa hooks error: %s when: %s\n", errorMsg, when);
 }
 
+static int parseSize(unsigned char array[], int index) {
+    int res = 0;
+
+    res = (res | array[index + 1]) << 8;
+    res = res | array[index];
+
+    return res;
+}
+
 static message_t *newMessage() {
     message_t *message = (message_t *) calloc(1, sizeof(message_t));
     if(message == NULL)
@@ -106,6 +115,10 @@ static void insertMessage(context_t *ctx, message_t *newMsg) {
             } else if(msg->msgType == 4 && newMsg->msgType == 4 && 
                     msg->receiverId == newMsg->receiverId && msg->syn == newMsg->syn) //remove duplicates
                 return;
+            else if(msg->msgType == 3 && newMsg->msgType == 3 &&
+                    msg->receiverId == newMsg->receiverId &&
+                    parse2size(msg->buffer, 10) == parse2size(newMsg->buffer, 10))
+                return;
 
 
         } while (1);
@@ -124,14 +137,6 @@ static message_t *copyMessage(message_t *msg) {
     return newMsg;
 }
 
-static int parseSize(unsigned char array[], int index) {
-    int res = 0;
-
-    res = (res | array[index + 1]) << 8;
-    res = res | array[index];
-
-    return res;
-}
 
 static context_t *getEncoderContext(uint32_t ssrc) {
 
@@ -611,8 +616,8 @@ static void deliverMessage(uint32_t ssrc, uint64_t rtpSession) {
 void readQdctLsb(unsigned char* steganogram, int *index, short *qcoeff, int has_y2_block) {
 
     //optimization idea: loop unroll
-    for(int i = 0; i < 384 + has_y2_block * 16; i++) {
-        if(qcoeff[i] != 1 && qcoeff[i] != 0 && (!has_y2_block || MOD16(i) != 0 || i > 255)) {
+    for(int i = 0; i < 384 /*+ has_y2_block * 16*/; i++) {
+        if(qcoeff[i] != 1 && qcoeff[i] != 0 && (/*!has_y2_block ||*/ MOD16(i) != 0 || i > 255)) {
             
             steganogram[*index] = getLsb(qcoeff[i]);
             (*index)++;
