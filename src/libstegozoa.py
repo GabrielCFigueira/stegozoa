@@ -459,11 +459,11 @@ def send(byteArray, receiver):
         messageToSend[receiver] = sendQueue()
 
     array = bytes(0)
-    for i in range(0, len(byteArray), 1024):
-        array = byteArray[i:i+1024]
+    for i in range(0, len(byteArray), 256):
+        array = byteArray[i:i+256]
 
         frag = 1
-        if i + 1024 >= len(byteArray):
+        if i + 256 >= len(byteArray):
             frag = 0
 
         syn = messageToSend[receiver].addMessage(array, frag)
