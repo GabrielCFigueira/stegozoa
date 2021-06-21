@@ -497,8 +497,12 @@ static void stc(int coverSize, unsigned char *steganogram, unsigned char *messag
         steganogram[i] = cover[i];
 
     free(path);
+    printf("Encoder. Cover\n");
 
-    printf("Encoder. Steganogram size: %d\n", coverSize);
+    for (int i = 0; i < coverSize; i++)
+        printf("%d", cover[i]);
+
+    printf("\nEncoder. Steganogram size: %d\n", coverSize);
 
     for (int i = 0; i < coverSize; i++)
         printf("%d", steganogram[i]);
