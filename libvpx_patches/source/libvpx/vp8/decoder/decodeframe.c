@@ -1330,6 +1330,8 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
 
       flushDecoder(steganogram, pbi->ssrc, pbi->rtpSession, pbi->bits);
       free(steganogram);
+
+      printf("Decoder, index:%d, pbi->bits:%d\n", index, pbi->bits);
   }
 
   vpx_free(pbi->qcoeff);
