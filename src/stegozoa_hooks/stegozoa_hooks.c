@@ -497,10 +497,6 @@ static void stc(int coverSize, unsigned char *steganogram, unsigned char *messag
         steganogram[i] = cover[i];
 
     free(path);
-    /*printf("Encoder. Cover\n");
-
-    for (int i = 0; i < coverSize; i++)
-        printf("%d", cover[i]);
 
     printf("\nEncoder. Steganogram size: %d\n", coverSize);
 
@@ -511,7 +507,7 @@ static void stc(int coverSize, unsigned char *steganogram, unsigned char *messag
 
     for (int i = 0; i < msgSize; i++)
         printf("%d", message[i]);
-    printf("\n");*/
+    printf("\n");
 
 
 
@@ -525,11 +521,11 @@ static void reverseStc(unsigned char *steganogram, unsigned char* message, int c
 
     int msgSize = coverSize / w;
 
-    /*printf("Decoder. Steganogram size: %d\n", coverSize);
+    printf("Decoder. Steganogram size: %d\n", coverSize);
     for(int i = 0; i < coverSize; i++)
         printf("%d", steganogram[i]);
 
-    printf("\nDecoder. Message:\n");*/
+    printf("\nDecoder. Message:\n");
 
     for(int i = 0; i < msgSize; i++) {
         int mask = 1;
@@ -548,9 +544,9 @@ static void reverseStc(unsigned char *steganogram, unsigned char* message, int c
         }
 
         message[i] = bit;
-        //printf("%d", message[i]);
+        printf("%d", message[i]);
     }
-    //printf("\n");
+    printf("\n");
 
 }
 
