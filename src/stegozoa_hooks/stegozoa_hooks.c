@@ -547,6 +547,7 @@ int flushEncoder(unsigned char *steganogram, unsigned char *cover, uint32_t ssrc
 
     int msgSize = size / w;
     unsigned char *message = (unsigned char*) malloc(msgSize * sizeof(unsigned char));
+    unsigned char *tempMessage = (unsigned char*) malloc(msgSize * sizeof(unsigned char));
     int toSend = obtainMessage(ctx, message, msgSize);
 
 
@@ -556,6 +557,17 @@ int flushEncoder(unsigned char *steganogram, unsigned char *cover, uint32_t ssrc
     }
 
     stc(size, steganogram, message, cover);
+
+    reverseStc(steganogram, tempMessage, size);
+    int differences = 0;
+    for (int i = 0; i < msgSize; i++)
+        if(message[i] != tempMessage[i])
+            differences++;
+
+    if(differences)
+        printf("Alert!!!!! differences: %d\n", differences);
+
+    free(tempMessage);
 
     free(message);
 
@@ -629,12 +641,10 @@ void readQdctLsb(unsigned char* steganogram, int *index, short *qcoeff, int has_
 
 void flushDecoder(unsigned char *steganogram, uint32_t ssrc, uint64_t rtpSession, int size) {
 
-
-    unsigned char *message = (unsigned char*) malloc(size * sizeof(unsigned char));
-
+    int msgSize = size / w;
+    unsigned char *message = (unsigned char*) malloc(msgSize * sizeof(unsigned char));
     reverseStc(steganogram, message, size);
 
-    int msgSize = size / w;
 
     message_t *msg = getDecoderContext(ssrc, rtpSession)->msg;
 
