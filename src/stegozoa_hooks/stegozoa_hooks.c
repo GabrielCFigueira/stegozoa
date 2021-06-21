@@ -525,6 +525,7 @@ static void reverseStc(unsigned char *steganogram, unsigned char* message, int c
         }
 
         message[i] = bit;
+        printf("%d", message[i]);
     }
 
 }
@@ -555,8 +556,6 @@ int flushEncoder(unsigned char *steganogram, unsigned char *cover, uint32_t ssrc
         error("Who knows", "Trying to release the lock");
         return 0; //should abort
     }
-    for(int i = 0; i < msgSize; i++)
-        printf("%d", message[i]);
 
     stc(size, steganogram, message, cover);
 
@@ -652,7 +651,6 @@ void flushDecoder(unsigned char *steganogram, uint32_t ssrc, uint64_t rtpSession
 
     for(int i = 0; i < msgSize; i++) {
         setBit(msg->buffer, msg->bit, message[i]);
-        //printf("%d", message[i]);
         msg->bit++;
 
         if(msg->bit == 32) {
