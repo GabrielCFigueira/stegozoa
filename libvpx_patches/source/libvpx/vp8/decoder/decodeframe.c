@@ -1319,7 +1319,7 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
   if(extract) {
       unsigned char *steganogram = (unsigned char*) malloc(bits * sizeof(unsigned char));
         
-      readQdctLsb(pbi->positions, pbi->row_bits, steganogram, pbi->qcoeff, bits);
+      readQdctLsb(pbi->positions, pbi->row_bits, pc->mb_rows, steganogram, pbi->qcoeff, bits);
       flushDecoder(steganogram, pbi->ssrc, pbi->rtpSession, bits);
       free(steganogram);
   }

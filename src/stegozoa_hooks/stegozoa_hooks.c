@@ -585,23 +585,19 @@ int flushEncoder(unsigned char *steganogram, unsigned char *cover, uint32_t ssrc
 }
 
 
-int writeQdctLsb(int **positions, int *row_bits, unsigned char *steganogram, short *qcoeff, int bits) {
+int writeQdctLsb(int **positions, int *row_bits, int n_rows, unsigned char *steganogram, short *qcoeff, int bits) {
 
     int position;
-    int mb_row = 0;
     int index = 0;
 
     printf("Encoder. Positions:\n");
-    for(int i = 0; i < bits; i++) {
-        position = positions[mb_row][index++];
-        printf("%d\n", position);
-        qcoeff[position] = (qcoeff[position] & 0xFFFE) | steganogram[i];
-        
-        if(index == row_bits[mb_row]) {
-            mb_row++;
-            index = 0;
+    for(int i = 0; i < n_rows; i++)
+        for(int j = 0; j < row_bits[i]; j++) {
+            position = positions[i][j];
+            printf("%d\n", position);
+            qcoeff[position] = (qcoeff[position] & 0xFFFE) | steganogram[index++];
         }
-    }
+        
     
     return bits;
 }
@@ -636,24 +632,19 @@ static void deliverMessage(uint32_t ssrc, uint64_t rtpSession) {
 
 }
 
-void readQdctLsb(int **positions, int *row_bits, unsigned char* steganogram, short *qcoeff, int bits) {
+void readQdctLsb(int **positions, int *row_bits, int n_rows, unsigned char* steganogram, short *qcoeff, int bits) {
 
     int position;
-    int mb_row = 0;
     int index = 0;
 
     printf("Decoder. Positions:\n");
 
-    for(int i = 0; i < bits; i++) {
-        position = positions[mb_row][index++];
-        printf("%d\n", position);
-        steganogram[i] = getLsb(qcoeff[position]);
-        
-        if(index == row_bits[mb_row]) {
-            mb_row++;
-            index = 0;
+    for(int i = 0; i < n_rows; i++)
+        for(int j = 0; j < row_bits[i]; j++) {
+            position = positions[i][j];
+            printf("%d\n", position);
+            steganogram[index++] = getLsb(qcoeff[position]);
         }
-    }
 
 }
 
