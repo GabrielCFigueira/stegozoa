@@ -89,8 +89,6 @@ static struct VP8D_COMP *create_decompressor(VP8D_CONFIG *oxcf) {
   //Stegozoa
   VP8_COMMON *cm = &pbi->common;
 
-  printf("mb_rows: %d, mb_cols:%d\n", cm->mb_rows, cm->mb_cols);
-  fflush(stdout);
   CHECK_MEM_ERROR(pbi->row_bits, vpx_calloc(cm->mb_rows, sizeof(int)));
   CHECK_MEM_ERROR(pbi->positions, vpx_calloc(cm->mb_rows, sizeof(int*)));
 
@@ -134,6 +132,8 @@ static struct VP8D_COMP *create_decompressor(VP8D_CONFIG *oxcf) {
   vp8_setup_block_dptrs(&pbi->mb);
 
   once(initialize_dec);
+  printf("mb_rows: %d, mb_cols:%d\n", cm->mb_rows, cm->mb_cols);
+  fflush(stdout);
 
   return pbi;
 }
