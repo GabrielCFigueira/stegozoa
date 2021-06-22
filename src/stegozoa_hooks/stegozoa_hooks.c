@@ -389,12 +389,11 @@ static int obtainMessage(context_t *ctx, unsigned char *message, int size) {
     return toSend;
 }
 
-/*
- * const int h = 7;
- * const int w = 4;
- * const int H_hat[] = {81, 95, 107, 121};
- * const int Ht[] = {15, 6, 4, 7, 13, 3, 15};
- * */
+
+const int h = 7;
+const int w = 4;
+const int H_hat[] = {81, 95, 107, 121};
+const int Ht[] = {15, 6, 4, 7, 13, 3, 15};
 
 /*
  * const int h = 7;
@@ -403,10 +402,12 @@ static int obtainMessage(context_t *ctx, unsigned char *message, int size) {
  * const int Ht[] = {7, 4, 6, 5, 5, 3, 7};
  * */
 
-const int h = 7;
-const int w = 2;
-const int H_hat[] = {71, 109};
-const int Ht[] = {3, 2, 3, 1, 0, 1, 3};
+/*
+ * const int h = 7;
+ * const int w = 2;
+ * const int H_hat[] = {71, 109};
+ * const int Ht[] = {3, 2, 3, 1, 0, 1, 3};
+ * */
 
 
 static void stc(int coverSize, unsigned char *steganogram, unsigned char *message, unsigned char *cover) {
@@ -498,19 +499,6 @@ static void stc(int coverSize, unsigned char *steganogram, unsigned char *messag
 
     free(path);
 
-    /*printf("\nEncoder. Steganogram size: %d\n", coverSize);
-
-    for (int i = 0; i < coverSize; i++)
-        printf("%d", steganogram[i]);
-    printf("\nEncoder. Message:\n");
-
-
-    for (int i = 0; i < msgSize; i++)
-        printf("%d", message[i]);
-    printf("\n");*/
-
-
-
 }
 
 static void reverseStc(unsigned char *steganogram, unsigned char* message, int coverSize) {
@@ -520,12 +508,6 @@ static void reverseStc(unsigned char *steganogram, unsigned char* message, int c
         line += Ht[i] << (w * i);
 
     int msgSize = coverSize / w;
-
-    /*printf("Decoder. Steganogram size: %d\n", coverSize);
-    for(int i = 0; i < coverSize; i++)
-        printf("%d", steganogram[i]);
-
-    printf("\nDecoder. Message:\n");*/
 
     for(int i = 0; i < msgSize; i++) {
         int mask = 1;
@@ -544,9 +526,7 @@ static void reverseStc(unsigned char *steganogram, unsigned char* message, int c
         }
 
         message[i] = bit;
-        //printf("%d", message[i]);
     }
-    //printf("\n");
 
 }
 
