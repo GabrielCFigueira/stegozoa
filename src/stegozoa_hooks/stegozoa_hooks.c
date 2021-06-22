@@ -498,7 +498,7 @@ static void stc(int coverSize, unsigned char *steganogram, unsigned char *messag
 
     free(path);
 
-    printf("\nEncoder. Steganogram size: %d\n", coverSize);
+    /*printf("\nEncoder. Steganogram size: %d\n", coverSize);
 
     for (int i = 0; i < coverSize; i++)
         printf("%d", steganogram[i]);
@@ -507,7 +507,7 @@ static void stc(int coverSize, unsigned char *steganogram, unsigned char *messag
 
     for (int i = 0; i < msgSize; i++)
         printf("%d", message[i]);
-    printf("\n");
+    printf("\n");*/
 
 
 
@@ -521,11 +521,11 @@ static void reverseStc(unsigned char *steganogram, unsigned char* message, int c
 
     int msgSize = coverSize / w;
 
-    printf("Decoder. Steganogram size: %d\n", coverSize);
+    /*printf("Decoder. Steganogram size: %d\n", coverSize);
     for(int i = 0; i < coverSize; i++)
         printf("%d", steganogram[i]);
 
-    printf("\nDecoder. Message:\n");
+    printf("\nDecoder. Message:\n");*/
 
     for(int i = 0; i < msgSize; i++) {
         int mask = 1;
@@ -544,9 +544,9 @@ static void reverseStc(unsigned char *steganogram, unsigned char* message, int c
         }
 
         message[i] = bit;
-        printf("%d", message[i]);
+        //printf("%d", message[i]);
     }
-    printf("\n");
+    //printf("\n");
 
 }
 
@@ -590,11 +590,9 @@ int writeQdctLsb(int **positions, int *row_bits, int n_rows, unsigned char *steg
     int position;
     int index = 0;
 
-    printf("Encoder. Positions:\n");
     for(int i = 0; i < n_rows; i++)
         for(int j = 0; j < row_bits[i]; j++) {
             position = positions[i][j];
-            printf("%d\n", position);
             qcoeff[position] = (qcoeff[position] & 0xFFFE) | steganogram[index++];
         }
         
@@ -637,12 +635,9 @@ void readQdctLsb(int **positions, int *row_bits, int n_rows, unsigned char* steg
     int position;
     int index = 0;
 
-    printf("Decoder. Positions:\n");
-
     for(int i = 0; i < n_rows; i++)
         for(int j = 0; j < row_bits[i]; j++) {
             position = positions[i][j];
-            printf("%d\n", position);
             steganogram[index++] = getLsb(qcoeff[position]);
         }
 
