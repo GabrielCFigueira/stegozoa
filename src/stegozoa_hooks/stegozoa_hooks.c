@@ -384,7 +384,7 @@ static int obtainMessage(context_t *ctx, unsigned char *message, int size) {
     }
 
     for(int i = toSend; i < size; i++)
-        message[i] = 0;
+        message[i] = 2;
     
     return toSend;
 }
@@ -427,7 +427,8 @@ static void stc(int coverSize, unsigned char *steganogram, unsigned char *messag
     for (int i = 1; i < hpow; i++)
         wght[i] = INFINITY;
     
-    unsigned char *path = malloc(msgSize * w * hpow * sizeof(unsigned char*));
+    unsigned char *path = malloc(msgSize * w * hpow * sizeof(unsigned char));
+    unsigned char *messagePath = malloc(msgSize * hpow * sizeof(unsigned char));
 
     float w0, w1;
     float *newwght = (float*) malloc(hpow * sizeof(float));
@@ -460,8 +461,15 @@ static void stc(int coverSize, unsigned char *steganogram, unsigned char *messag
         
         }
 
-        for (int j = 0; j < hpow >> 1; j++)
-            wght[j] = wght[(j << 1) + message[indm]];
+        for (int j = 0; j < hpow >> 1; j++) {
+            if(message[indm] == 2) {
+                wght[j] = wght[j << 1] < wght[(j << 1) + 1] ? wght[j << 1] : wght[(j << 1) + 1];
+                messagePath[indm][j] = wght[j << 1] < wght[(j << 1) + 1];
+            } else {
+                wght[j] = wght[(j << 1) + message[indm]];
+                messagePath[indm][j] = message[indm];
+            }
+        }
         
         for (int j = hpow >> 1; j < hpow; j++)
             wght[j] = INFINITY;
@@ -477,7 +485,7 @@ static void stc(int coverSize, unsigned char *steganogram, unsigned char *messag
     indx--;
     indm--;
     for (int i = msgSize - 1; i >= 0; i--) {
-        state = (state << 1) + message[indm];
+        state = (state << 1) + messagePath[indm][state];
         indm--;
 
         for (int j = w - 1; j >= 0; j--) {
@@ -493,11 +501,12 @@ static void stc(int coverSize, unsigned char *steganogram, unsigned char *messag
 
     free(wght);
     free(newwght);
+    free(path);
+    free(messagePath);
 
     for (int i = msgSize * w; i < coverSize; i++)
         steganogram[i] = cover[i];
 
-    free(path);
 
 }
 
