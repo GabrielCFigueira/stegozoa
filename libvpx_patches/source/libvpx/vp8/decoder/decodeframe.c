@@ -121,7 +121,7 @@ static void decode_macroblock(VP8D_COMP *pbi, MACROBLOCKD *xd,
   
     for(int i = 0; i < 384 + has_y2_block * 16; i++)
       if(xd->qcoeff[i] != 1 && xd->qcoeff[i] != 0 && (!has_y2_block || i % 16 != 0 || i > 255)) {
-        pbi->postions[mb_row][pbi->row_bits[mb_row]] = i + (mb_row * pbi->common.mb_cols + mb_col) * 400;
+        pbi->positions[mb_row][pbi->row_bits[mb_row]] = i + (mb_row * pbi->common.mb_cols + mb_col) * 400;
         pbi->row_bits[mb_row]++;
       }
     
@@ -1313,7 +1313,7 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
   if(extract) {
       unsigned char *steganogram = (unsigned char*) malloc(bits * sizeof(unsigned char));
         
-      readQdctLsb(pbi->positions, pbi->row_bits, steganogram, qcoeff, bits);
+      readQdctLsb(pbi->positions, pbi->row_bits, steganogram, pbi->qcoeff, bits);
       flushDecoder(steganogram, pbi->ssrc, pbi->rtpSession, bits);
       free(steganogram);
   }

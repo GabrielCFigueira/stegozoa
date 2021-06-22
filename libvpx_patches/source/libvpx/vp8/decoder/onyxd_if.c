@@ -61,7 +61,7 @@ static void remove_decompressor(VP8D_COMP *pbi) {
 #endif
   //Stegozoa
   vpx_free(pbi->row_bits);
-  for(int i = 0; i < pbi->common->mb_rows; i++)
+  for(int i = 0; i < pbi->common.mb_rows; i++)
       vpx_free(pbi->positions[i]);
   vpx_free(pbi->positions);
 
