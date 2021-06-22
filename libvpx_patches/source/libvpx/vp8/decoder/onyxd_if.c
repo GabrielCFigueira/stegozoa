@@ -61,7 +61,7 @@ static void remove_decompressor(VP8D_COMP *pbi) {
 #endif
   //Stegozoa
   vpx_free(pbi->row_bits);
-  for(int i = 0; i < cm->mb_rows; i++)
+  for(int i = 0; i < pbi->common->mb_rows; i++)
       vpx_free(pbi->positions[i]);
   vpx_free(pbi->positions);
 
@@ -92,7 +92,7 @@ static struct VP8D_COMP *create_decompressor(VP8D_CONFIG *oxcf) {
   CHECK_MEM_ERROR(pbi->positions, vpx_calloc(cm->mb_rows, sizeof(int*)));
 
   for (int i = 0; i < cm->mb_rows; i++)
-      CHECK_MEM_ERROR(cpi->positions[i], vpx_calloc(400 * cm->mb_cols, sizeof(int)));
+      CHECK_MEM_ERROR(pbi->positions[i], vpx_calloc(400 * cm->mb_cols, sizeof(int)));
 
 
   pbi->common.current_video_frame = 0;
