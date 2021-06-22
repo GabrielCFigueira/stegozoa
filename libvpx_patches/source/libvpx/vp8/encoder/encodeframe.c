@@ -1383,7 +1383,7 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
     int has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
           xd->mode_info_context->mbmi.mode != SPLITMV);
   
-  for(int i = 0; i < 384 /*+ has_y2_block * 16*/; i++)
+  for(int i = 0; i < 384 + has_y2_block * 16; i++)
     if(xd->qcoeff[i] != 1 && xd->qcoeff[i] != 0 && (!has_y2_block || i % 16 != 0 || i > 255)) {
       cpi->positions[mb_row][cpi->row_bits[mb_row]] = i + (mb_row * cpi->common.mb_cols + mb_col) * 400;
       cpi->cover[mb_row][cpi->row_bits[mb_row]] = xd->qcoeff[i] & 0x1;
