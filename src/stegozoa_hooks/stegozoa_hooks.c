@@ -591,8 +591,10 @@ int writeQdctLsb(int **positions, int *row_bits, unsigned char *steganogram, sho
     int mb_row = 0;
     int index = 0;
 
+    printf("Encoder. Positions:\n");
     for(int i = 0; i < bits; i++) {
         position = positions[mb_row][index++];
+        printf("%d\n", position);
         qcoeff[position] = (qcoeff[position] & 0xFFFE) | steganogram[i];
         
         if(index == row_bits[mb_row]) {
@@ -640,8 +642,11 @@ void readQdctLsb(int **positions, int *row_bits, unsigned char* steganogram, sho
     int mb_row = 0;
     int index = 0;
 
+    printf("Decoder. Positions:\n");
+
     for(int i = 0; i < bits; i++) {
         position = positions[mb_row][index++];
+        printf("%d\n", position);
         steganogram[i] = getLsb(qcoeff[position]);
         
         if(index == row_bits[mb_row]) {
