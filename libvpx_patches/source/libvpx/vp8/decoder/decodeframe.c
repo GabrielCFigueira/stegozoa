@@ -916,10 +916,14 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
   YV12_BUFFER_CONFIG *yv12_fb_new = pbi->dec_fb_ref[INTRA_FRAME];
   
   //Stegozoa
-  CHECK_MEM_ERROR(pbi->qcoeff, vpx_calloc(400 * pbi->common.mb_cols * pbi->common.mb_rows, sizeof(short)));
+  CHECK_MEM_ERROR(pbi->qcoeff, vpx_calloc(400 * pc->mb_cols * pc->mb_rows, sizeof(short)));
+  CHECK_MEM_ERROR(pbi->row_bits, vpx_calloc(pc->mb_rows, sizeof(int)));
+  CHECK_MEM_ERROR(pbi->positions, vpx_calloc(pc->mb_rows, sizeof(int*)));
 
-  for (int i = 0; i < pc->mb_rows; i++)
+  for (int i = 0; i < pc->mb_rows; i++) {
+      CHECK_MEM_ERROR(pbi->positions[i], vpx_calloc(400 * pc->mb_cols, sizeof(int)));
       pbi->row_bits[i] = 0;
+  }
 
   /* start with no corruption of current frame */
   xd->corrupted = 0;
@@ -1321,6 +1325,11 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
   }
 
   vpx_free(pbi->qcoeff);
+  vpx_free(pbi->row_bits);
+  for(int i = 0; i < pbi->common.mb_rows; i++)
+      vpx_free(pbi->positions[i]);
+  vpx_free(pbi->positions);
+
 
   return 0;
 }

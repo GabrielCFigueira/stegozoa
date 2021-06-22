@@ -59,12 +59,6 @@ static void remove_decompressor(VP8D_COMP *pbi) {
 #if CONFIG_ERROR_CONCEALMENT
   vp8_de_alloc_overlap_lists(pbi);
 #endif
-  //Stegozoa
-  vpx_free(pbi->row_bits);
-  for(int i = 0; i < pbi->common.mb_rows; i++)
-      vpx_free(pbi->positions[i]);
-  vpx_free(pbi->positions);
-
   vp8_remove_common(&pbi->common);
   vpx_free(pbi);
 }
@@ -85,16 +79,6 @@ static struct VP8D_COMP *create_decompressor(VP8D_CONFIG *oxcf) {
   pbi->common.error.setjmp = 1;
 
   vp8_create_common(&pbi->common);
-
-  //Stegozoa
-  VP8_COMMON *cm = &pbi->common;
-
-  CHECK_MEM_ERROR(pbi->row_bits, vpx_calloc(cm->mb_rows, sizeof(int)));
-  CHECK_MEM_ERROR(pbi->positions, vpx_calloc(cm->mb_rows, sizeof(int*)));
-
-  for (int i = 0; i < cm->mb_rows; i++)
-      CHECK_MEM_ERROR(pbi->positions[i], vpx_calloc(400 * cm->mb_cols, sizeof(int)));
-
 
   pbi->common.current_video_frame = 0;
   pbi->ready_for_new_data = 1;
@@ -132,8 +116,6 @@ static struct VP8D_COMP *create_decompressor(VP8D_CONFIG *oxcf) {
   vp8_setup_block_dptrs(&pbi->mb);
 
   once(initialize_dec);
-  printf("mb_rows: %d, mb_cols:%d\n", cm->mb_rows, cm->mb_cols);
-  fflush(stdout);
 
   return pbi;
 }
