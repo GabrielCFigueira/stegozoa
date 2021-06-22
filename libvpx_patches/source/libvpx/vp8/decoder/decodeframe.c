@@ -119,8 +119,8 @@ static void decode_macroblock(VP8D_COMP *pbi, MACROBLOCKD *xd,
     int has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
           xd->mode_info_context->mbmi.mode != SPLITMV);
   
-    for(int i = 0; i < 256 /*384 + has_y2_block * 16*/; i++)
-      if(xd->qcoeff[i] != 1 && xd->qcoeff[i] != 0 && (!has_y2_block || i % 16 != 0))  //|| i > 255))
+    for(int i = 0; i < 384 /*+ has_y2_block * 16*/; i++)
+      if(xd->qcoeff[i] != 1 && xd->qcoeff[i] != 0 && (!has_y2_block || i % 16 != 0 || i > 255))
         pbi->bits++;
     
     /* Special case:  Force the loopfilter to skip when eobtotal is zero */
