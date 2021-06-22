@@ -918,7 +918,7 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
   //Stegozoa
   CHECK_MEM_ERROR(pbi->qcoeff, vpx_calloc(400 * pbi->common.mb_cols * pbi->common.mb_rows, sizeof(short)));
 
-  for (int i = 0; i < pb->mb_rows; i++)
+  for (int i = 0; i < pc->mb_rows; i++)
       pbi->row_bits[i] = 0;
 
   /* start with no corruption of current frame */
