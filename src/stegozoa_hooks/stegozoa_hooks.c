@@ -568,7 +568,6 @@ int flushEncoder(unsigned char *steganogram, unsigned char *cover, uint32_t ssrc
 
     int msgSize = size / w;
     unsigned char *message = (unsigned char*) malloc(msgSize * sizeof(unsigned char));
-    unsigned char *tempMessage = (unsigned char*) malloc(msgSize * sizeof(unsigned char));
     int toSend = obtainMessage(ctx, message, msgSize);
 
 
@@ -578,8 +577,6 @@ int flushEncoder(unsigned char *steganogram, unsigned char *cover, uint32_t ssrc
     }
 
     stc(size, steganogram, message, cover);
-
-    free(tempMessage);
 
     free(message);
 
@@ -641,7 +638,7 @@ void readQdctLsb(unsigned char* steganogram, int *index, short *qcoeff, int has_
 
     //optimization idea: loop unroll
     for(int i = 0; i < 256 /*384 + has_y2_block * 16*/; i++) {
-        if(qcoeff[i] != 1 && qcoeff[i] != 0 && MOD16(i) != 0) { //(!has_y2_block || MOD16(i) != 0 || i > 255)) {
+        if(qcoeff[i] != 1 && qcoeff[i] != 0 && (!has_y2_block || MOD16(i) != 0)) { // || i > 255)) {
             
             steganogram[*index] = getLsb(qcoeff[i]);
             (*index)++;
