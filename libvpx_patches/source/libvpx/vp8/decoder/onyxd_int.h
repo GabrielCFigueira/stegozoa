@@ -74,6 +74,8 @@ typedef struct VP8D_COMP {
   short *qcoeff;
   uint32_t ssrc;
   uint64_t rtpSession;
+  int **positions;
+  int *row_bits;
   int bits;
 
 #if CONFIG_MULTITHREAD

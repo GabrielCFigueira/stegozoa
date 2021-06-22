@@ -120,8 +120,10 @@ static void decode_macroblock(VP8D_COMP *pbi, MACROBLOCKD *xd,
           xd->mode_info_context->mbmi.mode != SPLITMV);
   
     for(int i = 0; i < 384 + has_y2_block * 16; i++)
-      if(xd->qcoeff[i] != 1 && xd->qcoeff[i] != 0 && (!has_y2_block || i % 16 != 0 || i > 255))
-        pbi->bits++;
+      if(xd->qcoeff[i] != 1 && xd->qcoeff[i] != 0 && (!has_y2_block || i % 16 != 0 || i > 255)) {
+        pbi->postions[mb_row][pbi->row_bits[mb_row]] = i + (mb_row * pbi->common.mb_cols + mb_col) * 400;
+        pbi->row_bits[mb_row]++;
+      }
     
     /* Special case:  Force the loopfilter to skip when eobtotal is zero */
     xd->mode_info_context->mbmi.mb_skip_coeff = (eobtotal == 0);
@@ -1301,35 +1303,19 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
     if(initializeExtract())
       extract = 0;
 
-  if(pbi->bits < 40) //minimal message size
+  int bits = 0;
+  for(int i = 0; i < pc->mb_rows; i++)
+    bits += pbi->row_bits[i];
+
+  if(bits < 40) //minimal message size
       extract = 0;
   
   if(extract) {
-      unsigned char *steganogram = (unsigned char*) malloc(pbi->bits * sizeof(unsigned char));
-
-      short *qcoeff = pbi->qcoeff;
-      int has_y2_block;
-      xd->mode_info_context = pc->mi;
-
-      int index = 0;
-
-      for (int i = 0; i < pc->mb_rows; ++i) {
-        for (int j = 0; j < pc->mb_cols; ++j) {
-          
-          has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
-                          xd->mode_info_context->mbmi.mode != SPLITMV);
-          
-          readQdctLsb(steganogram, &index, qcoeff, has_y2_block);
-          
-          xd->mode_info_context++;
-          qcoeff += 400;
-        }
-        xd->mode_info_context++;
-      }
-
-      flushDecoder(steganogram, pbi->ssrc, pbi->rtpSession, pbi->bits);
+      unsigned char *steganogram = (unsigned char*) malloc(bits * sizeof(unsigned char));
+        
+      readQdctLsb(pbi->positions, pbi->row_bits, steganogram, qcoeff, bits);
+      flushDecoder(steganogram, pbi->ssrc, pbi->rtpSession, bits);
       free(steganogram);
-
   }
 
   vpx_free(pbi->qcoeff);

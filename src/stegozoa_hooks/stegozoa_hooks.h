@@ -33,7 +33,7 @@ int flushEncoder(unsigned char *steganogram, unsigned char *cover, uint32_t ssrc
 void flushDecoder(unsigned char *steganogram, uint32_t ssrc, uint64_t rtpSession, int size);
 
 int writeQdctLsb(int **positions, int *row_bits, unsigned char* steganogram, short *qcoeff, int bits);
-void readQdctLsb(unsigned char* steganogram, int *index, short *qcoeff, int has_y2_block);
+void readQdctLsb(int **positions, int *row_bits, unsigned char* steganogram, short *qcoeff, int bits);
 
 int initializeEmbbed();
 int initializeExtract();

@@ -634,16 +634,20 @@ static void deliverMessage(uint32_t ssrc, uint64_t rtpSession) {
 
 }
 
-void readQdctLsb(unsigned char* steganogram, int *index, short *qcoeff, int has_y2_block) {
+void readQdctLsb(int **positions, int *row_bits, unsigned char* steganogram, short *qcoeff, int bits) {
 
-    //optimization idea: loop unroll
-    for(int i = 0; i < 384 + has_y2_block * 16; i++) {
-        if(qcoeff[i] != 1 && qcoeff[i] != 0 && (!has_y2_block || MOD16(i) != 0 || i > 255)) {
-            
-            steganogram[*index] = getLsb(qcoeff[i]);
-            (*index)++;
+    int position;
+    int mb_row = 0;
+    int index = 0;
 
-        }   
+    for(int i = 0; i < bits; i++) {
+        position = positions[mb_row][index++];
+        steganogram[i] = getLsb(qcoeff[position]);
+        
+        if(index == row_bits[mb_row]) {
+            mb_row++;
+            index = 0;
+        }
     }
 
 }
