@@ -464,10 +464,10 @@ static void stc(int coverSize, unsigned char *steganogram, unsigned char *messag
         for (int j = 0; j < hpow >> 1; j++) {
             if(message[indm] == 2) {
                 wght[j] = wght[j << 1] < wght[(j << 1) + 1] ? wght[j << 1] : wght[(j << 1) + 1];
-                messagePath[indm][j] = wght[j << 1] < wght[(j << 1) + 1];
+                messagePath[indm * (1 << h) + j] = wght[j << 1] < wght[(j << 1) + 1];
             } else {
                 wght[j] = wght[(j << 1) + message[indm]];
-                messagePath[indm][j] = message[indm];
+                messagePath[indm * (1 << h) + j] = message[indm];
             }
         }
         
@@ -485,7 +485,7 @@ static void stc(int coverSize, unsigned char *steganogram, unsigned char *messag
     indx--;
     indm--;
     for (int i = msgSize - 1; i >= 0; i--) {
-        state = (state << 1) + messagePath[indm][state];
+        state = (state << 1) + messagePath[indm * (1 << h) + state];
         indm--;
 
         for (int j = w - 1; j >= 0; j--) {
