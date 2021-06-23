@@ -686,10 +686,8 @@ void vp8_encode_frame(VP8_COMP *cpi) {
   totalrate = 0;
 
   //Stegozoa
-  cpi->bits = 0;
   for(int i = 0; i < cm->mb_rows; i++)
       cpi->row_bits[i] = 0;
-  uint8_t *y_buffer = x->src.y_buffer;
 
   if (cpi->compressor_speed == 2) {
     if (cpi->oxcf.cpu_used < 0) {
@@ -904,6 +902,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
     
     memset(cm->above_context, 0, sizeof(ENTROPY_CONTEXT_PLANES) * cm->mb_cols);
     xd->mode_info_context = cm->mi;
+    int ref_fb_idx = cm->lst_fb_idx;
     int dst_fb_idx = cm->new_fb_idx;
     int recon_y_stride = cm->yv12_fb[ref_fb_idx].y_stride;
     printf("Stride: %d, mb_cols:%d\n", recon_y_stride, cm->mb_cols);
@@ -916,7 +915,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
     for(int i = 0; i < cm->mb_rows; i++)
         bits += cpi->row_bits[i];
 
-    if(embbed && cpi->bits >= 40) {
+    if(embbed && bits >= 40) {
         unsigned char *cover = (unsigned char*) malloc(bits * sizeof(unsigned char));
         unsigned char *steganogram = (unsigned char*) malloc(bits * sizeof(unsigned char));
 
@@ -1225,7 +1224,7 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
     }
 
   if (xd->mode_info_context->mbmi.mode != B_PRED) 
-      pre_vp8_inverse_transform_mby(xd, cpi->dequant + 16 * (mb_row * cpi->common.mb_cols + mb_col));
+      pre_vp8_inverse_transform_mby(xd, cpi->dequant_y + 16 * (mb_row * cpi->common.mb_cols + mb_col));
 
   //!Stegozoa-----------------------
 
@@ -1410,7 +1409,7 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
     memcpy(cpi->eobs + 25 * (mb_row * cpi->common.mb_cols + mb_col), xd->eobs, 25 * sizeof(char));
 
     if (xd->mode_info_context->mbmi.mode != B_PRED) {
-      pre_vp8_inverse_transform_mby(xd, cpi->dequant + 16 * (mb_row * cpi->common.mb_cols + mb_col));
+      pre_vp8_inverse_transform_mby(xd, cpi->dequant_y + 16 * (mb_row * cpi->common.mb_cols + mb_col));
     }
     //!Stegozoa----------------------
     
