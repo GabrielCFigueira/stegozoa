@@ -1195,8 +1195,6 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
   //vp8_tokenize_mb(cpi, x, t);
   vp8_fake_tokenize_mb(cpi, x);
 
-  memcpy(cpi->qcoeff + 400 * (mb_row * cpi->common.mb_cols + mb_col), xd->qcoeff, 400 * sizeof(short));
-  memcpy(cpi->eobs + 25 * (mb_row * cpi->common.mb_cols + mb_col), xd->eobs, 25 * sizeof(char));
             
   int has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
           xd->mode_info_context->mbmi.mode != SPLITMV);
@@ -1213,6 +1211,9 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
   vp8_dequant_idct_add_uv_block(xd->qcoeff + 16 * 16, xd->dequant_uv,
                                 xd->dst.u_buffer, xd->dst.v_buffer,
                                 xd->dst.uv_stride, xd->eobs + 16);
+  
+  memcpy(cpi->qcoeff + 400 * (mb_row * cpi->common.mb_cols + mb_col), xd->qcoeff, 400 * sizeof(short));
+  memcpy(cpi->eobs + 25 * (mb_row * cpi->common.mb_cols + mb_col), xd->eobs, 25 * sizeof(char));
   
   return rate;
 }
@@ -1376,8 +1377,6 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
     //Stegozoa
     //vp8_tokenize_mb(cpi, x, t);
     vp8_fake_tokenize_mb(cpi, x);
-    memcpy(cpi->qcoeff + 400 * (mb_row * cpi->common.mb_cols + mb_col), xd->qcoeff, 400 * sizeof(short));
-    memcpy(cpi->eobs + 25 * (mb_row * cpi->common.mb_cols + mb_col), xd->eobs, 25 * sizeof(char));
   
 
     int has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
@@ -1398,6 +1397,10 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
     vp8_dequant_idct_add_uv_block(xd->qcoeff + 16 * 16, xd->dequant_uv,
                                   xd->dst.u_buffer, xd->dst.v_buffer,
                                   xd->dst.uv_stride, xd->eobs + 16);
+    
+    memcpy(cpi->qcoeff + 400 * (mb_row * cpi->common.mb_cols + mb_col), xd->qcoeff, 400 * sizeof(short));
+    memcpy(cpi->eobs + 25 * (mb_row * cpi->common.mb_cols + mb_col), xd->eobs, 25 * sizeof(char));
+
   } else {
     /* always set mb_skip_coeff as it is needed by the loopfilter */
     xd->mode_info_context->mbmi.mb_skip_coeff = 1;
