@@ -52,7 +52,9 @@ static INLINE void vp8_inverse_transform_mby(MACROBLOCKD *xd) {
 }
 
 //Stegozoa
-static INLINE void pre_vp8_inverse_transform_mby(MACROBLOCKD *xd, short *DQC) {
+static INLINE void pre_vp8_inverse_transform_mby(MACROBLOCKD *xd, short *dequant_y) {
+  short *DQC = xd->dequant_y1;
+
   if (xd->mode_info_context->mbmi.mode != SPLITMV) {
     /* do 2nd order transform on the dc block */
     if (xd->eobs[24] > 1) {
@@ -60,19 +62,22 @@ static INLINE void pre_vp8_inverse_transform_mby(MACROBLOCKD *xd, short *DQC) {
     } else {
       vp8_short_inv_walsh4x4_1(&xd->block[24].dqcoeff[0], xd->qcoeff);
     }
-
-    memcpy(DQC, xd->dequant_y1_dc, 16 * sizeof(short));
+    eob_adjust(xd->eobs, xd->qcoeff);
+    
+    DQC = xd->dequant_y1_dc;
   }
-  else
-    memcpy(DQC, xd->dequant_y1, 16 * sizeof(short));
+  
+  memcpy(dequant_y, DQC, 16 * sizeof(short));
+  vp8_dequant_idct_add_y_block(xd->qcoeff, DQC, xd->dst.y_buffer,
+                               xd->dst.y_stride, xd->eobs);
 }
 
 //Stegozoa
-static INLINE void pos_vp8_inverse_transform_mby(MACROBLOCKD *xd, short *DQC, short *qcoeff, char *eobs) {
+static INLINE void pos_vp8_inverse_transform_mby(MACROBLOCKD *xd, short *dequant_y, short *qcoeff, char *eobs) {
   if (xd->mode_info_context->mbmi.mode != SPLITMV)
     eob_adjust(eobs, qcoeff);
 
-  vp8_dequant_idct_add_y_block(qcoeff, DQC, xd->dst.y_buffer, xd->dst.y_stride, eobs);
+  vp8_dequant_idct_add_y_block(qcoeff, dequant_y, xd->dst.y_buffer, xd->dst.y_stride, eobs);
 }
 
 #ifdef __cplusplus
