@@ -689,6 +689,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
   cpi->bits = 0;
   for(int i = 0; i < cm->mb_rows; i++)
       cpi->row_bits[i] = 0;
+  uint8_t *y_buffer = x->src.y_buffer;
 
   if (cpi->compressor_speed == 2) {
     if (cpi->oxcf.cpu_used < 0) {
@@ -888,7 +889,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
       //cpi->tok_count = (unsigned int)(tp - cpi->tok);
     }
 
-    //Stegozoa section -------------------------------------------
+    //-----------Stegozoa section -------------------------------------------
     int embbed = 1;
     if(!isEmbbedInitialized())
         if(initializeEmbbed())
@@ -896,20 +897,28 @@ void vp8_encode_frame(VP8_COMP *cpi) {
 
     clock_t start, end;
     start = clock();
-    int has_y2_block;
+    
     short *qcoeff = cpi->qcoeff;
     char *eobs = cpi->eobs;
+    short *dequant_y = cpi->dequant_y;
+    
     memset(cm->above_context, 0, sizeof(ENTROPY_CONTEXT_PLANES) * cm->mb_cols);
     xd->mode_info_context = cm->mi;
+    int dst_fb_idx = cm->new_fb_idx;
+    int recon_y_stride = cm->yv12_fb[ref_fb_idx].y_stride;
+    printf("Stride: %d, mb_cols:%d\n", recon_y_stride, cm->mb_cols);
+    fflush(stdout);
+    int recon_yoffset = 0;
 
     int embbedData = 0;
+    int bits = 0;
 
     for(int i = 0; i < cm->mb_rows; i++)
-        cpi->bits += cpi->row_bits[i];
+        bits += cpi->row_bits[i];
 
     if(embbed && cpi->bits >= 40) {
-        unsigned char *cover = (unsigned char*) malloc(cpi->bits * sizeof(unsigned char));
-        unsigned char *steganogram = (unsigned char*) malloc(cpi->bits * sizeof(unsigned char));
+        unsigned char *cover = (unsigned char*) malloc(bits * sizeof(unsigned char));
+        unsigned char *steganogram = (unsigned char*) malloc(bits * sizeof(unsigned char));
 
         if(!steganogram || !cover) {
             fprintf(stderr, "Stegozoa: Failed malloc");
@@ -922,8 +931,8 @@ void vp8_encode_frame(VP8_COMP *cpi) {
                 cover[index++] = cpi->cover[i][j];
 
 
-        embbedData = flushEncoder(steganogram, cover, cpi->ssrc, cpi->simulcast, cpi->bits);
-        writeQdctLsb(cpi->positions, cpi->row_bits, cm->mb_rows, steganogram, qcoeff, cpi->bits);
+        embbedData = flushEncoder(steganogram, cover, cpi->ssrc, cpi->simulcast, bits);
+        writeQdctLsb(cpi->positions, cpi->row_bits, cm->mb_rows, steganogram, qcoeff, bits);
 
         free(steganogram);
         free(cover);
@@ -935,18 +944,28 @@ void vp8_encode_frame(VP8_COMP *cpi) {
         xd->above_context = cm->above_context;
         vp8_zero(cm->left_context);
 
+        recon_yoffset = (mb_row * recon_y_stride * 16);
+
         //multi partition
         cpi->tplist[mb_row].start = tp;
         
         for (int mb_col = 0; mb_col < cm->mb_cols; ++mb_col) {
             
+            xd->dst.y_buffer = cm->yv12_fb[dst_fb_idx].y_buffer + recon_yoffset;
+            
             vp8_tokenize_mb(cpi, x, &tp, qcoeff, eobs);
+
+            if (xd->mode_info_context->mbmi.mode != B_PRED)
+                pos_vp8_inverse_transform_mby(xd, dequant_y, qcoeff, eobs);
+            
 
             xd->above_context++;
             xd->mode_info_context++;
+            recon_yoffset += 16;
 
             qcoeff += 400;
             eobs += 25;
+            dequant_y += 16;
         }
 
         cpi->tplist[mb_row].stop = tp;
@@ -954,7 +973,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
     }
 
     end = clock();
-    printf("Time spent generating tokens %d: %lf, capacity:%d, embbeded bits:%d\n", cm->current_video_frame, ((double) end - start) / CLOCKS_PER_SEC, cpi->bits, embbedData);
+    printf("Time spent generating tokens %d: %lf, capacity:%d, embbeded bits:%d\n", cm->current_video_frame, ((double) end - start) / CLOCKS_PER_SEC, bits, embbedData);
     
     cpi->tok_count = (unsigned int)(tp - cpi->tok);
 
@@ -1191,7 +1210,7 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
   
   sum_intra_stats(cpi, x);
 
-  //Stegozoa
+  //Stegozoa-------------------------
   //vp8_tokenize_mb(cpi, x, t);
   vp8_fake_tokenize_mb(cpi, x);
 
@@ -1205,7 +1224,11 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
       cpi->row_bits[mb_row]++;
     }
 
-  if (xd->mode_info_context->mbmi.mode != B_PRED) vp8_inverse_transform_mby(xd);
+  if (xd->mode_info_context->mbmi.mode != B_PRED) 
+      pre_vp8_inverse_transform_mby(xd, cpi->dequant + 16 * (mb_row * cpi->common.mb_cols + mb_col));
+
+  //!Stegozoa-----------------------
+
   
 
   vp8_dequant_idct_add_uv_block(xd->qcoeff + 16 * 16, xd->dequant_uv,
@@ -1371,25 +1394,25 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
   
   if (!x->skip) {
 
-    //Stegozoa
+    //Stegozoa-------------------------
     //vp8_tokenize_mb(cpi, x, t);
     vp8_fake_tokenize_mb(cpi, x);
   
-
-  
-  for(int i = 0; i < 256; i++)
-    if(xd->qcoeff[i] != 1 && xd->qcoeff[i] != 0 && i % 16 != 0) {
-      cpi->positions[mb_row][cpi->row_bits[mb_row]] = i + (mb_row * cpi->common.mb_cols + mb_col) * 400;
-      cpi->cover[mb_row][cpi->row_bits[mb_row]] = xd->qcoeff[i] & 0x1;
-      cpi->row_bits[mb_row]++;
+    
+    for(int i = 0; i < 256; i++)
+        if(xd->qcoeff[i] != 1 && xd->qcoeff[i] != 0 && i % 16 != 0) {
+            cpi->positions[mb_row][cpi->row_bits[mb_row]] = i + (mb_row * cpi->common.mb_cols + mb_col) * 400;
+            cpi->cover[mb_row][cpi->row_bits[mb_row]] = xd->qcoeff[i] & 0x1;
+            cpi->row_bits[mb_row]++;
     }
   
     memcpy(cpi->qcoeff + 400 * (mb_row * cpi->common.mb_cols + mb_col), xd->qcoeff, 400 * sizeof(short));
     memcpy(cpi->eobs + 25 * (mb_row * cpi->common.mb_cols + mb_col), xd->eobs, 25 * sizeof(char));
 
     if (xd->mode_info_context->mbmi.mode != B_PRED) {
-      vp8_inverse_transform_mby(xd);
+      pre_vp8_inverse_transform_mby(xd, cpi->dequant + 16 * (mb_row * cpi->common.mb_cols + mb_col));
     }
+    //!Stegozoa----------------------
     
 
     vp8_dequant_idct_add_uv_block(xd->qcoeff + 16 * 16, xd->dequant_uv,

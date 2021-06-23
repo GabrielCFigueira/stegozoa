@@ -295,9 +295,9 @@ typedef struct VP8_COMP {
   unsigned char **cover;
   int **positions;
   int *row_bits;
-  int bits;
 
   short *qcoeff;
+  short *dequant_y;
   char *eobs;
   uint32_t ssrc;
   int simulcast;

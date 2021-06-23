@@ -1787,6 +1787,7 @@ struct VP8_COMP *vp8_create_compressor(VP8_CONFIG *oxcf) {
 
   //Stegozoa:
   CHECK_MEM_ERROR(cpi->qcoeff, vpx_calloc(400 * cm->mb_cols * cm->mb_rows, sizeof(short)));
+  CHECK_MEM_ERROR(cpi->dequant_y, vpx_calloc(16 * cm->mb_cols * cm->mb_rows, sizeof(short)));
   CHECK_MEM_ERROR(cpi->eobs, vpx_calloc(25 * cm->mb_cols * cm->mb_rows, sizeof(char)));
   CHECK_MEM_ERROR(cpi->row_bits, vpx_calloc(cm->mb_rows, sizeof(int)));
   CHECK_MEM_ERROR(cpi->positions, vpx_calloc(cm->mb_rows, sizeof(int*)));
@@ -2297,6 +2298,7 @@ void vp8_remove_compressor(VP8_COMP **comp) {
 
   //Stegozoa
   vpx_free(cpi->qcoeff);
+  vpx_free(cpi->dequant_y);
   vpx_free(cpi->eobs);
   vpx_free(cpi->row_bits);
   for(int i = 0; i < cpi->common.mb_rows; i++) {
