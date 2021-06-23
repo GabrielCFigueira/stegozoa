@@ -119,8 +119,8 @@ static void decode_macroblock(VP8D_COMP *pbi, MACROBLOCKD *xd,
     int has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
           xd->mode_info_context->mbmi.mode != SPLITMV);
   
-    for(int i = 0; i < 384; i++)
-      if(xd->qcoeff[i] != 1 && xd->qcoeff[i] != 0 && i % 16 != 0) { //(!has_y2_block || i % 16 != 0 || i > 255)) {
+    for(int i = 0; i < 256; i++)
+      if(xd->qcoeff[i] != 1 && xd->qcoeff[i] != 0 && i % 16 != 0) {
         pbi->positions[mb_row][pbi->row_bits[mb_row]] = i + (mb_row * pbi->common.mb_cols + mb_col) * 400;
         pbi->row_bits[mb_row]++;
       }
