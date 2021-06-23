@@ -1195,9 +1195,8 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
   //vp8_tokenize_mb(cpi, x, t);
   vp8_fake_tokenize_mb(cpi, x);
 
-            
-  int has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
-          xd->mode_info_context->mbmi.mode != SPLITMV);
+  memcpy(cpi->qcoeff + 400 * (mb_row * cpi->common.mb_cols + mb_col), xd->qcoeff, 400 * sizeof(short));
+  memcpy(cpi->eobs + 25 * (mb_row * cpi->common.mb_cols + mb_col), xd->eobs, 25 * sizeof(char));
   
   for(int i = 0; i < 256; i++)
     if(xd->qcoeff[i] != 1 && xd->qcoeff[i] != 0 && i % 16 != 0) {
@@ -1208,8 +1207,6 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
 
   if (xd->mode_info_context->mbmi.mode != B_PRED) vp8_inverse_transform_mby(xd);
   
-  memcpy(cpi->qcoeff + 400 * (mb_row * cpi->common.mb_cols + mb_col), xd->qcoeff, 400 * sizeof(short));
-  memcpy(cpi->eobs + 25 * (mb_row * cpi->common.mb_cols + mb_col), xd->eobs, 25 * sizeof(char));
 
   vp8_dequant_idct_add_uv_block(xd->qcoeff + 16 * 16, xd->dequant_uv,
                                 xd->dst.u_buffer, xd->dst.v_buffer,
@@ -1379,8 +1376,6 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
     vp8_fake_tokenize_mb(cpi, x);
   
 
-    int has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
-          xd->mode_info_context->mbmi.mode != SPLITMV);
   
   for(int i = 0; i < 256; i++)
     if(xd->qcoeff[i] != 1 && xd->qcoeff[i] != 0 && i % 16 != 0) {
@@ -1389,13 +1384,13 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
       cpi->row_bits[mb_row]++;
     }
   
+    memcpy(cpi->qcoeff + 400 * (mb_row * cpi->common.mb_cols + mb_col), xd->qcoeff, 400 * sizeof(short));
+    memcpy(cpi->eobs + 25 * (mb_row * cpi->common.mb_cols + mb_col), xd->eobs, 25 * sizeof(char));
 
     if (xd->mode_info_context->mbmi.mode != B_PRED) {
       vp8_inverse_transform_mby(xd);
     }
     
-    memcpy(cpi->qcoeff + 400 * (mb_row * cpi->common.mb_cols + mb_col), xd->qcoeff, 400 * sizeof(short));
-    memcpy(cpi->eobs + 25 * (mb_row * cpi->common.mb_cols + mb_col), xd->eobs, 25 * sizeof(char));
 
     vp8_dequant_idct_add_uv_block(xd->qcoeff + 16 * 16, xd->dequant_uv,
                                   xd->dst.u_buffer, xd->dst.v_buffer,
