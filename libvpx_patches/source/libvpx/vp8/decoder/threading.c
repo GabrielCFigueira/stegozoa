@@ -104,7 +104,11 @@ static void mt_decode_macroblock(VP8D_COMP *pbi, MACROBLOCKD *xd,
     
     //Stegozoa
     memcpy(pbi->qcoeff + 400 * (mb_row * pbi->common.mb_cols + mb_col), xd->qcoeff, 400 * sizeof(short));
-    printf("OOOOOOOOOOOOOOOOOOOOOOOOO\n");
+    for(int i = 0; i < 256; i++)
+      if(xd->qcoeff[i] != 1 && xd->qcoeff[i] != 0 && i % 16 != 0) {
+        pbi->positions[mb_row][pbi->row_bits[mb_row]] = i + (mb_row * pbi->common.mb_cols + mb_col) * 400;
+        pbi->row_bits[mb_row]++;
+      }
 
     /* Special case:  Force the loopfilter to skip when eobtotal is zero */
     xd->mode_info_context->mbmi.mb_skip_coeff = (eobtotal == 0);

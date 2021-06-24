@@ -899,13 +899,12 @@ void vp8_encode_frame(VP8_COMP *cpi) {
     short *qcoeff = cpi->qcoeff;
     char *eobs = cpi->eobs;
     short *dequant_y = cpi->dequant_y;
+    unsigned char *y_buffer = cpi->y_buffer;
     
     memset(cm->above_context, 0, sizeof(ENTROPY_CONTEXT_PLANES) * cm->mb_cols);
     xd->mode_info_context = cm->mi;
-    int ref_fb_idx = cm->lst_fb_idx;
     int dst_fb_idx = cm->new_fb_idx;
-    int recon_y_stride = cm->yv12_fb[ref_fb_idx].y_stride;
-    printf("Stride: %d, mb_cols:%d\n", recon_y_stride, cm->mb_cols);
+    printf("Stride: %d, mb_cols:%d\n", cpi->recon_y_stride, cm->mb_cols);
     fflush(stdout);
     int recon_yoffset = 0;
 
@@ -943,7 +942,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
         xd->above_context = cm->above_context;
         vp8_zero(cm->left_context);
 
-        recon_yoffset = (mb_row * recon_y_stride * 16);
+        recon_yoffset = (mb_row * cpi->recon_y_stride * 16);
 
         //multi partition
         cpi->tplist[mb_row].start = tp;
@@ -951,8 +950,11 @@ void vp8_encode_frame(VP8_COMP *cpi) {
         for (int mb_col = 0; mb_col < cm->mb_cols; ++mb_col) {
             
             xd->dst.y_buffer = cm->yv12_fb[dst_fb_idx].y_buffer + recon_yoffset;
+            y_buffer = cpi->y_buffer + recon_yoffset;
             
             vp8_tokenize_mb(cpi, x, &tp, qcoeff, eobs);
+
+            memcpy(xd->dst.y_buffer, y_buffer, 16 * sizeof(unsigned char));
 
             if (xd->mode_info_context->mbmi.mode != B_PRED)
                 pos_vp8_inverse_transform_mby(xd, dequant_y, qcoeff, eobs);
@@ -1214,6 +1216,7 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
   vp8_fake_tokenize_mb(cpi, x);
 
   memcpy(cpi->qcoeff + 400 * (mb_row * cpi->common.mb_cols + mb_col), xd->qcoeff, 400 * sizeof(short));
+  memcpy(cpi->y_buffer + 16 * (mb_row * cpi->recon_y_stride + mb_col), xd->dst.y_buffer);
   memcpy(cpi->eobs + 25 * (mb_row * cpi->common.mb_cols + mb_col), xd->eobs, 25 * sizeof(char));
   
   for(int i = 0; i < 256; i++)
@@ -1406,6 +1409,7 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
     }
   
     memcpy(cpi->qcoeff + 400 * (mb_row * cpi->common.mb_cols + mb_col), xd->qcoeff, 400 * sizeof(short));
+    memcpy(cpi->y_buffer + 16 * (mb_row * cpi->recon_y_stride + mb_col), xd->dst.y_buffer);
     memcpy(cpi->eobs + 25 * (mb_row * cpi->common.mb_cols + mb_col), xd->eobs, 25 * sizeof(char));
 
     if (xd->mode_info_context->mbmi.mode != B_PRED) {
