@@ -1216,7 +1216,7 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
   vp8_fake_tokenize_mb(cpi, x);
 
   memcpy(cpi->qcoeff + 400 * (mb_row * cpi->common.mb_cols + mb_col), xd->qcoeff, 400 * sizeof(short));
-  memcpy(cpi->y_buffer + 16 * (mb_row * cpi->recon_y_stride + mb_col), xd->dst.y_buffer);
+  memcpy(cpi->y_buffer + 16 * (mb_row * cpi->recon_y_stride + mb_col), xd->dst.y_buffer, 16 * sizeof(unsigned char));
   memcpy(cpi->eobs + 25 * (mb_row * cpi->common.mb_cols + mb_col), xd->eobs, 25 * sizeof(char));
   
   for(int i = 0; i < 256; i++)
@@ -1409,7 +1409,7 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
     }
   
     memcpy(cpi->qcoeff + 400 * (mb_row * cpi->common.mb_cols + mb_col), xd->qcoeff, 400 * sizeof(short));
-    memcpy(cpi->y_buffer + 16 * (mb_row * cpi->recon_y_stride + mb_col), xd->dst.y_buffer);
+    memcpy(cpi->y_buffer + 16 * (mb_row * cpi->recon_y_stride + mb_col), xd->dst.y_buffer, 16 * sizeof(unsigned char));
     memcpy(cpi->eobs + 25 * (mb_row * cpi->common.mb_cols + mb_col), xd->eobs, 25 * sizeof(char));
 
     if (xd->mode_info_context->mbmi.mode != B_PRED) {
