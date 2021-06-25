@@ -62,14 +62,14 @@ static INLINE void pre_vp8_inverse_transform_mby(MACROBLOCKD *xd, short *dequant
     } else {
       vp8_short_inv_walsh4x4_1(&xd->block[24].dqcoeff[0], xd->qcoeff);
     }
-    eob_adjust(xd->eobs, xd->qcoeff);
+    //eob_adjust(xd->eobs, xd->qcoeff);
     
     DQC = xd->dequant_y1_dc;
   }
   
   memcpy(dequant_y, DQC, 16 * sizeof(short));
-  vp8_dequant_idct_add_y_block(xd->qcoeff, DQC, xd->dst.y_buffer,
-                               xd->dst.y_stride, xd->eobs);
+  //vp8_dequant_idct_add_y_block(xd->qcoeff, DQC, xd->dst.y_buffer,
+  //                             xd->dst.y_stride, xd->eobs);
 }
 
 //Stegozoa
