@@ -898,18 +898,9 @@ void vp8_encode_frame(VP8_COMP *cpi) {
     
     short *qcoeff = cpi->qcoeff;
     char *eobs = cpi->eobs;
-    short *dequant_y = cpi->dequant_y;
-    unsigned char *y_buffer = cpi->y_buffer;
     
     memset(cm->above_context, 0, sizeof(ENTROPY_CONTEXT_PLANES) * cm->mb_cols);
     xd->mode_info_context = cm->mi;
-    int dst_fb_idx = cm->new_fb_idx;
-    int ref_fb_idx = cm->lst_fb_idx;
-    int recon_uv_stride = cm->yv12_fb[ref_fb_idx].uv_stride;
-    printf("Stride: %d, mb_cols:%d\n", cpi->recon_y_stride, cm->mb_cols);
-    fflush(stdout);
-    int recon_yoffset;
-    int recon_uvoffset;
 
     int embbedData = 0;
     int bits = 0;
@@ -945,39 +936,19 @@ void vp8_encode_frame(VP8_COMP *cpi) {
         xd->above_context = cm->above_context;
         vp8_zero(cm->left_context);
 
-        recon_yoffset = (mb_row * cpi->recon_y_stride * 16);
-        recon_uvoffset = (mb_row * recon_uv_stride * 8);
-
         //multi partition
         cpi->tplist[mb_row].start = tp;
         
         for (int mb_col = 0; mb_col < cm->mb_cols; ++mb_col) {
             
-            xd->dst.y_buffer = cm->yv12_fb[dst_fb_idx].y_buffer + recon_yoffset;
-            xd->dst.u_buffer = cm->yv12_fb[dst_fb_idx].u_buffer + recon_uvoffset;
-            xd->dst.v_buffer = cm->yv12_fb[dst_fb_idx].v_buffer + recon_uvoffset;
-            y_buffer = cpi->y_buffer + recon_yoffset;
-            
             vp8_tokenize_mb(cpi, x, &tp, qcoeff, eobs);
-
-            memcpy(xd->dst.y_buffer, y_buffer, 16 * sizeof(unsigned char));
-
-            //if (xd->mode_info_context->mbmi.mode != B_PRED)
-            //    pos_vp8_inverse_transform_mby(xd, dequant_y, qcoeff, eobs);
-            
 
             xd->above_context++;
             xd->mode_info_context++;
-            recon_yoffset += 16;
-            recon_uvoffset += 8;
 
             qcoeff += 400;
             eobs += 25;
-            dequant_y += 16;
         }
-  
-        vp8_extend_mb_row(&cm->yv12_fb[dst_fb_idx], xd->dst.y_buffer + 16,
-                    xd->dst.u_buffer + 8, xd->dst.v_buffer + 8);
 
         cpi->tplist[mb_row].stop = tp;
         xd->mode_info_context++;
@@ -1226,7 +1197,6 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
   vp8_fake_tokenize_mb(cpi, x);
 
   memcpy(cpi->qcoeff + 400 * (mb_row * cpi->common.mb_cols + mb_col), xd->qcoeff, 400 * sizeof(short));
-  memcpy(cpi->y_buffer + 16 * (mb_row * cpi->recon_y_stride + mb_col), xd->dst.y_buffer, 16 * sizeof(unsigned char));
   memcpy(cpi->eobs + 25 * (mb_row * cpi->common.mb_cols + mb_col), xd->eobs, 25 * sizeof(char));
   
   for(int i = 0; i < 256; i++)
@@ -1236,12 +1206,9 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
       cpi->row_bits[mb_row]++;
     }
 
-  if (xd->mode_info_context->mbmi.mode != B_PRED) 
-      pre_vp8_inverse_transform_mby(xd, cpi->dequant_y + 16 * (mb_row * cpi->common.mb_cols + mb_col));
-
   //!Stegozoa-----------------------
-
   
+  if (xd->mode_info_context->mbmi.mode != B_PRED) vp8_inverse_transform_mby(xd);
 
   vp8_dequant_idct_add_uv_block(xd->qcoeff + 16 * 16, xd->dequant_uv,
                                 xd->dst.u_buffer, xd->dst.v_buffer,
@@ -1404,7 +1371,6 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
   }
 
   
-  memcpy(cpi->y_buffer + 16 * (mb_row * cpi->recon_y_stride + mb_col), xd->dst.y_buffer, 16 * sizeof(unsigned char));
   if (!x->skip) {
 
     //Stegozoa-------------------------
@@ -1421,11 +1387,11 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
   
     memcpy(cpi->qcoeff + 400 * (mb_row * cpi->common.mb_cols + mb_col), xd->qcoeff, 400 * sizeof(short));
     memcpy(cpi->eobs + 25 * (mb_row * cpi->common.mb_cols + mb_col), xd->eobs, 25 * sizeof(char));
+    //!Stegozoa----------------------
 
     if (xd->mode_info_context->mbmi.mode != B_PRED) {
-      pre_vp8_inverse_transform_mby(xd, cpi->dequant_y + 16 * (mb_row * cpi->common.mb_cols + mb_col));
+      vp8_inverse_transform_mby(xd);
     }
-    //!Stegozoa----------------------
     
 
     vp8_dequant_idct_add_uv_block(xd->qcoeff + 16 * 16, xd->dequant_uv,
@@ -1446,7 +1412,6 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
     
     //Stegozoa
     memset(cpi->qcoeff + 400 * (mb_row * cpi->common.mb_cols + mb_col), 0, 400 * sizeof(short));
-    memset(cpi->dequant_y + 16 * (mb_row * cpi->common.mb_cols + mb_col), 0, 16 * sizeof(short));
     memset(cpi->eobs + 25 * (mb_row * cpi->common.mb_cols + mb_col), 0, 25 * sizeof(char));
   }
 

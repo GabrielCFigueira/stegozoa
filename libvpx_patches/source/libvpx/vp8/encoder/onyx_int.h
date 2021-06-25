@@ -297,10 +297,7 @@ typedef struct VP8_COMP {
   int *row_bits;
 
   short *qcoeff;
-  short *dequant_y;
-  unsigned char* y_buffer;
   char *eobs;
-  int recon_y_stride;
   uint32_t ssrc;
   int simulcast;
 
