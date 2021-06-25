@@ -962,8 +962,8 @@ void vp8_encode_frame(VP8_COMP *cpi) {
 
             memcpy(xd->dst.y_buffer, y_buffer, 16 * sizeof(unsigned char));
 
-            if (xd->mode_info_context->mbmi.mode != B_PRED)
-                pos_vp8_inverse_transform_mby(xd, dequant_y, qcoeff, eobs);
+            //if (xd->mode_info_context->mbmi.mode != B_PRED)
+            //    pos_vp8_inverse_transform_mby(xd, dequant_y, qcoeff, eobs);
             
 
             xd->above_context++;
