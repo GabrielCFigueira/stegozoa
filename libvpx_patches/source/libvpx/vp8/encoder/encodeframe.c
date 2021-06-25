@@ -1404,6 +1404,7 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
   }
 
   
+  memcpy(cpi->y_buffer + 16 * (mb_row * cpi->recon_y_stride + mb_col), xd->dst.y_buffer, 16 * sizeof(unsigned char));
   if (!x->skip) {
 
     //Stegozoa-------------------------
@@ -1419,7 +1420,6 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
     }
   
     memcpy(cpi->qcoeff + 400 * (mb_row * cpi->common.mb_cols + mb_col), xd->qcoeff, 400 * sizeof(short));
-    memcpy(cpi->y_buffer + 16 * (mb_row * cpi->recon_y_stride + mb_col), xd->dst.y_buffer, 16 * sizeof(unsigned char));
     memcpy(cpi->eobs + 25 * (mb_row * cpi->common.mb_cols + mb_col), xd->eobs, 25 * sizeof(char));
 
     if (xd->mode_info_context->mbmi.mode != B_PRED) {
@@ -1446,7 +1446,7 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
     
     //Stegozoa
     memset(cpi->qcoeff + 400 * (mb_row * cpi->common.mb_cols + mb_col), 0, 400 * sizeof(short));
-    memset(cpi->y_buffer + 16 * (mb_row * cpi->recon_y_stride + mb_col), 0, 16 * sizeof(unsigned char));
+    memset(cpi->dequant_y + 16 * (mb_row * cpi->common.mb_cols + mb_col), 0, 16 * sizeof(short));
     memset(cpi->eobs + 25 * (mb_row * cpi->common.mb_cols + mb_col), 0, 25 * sizeof(char));
   }
 
