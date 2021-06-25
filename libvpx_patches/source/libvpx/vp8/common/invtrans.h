@@ -68,6 +68,10 @@ static INLINE void pre_vp8_inverse_transform_mby(MACROBLOCKD *xd, short *dequant
   }
   
   memcpy(dequant_y, DQC, 16 * sizeof(short));
+
+  printf("Dequant\n");
+  for(int i = 0; i < 16; i++)
+    printf("%d:%d\n", i, dequant_y[i]);  
   vp8_dequant_idct_add_y_block(xd->qcoeff, DQC, xd->dst.y_buffer,
                                xd->dst.y_stride, xd->eobs);
 }
