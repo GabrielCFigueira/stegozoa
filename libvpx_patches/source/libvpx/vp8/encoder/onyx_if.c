@@ -5177,6 +5177,9 @@ int vp8_get_compressed_data(VP8_COMP *cpi, unsigned int *frame_flags,
     generate_psnr_packet(cpi);
   }
 
+  //Stegozoa
+  printf("calculate_psnr: %d, show_frame: %d\n", cpi->b_calculate_psnr, cm->show_frame);
+
 #if CONFIG_INTERNAL_STATS
 
   if (cpi->pass != 1) {
