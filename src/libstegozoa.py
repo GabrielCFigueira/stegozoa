@@ -423,13 +423,13 @@ def initialize(newId):
     try:
         os.mkfifo(encoderPipePath)
     except OSError as oe: 
-        if oe.errno != oe.EEXIST:
+        if oe.errno != errno.EEXIST:
             raise
 
     try:
         os.mkfifo(decoderPipePath)
     except OSError as oe: 
-        if oe.errno != oe.EEXIST:
+        if oe.errno != errno.EEXIST:
             raise
 
     encoderPipe = open(encoderPipePath, 'wb')
