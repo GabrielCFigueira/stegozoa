@@ -63,11 +63,11 @@ def createMessage(msgType, sender, receiver, frag = 0, syn = 0, byteArray = byte
 def sendMessage(message):
     global encoderPipe, encoderPipePath
 
-    try:
-        encoderPipe.write(message)
-        encoderPipe.flush()
-    except Exception:
-        encoderPipe = open(encoderPipePath, 'wb')
+    #try:
+    encoderPipe.write(message)
+    encoderPipe.flush()
+    #except Exception:
+    #    encoderPipe = open(encoderPipePath, 'wb')
 
 
 def processRetransmission(syn, retransmissions, mutex, message):
