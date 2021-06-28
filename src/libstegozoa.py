@@ -64,11 +64,11 @@ def createMessage(msgType, sender, receiver, frag = 0, syn = 0, byteArray = byte
 def sendMessage(message):
     global encoderPipe, encoderPipePath
 
-    #try:
-    encoderPipe.write(message)
-    encoderPipe.flush()
-    #except Exception:
-    #    encoderPipe = open(encoderPipePath, 'wb')
+    try:
+        encoderPipe.write(message)
+        encoderPipe.flush()
+    except Exception:
+        encoderPipe = open(encoderPipePath, 'wb')
 
 
 def processRetransmission(syn, retransmissions, mutex, message):
@@ -197,7 +197,7 @@ class recvQueue:
 
                     response = createMessage(3, receiver, sender, 0, 0, create2byte(actualSyn), True)
                     
-                    thread = threading.Thread(target=processRetransmission, args=(actualSyn, self.retransmissions, self.mutex, response))
+                    thread = threading.Thread(target=processRetransmission, args=(actualSyn, self.retransmissions, self.mutex, response), daemon=True)
                     thread.start() #have single thread doing this? TODO
 
 
@@ -402,10 +402,10 @@ def connect():
 
     sendMessage(message)
 
-    thread = threading.Thread(target=broadcastKeepalive, args=())
+    thread = threading.Thread(target=broadcastKeepalive, args=(), daemon=True)
     thread.start()
     
-    thread = threading.Thread(target=broadcastConnect, args=())
+    thread = threading.Thread(target=broadcastConnect, args=(), daemon=True)
     thread.start()
     
 
@@ -436,7 +436,7 @@ def initialize(newId):
     encoderPipe = open(encoderPipePath, 'wb')
     decoderPipe = open(decoderPipePath, 'rb')
 
-    thread = threading.Thread(target=receiveMessage, args=())
+    thread = threading.Thread(target=receiveMessage, args=(), daemon=True)
     thread.start()
 
     myId = newId
