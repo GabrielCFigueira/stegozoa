@@ -84,8 +84,12 @@ else:
 
 server = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
 
+try:
+    server.bind(socketPath)
+except OSError as e:
+    os.remove(socketPath)
+    server.bind(socketPath)
 
-server.bind(socketPath)
 server.listen(1)
 
 
