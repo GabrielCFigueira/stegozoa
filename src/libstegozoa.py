@@ -4,6 +4,7 @@ import threading
 import queue
 import sys
 import signal
+import errno
 
 import crccheck
 
