@@ -31,11 +31,6 @@ DSP_SRCS-yes += bitwriter_buffer.c
 DSP_SRCS-yes += bitwriter_buffer.h
 DSP_SRCS-yes += psnr.c
 DSP_SRCS-yes += psnr.h
-# DSP_SRCS-$(CONFIG_INTERNAL_STATS) += ssim.c
-# DSP_SRCS-$(CONFIG_INTERNAL_STATS) += ssim.h
-# DSP_SRCS-$(CONFIG_INTERNAL_STATS) += psnrhvs.c
-# DSP_SRCS-$(CONFIG_INTERNAL_STATS) += fastssim.c
-# Stegozoa
 DSP_SRCS-yes += ssim.c
 DSP_SRCS-yes += ssim.h
 DSP_SRCS-yes += psnrhvs.c
