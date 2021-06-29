@@ -26,6 +26,8 @@
 #include "mcomp.h"
 #include "firstpass.h"
 #include "vpx_dsp/psnr.h"
+//Stegozoa
+#include "vpx_dsp/ssim.h"
 #include "vpx_scale/vpx_scale.h"
 #include "vp8/common/extend.h"
 #include "ratectrl.h"
