@@ -5182,8 +5182,6 @@ int vp8_get_compressed_data(VP8_COMP *cpi, unsigned int *frame_flags,
   //Stegozoa: psnr and ssim
   if (cm->show_frame) {
     cpi->common.show_frame_mi = cpi->common.mi;
-    cpi->count++;
-
       
     uint64_t ye, ue, ve;
     double frame_psnr;
