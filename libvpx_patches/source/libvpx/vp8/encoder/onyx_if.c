@@ -5231,7 +5231,7 @@ int vp8_get_compressed_data(VP8_COMP *cpi, unsigned int *frame_flags,
 
     frame_psnr2 = vpx_sse_to_psnr(t_samples, 255.0, sq_error2);
     //frame_ssim2 = vpx_calc_ssim(cpi->Source, &cm->post_proc_buffer, &weight);
-    printf("PSNR (after deblocking): %f, SSIM: %f", frame_psnr2, frame_ssim2);
+    printf("PSNR (after deblocking): %f, SSIM: %f\n", frame_psnr2, frame_ssim2);
   }
 
 #if CONFIG_INTERNAL_STATS
