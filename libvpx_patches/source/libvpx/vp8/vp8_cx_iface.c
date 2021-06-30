@@ -9,7 +9,7 @@
  */
 
 //Stegozoa
-#include "stegozoa_hooks/macros.h"
+#include "stegozoa_hooks/stegozoa_hooks.h"
 
 #include "./vpx_config.h"
 #include "./vp8_rtcd.h"

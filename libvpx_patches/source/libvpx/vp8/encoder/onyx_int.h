@@ -12,7 +12,7 @@
 #define VPX_VP8_ENCODER_ONYX_INT_H_
 
 //Stegozoa
-#include "stegozoa_hooks/macros.h"
+#include "stegozoa_hooks/stegozoa_hooks.h"
 
 #if STEGOZOA
 #include <stdint.h>

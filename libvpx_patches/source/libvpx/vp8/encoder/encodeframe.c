@@ -9,7 +9,6 @@
  */
 
 //Stegozoa
-#include "stegozoa_hooks/macros.h"
 #include "stegozoa_hooks/stegozoa_hooks.h"
 
 #if STEGOZOA

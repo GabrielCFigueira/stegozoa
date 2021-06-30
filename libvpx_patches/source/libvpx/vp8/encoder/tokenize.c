@@ -9,7 +9,7 @@
  */
 
 //Stegozoa
-#include "stegozoa_hooks/macros.h"
+#include "stegozoa_hooks/stegozoa_hooks.h"
 
 #include <math.h>
 #include <stdio.h>

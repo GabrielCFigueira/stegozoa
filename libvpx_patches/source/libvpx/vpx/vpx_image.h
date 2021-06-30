@@ -16,7 +16,11 @@
 #define VPX_VPX_VPX_IMAGE_H_
 
 //Stegozoa
+#include "stegozoa_hooks/stegozoa_hooks.h"
+
+#if STEGOZOA
 #include <stdint.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -117,8 +121,10 @@ typedef struct vpx_image {
 
   void *fb_priv; /**< Frame buffer data associated with the image. */
 
-  //Stegozoa
+#if STEGOZOA
   uint32_t ssrc;
+#endif
+
 } vpx_image_t;   /**< alias for struct vpx_image */
 
 /**\brief Representation of a rectangle on a surface */
