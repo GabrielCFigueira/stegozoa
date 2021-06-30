@@ -959,7 +959,7 @@ specialize qw/vpx_sum_squares_2d_i16 neon sse2 msa/;
 #
 # Structured Similarity (SSIM)
 # Stegozoa
-if (vpx_config("CONFIG_INTERNAL_STATS") eq "yes" or stegozoa_hooks("STEGOZOA") eq "yes") {
+if (vpx_config("CONFIG_INTERNAL_STATS") eq "yes" || stegozoa_hooks("STEGOZOA") eq "yes") {
     add_proto qw/void vpx_ssim_parms_8x8/, "const uint8_t *s, int sp, const uint8_t *r, int rp, uint32_t *sum_s, uint32_t *sum_r, uint32_t *sum_sq_s, uint32_t *sum_sq_r, uint32_t *sum_sxr";
     specialize qw/vpx_ssim_parms_8x8/, "$sse2_x86_64";
 
@@ -1106,7 +1106,7 @@ if (vpx_config("CONFIG_VP9_HIGHBITDEPTH") eq "yes") {
   #
   # Structured Similarity (SSIM)
   # Stegozoa
-  if (vpx_config("CONFIG_INTERNAL_STATS") eq "yes" or stegozoa_hooks("STEGOZOA") eq "yes") {
+  if (vpx_config("CONFIG_INTERNAL_STATS") eq "yes" || stegozoa_hooks("STEGOZOA") eq "yes") {
     add_proto qw/void vpx_highbd_ssim_parms_8x8/, "const uint16_t *s, int sp, const uint16_t *r, int rp, uint32_t *sum_s, uint32_t *sum_r, uint32_t *sum_sq_s, uint32_t *sum_sq_r, uint32_t *sum_sxr";
   }
 }  # CONFIG_VP9_HIGHBITDEPTH
