@@ -3,7 +3,7 @@
 
 #define STEGOZOA 1
 
-#define STEGOZOA_IMAGE_QUALITY 1
+#define IMAGE_QUALITY 1
 
 
 

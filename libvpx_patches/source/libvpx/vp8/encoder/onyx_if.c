@@ -5189,7 +5189,7 @@ int vp8_get_compressed_data(VP8_COMP *cpi, unsigned int *frame_flags,
     generate_psnr_packet(cpi);
   }
 
-#if STEGOZOA & STEGOZOA_IMAGE_QUALITY
+#if IMAGE_QUALITY
   //Stegozoa: psnr and ssim
   if (cm->show_frame) {
       
