@@ -9,6 +9,7 @@
  */
 
 //Stegozoa
+#include "stegozoa_hooks/macros.h"
 #include "stegozoa_hooks/stegozoa_hooks.h"
 
 #include "vpx_config.h"
@@ -106,24 +107,24 @@ static void decode_macroblock(VP8D_COMP *pbi, MACROBLOCKD *xd,
 
   if (xd->mode_info_context->mbmi.mb_skip_coeff) {
     vp8_reset_mb_tokens_context(xd);
-    //Stegozoa
+    
+#if STEGOZOA
     memset(pbi->qcoeff + 400 * (mb_row * pbi->common.mb_cols + mb_col), 0, 400 * sizeof(short));
+#endif
 
   } else if (!vp8dx_bool_error(xd->current_bc)) {
     int eobtotal;
     eobtotal = vp8_decode_mb_tokens(pbi, xd);
 
-    //Stegozoa
+#if STEGOZOA
     memcpy(pbi->qcoeff + 400 * (mb_row * pbi->common.mb_cols + mb_col), xd->qcoeff, 400 * sizeof(short));
-  
-    int has_y2_block = (xd->mode_info_context->mbmi.mode != B_PRED &&
-          xd->mode_info_context->mbmi.mode != SPLITMV);
   
     for(int i = 0; i < 256; i++)
       if(xd->qcoeff[i] != 1 && xd->qcoeff[i] != 0 && i % 16 != 0) {
         pbi->positions[mb_row][pbi->row_bits[mb_row]] = i + (mb_row * pbi->common.mb_cols + mb_col) * 400;
         pbi->row_bits[mb_row]++;
       }
+#endif
     
     /* Special case:  Force the loopfilter to skip when eobtotal is zero */
     xd->mode_info_context->mbmi.mb_skip_coeff = (eobtotal == 0);
@@ -914,8 +915,8 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
   int prev_independent_partitions = pbi->independent_partitions;
 
   YV12_BUFFER_CONFIG *yv12_fb_new = pbi->dec_fb_ref[INTRA_FRAME];
-  
-  //Stegozoa
+ 
+#if STEGOZOA 
   CHECK_MEM_ERROR(pbi->qcoeff, vpx_calloc(400 * pc->mb_cols * pc->mb_rows, sizeof(short)));
   CHECK_MEM_ERROR(pbi->row_bits, vpx_calloc(pc->mb_rows, sizeof(int)));
   CHECK_MEM_ERROR(pbi->positions, vpx_calloc(pc->mb_rows, sizeof(int*)));
@@ -924,6 +925,7 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
       CHECK_MEM_ERROR(pbi->positions[i], vpx_calloc(400 * pc->mb_cols, sizeof(int)));
       pbi->row_bits[i] = 0;
   }
+#endif
 
   /* start with no corruption of current frame */
   xd->corrupted = 0;
@@ -1302,7 +1304,8 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
   }
 #endif
 
-  //Stegozoa
+#if STEGOZOA
+
   int extract = 1;
    
   if(!isExtractInitialized())
@@ -1329,6 +1332,8 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
   for(int i = 0; i < pbi->common.mb_rows; i++)
       vpx_free(pbi->positions[i]);
   vpx_free(pbi->positions);
+
+#endif // STEGOZOA
 
 
   return 0;

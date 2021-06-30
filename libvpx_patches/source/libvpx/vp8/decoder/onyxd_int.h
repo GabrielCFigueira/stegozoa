@@ -18,7 +18,11 @@
 #include "vp8/common/threading.h"
 
 //Stegozoa
+#include "stegozoa_hooks/macros.h"
+
+#if STEGOZOA
 #include <stdint.h>
+#endif
 
 #if CONFIG_ERROR_CONCEALMENT
 #include "ec_types.h"
@@ -70,12 +74,13 @@ typedef struct VP8D_COMP {
 
   FRAGMENT_DATA fragments;
 
-  //Stegozoa
+#if STEGOZOA
   short *qcoeff;
   uint32_t ssrc;
   uint64_t rtpSession;
   int **positions;
   int *row_bits;
+#endif
 
 #if CONFIG_MULTITHREAD
   /* variable for threading */

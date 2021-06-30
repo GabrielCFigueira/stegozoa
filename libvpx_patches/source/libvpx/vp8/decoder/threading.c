@@ -8,6 +8,9 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+//Stegozoa
+#include "stegozoa_hooks/macros.h"
+
 #include "vpx_config.h"
 #include "vp8_rtcd.h"
 #if !defined(WIN32) && CONFIG_OS_SUPPORT == 1
@@ -95,20 +98,23 @@ static void mt_decode_macroblock(VP8D_COMP *pbi, MACROBLOCKD *xd,
 
   if (xd->mode_info_context->mbmi.mb_skip_coeff) {
     vp8_reset_mb_tokens_context(xd);
-    //Stegozoa
+
+#if STEGOZOA
     memset(pbi->qcoeff + 400 * (mb_row * pbi->common.mb_cols + mb_col), 0, 400 * sizeof(short));
+#endif
 
   } else if (!vp8dx_bool_error(xd->current_bc)) {
     int eobtotal;
     eobtotal = vp8_decode_mb_tokens(pbi, xd);
     
-    //Stegozoa
+#if STEGOZOA
     memcpy(pbi->qcoeff + 400 * (mb_row * pbi->common.mb_cols + mb_col), xd->qcoeff, 400 * sizeof(short));
     for(int i = 0; i < 256; i++)
       if(xd->qcoeff[i] != 1 && xd->qcoeff[i] != 0 && i % 16 != 0) {
         pbi->positions[mb_row][pbi->row_bits[mb_row]] = i + (mb_row * pbi->common.mb_cols + mb_col) * 400;
         pbi->row_bits[mb_row]++;
       }
+#endif
 
     /* Special case:  Force the loopfilter to skip when eobtotal is zero */
     xd->mode_info_context->mbmi.mb_skip_coeff = (eobtotal == 0);
@@ -437,6 +443,7 @@ static void mt_decode_mb_rows(VP8D_COMP *pbi, MACROBLOCKD *xd,
         xd->pre.u_buffer = 0;
         xd->pre.v_buffer = 0;
       }
+      //Stegozoa: extra args
       mt_decode_macroblock(pbi, xd, 0, mb_row, mb_col);
 
       xd->left_available = 1;

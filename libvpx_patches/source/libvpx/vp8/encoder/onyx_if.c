@@ -10,7 +10,13 @@
 
 //Stegozoa
 #include "stegozoa_hooks/macros.h"
+
+#if STEGOZOA
+
 #include <time.h>
+#include "vpx_dsp/ssim.h"
+
+#endif
 
 #include "vpx_config.h"
 #include "./vpx_scale_rtcd.h"
@@ -27,8 +33,6 @@
 #include "mcomp.h"
 #include "firstpass.h"
 #include "vpx_dsp/psnr.h"
-//Stegozoa
-#include "vpx_dsp/ssim.h"
 #include "vpx_scale/vpx_scale.h"
 #include "vp8/common/extend.h"
 #include "ratectrl.h"
@@ -1788,7 +1792,8 @@ struct VP8_COMP *vp8_create_compressor(VP8_CONFIG *oxcf) {
 
   init_config(cpi, oxcf);
 
-  //Stegozoa:
+#if STEGOZOA
+
   CHECK_MEM_ERROR(cpi->qcoeff, vpx_calloc(400 * cm->mb_cols * cm->mb_rows, sizeof(short)));
   CHECK_MEM_ERROR(cpi->eobs, vpx_calloc(25 * cm->mb_cols * cm->mb_rows, sizeof(char)));
   CHECK_MEM_ERROR(cpi->row_bits, vpx_calloc(cm->mb_rows, sizeof(int)));
@@ -1799,6 +1804,7 @@ struct VP8_COMP *vp8_create_compressor(VP8_CONFIG *oxcf) {
     CHECK_MEM_ERROR(cpi->positions[i], vpx_calloc(400 * cm->mb_cols, sizeof(int)));
     CHECK_MEM_ERROR(cpi->cover[i], vpx_calloc(400 * cm->mb_cols, sizeof(unsigned char)));
   }
+#endif
 
   memcpy(cpi->base_skip_false_prob, vp8cx_base_skip_false_prob,
          sizeof(vp8cx_base_skip_false_prob));
@@ -2298,7 +2304,7 @@ void vp8_remove_compressor(VP8_COMP **comp) {
   vpx_free(cpi->consec_zero_last);
   vpx_free(cpi->consec_zero_last_mvbias);
 
-  //Stegozoa
+#if STEGOZOA
   vpx_free(cpi->qcoeff);
   vpx_free(cpi->eobs);
   vpx_free(cpi->row_bits);
@@ -2308,6 +2314,7 @@ void vp8_remove_compressor(VP8_COMP **comp) {
   }
   vpx_free(cpi->positions);
   vpx_free(cpi->cover);
+#endif
 
   vp8_remove_common(&cpi->common);
   vpx_free(cpi);
@@ -3982,11 +3989,13 @@ static void encode_frame_to_data_rate(VP8_COMP *cpi, size_t *size,
     }
 #else
     /* transform / motion compensation build reconstruction frame */
-    
-    //Stegozoa
+
+    //Stegozoa: frame encoding time    
     clock_t start, end;
     start = clock();
+
     vp8_encode_frame(cpi);
+
     end = clock();
     printf("Time spent encoding the frame %d: %lf\n", cm->current_video_frame, ((double) end - start) / CLOCKS_PER_SEC);
 
@@ -5180,7 +5189,7 @@ int vp8_get_compressed_data(VP8_COMP *cpi, unsigned int *frame_flags,
     generate_psnr_packet(cpi);
   }
 
-#if STEGOZOA_IMAGE_QUALITY
+#if STEGOZOA & STEGOZOA_IMAGE_QUALITY
   //Stegozoa: psnr and ssim
   if (cm->show_frame) {
       
@@ -5235,7 +5244,7 @@ int vp8_get_compressed_data(VP8_COMP *cpi, unsigned int *frame_flags,
     printf("Frame: %d, PSNR (after deblocking): %f, SSIM: %f\n", cm->current_video_frame, frame_psnr2, frame_ssim2);
   }
  
-#endif
+#endif // STEGOZOA & STEGOZOA_IMAGE_QUALITY
 
 #if CONFIG_INTERNAL_STATS
 

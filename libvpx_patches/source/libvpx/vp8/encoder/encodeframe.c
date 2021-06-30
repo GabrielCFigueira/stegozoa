@@ -7,10 +7,14 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-///Stegozoa: include hooks
+
+//Stegozoa
+#include "stegozoa_hooks/macros.h"
 #include "stegozoa_hooks/stegozoa_hooks.h"
+
+#if STEGOZOA
 #include <time.h>
-///
+#endif
 
 
 #include "vpx_config.h"
@@ -685,9 +689,10 @@ void vp8_encode_frame(VP8_COMP *cpi) {
   memset(segment_counts, 0, sizeof(segment_counts));
   totalrate = 0;
 
-  //Stegozoa
+#if STEGOZOA
   for(int i = 0; i < cm->mb_rows; i++)
       cpi->row_bits[i] = 0;
+#endif
 
   if (cpi->compressor_speed == 2) {
     if (cpi->oxcf.cpu_used < 0) {
@@ -777,10 +782,10 @@ void vp8_encode_frame(VP8_COMP *cpi) {
 
 #if CONFIG_REALTIME_ONLY & CONFIG_ONTHEFLY_BITPACKING
             tp = cpi->tok;
-#else
-            //Stegozoa: comment out
-            //tp = cpi->tok + mb_row * (cm->mb_cols * 16 * 24);
+#elif !STEGOZOA
+            tp = cpi->tok + mb_row * (cm->mb_cols * 16 * 24);
 #endif
+
         encode_mb_row(cpi, cm, mb_row, x, xd, &tp, segment_counts, &totalrate);
 
         /* adjust to the next row of mbs */
@@ -804,12 +809,12 @@ void vp8_encode_frame(VP8_COMP *cpi) {
       for (i = 0; i < cpi->encoding_thread_count; ++i) {
         sem_wait(&cpi->h_event_end_encoding[i]);
       }
-
-      //Stegozoa: comment out
-      /*for (mb_row = 0; mb_row < cm->mb_rows; ++mb_row) {
+#if !STEGOZOA
+      for (mb_row = 0; mb_row < cm->mb_rows; ++mb_row) {
         cpi->tok_count += (unsigned int)(cpi->tplist[mb_row].stop -
                                          cpi->tplist[mb_row].start);
-      }*/
+      }
+#endif
 
       if (xd->segmentation_enabled) {
         int j;
@@ -857,9 +862,10 @@ void vp8_encode_frame(VP8_COMP *cpi) {
           cpi->mb.error_bins[c_idx] += cpi->mb_row_ei[i].mb.error_bins[c_idx];
         }
 
+#if !STEGOZOA
         /* add up counts for each thread */
-        //Stegozoa: comment out
-        //sum_coef_counts(x, &cpi->mb_row_ei[i].mb);
+        sum_coef_counts(x, &cpi->mb_row_ei[i].mb);
+#endif
       }
 
     } else
@@ -883,10 +889,13 @@ void vp8_encode_frame(VP8_COMP *cpi) {
         
       }
 
-      //Stegzoa: comment out
-      //cpi->tok_count = (unsigned int)(tp - cpi->tok);
+#if !STEGOZOA
+      cpi->tok_count = (unsigned int)(tp - cpi->tok);
+#endif
+
     }
 
+#if STEGOZOA
     //-----------Stegozoa section -------------------------------------------
     int embbed = 1;
     if(!isEmbbedInitialized())
@@ -928,6 +937,9 @@ void vp8_encode_frame(VP8_COMP *cpi) {
 
         free(steganogram);
         free(cover);
+    
+        end = clock();
+        printf("Time spent embbedding secret data in frame %d: %lf, capacity:%d, embbeded bits:%d\n", cm->current_video_frame, ((double) end - start) / CLOCKS_PER_SEC, bits, embbedData);
     }
 
     for (mb_row = 0; mb_row < cm->mb_rows; ++mb_row) {
@@ -954,10 +966,9 @@ void vp8_encode_frame(VP8_COMP *cpi) {
         xd->mode_info_context++;
     }
 
-    end = clock();
-    printf("Time spent generating tokens %d: %lf, capacity:%d, embbeded bits:%d\n", cm->current_video_frame, ((double) end - start) / CLOCKS_PER_SEC, bits, embbedData);
     
     cpi->tok_count = (unsigned int)(tp - cpi->tok);
+#endif // STEGOZOA
 
 
 #if CONFIG_REALTIME_ONLY & CONFIG_ONTHEFLY_BITPACKING
@@ -1192,10 +1203,12 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
   
   sum_intra_stats(cpi, x);
 
-  //Stegozoa-------------------------
-  //vp8_tokenize_mb(cpi, x, t);
+#if !STEGOZOA
+  vp8_tokenize_mb(cpi, x, t, xd->qcoeff, xd->eobs);
+#else
   vp8_fake_tokenize_mb(cpi, x);
-
+  
+  
   memcpy(cpi->qcoeff + 400 * (mb_row * cpi->common.mb_cols + mb_col), xd->qcoeff, 400 * sizeof(short));
   memcpy(cpi->eobs + 25 * (mb_row * cpi->common.mb_cols + mb_col), xd->eobs, 25 * sizeof(char));
   
@@ -1205,8 +1218,8 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
       cpi->cover[mb_row][cpi->row_bits[mb_row]] = xd->qcoeff[i] & 0x1;
       cpi->row_bits[mb_row]++;
     }
+#endif
 
-  //!Stegozoa-----------------------
   
   if (xd->mode_info_context->mbmi.mode != B_PRED) vp8_inverse_transform_mby(xd);
 
@@ -1373,8 +1386,9 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
   
   if (!x->skip) {
 
-    //Stegozoa-------------------------
-    //vp8_tokenize_mb(cpi, x, t);
+#if !STEGOZOA
+    vp8_tokenize_mb(cpi, x, t, xd->qcoeff, xd->eobs);
+#else
     vp8_fake_tokenize_mb(cpi, x);
   
     
@@ -1387,7 +1401,8 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
   
     memcpy(cpi->qcoeff + 400 * (mb_row * cpi->common.mb_cols + mb_col), xd->qcoeff, 400 * sizeof(short));
     memcpy(cpi->eobs + 25 * (mb_row * cpi->common.mb_cols + mb_col), xd->eobs, 25 * sizeof(char));
-    //!Stegozoa----------------------
+
+#endif
 
     if (xd->mode_info_context->mbmi.mode != B_PRED) {
       vp8_inverse_transform_mby(xd);
@@ -1405,14 +1420,19 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
     if (cpi->common.mb_no_coeff_skip) {
       x->skip_true_count++;
       vp8_fix_contexts(xd);
-    } //Stegozoa
-      //else {
-      //vp8_stuff_mb(cpi, x, t);
-    //}
-    
-    //Stegozoa
+    }
+
+#if !STEGOZOA
+      else {
+      vp8_stuff_mb(cpi, x, t);
+    }
+
+#else
+
     memset(cpi->qcoeff + 400 * (mb_row * cpi->common.mb_cols + mb_col), 0, 400 * sizeof(short));
     memset(cpi->eobs + 25 * (mb_row * cpi->common.mb_cols + mb_col), 0, 25 * sizeof(char));
+#endif
+
   }
 
   return rate;

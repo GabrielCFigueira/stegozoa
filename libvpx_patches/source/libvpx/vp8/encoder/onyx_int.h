@@ -12,7 +12,11 @@
 #define VPX_VP8_ENCODER_ONYX_INT_H_
 
 //Stegozoa
+#include "stegozoa_hooks/macros.h"
+
+#if STEGOZOA
 #include <stdint.h>
+#endif
 
 #include <stdio.h>
 #include "vpx_config.h"
@@ -291,7 +295,7 @@ typedef struct VP8_COMP {
 
   MACROBLOCK mb;
   
-  //Stegozoa
+#if STEGOZOA
   unsigned char **cover;
   int **positions;
   int *row_bits;
@@ -300,6 +304,7 @@ typedef struct VP8_COMP {
   char *eobs;
   uint32_t ssrc;
   int simulcast;
+#endif
 
 
   VP8_COMMON common;
@@ -732,8 +737,9 @@ void vp8_pack_bitstream(VP8_COMP *cpi, unsigned char *dest,
 //Stegozoa
 void vp8_tokenize_mb(VP8_COMP *, MACROBLOCK *, TOKENEXTRA **, short *qcoeff, char *eobs);
 
-//Stegozoa
+#if STEGOZOA
 void vp8_fake_tokenize_mb(VP8_COMP *cpi, MACROBLOCK *x);
+#endif
 
 void vp8_set_speed_features(VP8_COMP *cpi);
 

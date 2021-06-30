@@ -31,6 +31,7 @@ int vp8cx_encode_inter_macroblock(struct VP8_COMP *cpi, struct macroblock *x,
                                   TOKENEXTRA **t, int recon_yoffset,
                                   int recon_uvoffset, int mb_row, int mb_col);
 
+//Stegozoa: extra args
 int vp8cx_encode_intra_macroblock(struct VP8_COMP *cpi, struct macroblock *x,
                                   TOKENEXTRA **t, int mb_row, int mb_col);
 #ifdef __cplusplus

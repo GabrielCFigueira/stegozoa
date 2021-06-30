@@ -8,6 +8,9 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+//Stegozoa
+#include "stegozoa_hooks/macros.h"
+
 #include <math.h>
 #include <stdio.h>
 #include <string.h>
@@ -365,8 +368,9 @@ void vp8_tokenize_mb(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t, short *qcoeff
       vp8_stuff_mb(cpi, x, t);
     } else {
       vp8_fix_contexts(xd);
-      //Stegozoa
-      //x->skip_true_count++;
+#if !STEGOZOA
+      x->skip_true_count++;
+#endif
     }
 
     return;
@@ -381,7 +385,8 @@ void vp8_tokenize_mb(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t, short *qcoeff
   tokenize1st_order_b(x, t, plane_type, cpi, qcoeff, eobs);
 }
 
-//Stegozoa
+#if STEGOZOA
+
 void fake_tokenize2nd_order_b(MACROBLOCK *x, VP8_COMP *cpi) {
 
   MACROBLOCKD *xd = &x->e_mbd;
@@ -394,7 +399,6 @@ void fake_tokenize2nd_order_b(MACROBLOCK *x, VP8_COMP *cpi) {
     *a = *l = 1;
 }
 
-//Stegozoa
 void fake_tokenize1st_order_b(MACROBLOCK *x, int plane_type, VP8_COMP *cpi) {
   
   MACROBLOCKD *xd = &x->e_mbd;
@@ -437,7 +441,6 @@ void fake_tokenize1st_order_b(MACROBLOCK *x, int plane_type, VP8_COMP *cpi) {
 
 }
 
-//Stegozoa
 void vp8_fake_tokenize_mb(VP8_COMP *cpi, MACROBLOCK *x) {
   MACROBLOCKD *xd = &x->e_mbd;
   int plane_type;
@@ -464,6 +467,8 @@ void vp8_fake_tokenize_mb(VP8_COMP *cpi, MACROBLOCK *x) {
   fake_tokenize1st_order_b(x, plane_type, cpi);
 
 }
+
+#endif // STEGOZOA
 
 static void stuff2nd_order_b(TOKENEXTRA **tp, ENTROPY_CONTEXT *a,
                              ENTROPY_CONTEXT *l, VP8_COMP *cpi, MACROBLOCK *x) {

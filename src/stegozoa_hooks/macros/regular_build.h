@@ -2,6 +2,8 @@
 #define STEGOZOA_MACROS_H_
 
 
+#define STEGOZOA 1
+
 #define STEGOZOA_IMAGE_QUALITY 0
 
 

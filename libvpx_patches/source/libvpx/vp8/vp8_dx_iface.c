@@ -7,6 +7,9 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
+//Stegozoa
+#include "stegozoa_hooks/macros.h"
+
 
 #include <assert.h>
 #include <stdlib.h>
@@ -278,9 +281,11 @@ static vpx_codec_err_t vp8_decode(vpx_codec_alg_priv_t *ctx,
   unsigned int w, h;
 
   //Stegozoa: cheekly obtain the ssrc and rtpSession
+#if STEGOZOA
   uint64_t *myData = user_priv;
   uint32_t ssrc = (uint32_t) myData[0];
   uint64_t rtpSession = myData[1];
+#endif
 
   if (!ctx->fragments.enabled && (data == NULL && data_sz == 0)) {
     return 0;
@@ -295,9 +300,6 @@ static vpx_codec_err_t vp8_decode(vpx_codec_alg_priv_t *ctx,
    */
   w = ctx->si.w;
   h = ctx->si.h;
-  //Stegozoa
-  //fprintf(stdout, "Ssrc: %lu Resolution w:%u h:%u\n", (unsigned long) ssrc, w, h);
-  //fflush(stdout);
 
   res = vp8_peek_si_internal(ctx->fragments.ptrs[0], ctx->fragments.sizes[0],
                              &ctx->si, ctx->decrypt_cb, ctx->decrypt_state);
@@ -495,9 +497,10 @@ static vpx_codec_err_t vp8_decode(vpx_codec_alg_priv_t *ctx,
 #endif
     ctx->user_priv = user_priv;
 
-    //Stegozoa
+#if STEGOZOA
     pbi->ssrc = ssrc;
     pbi->rtpSession = rtpSession;
+#endif
     if (vp8dx_receive_compressed_data(pbi, deadline)) {
       res = update_error_state(ctx, &pbi->common.error);
     }
