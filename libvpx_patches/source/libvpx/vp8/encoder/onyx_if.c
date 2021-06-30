@@ -5189,6 +5189,10 @@ int vp8_get_compressed_data(VP8_COMP *cpi, unsigned int *frame_flags,
     generate_psnr_packet(cpi);
   }
 
+  int lol = IMAGE_QUALITY;
+  int bruh = STEGOZOA;
+  printf("STEGOZOA: %d, IMAGE_QUALITY: %d\n", bruh, lol);
+
 #if IMAGE_QUALITY
   //Stegozoa: psnr and ssim
   if (cm->show_frame) {
