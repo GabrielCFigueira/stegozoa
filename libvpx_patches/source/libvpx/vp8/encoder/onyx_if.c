@@ -9,6 +9,7 @@
  */
 
 //Stegozoa
+#include "stegozoa_hooks/macros.h"
 #include <time.h>
 
 #include "vpx_config.h"
@@ -5179,9 +5180,9 @@ int vp8_get_compressed_data(VP8_COMP *cpi, unsigned int *frame_flags,
     generate_psnr_packet(cpi);
   }
 
+#if STEGOZOA_IMAGE_QUALITY
   //Stegozoa: psnr and ssim
   if (cm->show_frame) {
-    cpi->common.show_frame_mi = cpi->common.mi;
       
     uint64_t ye, ue, ve;
     double frame_psnr;
@@ -5209,7 +5210,7 @@ int vp8_get_compressed_data(VP8_COMP *cpi, unsigned int *frame_flags,
  
     frame_psnr = vpx_sse_to_psnr(t_samples, 255.0, sq_error);
 
-    printf("PSNR (before deblocking): %f\n", frame_psnr);
+    printf("Frame: %d, PSNR (before deblocking): %f\n", cm->current_video_frame, frame_psnr);
     YV12_BUFFER_CONFIG *pp = &cm->post_proc_buffer;
     double sq_error2;
     double frame_psnr2, frame_ssim2 = 0;
@@ -5231,8 +5232,10 @@ int vp8_get_compressed_data(VP8_COMP *cpi, unsigned int *frame_flags,
 
     frame_psnr2 = vpx_sse_to_psnr(t_samples, 255.0, sq_error2);
     //frame_ssim2 = vpx_calc_ssim(cpi->Source, &cm->post_proc_buffer, &weight);
-    printf("PSNR (after deblocking): %f, SSIM: %f\n", frame_psnr2, frame_ssim2);
+    printf("Frame: %d, PSNR (after deblocking): %f, SSIM: %f\n", cm->current_video_frame, frame_psnr2, frame_ssim2);
   }
+ 
+#endif
 
 #if CONFIG_INTERNAL_STATS
 
