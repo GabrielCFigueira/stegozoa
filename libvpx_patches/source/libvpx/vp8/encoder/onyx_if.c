@@ -5197,7 +5197,6 @@ int vp8_get_compressed_data(VP8_COMP *cpi, unsigned int *frame_flags,
   if (cm->show_frame) {
       
     uint64_t ye, ue, ve;
-    double frame_psnr;
     YV12_BUFFER_CONFIG *orig = cpi->Source;
     YV12_BUFFER_CONFIG *recon = cpi->common.frame_to_show;
     unsigned int y_width = cpi->common.Width;
@@ -5207,25 +5206,11 @@ int vp8_get_compressed_data(VP8_COMP *cpi, unsigned int *frame_flags,
     int y_samples = y_height * y_width;
     int uv_samples = uv_height * uv_width;
     int t_samples = y_samples + 2 * uv_samples;
-    double sq_error;
 
-    ye = calc_plane_error(orig->y_buffer, orig->y_stride, recon->y_buffer,
-                              recon->y_stride, y_width, y_height);
 
-    ue = calc_plane_error(orig->u_buffer, orig->uv_stride, recon->u_buffer,
-                              recon->uv_stride, uv_width, uv_height);
-     
-    ve = calc_plane_error(orig->v_buffer, orig->uv_stride, recon->v_buffer,
-                              recon->uv_stride, uv_width, uv_height);
-   
-    sq_error = (double)(ye + ue + ve);
- 
-    frame_psnr = vpx_sse_to_psnr(t_samples, 255.0, sq_error);
-
-    printf("Frame: %d, PSNR (before deblocking): %f\n", cm->current_video_frame, frame_psnr);
     YV12_BUFFER_CONFIG *pp = &cm->post_proc_buffer;
-    double sq_error2;
-    double frame_psnr2, frame_ssim2 = 0;
+    double sq_error;
+    double frame_psnr, frame_ssim;
     double weight = 0;
 
     vp8_deblock(cm, cm->frame_to_show, &cm->post_proc_buffer,
@@ -5240,11 +5225,11 @@ int vp8_get_compressed_data(VP8_COMP *cpi, unsigned int *frame_flags,
     ve = calc_plane_error(orig->v_buffer, orig->uv_stride, pp->v_buffer,
                             pp->uv_stride, uv_width, uv_height);
 
-    sq_error2 = (double)(ye + ue + ve);
+    sq_error = (double)(ye + ue + ve);
 
-    frame_psnr2 = vpx_sse_to_psnr(t_samples, 255.0, sq_error2);
-    frame_ssim2 = vpx_calc_ssim(cpi->Source, &cm->post_proc_buffer, &weight);
-    printf("Frame: %d, PSNR (after deblocking): %f, SSIM: %f\n", cm->current_video_frame, frame_psnr2, frame_ssim2);
+    frame_psnr = vpx_sse_to_psnr(t_samples, 255.0, sq_error);
+    frame_ssim = vpx_calc_ssim(cpi->Source, &cm->post_proc_buffer, &weight);
+    printf("Frame: %d, PSNR: %f, SSIM: %f\n", cm->current_video_frame, frame_psnr, frame_ssim);
   }
  
 #endif // STEGOZOA & STEGOZOA_IMAGE_QUALITY

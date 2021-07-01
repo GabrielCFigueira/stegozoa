@@ -31,10 +31,10 @@ DSP_SRCS-yes += bitwriter_buffer.c
 DSP_SRCS-yes += bitwriter_buffer.h
 DSP_SRCS-yes += psnr.c
 DSP_SRCS-yes += psnr.h
-DSP_SRCS-yes += ssim.c
-DSP_SRCS-yes += ssim.h
-DSP_SRCS-yes += psnrhvs.c
-DSP_SRCS-yes += fastssim.c
+DSP_SRCS-STEGOZOA += ssim.c
+DSP_SRCS-STEGOZOA += ssim.h
+DSP_SRCS-STEGOZOA += psnrhvs.c
+DSP_SRCS-STEGOZOA += fastssim.c
 endif
 
 ifeq ($(CONFIG_DECODERS),yes)
