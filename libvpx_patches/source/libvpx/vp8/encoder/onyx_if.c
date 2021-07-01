@@ -5192,8 +5192,6 @@ int vp8_get_compressed_data(VP8_COMP *cpi, unsigned int *frame_flags,
 
 #if IMAGE_QUALITY
   
-  clock_t start, end;
-  start = clock();
   //Stegozoa: psnr and ssim
   if (cm->show_frame) {
       
@@ -5231,11 +5229,9 @@ int vp8_get_compressed_data(VP8_COMP *cpi, unsigned int *frame_flags,
     frame_psnr = vpx_sse_to_psnr(t_samples, 255.0, sq_error);
     frame_ssim = vpx_calc_ssim(cpi->Source, &cm->post_proc_buffer, &weight);
     printf("Frame: %d, PSNR: %f, SSIM: %f\n", cm->current_video_frame, frame_psnr, frame_ssim);
-    end = clock();
-    printf("Time calculating psnr and ssim: %lf", ((double) end - start) / CLOCKS_PER_SEC);
   }
  
-#endif // STEGOZOA & STEGOZOA_IMAGE_QUALITY
+#endif // IMAGE_QUALITY
 
 #if CONFIG_INTERNAL_STATS
 
