@@ -195,7 +195,7 @@ def ResumeNetworkOperation():
 
 
 def SampleRegularExact(sample_index, config, baseline, network_condition):
-    chromium_build = "regular_build"
+    chromium_build = "no_stegozoa_build"
     regular_cap_folder = config
 
     random.seed(a=1)
