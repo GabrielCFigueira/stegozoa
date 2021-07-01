@@ -12,10 +12,11 @@
 #include "stegozoa_hooks/stegozoa_hooks.h"
 
 #if STEGOZOA
-
 #include <time.h>
-#include "vpx_dsp/ssim.h"
+#endif
 
+#if IMAGE_QUALITY
+#include "vpx_dsp/ssim.h"
 #endif
 
 #include "vpx_config.h"
@@ -5188,9 +5189,6 @@ int vp8_get_compressed_data(VP8_COMP *cpi, unsigned int *frame_flags,
   if (cpi->b_calculate_psnr && cpi->pass != 1 && cm->show_frame) {
     generate_psnr_packet(cpi);
   }
-
-  int lol = IMAGE_QUALITY;
-  int bruh = STEGOZOA;
 
 #if IMAGE_QUALITY
   //Stegozoa: psnr and ssim
