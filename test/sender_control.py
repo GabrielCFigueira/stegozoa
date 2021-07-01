@@ -194,8 +194,7 @@ def ResumeNetworkOperation():
 
 
 
-def SampleRegularExact(sample_index, config, baseline, network_condition):
-    chromium_build = "no_stegozoa_build"
+def SampleRegularExact(sample_index, config, baseline, network_condition, chromium_build):
     regular_cap_folder = config
 
     random.seed(a=1)
@@ -216,7 +215,7 @@ def SampleRegularExact(sample_index, config, baseline, network_condition):
     chat_sample = sample_list[sample_index]
 
         
-    if(chat_sample[:-4].replace(" ", "") + "_" + str(i) + "_chromium_log" not in os.listdir(regular_cap_folder + baseline + "/" + network_condition[2])):
+    if(chat_sample[:-4].replace(" ", "") + "_" + str(sample_index % 246) + "_chromium_log" not in os.listdir(regular_cap_folder + baseline + "/" + network_condition[2])):
         print ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
         print "Network conditions: " + network_condition[2]
         ImpairNetworkOperation(network_condition[0])
@@ -241,7 +240,7 @@ def SampleRegularExact(sample_index, config, baseline, network_condition):
         args = (video_folder + baseline + "/" + chat_sample,)
         s.enterabs(start_local_ffmpeg, 0, StartFFMPEGStream, args)                  
         s.run()
-        print "[P] Starting local FFMPEG stream: " + baseline + "/" + chat_sample + " - index " + str(i)  
+        print "[P] Starting local FFMPEG stream: " + baseline + "/" + chat_sample + " - index " + str(sample_index % 246)  
         
         #Start Chromium in sync
         now = time.time()
@@ -251,7 +250,7 @@ def SampleRegularExact(sample_index, config, baseline, network_condition):
         webrtc_app = WEBRTC_APPLICATION
         if("appr.tc" in WEBRTC_APPLICATION):
             label = network_condition[2].replace(".","-")
-            webrtc_app = WEBRTC_APPLICATION + "_reg_" + label + "_" + str(i)
+            webrtc_app = WEBRTC_APPLICATION + "_reg_" + label + "_" + str(sample_index % 246)
 
         print "[P] Starting Remote Chromium Browser at: " + str(start_remote_chromium)
         print "[P] Starting WebRTC Application: " + webrtc_app
@@ -312,8 +311,8 @@ def SampleRegularExact(sample_index, config, baseline, network_condition):
         start_remote_traffic_capture = now + sync_early
         
         print "[P] Starting Remote Traffic Capture at: " + str(start_remote_traffic_capture)
-        print "[P] Capturing " + baseline + "/" + network_condition[2] + "/" + chat_sample[:-4] + "_" + str(i) + ".pcap"
-        RESTCallMiddlebox("captureTraffic", str(start_remote_traffic_capture) + "," + chat_sample[:-4].replace(" ", "") + "_" + str(i) + "," + regular_cap_folder + baseline + "/" + network_condition[2] + "/" + "," + str(capture_duration))
+        print "[P] Capturing " + baseline + "/" + network_condition[2] + "/" + chat_sample[:-4] + "_" + str(sample_index % 246) + ".pcap"
+        RESTCallMiddlebox("captureTraffic", str(start_remote_traffic_capture) + "," + chat_sample[:-4].replace(" ", "") + "_" + str(sample_index % 246) + "," + regular_cap_folder + baseline + "/" + network_condition[2] + "/" + "," + str(capture_duration))
 
 
         #Wait for tcpdump to finish
@@ -327,7 +326,7 @@ def SampleRegularExact(sample_index, config, baseline, network_condition):
         RESTCall("killFFMPEG")
 
         print "[P] Killing Chromium"
-        KillChromium(regular_cap_folder + baseline + "/" + network_condition[2] + "/" + chat_sample[:-4].replace(" ", "") + "_" + str(i), True)
+        KillChromium(regular_cap_folder + baseline + "/" + network_condition[2] + "/" + chat_sample[:-4].replace(" ", "") + "_" + str(sample_index % 246), True)
 
         print "[P] Killing Remote Chromium Browser"
         RESTCall("killChromium")
@@ -362,7 +361,7 @@ def SampleStegozoaExact(sample_index, config, baseline, network_condition, chrom
     chat_sample = sample_list[sample_index]
 
     #Check sample existence by checking whether chromium log is saved
-    if(chat_sample[:-4].replace(" ", "") + "_" + str(i) + "_chromium_log" not in os.listdir(stegozoa_cap_folder + baseline + "/" + network_condition[2])):
+    if(chat_sample[:-4].replace(" ", "") + "_" + str(sample_index % 246) + "_chromium_log" not in os.listdir(stegozoa_cap_folder + baseline + "/" + network_condition[2])):
         print ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 
         ImpairNetworkOperation(network_condition[0])
@@ -394,7 +393,7 @@ def SampleStegozoaExact(sample_index, config, baseline, network_condition, chrom
         args = (video_folder + baseline + "/" + chat_sample,)
         s.enterabs(start_local_ffmpeg, 0, StartFFMPEGStream, args)                  
         s.run()
-        print "[P] Starting local FFMPEG stream: " + baseline + "/" + chat_sample + " - index " + str(i)  
+        print "[P] Starting local FFMPEG stream: " + baseline + "/" + chat_sample + " - index " + str(sample_index % 246)  
         
         #Start Chromium in sync
         now = time.time()
@@ -405,7 +404,7 @@ def SampleStegozoaExact(sample_index, config, baseline, network_condition, chrom
         webrtc_app = WEBRTC_APPLICATION
         if("appr.tc" in WEBRTC_APPLICATION):
             label = network_condition[2].replace(".","-")
-            webrtc_app = WEBRTC_APPLICATION + "_stego_" + label + "_" + str(i)
+            webrtc_app = WEBRTC_APPLICATION + "_stego_" + label + "_" + str(sample_index % 246)
 
         print "[P] Starting Remote Chromium Browser at: " + str(start_remote_chromium)
         RESTCall("startChromium", str(start_remote_chromium) + "," + chromium_build + "," + webrtc_app)
@@ -455,7 +454,7 @@ def SampleStegozoaExact(sample_index, config, baseline, network_condition, chrom
         RESTCall("pingTest")
         StegozoaPingTest(True)
         time.sleep(20) # ping time
-        SaveStegozoaPingResult(stegozoa_cap_folder + baseline + "/" + network_condition[2] + "/" + chat_sample[:-4].replace(" ", "") + "_" + str(i), True)
+        SaveStegozoaPingResult(stegozoa_cap_folder + baseline + "/" + network_condition[2] + "/" + chat_sample[:-4].replace(" ", "") + "_" + str(sample_index % 246), True)
         RESTCall("killPingTest")
 
         #Start Traffic Capture in sync
@@ -463,8 +462,8 @@ def SampleStegozoaExact(sample_index, config, baseline, network_condition, chrom
         start_remote_traffic_capture = now + sync_early
         
         print "[P] Starting Remote Traffic Capture at: " + str(start_remote_traffic_capture)
-        print "[P] Capturing " + baseline + "/" + network_condition[2] + "/" + chat_sample[:-4] + "_" + str(i) + ".pcap"
-        RESTCallMiddlebox("captureTraffic", str(start_remote_traffic_capture) + "," + chat_sample[:-4].replace(" ", "") + "_" + str(i) + "," + stegozoa_cap_folder + baseline + "/" + network_condition[2] + "/" + "," + str(capture_duration))
+        print "[P] Capturing " + baseline + "/" + network_condition[2] + "/" + chat_sample[:-4] + "_" + str(sample_index % 246) + ".pcap"
+        RESTCallMiddlebox("captureTraffic", str(start_remote_traffic_capture) + "," + chat_sample[:-4].replace(" ", "") + "_" + str(sample_index % 246) + "," + stegozoa_cap_folder + baseline + "/" + network_condition[2] + "/" + "," + str(capture_duration))
 
         
         #Start Stegozoa data transmission after tcpdump start
@@ -483,19 +482,19 @@ def SampleStegozoaExact(sample_index, config, baseline, network_condition, chrom
         RESTCall("killFFMPEG")
 
         print "[P] Killing Chromium"
-        KillChromium(stegozoa_cap_folder + baseline + "/" + network_condition[2] + "/" + chat_sample[:-4].replace(" ", "") + "_" + str(i), True)
+        KillChromium(stegozoa_cap_folder + baseline + "/" + network_condition[2] + "/" + chat_sample[:-4].replace(" ", "") + "_" + str(sample_index % 246), True)
 
         print "[P] Killing Remote Chromium Browser"
         RESTCall("killChromium")
 
         print "[P] saving local results for Stegozoa transmission"
-        SaveStegozoaDownloadResult(stegozoa_cap_folder + baseline + "/" + network_condition[2] + "/" + chat_sample[:-4].replace(" ", "") + "_" + str(i), True)
+        SaveStegozoaDownloadResult(stegozoa_cap_folder + baseline + "/" + network_condition[2] + "/" + chat_sample[:-4].replace(" ", "") + "_" + str(sample_index % 246), True)
 
         print "[P] Killing Remote Download Test"
         RESTCall("killDownloadTest")
 
         print "[P] Killing Stegozoa"
-        KillStegozoa(stegozoa_cap_folder + baseline + "/" + network_condition[2] + "/" + chat_sample[:-4].replace(" ", "") + "_" + str(i), True)
+        KillStegozoa(stegozoa_cap_folder + baseline + "/" + network_condition[2] + "/" + chat_sample[:-4].replace(" ", "") + "_" + str(sample_index % 246), True)
         print "[P] Killing Remote Stegozoa instance"
         RESTCall("killStegozoa")
         time.sleep(2)
@@ -510,22 +509,16 @@ if __name__ == "__main__":
 
     #Sample Regular and Stegozoa flows in an interleaved fashion
 
-    baselines = [
-    "Chat",
-    #"LiveCoding",
-    #"Gaming",
-    #"Sports"
-    ]
+    baseline = ["Chat"]
 
-    chromium_builds = ["regular_build"]
+    chromium_builds = ["no_stegozoa_build", "regular_build"]
 
     ResumeNetworkOperation()
     RESTCall("resumeNetworkOperation")
 
     for network_condition in network_conditions:
-        for baseline in baselines:
-            for i in range(0,246):
-                SampleRegularExact(0 + i, "/home/vagrant/SharedFolder/StegozoaCaps/RegularTraffic_1/", baseline, network_condition)
-                SampleStegozoaExact(246 + i, "/home/vagrant/SharedFolder/StegozoaCaps/StegozoaTraffic/", baseline, network_condition, chromium_builds[0])
+        for i in range(0,246):
+            SampleRegularExact(0 + i, "/home/vagrant/SharedFolder/StegozoaCaps/RegularTraffic_1/", baseline, network_condition, chromium_builds[0])
+            SampleStegozoaExact(246 + i, "/home/vagrant/SharedFolder/StegozoaCaps/StegozoaTraffic/", baseline, network_condition, chromium_builds[1])
 
 

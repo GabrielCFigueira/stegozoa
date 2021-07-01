@@ -3991,14 +3991,16 @@ static void encode_frame_to_data_rate(VP8_COMP *cpi, size_t *size,
 #else
     /* transform / motion compensation build reconstruction frame */
 
-    //Stegozoa: frame encoding time    
+    //Stegozoa: frame encoding time
     clock_t start, end;
     start = clock();
 
     vp8_encode_frame(cpi);
 
     end = clock();
+#if !IMAGE_QUALITY // we dont need this when measuring psnr and ssim
     printf("Time spent encoding the frame %d: %lf\n", cm->current_video_frame, ((double) end - start) / CLOCKS_PER_SEC);
+#endif
 
     if (cpi->pass == 0 && cpi->oxcf.end_usage == USAGE_STREAM_FROM_SERVER) {
       if (vp8_drop_encodedframe_overshoot(cpi, Q)) {
