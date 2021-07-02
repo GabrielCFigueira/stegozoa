@@ -984,9 +984,9 @@ void vp8_encode_frame(VP8_COMP *cpi) {
             for (int mb_col = 0; mb_col < cm->mb_cols; ++mb_col) {
                 for (int i = 0; i < 256; i++) {
 
-                    if(qcoeff[i] != 0 && qcoeff[i] != 1 && i % 16 != 0 && (qcoeff[i] < 100 || qcoeff[i] >= -100))        
+                    if(qcoeff[i] != 0 && qcoeff[i] != 1 && i % 16 != 0 && qcoeff[i] < 100 && qcoeff[i] >= -100)
                         frequency[100 + qcoeff[i]]++;
-                    else if((qcoeff[i] >= 100 || qcoeff[i] > -100) && i % 16 != 0)
+                    else if((qcoeff[i] >= 100 || qcoeff[i] < -100) && i % 16 != 0)
                         printf("This should not happen! %d\n", qcoeff[i]);
                 }
                 
