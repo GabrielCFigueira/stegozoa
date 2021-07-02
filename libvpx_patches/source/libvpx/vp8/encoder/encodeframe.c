@@ -1233,6 +1233,11 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
 
 #if !STEGOZOA
   vp8_tokenize_mb(cpi, x, t, xd->qcoeff, xd->eobs);
+
+#if DCT_FREQUENCY
+  memcpy(cpi->qcoeff + 400 * (mb_row * cpi->common.mb_cols + mb_col), xd->qcoeff, 400 * sizeof(short));
+#endif
+
 #else
   vp8_fake_tokenize_mb(cpi, x);
   
@@ -1246,7 +1251,8 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
       cpi->cover[mb_row][cpi->row_bits[mb_row]] = xd->qcoeff[i] & 0x1;
       cpi->row_bits[mb_row]++;
     }
-#endif
+
+#endif // STEGOZOA
 
   
   if (xd->mode_info_context->mbmi.mode != B_PRED) vp8_inverse_transform_mby(xd);
@@ -1416,6 +1422,11 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
 
 #if !STEGOZOA
     vp8_tokenize_mb(cpi, x, t, xd->qcoeff, xd->eobs);
+
+#if DCT_FREQUENCY
+    memcpy(cpi->qcoeff + 400 * (mb_row * cpi->common.mb_cols + mb_col), xd->qcoeff, 400 * sizeof(short));
+#endif
+
 #else
     vp8_fake_tokenize_mb(cpi, x);
   
@@ -1429,8 +1440,7 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
   
     memcpy(cpi->qcoeff + 400 * (mb_row * cpi->common.mb_cols + mb_col), xd->qcoeff, 400 * sizeof(short));
     memcpy(cpi->eobs + 25 * (mb_row * cpi->common.mb_cols + mb_col), xd->eobs, 25 * sizeof(char));
-
-#endif
+#endif // STEGOZOA
 
     if (xd->mode_info_context->mbmi.mode != B_PRED) {
       vp8_inverse_transform_mby(xd);
@@ -1455,11 +1465,15 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
       vp8_stuff_mb(cpi, x, t);
     }
 
+#if DCT_FREQUENCY
+    memset(cpi->qcoeff + 400 * (mb_row * cpi->common.mb_cols + mb_col), 0, 400 * sizeof(short));
+#endif
+
 #else
 
     memset(cpi->qcoeff + 400 * (mb_row * cpi->common.mb_cols + mb_col), 0, 400 * sizeof(short));
     memset(cpi->eobs + 25 * (mb_row * cpi->common.mb_cols + mb_col), 0, 25 * sizeof(char));
-#endif
+#endif // STEGOZOA
 
   }
 
