@@ -989,6 +989,8 @@ void vp8_encode_frame(VP8_COMP *cpi) {
                         frequency[qcoeff[i]]++;
                     else if(qcoeff[i] >= 100 && i % 16 != 0)
                         printf("This should not happen!\n");
+                    
+                    qcoeff += 400;
                 }
 
         printf("Frequency for Frame %d\n", cm->current_video_frame);
