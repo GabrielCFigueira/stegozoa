@@ -895,79 +895,108 @@ void vp8_encode_frame(VP8_COMP *cpi) {
     }
 
 #if STEGOZOA
-    //-----------Stegozoa section -------------------------------------------
-    int embbed = 1;
-    if(!isEmbbedInitialized())
-        if(initializeEmbbed())
-            embbed = 0;
+    {
+        //-----------Stegozoa section -------------------------------------------
+        int embbed = 1;
+        if(!isEmbbedInitialized())
+            if(initializeEmbbed())
+                embbed = 0;
 
-    clock_t start, end;
-    start = clock();
-    
-    short *qcoeff = cpi->qcoeff;
-    char *eobs = cpi->eobs;
-    
-    memset(cm->above_context, 0, sizeof(ENTROPY_CONTEXT_PLANES) * cm->mb_cols);
-    xd->mode_info_context = cm->mi;
-
-    int embbedData = 0;
-    int bits = 0;
-
-    for(int i = 0; i < cm->mb_rows; i++)
-        bits += cpi->row_bits[i];
-
-    if(embbed && bits >= 40) {
-        unsigned char *cover = (unsigned char*) malloc(bits * sizeof(unsigned char));
-        unsigned char *steganogram = (unsigned char*) malloc(bits * sizeof(unsigned char));
-
-        if(!steganogram || !cover) {
-            fprintf(stderr, "Stegozoa: Failed malloc");
-            return;
-        }
+        clock_t start, end;
+        start = clock();
         
-        int index = 0;
+        short *qcoeff = cpi->qcoeff;
+        char *eobs = cpi->eobs;
+        
+        memset(cm->above_context, 0, sizeof(ENTROPY_CONTEXT_PLANES) * cm->mb_cols);
+        xd->mode_info_context = cm->mi;
+
+        int embbedData = 0;
+        int bits = 0;
+
         for(int i = 0; i < cm->mb_rows; i++)
-            for(int j = 0; j < cpi->row_bits[i]; j++)
-                cover[index++] = cpi->cover[i][j];
+            bits += cpi->row_bits[i];
 
+        if(embbed && bits >= 40) {
+            unsigned char *cover = (unsigned char*) malloc(bits * sizeof(unsigned char));
+            unsigned char *steganogram = (unsigned char*) malloc(bits * sizeof(unsigned char));
 
-        embbedData = flushEncoder(steganogram, cover, cpi->ssrc, cpi->simulcast, bits);
-        writeQdctLsb(cpi->positions, cpi->row_bits, cm->mb_rows, steganogram, qcoeff, bits);
-
-        free(steganogram);
-        free(cover);
-    
-        end = clock();
-        printf("Time spent embbedding secret data in frame %d: %lf, capacity:%d, embbeded bits:%d\n", cm->current_video_frame, ((double) end - start) / CLOCKS_PER_SEC, bits, embbedData);
-    }
-
-    for (mb_row = 0; mb_row < cm->mb_rows; ++mb_row) {
-
-        // reset above block coeffs
-        xd->above_context = cm->above_context;
-        vp8_zero(cm->left_context);
-
-        //multi partition
-        cpi->tplist[mb_row].start = tp;
-        
-        for (int mb_col = 0; mb_col < cm->mb_cols; ++mb_col) {
+            if(!steganogram || !cover) {
+                fprintf(stderr, "Stegozoa: Failed malloc");
+                return;
+            }
             
-            vp8_tokenize_mb(cpi, x, &tp, qcoeff, eobs);
+            int index = 0;
+            for(int i = 0; i < cm->mb_rows; i++)
+                for(int j = 0; j < cpi->row_bits[i]; j++)
+                    cover[index++] = cpi->cover[i][j];
 
-            xd->above_context++;
-            xd->mode_info_context++;
 
-            qcoeff += 400;
-            eobs += 25;
+            embbedData = flushEncoder(steganogram, cover, cpi->ssrc, cpi->simulcast, bits);
+            writeQdctLsb(cpi->positions, cpi->row_bits, cm->mb_rows, steganogram, qcoeff, bits);
+
+            free(steganogram);
+            free(cover);
+        
+            end = clock();
+            printf("Time spent embbedding secret data in frame %d: %lf, capacity:%d, embbeded bits:%d\n", cm->current_video_frame, ((double) end - start) / CLOCKS_PER_SEC, bits, embbedData);
         }
 
-        cpi->tplist[mb_row].stop = tp;
-        xd->mode_info_context++;
-    }
 
-    
-    cpi->tok_count = (unsigned int)(tp - cpi->tok);
+        for (mb_row = 0; mb_row < cm->mb_rows; ++mb_row) {
+
+            // reset above block coeffs
+            xd->above_context = cm->above_context;
+            vp8_zero(cm->left_context);
+
+            //multi partition
+            cpi->tplist[mb_row].start = tp;
+            
+            for (int mb_col = 0; mb_col < cm->mb_cols; ++mb_col) {
+                
+                vp8_tokenize_mb(cpi, x, &tp, qcoeff, eobs);
+
+                xd->above_context++;
+                xd->mode_info_context++;
+
+                qcoeff += 400;
+                eobs += 25;
+            }
+
+            cpi->tplist[mb_row].stop = tp;
+            xd->mode_info_context++;
+        }
+
+        
+        cpi->tok_count = (unsigned int)(tp - cpi->tok);
+    }
 #endif // STEGOZOA
+
+#if DCT_FREQUENCY
+    {
+        int frequency[100]; //do we care about coefficients bigger than 100? (are they even real?)
+        for(int i = 0; i < 100; i++)
+            frequency[i] = 0;
+        
+        short *qcoeff = cpi->qcoeff;
+
+        for (mb_row = 0; mb_row < cm->mb_rows; ++mb_row)
+            for (int mb_col = 0; mb_col < cm->mb_cols; ++mb_col)
+                for (int i = 0; i < 256; i++) {
+
+                    if(qcoeff[i] != 0 && qcoeff[i] != 1 && i % 16 != 0 && qcoeff[i] < 100)
+                        
+                        frequency[qcoeff[i]]++;
+                    else if(qcoeff[i] >= 100 && i % 16 != 0)
+                        printf("This should not happen!\n");
+                }
+
+        printf("Frequency for Frame %d\n", cm->current_video_frame);
+        for (int i = 0; i < 100; i++)
+            printf("%d: %d\n", i, frequency[i]);
+
+    }
+#endif
 
 
 #if CONFIG_REALTIME_ONLY & CONFIG_ONTHEFLY_BITPACKING
