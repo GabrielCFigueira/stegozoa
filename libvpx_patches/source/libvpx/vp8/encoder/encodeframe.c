@@ -981,17 +981,17 @@ void vp8_encode_frame(VP8_COMP *cpi) {
         short *qcoeff = cpi->qcoeff;
 
         for (mb_row = 0; mb_row < cm->mb_rows; ++mb_row)
-            for (int mb_col = 0; mb_col < cm->mb_cols; ++mb_col)
+            for (int mb_col = 0; mb_col < cm->mb_cols; ++mb_col) {
                 for (int i = 0; i < 256; i++) {
 
-                    if(qcoeff[i] != 0 && qcoeff[i] != 1 && i % 16 != 0 && qcoeff[i] < 100)
-                        
+                    if(qcoeff[i] != 0 && qcoeff[i] != 1 && i % 16 != 0 && qcoeff[i] < 100)        
                         frequency[qcoeff[i]]++;
                     else if(qcoeff[i] >= 100 && i % 16 != 0)
-                        printf("This should not happen!\n");
-                    
-                    qcoeff += 400;
+                        printf("This should not happen! %d\n", qcoeff[i]);
                 }
+                
+                qcoeff += 400;
+            }
 
         printf("Frequency for Frame %d\n", cm->current_video_frame);
         for (int i = 0; i < 100; i++)
