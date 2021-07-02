@@ -304,6 +304,8 @@ typedef struct VP8_COMP {
   char *eobs;
   uint32_t ssrc;
   int simulcast;
+#elif DCT_FREQUENCY
+  short *qcoeff;
 #endif
 
 
