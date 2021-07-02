@@ -297,9 +297,9 @@ if __name__ == "__main__":
 
     #PSNR and SSIM values with and without Stegozoa
 
-    baseline = ["Chat"]
+    baseline = "Chat"
 
-    chromium_builds = ["image_no_stegozoa", "image_stegozoa"]
+    chromium_builds = ["stats_no_stegozoa", "stats_stegozoa"]
 
     ResumeNetworkOperation()
     RESTCall("resumeNetworkOperation")

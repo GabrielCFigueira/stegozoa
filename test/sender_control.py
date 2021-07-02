@@ -509,7 +509,7 @@ if __name__ == "__main__":
 
     #Sample Regular and Stegozoa flows in an interleaved fashion
 
-    baseline = ["Chat"]
+    baseline = "Chat"
 
     chromium_builds = ["no_stegozoa_build", "regular_build"]
 
