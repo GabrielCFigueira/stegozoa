@@ -142,7 +142,7 @@ def SampleRegularImage(sample_index, config, baseline, network_condition, chromi
     RESTCall("resumeNetworkOperation")
 
 
-def SampleStegozoaExact(sample_index, config, baseline, network_condition, chromium_build):
+def SampleStegozoaImage(sample_index, config, baseline, network_condition, chromium_build):
 
     stegozoa_cap_folder = config
 
