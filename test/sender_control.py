@@ -106,7 +106,7 @@ def CaptureTraffic(sample_name, capture_folder):
 
 def StartFFMPEGStream(chat_video):
     args = "ffmpeg -nostats -loglevel quiet -re -i " + "\"" + chat_video + "\"" + " -r 30 \
-            -vf scale=1280:720 -vcodec rawvideo -pix_fmt yuv420p -threads 0 -f v4l2 /dev/video0"
+            -vf scale=1920:1080 -vcodec rawvideo -pix_fmt yuv420p -threads 0 -f v4l2 /dev/video0"
     sub.Popen(args, shell = True, stdin = open(os.devnull))
 
 
@@ -125,7 +125,7 @@ def StartChromium(create_log, chromium_build, webrtc_app):
 
 
 def KillChromium(sample, log_created):
-    os.system("pkill -9 -f chrome")
+    os.system("pkill -SIGINT -f chrome")
     if(log_created):
         os.system("mv chromium_log " + "\"" + sample + "\"" + "_chromium_log")
 

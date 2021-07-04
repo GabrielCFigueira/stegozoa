@@ -7,7 +7,7 @@ import requests
 from flask import Flask
 from flask import request
 from termcolor import colored 
-from automate import automateChromium, gracefullyCloseChromium
+from automate import automateChromium
 
 #from chromium_factory import *
 
@@ -45,7 +45,7 @@ def startFFMPEGAtClock(video_sample):
     PrintColored("Starting FFMPEG stream - " + video_sample, 'red')
 
     args = "ffmpeg -nostats -loglevel quiet -re -i " + video_sample + " -r 30 \
-            -vf scale=1280:720 -vcodec rawvideo -pix_fmt yuv420p -threads 0 -f v4l2 /dev/video0"
+            -vf scale=1920:1080 -vcodec rawvideo -pix_fmt yuv420p -threads 0 -f v4l2 /dev/video0"
     sub.Popen(args, shell = True, stdin = open(os.devnull))
 
 @app.route('/startFFMPEGStream', methods=['POST'])
@@ -56,7 +56,7 @@ def startFFMPEGStream():
         video_sample = request.data
 
     args = "ffmpeg -nostats -loglevel quiet -re -i " + video_sample + " -r 30 \
-            -vf scale=1280:720 -vcodec rawvideo -pix_fmt yuv420p -threads 0 -f v4l2 /dev/video0"
+            -vf scale=1920:1080 -vcodec rawvideo -pix_fmt yuv420p -threads 0 -f v4l2 /dev/video0"
     sub.Popen(args, shell = True, stdin = open(os.devnull))
 
 
@@ -100,7 +100,7 @@ def startChromium():
 @app.route('/killChromium', methods=['POST'])
 def killChromium():
     PrintColored("Killing Chromium", 'red')
-    os.system("pkill -9 -f chrome")
+    os.system("pkill -SIGINT -f chrome")
     return "Killing Chromium"
 
 @app.route('/automateApp', methods=['POST'])
@@ -109,12 +109,6 @@ def automateApp():
     webrtc_application = request.data
     automateChromium(webrtc_application, "callee")
     return "Automated Chromium"
-
-@app.route('/gracefullyCloseChromium', methods=['POST'])
-def gracefullyCloseChromium():
-    PrintColored("Gracefully closing Chromium", 'red')
-    gracefullyCloseChromium()
-    return "Gracefully closing Chromium"
 
 @app.route('/startStegozoa', methods=['POST'])
 def startStegozoa():
