@@ -524,8 +524,8 @@ if __name__ == "__main__":
     ResumeNetworkOperation()
     RESTCall("resumeNetworkOperation")
 
-    routeMiddlebox()
     RESTCall("routeMiddlebox")
+    routeMiddlebox()
 
     for network_condition in network_conditions:
         for i in range(0,246):
@@ -533,5 +533,5 @@ if __name__ == "__main__":
             SampleStegozoaExact(246 + i, "/home/vagrant/SharedFolder/StegozoaCaps/StegozoaTraffic/", baseline, network_condition, chromium_builds[1])
 
 
-    delRoute()
     RESTCall("delRoute")
+    delRoute()
