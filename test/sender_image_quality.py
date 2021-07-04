@@ -305,7 +305,7 @@ if __name__ == "__main__":
     RESTCall("resumeNetworkOperation")
 
     for i in range(0,246):
-        SampleRegularImage(0 + i, "/home/vagrant/SharedFolder/StegozoaCaps/RegularTraffic_1/", baseline, network_condition)
-        SampleStegozoaImage(246 + i, "/home/vagrant/SharedFolder/StegozoaCaps/StegozoaTraffic/", baseline, network_condition, chromium_builds[0])
+        SampleRegularImage(0 + i, "/home/vagrant/SharedFolder/StegozoaCaps/RegularTraffic_1/", baseline, network_condition, chromium_builds[0])
+        SampleStegozoaImage(246 + i, "/home/vagrant/SharedFolder/StegozoaCaps/StegozoaTraffic/", baseline, network_condition, chromium_builds[1])
 
 
