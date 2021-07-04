@@ -192,6 +192,14 @@ def ImpairNetworkOperation(network_condition):
 def ResumeNetworkOperation():
     os.system("tc qdisc del dev " + NETWORK_INTERFACE + " root")
 
+def routeMiddlebox():
+    PrintColored("Applying routing through middlebox", 'red')
+    os.system("sudo route add default gw " + MIDDLEBOX_IP)
+
+def delRoute():
+    PrintColored("Removing routing through middlebox", 'red')
+    os.system("sudo route del default")
+
 
 
 def SampleRegularExact(sample_index, config, baseline, network_condition, chromium_build):
@@ -516,9 +524,14 @@ if __name__ == "__main__":
     ResumeNetworkOperation()
     RESTCall("resumeNetworkOperation")
 
+    routeMiddlebox()
+    RESTCall("routeMiddlebox")
+
     for network_condition in network_conditions:
         for i in range(0,246):
             SampleRegularExact(0 + i, "/home/vagrant/SharedFolder/StegozoaCaps/RegularTraffic_1/", baseline, network_condition, chromium_builds[0])
             SampleStegozoaExact(246 + i, "/home/vagrant/SharedFolder/StegozoaCaps/StegozoaTraffic/", baseline, network_condition, chromium_builds[1])
 
 
+    delRoute()
+    RESTCall("delRoute")

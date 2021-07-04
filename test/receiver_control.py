@@ -30,6 +30,7 @@ headless_env = dict(os.environ)
 headless_env['DISPLAY'] = ':0'
 
 NETWORK_INTERFACE = "enp0s8"
+MIDDLEBOX_IP = "192.168.51.104"
 #################################################################################
 
 app = Flask(__name__)
@@ -197,6 +198,18 @@ def resumeNetworkOperation():
     PrintColored("Applying default network settings", 'red')
     os.system("tc qdisc del dev " + NETWORK_INTERFACE + " root")
     return "Set default network settings"
+
+@app.route('/routeMiddlebox', methods=['POST'])
+def routeMiddlebox():
+    PrintColored("Applying routing through middlebox", 'red')
+    os.system("sudo route add default gw " + MIDDLEBOX_IP)
+    return "Applying routing through middlebox"
+
+@app.route('/delRoute', methods=['POST'])
+def delRoute():
+    PrintColored("Removing routing through middlebox", 'red')
+    os.system("sudo route del default")
+    return "Removing routing through middlebox"
 
 if __name__ == "__main__":
     app.run(debug=False, host='0.0.0.0',port=5005)
