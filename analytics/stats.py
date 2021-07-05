@@ -35,10 +35,6 @@ def computePsnrSsim(cap_folder):
 
     return psnrList, ssimList
 
-def normal_dist(x, mean, sd):
-    prob_density = (np.pi * sd) * np.exp(-0.5 * ((x - mean) / sd) ** 2)
-    return prob_density
-
 def plot(dist, savefile, x_label):
     mean = np.mean(dist)
     sd = np.std(dist)
@@ -48,7 +44,7 @@ def plot(dist, savefile, x_label):
     pdf = norm.pdf(dist,mean,sd)
 
     plt.title(savefile)
-    plt.plot(dist, pdf, color = 'red', label= x_label + " = %0.2f $\pm$ %0.3f" % (mean, sd))
+    plt.plot(dist, pdf, color = 'red', label = x_label + r' = %0.2f $\pm$ %0.3f' % (mean, sd))
     plt.xlabel(x_label)
     plt.ylabel('Probability Density')
 
