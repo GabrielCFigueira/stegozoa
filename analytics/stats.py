@@ -11,8 +11,8 @@ with open(logfilename, "rt") as logfile:
     for line in lines:
         words = line.split(" ")
         if words[0] == "Frame:":
-            totalPsnr += float(words[4][:-1])
-            totalSsim += float(words[6])
+            totalPsnr += float(words[3][:-1])
+            totalSsim += float(words[5])
             n += 1
             
 
