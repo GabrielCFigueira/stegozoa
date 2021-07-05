@@ -37,10 +37,10 @@ def computePsnrSsim(cap_folder):
     return psnrList, ssimList
 
 def normal_dist(x, mean, sd):
-    prob_density = (np.pi * sd) * np.exp(-0.5 * ((x-mean) / sd) ** 2)
+    prob_density = (np.pi * sd) * np.exp(-0.5 * ((x - mean) / sd) ** 2)
     return prob_density
 
-def plot(dist):
+def plot(dist, savefile):
     mean = np.mean(dist)
     sd = np.std(dist)
 
@@ -49,6 +49,10 @@ def plot(dist):
     plt.plot(dist, pdf, color = 'red')
     plt.xlabel('Data points')
     plt.ylabel('Probability Density')
+
+    fig = plt.figure()
+    fig.savefig(savefile)
+    plt.close(fig)
 
 
             
@@ -65,9 +69,9 @@ if __name__ == "__main__":
     regularPsnrs, regularSsims = computePsnrSsim(regular_cap_folder)
 
 
-    plot(stegoPsnrs)
-    plot(stegoSsims)
-    plot(regularPsnrs)
-    plot(regularPsnrs)
+    plot(stegoPsnrs, "stegoPSNR")
+    plot(stegoSsims, "stegoSSIM")
+    plot(regularPsnrs, "regularPSNR")
+    plot(regularSsims, "regularSSIM")
 
     
