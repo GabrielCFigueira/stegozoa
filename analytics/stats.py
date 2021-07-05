@@ -1,5 +1,6 @@
 import os
-
+import numpy as np
+import matplotlib.pyplot as plt
 
 
 log_folder = "/home/vagrant/SharedFolder/StegozoaCaps/"
@@ -34,6 +35,22 @@ def computePsnrSsim(cap_folder):
                 ssimList += [totalSsim / n]
 
     return psnrList, ssimList
+
+def normal_dist(x, mean, sd):
+    prob_density = (np.pi * sd) * np.exp(-0.5 * ((x-mean) / sd) ** 2)
+    return prob_density
+
+def plot(dist):
+    mean = np.mean(dist)
+    sd = np.std(dist)
+
+    pdf = normal_dist(dist,mean,sd)
+
+    plt.plot(x,pdf , color = 'red')
+    plt.xlabel('Data points')
+    plt.ylabel('Probability Density')
+
+
             
 
 if __name__ == "__main__":
@@ -47,7 +64,10 @@ if __name__ == "__main__":
     stegoPsnrs, stegoSsims = computePsnrSsim(stegozoa_cap_folder)
     regularPsnrs, regularSsims = computePsnrSsim(regular_cap_folder)
 
-    print(stegoPsnrs)
-    print(stegoSsims)
-    print(regularPsnrs)
-    print(regularSsims)
+
+    plot(stegoPsnrs)
+    plot(stegoSsims)
+    plot(regularPsnrs)
+    plot(regularPsnrs)
+
+    
