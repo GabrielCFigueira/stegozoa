@@ -529,8 +529,8 @@ if __name__ == "__main__":
 
     for network_condition in network_conditions:
         for i in range(0,246):
-            SampleRegularExact(0 + i, "/home/vagrant/SharedFolder/StegozoaCaps/RegularTraffic_1/", baseline, network_condition, chromium_builds[0])
-            SampleStegozoaExact(246 + i, "/home/vagrant/SharedFolder/StegozoaCaps/StegozoaTraffic/", baseline, network_condition, chromium_builds[1])
+            SampleRegularExact(0 + i, regular_cap_folder, baseline, network_condition, chromium_builds[0])
+            SampleStegozoaExact(246 + i, stegozoa_cap_folder, baseline, network_condition, chromium_builds[1])
 
 
     RESTCall("delRoute")
