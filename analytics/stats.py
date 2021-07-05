@@ -13,7 +13,7 @@ def computePsnrSsim(cap_folder):
 
     for log_filename in log_list:
 
-        with open(log_filename, "rt") as logfile:
+        with open(cap_folder + "/" + log_filename, "rt") as logfile:
             lines = logfile.readlines()
 
             totalPsnr = 0
