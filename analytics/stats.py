@@ -21,7 +21,7 @@ def computePsnrSsim(cap_folder):
             n = 0
             for line in lines:
                 words = line.split(" ")
-                if words[0] == "Frame:":
+                if len(words) == 6 and words[0] == "Frame:":
                     totalPsnr += float(words[3][:-1])
                     totalSsim += float(words[5])
                     n += 1
