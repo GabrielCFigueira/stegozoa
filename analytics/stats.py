@@ -40,8 +40,8 @@ if __name__ == "__main__":
     baseline = "Chat"
     network_condition = "regular.regular"
 
-    regular_cap_folder = log_folder + "/" + "RegularTraffic" + "/" + baseline + "/" + network_condition
-    stegozoa_cap_folder = log_folder + "/" + "RegularTraffic" + "/" + baseline + "/" + network_condition
+    regular_cap_folder = log_folder + "RegularTraffic" + "/" + baseline + "/" + network_condition
+    stegozoa_cap_folder = log_folder + "StegozoaTraffic" + "/" + baseline + "/" + network_condition
 
     stegoPsnrs, stegoSsims = computePsnrSsim(stegozoa_cap_folder)
     regularPsnrs, regularSsims = computePsnrSsim(regular_cap_folder)
