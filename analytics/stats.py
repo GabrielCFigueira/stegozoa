@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.stats import norm
 
 
 log_folder = "/home/vagrant/SharedFolder/StegozoaCaps/"
@@ -44,13 +45,13 @@ def plot(dist, savefile):
     mean = np.mean(dist)
     sd = np.std(dist)
 
-    pdf = normal_dist(dist,mean,sd)
+    fig = plt.figure()
+    pdf = norm.pdf(dist,mean,sd)
 
     plt.plot(dist, pdf, color = 'red')
     plt.xlabel('Data points')
     plt.ylabel('Probability Density')
 
-    fig = plt.figure()
     fig.savefig(savefile)
     plt.close(fig)
 
