@@ -14,6 +14,9 @@ with open(logfilename, "rt") as logfile:
             totalPsnr += float(words[3][:-1])
             totalSsim += float(words[5])
             n += 1
+
+    print("Average PSNR: " + str(totalPsnr / n))
+    print("Average SSIM: " + str(totalSsim / n))
             
 
 
