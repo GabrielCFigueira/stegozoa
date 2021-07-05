@@ -25,12 +25,13 @@ def computePsnrSsim(cap_folder):
                     totalPsnr += float(words[3][:-1])
                     totalSsim += float(words[5])
                     n += 1
+            
+            if n > 0:
+                print("Average PSNR: " + str(totalPsnr / n))
+                print("Average SSIM: " + str(totalSsim / n))
 
-            print("Average PSNR: " + str(totalPsnr / n))
-            print("Average SSIM: " + str(totalSsim / n))
-
-            psnrList += [totalPsnr / n]
-            ssimList += [totalSsim / n]
+                psnrList += [totalPsnr / n]
+                ssimList += [totalSsim / n]
 
     return psnrList, ssimList
             
