@@ -10,9 +10,9 @@ with open(logfilename, "rt") as logfile:
     n = 0
     for line in lines:
         words = line.split(" ")
-        if word[0] == "Frame:":
-            totalPsnr += float(word[4][:-1])
-            totalSsim += float(word[6])
+        if words[0] == "Frame:":
+            totalPsnr += float(words[4][:-1])
+            totalSsim += float(words[6])
             n += 1
             
 
