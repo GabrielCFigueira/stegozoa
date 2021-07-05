@@ -46,7 +46,7 @@ def plot(dist):
 
     pdf = normal_dist(dist,mean,sd)
 
-    plt.plot(x,pdf , color = 'red')
+    plt.plot(dist, pdf, color = 'red')
     plt.xlabel('Data points')
     plt.ylabel('Probability Density')
 
