@@ -47,7 +47,7 @@ if __name__ == "__main__":
     stegoPsnrs, stegoSsims = computePsnrSsim(stegozoa_cap_folder)
     regularPsnrs, regularSsims = computePsnrSsim(regular_cap_folder)
 
-    print(stegozoaPsnrs)
+    print(stegoPsnrs)
     print(stegoSsims)
     print(regularPsnrs)
     print(regularSsims)
