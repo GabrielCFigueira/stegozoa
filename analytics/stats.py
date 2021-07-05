@@ -48,7 +48,7 @@ def plot(dist, savefile, x_label):
     pdf = norm.pdf(dist,mean,sd)
 
     plt.title(savefile)
-    plt.plot(dist, pdf, color = 'red')
+    plt.plot(dist, pdf, color = 'red', label= x_label + " = %0.2f $\pm$ %0.3f" % (mean, sd))
     plt.xlabel(x_label)
     plt.ylabel('Probability Density')
 
@@ -70,9 +70,9 @@ if __name__ == "__main__":
     regularPsnrs, regularSsims = computePsnrSsim(regular_cap_folder)
 
 
-    plot(stegoPsnrs, "stegoPSNR", "PSNR")
-    plot(stegoSsims, "stegoSSIM", "SSIM")
-    plot(regularPsnrs, "regularPSNR", "PSNR")
-    plot(regularSsims, "regularSSIM", "SSIM")
+    plot(stegoPsnrs, "stegoPSNR.pdf", "PSNR")
+    plot(stegoSsims, "stegoSSIM.pdf", "SSIM")
+    plot(regularPsnrs, "regularPSNR.pdf", "PSNR")
+    plot(regularSsims, "regularSSIM.pdf", "SSIM")
 
     
