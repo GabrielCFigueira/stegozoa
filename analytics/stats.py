@@ -41,7 +41,7 @@ def plot(dist, savefile, x_label):
 
 
     fig = plt.figure()
-    pdf = norm.pdf(dist,mean,sd)
+    pdf = norm.pdf(dist, mean, sd)
 
     plt.title(savefile)
     plt.plot(dist, pdf, color = 'red', label = x_label + r' = %0.2f $\pm$ %0.3f' % (mean, sd))

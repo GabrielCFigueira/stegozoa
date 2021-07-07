@@ -149,7 +149,14 @@ def runClassificationKFold_CV(data_folder, mode, cfg, classifier, comparison, lo
         tprs.append(interp(mean_fpr, fpr, tpr))
         tprs[-1][0] = 0.0
         aucs.append(roc_auc)
+
+        #Check feature importance in this fold
+        f_imp = model.feature_importances_
+        importances.append(f_imp)
+        
         i += 1
+
+
 
     plt.plot([0, 1], [0, 1], linestyle='--', lw=2, color='r', label='Random Guess', alpha=.8)
 
@@ -208,6 +215,17 @@ def runClassificationKFold_CV(data_folder, mode, cfg, classifier, comparison, lo
         os.makedirs('classificationResults/' + cap_folder + "/" + location + "/" + comparison + "/" + mode)
     fig.savefig('classificationResults/' + cap_folder + "/" + location + "/" + comparison + "/" + mode + "/" + "ROC_10CV_" + clf_name + "_" + os.path.basename(cfg[1]) + ".pdf")   # save the figure to file
     plt.close(fig)
+
+    #Compute mean importance of feature accross CV folds
+    bin_number = list(range(len(train_x[0])))
+    mean_importances = []
+    for n in range(0,len(importances[0])):
+        mean_imp = (importances[0][n] + importances[1][n] + importances[2][n] + importances[3][n] + importances[4][n] + importances[5][n] + importances[6][n] + importances[7][n] + importances[8][n] + importances[9][n])/10.0
+        mean_importances.append(mean_imp)
+    #print mean_importances
+    f_imp = zip(bin_number,mean_importances,features_id)
+    f_imp.sort(key = lambda t: t[1], reverse=True)
+    np.save('classificationResults/' + cap_folder + "/" + location + "/" + comparison + "/" + mode + "/" + clf_name + "_" + os.path.basename(cfg[1]), np.array(f_imp))
 
     return mean_tpr, mean_fpr, mean_auc, os.path.basename(cfg[1])
 
