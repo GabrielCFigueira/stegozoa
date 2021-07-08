@@ -44,7 +44,7 @@ def plot(dist, savefile, x_label):
     pdf = norm.pdf(dist, mean, sd)
 
     plt.title(savefile)
-    plt.plot(dist, pdf, color = 'red', label = x_label + r' = %0.2f $\pm$ %0.3f' % (mean, sd))
+    plt.scatter(dist, pdf, color = 'red', label = x_label + r' = %0.2f $\pm$ %0.3f' % (mean, sd))
     plt.xlabel(x_label)
     plt.ylabel('Probability Density')
 
