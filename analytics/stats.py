@@ -35,14 +35,14 @@ def computePsnrSsim(cap_folder):
 
     return psnrList, ssimList
 
-def plot(dist, savefile, x_label):
+def plot(dist, savefile, title):
     mean = np.mean(dist)
     sd = np.std(dist)
 
 
     fig = plt.figure()
 
-    plt.title(savefile)
+    plt.title(title)
     #plt.scatter(dist, pdf, color = 'red', label = x_label + r' = %0.2f $\pm$ %0.3f' % (mean, sd))
     plt.boxplot(dist)
 
@@ -64,9 +64,9 @@ if __name__ == "__main__":
     regularPsnrs, regularSsims = computePsnrSsim(regular_cap_folder)
 
 
-    plot(stegoPsnrs, "stegoPSNR.pdf", "PSNR")
-    plot(stegoSsims, "stegoSSIM.pdf", "SSIM")
-    plot(regularPsnrs, "regularPSNR.pdf", "PSNR")
-    plot(regularSsims, "regularSSIM.pdf", "SSIM")
+    plot(stegoPsnrs, "stegoPSNR.pdf", "Stegozoa PSNR")
+    plot(stegoSsims, "stegoSSIM.pdf", "Stegozoa SSIM")
+    plot(regularPsnrs, "regularPSNR.pdf", "Regular PSNR")
+    plot(regularSsims, "regularSSIM.pdf", "Regular SSIM")
 
     

@@ -19,10 +19,10 @@ stegozoa_src_folder_location = '/home/vagrant/stegozoa/src/'
 stegozoa_test_folder_location = '/home/vagrant/stegozoa/test/'
 analytics_folder_location = '/home/vagrant/stegozoa/analytics/'
 
-stegozoa_cap_folder = "/home/vagrant/SharedFolder/StegozoaTraffic/"
-stegozoa_multisample_cap_folder = "/home/vagrant/StegozoaMultiSampleTraffic/"
-regular_cap_folder = "/home/vagrant/SharedFolder/RegularTraffic/"
-regular_multisample_cap_folder = "/home/vagrant/RegularMultiSampleTraffic/"
+stegozoa_cap_folder = "/home/vagrant/SharedFolder/StegozoaCaps/StegozoaTraffic/"
+stegozoa_multisample_cap_folder = "/home/vagrant/SharedFolder/StegozoaCaps/StegozoaMultiSampleTraffic/"
+regular_cap_folder = "/home/vagrant/SharedFolder/StegozoaCaps/RegularTraffic/"
+regular_multisample_cap_folder = "/home/vagrant/SharedFolder/StegozoaCaps/RegularMultiSampleTraffic/"
 video_folder = "/home/vagrant/SharedFolder/VideoBaselines/"
 
 chromium_builds_folder = "/home/vagrant/chromium_builds/"
