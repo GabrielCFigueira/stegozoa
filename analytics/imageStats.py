@@ -23,8 +23,13 @@ def computePsnrSsim(cap_folder):
             for i in range(100, len(lines)): # delete first 100 (video call is not in a stable state at the beginning
                 words = lines[i].split(" ")
                 if len(words) == 6 and words[0] == "Frame:":
-                    totalPsnr += float(words[3][:-1])
-                    totalSsim += float(words[5])
+                    try:
+                        psnr = float(words[3][:-1])
+                        ssim = float(words[5])
+                    except:
+                        continue
+                    totalPsnr += psnr
+                    totalSsim += ssim
                     n += 1
             
             if n > 0:

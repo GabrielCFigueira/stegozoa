@@ -27,9 +27,15 @@ def computeTimes(cap_folder):
                 if len(words) >= 7: # both have 7 or more words
 
                     if words[2] == "embedding":
-                        totalEmbeddingTime += float(words[8])
+                        try:
+                            totalEmbeddingTime += float(words[8])
+                        except:
+                            continue
                     elif words[2] == "encoding":
-                        totalEncodingTime += float(words[6])
+                        try:
+                            totalEncodingTime += float(words[6])
+                        except:
+                            continue
             
             if nEmbbed > 0 and nEncode > 0:
 
