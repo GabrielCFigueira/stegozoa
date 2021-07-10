@@ -40,10 +40,11 @@ def computeTimes(cap_folder):
                         except:
                             continue
             
-            if nEmbbed > 0 and nEncode > 0:
+            if nEmbbed > 0:
+                Embedding += [totalEmbeddingTime / nEmbbed]
 
-                Embedding += [totalEmbeddingTime / n]
-                Embedding += [totalEncodingTime / n]
+            if nEncode > 0:
+                Encoding += [totalEncodingTime / nEncode]
 
     return Embedding, Encoding
 
@@ -74,6 +75,6 @@ if __name__ == "__main__":
 
 
     plot(stegoEncoding, regularEncoding, "EncodingTimes.pdf", "Encoding times comparision")
-    plot(stegoSsims, [], "EmbeddingTimes.pdf", "Embedding times")
+    plot(stegoEmbedding, [], "EmbeddingTimes.pdf", "Embedding times")
 
     
