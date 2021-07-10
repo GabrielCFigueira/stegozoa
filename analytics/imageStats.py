@@ -1,7 +1,6 @@
 import os
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.stats import norm
 
 
 log_folder = "/home/vagrant/SharedFolder/StegozoaCaps/"
@@ -21,8 +20,8 @@ def computePsnrSsim(cap_folder):
             totalPsnr = 0
             totalSsim = 0
             n = 0
-            for line in lines:
-                words = line.split(" ")
+            for i in range(100, len(lines)): # delete first 100 (video call is not in a stable state at the beginning
+                words = lines[i].split(" ")
                 if len(words) == 6 and words[0] == "Frame:":
                     totalPsnr += float(words[3][:-1])
                     totalSsim += float(words[5])
@@ -41,7 +40,6 @@ def plot(stegoDist, regularDist, savefile, title):
     fig = plt.figure()
 
     plt.title(title)
-    #plt.scatter(dist, pdf, color = 'red', label = x_label + r' = %0.2f $\pm$ %0.3f' % (mean, sd))
     plt.boxplot([stegoDist, regularDist], labels=["Stegozoa", "Regular"])
 
     fig.savefig(savefile)
