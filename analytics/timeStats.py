@@ -32,14 +32,14 @@ def computeTimes(cap_folder):
                     if words[2] == "embedding":
                         try:
                             time = float(words[8])
-                        except:
+                        except ValueError:
                             continue
                         totalEmbeddingTime += time
                         nEmbded += 1
                     elif words[2] == "encoding":
                         try:
-                            time += float(words[6])
-                        except:
+                            time = float(words[6])
+                        except ValueError:
                             continue
                         totalEncodingTime += time
                         nEncode += 1
