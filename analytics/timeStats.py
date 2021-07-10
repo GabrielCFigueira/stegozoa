@@ -60,7 +60,7 @@ if __name__ == "__main__":
     regular_cap_folder = log_folder + "RegularTraffic" + "/" + baseline + "/" + network_condition
     stegozoa_cap_folder = log_folder + "StegozoaTraffic" + "/" + baseline + "/" + network_condition
 
-    stegoEmbedding, stegoEncoding = computePsnrSsim(stegozoa_cap_folder)
+    stegoEmbedding, stegoEncoding = computeTimes(stegozoa_cap_folder)
     _, regularEncoding = computePsnrSsim(regular_cap_folder)
 
 
