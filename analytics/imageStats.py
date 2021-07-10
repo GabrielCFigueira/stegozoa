@@ -13,6 +13,9 @@ def computePsnrSsim(cap_folder):
     ssimList = []
 
     for log_filename in log_list:
+        
+        if not log_filename.__contains__("chromium_log"):
+            continue
 
         with open(cap_folder + "/" + log_filename, "rt") as logfile:
             lines = logfile.readlines()

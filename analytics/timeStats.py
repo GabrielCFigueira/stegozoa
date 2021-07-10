@@ -14,6 +14,9 @@ def computeTimes(cap_folder):
 
     for log_filename in log_list:
 
+        if not log_filename.__contains__("chromium_log"):
+            continue
+
         with open(cap_folder + "/" + log_filename, "rt") as logfile:
             lines = logfile.readlines()
 
@@ -67,7 +70,7 @@ if __name__ == "__main__":
     stegozoa_cap_folder = log_folder + "StegozoaTraffic" + "/" + baseline + "/" + network_condition
 
     stegoEmbedding, stegoEncoding = computeTimes(stegozoa_cap_folder)
-    _, regularEncoding = computePsnrSsim(regular_cap_folder)
+    _, regularEncoding = computeTimes(regular_cap_folder)
 
 
     plot(stegoEncoding, regularEncoding, "EncodingTimes.pdf", "Encoding times comparision")
