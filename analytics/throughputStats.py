@@ -24,7 +24,7 @@ def computeThroughput(cap_folder):
 
                 if len(words) == 2:
 
-                    if words[0] == "Throughput(bits/s):"
+                    if words[0] == "Throughput(bits/s):":
                         try:
                             speed = float(words[1])
                         except ValueError:
