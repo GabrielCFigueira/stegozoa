@@ -912,7 +912,7 @@ def profile_processing(network_condition_type, profile_type, b, data_folder):
 
         random.seed(a=1)
         samples_random_list = os.listdir(samples_folder)
-        samples_random_list = [e for e in samples_random_list]
+        samples_random_list = [e for e in samples_random_list if not e.endswith("_log"]
         samples_random_list.sort()
         random.shuffle(samples_random_list)
 
