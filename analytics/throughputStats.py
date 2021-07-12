@@ -53,7 +53,7 @@ if __name__ == "__main__":
     baseline = "Chat"
     network_condition = "regular.regular"
 
-    regular_cap_folder = log_folder + "RegularTraffic" + "/" + baseline + "/" + network_condition
+    stegozoa_cap_folder = log_folder + "StegozoaTraffic" + "/" + baseline + "/" + network_condition
 
     throughputs = computeThroughput(stegozoa_cap_folder)
 
