@@ -58,7 +58,11 @@ def plot(stegoDist, regularDist, savefile, title):
     fig = plt.figure()
 
     plt.title(title)
-    plt.boxplot([stegoDist, regularDist], labels=["Stegozoa", "Regular"])
+
+    if not regularDist:
+        plt.boxplot(stegoDist)
+    else:
+        plt.boxplot([stegoDist, regularDist], labels=["Stegozoa", "Regular"])
 
     fig.savefig(savefile)
     plt.close(fig)
