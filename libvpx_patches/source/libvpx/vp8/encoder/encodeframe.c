@@ -974,6 +974,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
 
 #if DCT_FREQUENCY
     {
+        /*
         int frequency[200]; //do we care about coefficients bigger than 100? (are they even real?)
         for(int i = 0; i < 200; i++)
             frequency[i] = 0;
@@ -996,7 +997,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
         printf("Frequency for Frame %d\n", cm->current_video_frame);
         for (int i = 0; i < 200; i++)
             printf("%d: %d\n", i - 100, frequency[i]);
-
+        */
     }
 #endif
 
