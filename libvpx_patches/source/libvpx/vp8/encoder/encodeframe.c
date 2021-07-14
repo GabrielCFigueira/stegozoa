@@ -940,6 +940,8 @@ void vp8_encode_frame(VP8_COMP *cpi) {
             printf("Time spent embbedding secret data in frame %d: %lf, capacity:%d, embbeded bits:%d\n", cm->current_video_frame, ((double) end - start) / CLOCKS_PER_SEC, bits, embbedData);
         }
 
+        start = clock();
+
         memset(cm->above_context, 0, sizeof(ENTROPY_CONTEXT_PLANES) * cm->mb_cols);
         xd->mode_info_context = cm->mi;
 
@@ -969,6 +971,9 @@ void vp8_encode_frame(VP8_COMP *cpi) {
 
         
         cpi->tok_count = (unsigned int)(tp - cpi->tok);
+
+        end = clock();
+        printf("Time spent generating tokens in frame %d: %lf\n", cm->current_video_frame, ((double) end - start) / CLOCKS_PER_SEC);
     }
 #endif // STEGOZOA
 
