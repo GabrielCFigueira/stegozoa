@@ -905,6 +905,8 @@ void vp8_encode_frame(VP8_COMP *cpi) {
         clock_t start, end;
         start = clock();
         
+        printf("Preparing frame %d\n", cm->current_video_frame);
+
         short *qcoeff = cpi->qcoeff;
         char *eobs = cpi->eobs;
         
