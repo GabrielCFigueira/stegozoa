@@ -10,7 +10,19 @@
 #include <math.h>
 
 #include <time.h>
+#include <sys/time.h>
 
+double now()
+{
+      struct timeval tp;
+
+        if (gettimeofday (&tp, NULL) < 0)
+              {
+                      perror ("gettimeofday failed");
+                        }
+
+          return (double) tp.tv_sec + (double) tp.tv_usec * 1.e-6;
+}
 
 #define MASK 0xFE
 #define DIVIDE8(num) (num >> 3)
@@ -491,9 +503,14 @@ static void stc(int coverSize, unsigned char *steganogram, unsigned char *messag
     wght[0] = 0;
     for (int i = 1; i < hpow; i++)
         wght[i] = INFINITY;
-    
+   
+    double start, end;
+    start = now();   
     unsigned char *path = malloc(msgSize * w * hpow * sizeof(unsigned char));
     unsigned char *messagePath = malloc(msgSize * hpow * sizeof(unsigned char));
+    end = now();
+    printf("Time spent obtaining message: %lf\n", end - start);
+
 
     float w0, w1;
     float *newwght = (float*) malloc(hpow * sizeof(float));
