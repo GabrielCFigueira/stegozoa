@@ -1802,8 +1802,6 @@ struct VP8_COMP *vp8_create_compressor(VP8_CONFIG *oxcf) {
     CHECK_MEM_ERROR(cpi->positions[i], vpx_calloc(400 * cm->mb_cols, sizeof(int)));
     CHECK_MEM_ERROR(cpi->cover[i], vpx_calloc(400 * cm->mb_cols, sizeof(unsigned char)));
   }
-#elif DCT_FREQUENCY
-  CHECK_MEM_ERROR(cpi->qcoeff, vpx_calloc(400 * cm->mb_cols * cm->mb_rows, sizeof(short)));
 #endif
 
   memcpy(cpi->base_skip_false_prob, vp8cx_base_skip_false_prob,
@@ -2314,8 +2312,6 @@ void vp8_remove_compressor(VP8_COMP **comp) {
   }
   vpx_free(cpi->positions);
   vpx_free(cpi->cover);
-#elif DCT_FREQUENCY
-  vpx_free(cpi->qcoeff);
 #endif
 
   vp8_remove_common(&cpi->common);
@@ -3999,7 +3995,7 @@ static void encode_frame_to_data_rate(VP8_COMP *cpi, size_t *size,
     vp8_encode_frame(cpi);
 
     end = clock();
-#if !IMAGE_QUALITY | !DCT_FREQUENCY // we dont need this when measuring psnr, ssim, etc
+#if !IMAGE_QUALITY // we dont need this when measuring psnr, ssim, etc
     printf("Time spent encoding the frame %d: %lf\n", cm->current_video_frame, ((double) end - start) / CLOCKS_PER_SEC);
 #endif
 

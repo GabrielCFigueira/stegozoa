@@ -988,36 +988,6 @@ void vp8_encode_frame(VP8_COMP *cpi) {
     }
 #endif // STEGOZOA
 
-#if DCT_FREQUENCY
-    {
-        /*
-        int frequency[200]; //do we care about coefficients bigger than 100? (are they even real?)
-        for(int i = 0; i < 200; i++)
-            frequency[i] = 0;
-        
-        short *qcoeff = cpi->qcoeff;
-
-        for (mb_row = 0; mb_row < cm->mb_rows; ++mb_row)
-            for (int mb_col = 0; mb_col < cm->mb_cols; ++mb_col) {
-                for (int i = 0; i < 256; i++) {
-
-                    if(qcoeff[i] != 0 && qcoeff[i] != 1 && i % 16 != 0 && qcoeff[i] < 100 && qcoeff[i] >= -100)
-                        frequency[100 + qcoeff[i]]++;
-                    else if((qcoeff[i] >= 100 || qcoeff[i] < -100) && i % 16 != 0)
-                        printf("This should not happen! %d\n", qcoeff[i]);
-                }
-                
-                qcoeff += 400;
-            }
-
-        printf("Frequency for Frame %d\n", cm->current_video_frame);
-        for (int i = 0; i < 200; i++)
-            printf("%d: %d\n", i - 100, frequency[i]);
-        */
-    }
-#endif
-
-
 #if CONFIG_REALTIME_ONLY & CONFIG_ONTHEFLY_BITPACKING
     {
       int i;
@@ -1252,25 +1222,22 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
 
 #if !STEGOZOA
   vp8_tokenize_mb(cpi, x, t, xd->qcoeff, xd->eobs);
-
-#if DCT_FREQUENCY
-  memcpy(cpi->qcoeff + 400 * (mb_row * cpi->common.mb_cols + mb_col), xd->qcoeff, 400 * sizeof(short));
-#endif
-
 #else
   vp8_fake_tokenize_mb(cpi, x);
   
-  
   memcpy(cpi->qcoeff + 400 * (mb_row * cpi->common.mb_cols + mb_col), xd->qcoeff, 400 * sizeof(short));
   memcpy(cpi->eobs + 25 * (mb_row * cpi->common.mb_cols + mb_col), xd->eobs, 25 * sizeof(char));
-  
+ 
+  int offset = (mb_row * cpi->common.mb_cols + mb_col) * 400;
+  int *positions = cpi->positions[mb_row];
+  int *cover = cpi->cover[mb_row];
+  int *row_bits = cpi->row_bits[mb_row];
   for(int i = 0; i < 256; i++)
-    if(xd->qcoeff[i] != 1 && xd->qcoeff[i] != 0 && i % 16 != 0) {
-      cpi->positions[mb_row][cpi->row_bits[mb_row]] = i + (mb_row * cpi->common.mb_cols + mb_col) * 400;
-      cpi->cover[mb_row][cpi->row_bits[mb_row]] = xd->qcoeff[i] & 0x1;
-      cpi->row_bits[mb_row]++;
+    if(xd->qcoeff[i] != 1 && xd->qcoeff[i] != 0 && i & 0xF != 0) {
+      positions[*row_bits] = i + offset;
+      cover[*row_bits] = xd->qcoeff[i] & 0x1;
+      (*row_bits)++;
     }
-
 #endif // STEGOZOA
 
   
@@ -1436,29 +1403,29 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
     }
   }
 
+#if STEGOZOA
+  int offset = (mb_row * cpi->common.mb_cols + mb_col) * 400;
+#endif
   
   if (!x->skip) {
 
 #if !STEGOZOA
     vp8_tokenize_mb(cpi, x, t, xd->qcoeff, xd->eobs);
-
-#if DCT_FREQUENCY
-    memcpy(cpi->qcoeff + 400 * (mb_row * cpi->common.mb_cols + mb_col), xd->qcoeff, 400 * sizeof(short));
-#endif
-
 #else
     vp8_fake_tokenize_mb(cpi, x);
   
-    
+    int *positions = cpi->positions[mb_row];
+    int *cover = cpi->cover[mb_row];
+    int *row_bits = cpi->row_bits[mb_row];
     for(int i = 0; i < 256; i++)
-        if(xd->qcoeff[i] != 1 && xd->qcoeff[i] != 0 && i % 16 != 0) {
-            cpi->positions[mb_row][cpi->row_bits[mb_row]] = i + (mb_row * cpi->common.mb_cols + mb_col) * 400;
-            cpi->cover[mb_row][cpi->row_bits[mb_row]] = xd->qcoeff[i] & 0x1;
-            cpi->row_bits[mb_row]++;
-    }
+      if(xd->qcoeff[i] != 1 && xd->qcoeff[i] != 0 && i & 0xF != 0) {
+        positions[*row_bits] = i + offset;
+        cover[*row_bits] = xd->qcoeff[i] & 0x1;
+        (*row_bits)++;
+      }
   
-    memcpy(cpi->qcoeff + 400 * (mb_row * cpi->common.mb_cols + mb_col), xd->qcoeff, 400 * sizeof(short));
-    memcpy(cpi->eobs + 25 * (mb_row * cpi->common.mb_cols + mb_col), xd->eobs, 25 * sizeof(char));
+    memcpy(cpi->qcoeff + offset, 400 * sizeof(short));
+    memcpy(cpi->eobs + (offset >> 4), xd->eobs, 25 * sizeof(char));
 #endif // STEGOZOA
 
     if (xd->mode_info_context->mbmi.mode != B_PRED) {
@@ -1483,15 +1450,9 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
       else {
       vp8_stuff_mb(cpi, x, t);
     }
-
-#if DCT_FREQUENCY
-    memset(cpi->qcoeff + 400 * (mb_row * cpi->common.mb_cols + mb_col), 0, 400 * sizeof(short));
-#endif
-
 #else
-
-    memset(cpi->qcoeff + 400 * (mb_row * cpi->common.mb_cols + mb_col), 0, 400 * sizeof(short));
-    memset(cpi->eobs + 25 * (mb_row * cpi->common.mb_cols + mb_col), 0, 25 * sizeof(char));
+    memset(cpi->qcoeff + offset, 0, 400 * sizeof(short));
+    memset(cpi->eobs + (offset >> 4), 0, 25 * sizeof(char));
 #endif // STEGOZOA
 
   }

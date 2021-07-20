@@ -5,7 +5,5 @@
 
 #define IMAGE_QUALITY 1
 
-#define DCT_FREQUENCY 1
-
 
 #endif //STEGOZOA_MACROS_H_
