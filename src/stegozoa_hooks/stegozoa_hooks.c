@@ -273,6 +273,14 @@ static void *fetchDataThread(void *args) {
                 error("Who knows", "Trying to acquire the lock");
                 continue; //should abort
             }
+
+            int local_n_encoder = n_encoders;
+
+            if(pthread_mutex_unlock(&barrier_mutex)) {
+                error("Who knows", "Trying to release the lock");
+                continue; //should abort
+            }
+
             
             if(size > MSG_SIZE) {
                 error("Message too big", "Parsing the header of the new message");
@@ -285,23 +293,46 @@ static void *fetchDataThread(void *args) {
             } else {
                 newMsg->size = read_bytes + 6; //constant + size header (4 + 2)
                 printf("Consegui ler %d bytes\n", read_bytes);
-                fflush(stdout);
                 
                 if(msgType == 0) {
                     senderId = sender;
                     message_t *tempMsg;
-                    for(int i = 0; i < n_encoders; ++i) {
+                    for(int i = 0; i < local_n_encoder; ++i) {
                         tempMsg = copyMessage(newMsg);
                         insertSsrc(tempMsg, encoders[i]->ssrc);
+
+                        if(pthread_mutex_lock(&barrier_mutex)) {
+                            error("Who knows", "Trying to acquire the lock");
+                            continue; //should abort
+                        }
+
                         appendMessage(encoders[i], tempMsg);
+
+                        if(pthread_mutex_unlock(&barrier_mutex)) {
+                            error("Who knows", "Trying to release the lock");
+                            continue; //should abort
+                        }
+
                     }
                     releaseMessage(newMsg);
                 
                 } else if(msgType == 3 || msgType == 4) {
                     if(receiver == 15 || broadcast) { // 15 is the broadcast address
                        
-                        for(int i = 0; i < n_encoders; ++i) {
+                        for(int i = 0; i < local_n_encoder; ++i) {
+
+                            if(pthread_mutex_lock(&barrier_mutex)) {
+                                error("Who knows", "Trying to acquire the lock");
+                                continue; //should abort
+                            }
+
                             insertMessage(encoders[i], newMsg);
+                            
+                            if(pthread_mutex_unlock(&barrier_mutex)) {
+                                error("Who knows", "Trying to release the lock");
+                                continue; //should abort
+                            }
+
                             newMsg = copyMessage(newMsg);
                         }
                         releaseMessage(newMsg);
@@ -310,15 +341,39 @@ static void *fetchDataThread(void *args) {
                         context_t *ctxById = getEncoderContextById(receiver);
                         if(ctxById == NULL)
                             error("No context exists for this id", "Sending new message");
-                        else
+                        else {
+
+                            if(pthread_mutex_lock(&barrier_mutex)) {
+                                error("Who knows", "Trying to acquire the lock");
+                                continue; //should abort
+                            }
+
                             insertMessage(ctxById, newMsg);
+
+                            if(pthread_mutex_unlock(&barrier_mutex)) {
+                                error("Who knows", "Trying to release the lock");
+                                continue; //should abort
+                            }
+                        }
                     }
                     
                 
                 } else if(msgType == 1 || receiver == 15 || broadcast) {
 
-                    for(int i = 0; i < n_encoders; ++i) {
-                        appendMessage(encoders[i], newMsg);
+                    for(int i = 0; i < local_n_encoder; ++i) {
+
+                        if(pthread_mutex_lock(&barrier_mutex)) {
+                            error("Who knows", "Trying to acquire the lock");
+                            continue; //should abort
+                        }
+
+                        insertMessage(encoders[i], newMsg);
+                        
+                        if(pthread_mutex_unlock(&barrier_mutex)) {
+                            error("Who knows", "Trying to release the lock");
+                            continue; //should abort
+                        }
+
                         newMsg = copyMessage(newMsg);
                     }
                     releaseMessage(newMsg);
@@ -327,19 +382,27 @@ static void *fetchDataThread(void *args) {
                     context_t *ctxById = getEncoderContextById(receiver);
                     if(ctxById == NULL)
                         error("No context exists for this id", "Sending new message");
-                    else
+                    else {
+
+                        if(pthread_mutex_lock(&barrier_mutex)) {
+                            error("Who knows", "Trying to acquire the lock");
+                            continue; //should abort
+                        }
+
                         appendMessage(ctxById, newMsg);
+
+                        if(pthread_mutex_unlock(&barrier_mutex)) {
+                            error("Who knows", "Trying to release the lock");
+                            continue; //should abort
+                        }
+                    }
                 }
 
             }
 
-            if(pthread_mutex_unlock(&barrier_mutex)) {
-                error("Who knows", "Trying to release the lock");
-                continue; //should abort
-            }
         }
 
-        usleep(2000);
+        usleep(5000);
     }
 
 }
