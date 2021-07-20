@@ -1232,7 +1232,7 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
  
   int *positions = cpi->positions[mb_row];
   unsigned char *cover = cpi->cover[mb_row];
-  int *row_bits = cpi->row_bits[mb_row];
+  int *row_bits = &cpi->row_bits[mb_row];
   for(int i = 0; i < 256; i++)
     if(xd->qcoeff[i] != 1 && xd->qcoeff[i] != 0 && (i & 0xF) != 0) {
       positions[*row_bits] = i + offset;
@@ -1417,7 +1417,7 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
   
     int *positions = cpi->positions[mb_row];
     unsigned char *cover = cpi->cover[mb_row];
-    int *row_bits = cpi->row_bits[mb_row];
+    int *row_bits = &cpi->row_bits[mb_row];
     for(int i = 0; i < 256; i++)
       if(xd->qcoeff[i] != 1 && xd->qcoeff[i] != 0 && (i & 0xF) != 0) {
         positions[*row_bits] = i + offset;
