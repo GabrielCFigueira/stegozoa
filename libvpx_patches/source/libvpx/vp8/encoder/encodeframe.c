@@ -937,12 +937,8 @@ void vp8_encode_frame(VP8_COMP *cpi) {
                 clock_t end = clock();
                 printf("Time spent generating steganogram in frame %d: %lf\n", cm->current_video_frame, ((double) end - start) / CLOCKS_PER_SEC);
             }
-            {
-                clock_t start = clock();
-                writeQdctLsb(cpi->positions, cpi->row_bits, cm->mb_rows, steganogram, qcoeff, bits);
-                clock_t end = clock();
-                printf("Time spent writing qdct in frame %d: %lf\n", cm->current_video_frame, ((double) end - start) / CLOCKS_PER_SEC);
-            }
+
+            writeQdctLsb(cpi->positions, cpi->row_bits, cm->mb_rows, steganogram, qcoeff, bits);
 
             free(steganogram);
             free(cover);

@@ -9,6 +9,8 @@
 #include <pthread.h>
 #include <math.h>
 
+#include <time.h>
+
 
 #define MASK 0xFE
 #define DIVIDE8(num) (num >> 3)
@@ -618,17 +620,24 @@ int flushEncoder(unsigned char *steganogram, unsigned char *cover, uint32_t ssrc
     if(ctx == NULL)
         ctx = createEncoderContext(ssrc);
 
+    clock_t start = clock();
+    
     int msgSize = size / w;
     unsigned char *message = (unsigned char*) malloc(msgSize * sizeof(unsigned char));
     int toSend = obtainMessage(ctx, message, msgSize);
 
+    clock_t end = clock();
+    printf("Time spent obtaining message: %lf\n", ((double) end - start) / CLOCKS_PER_SEC);
 
     if(pthread_mutex_unlock(&barrier_mutex)) {
         error("Who knows", "Trying to release the lock");
         return 0; //should abort
     }
 
+    start = clock();
     stc(size, steganogram, message, cover);
+    end = clock();
+    printf("Time spent computing stc: %lf\n", ((double) end - start) / CLOCKS_PER_SEC);
 
     free(message);
 
