@@ -481,16 +481,16 @@ static void stc(int coverSize, stc_data_t *data) {
 
     int indx = 0;
     int indm = 0;
-    int tempHpow = hpow;
+    int tempHpow = HPOW;
 
-    int H[w];
-    for (int i = 0; i < w; i++)
+    int H[WIDTH];
+    for (int i = 0; i < WIDTH; i++)
         H[i] = H_hat[i];
 
-    int msgSize = coverSize / w;
+    int msgSize = coverSize / WIDTH;
 
     wght[0] = 0;
-    for (int i = 1; i < hpw; i++)
+    for (int i = 1; i < HPOW; i++)
         wght[i] = INFINITY;
    
 
@@ -501,18 +501,18 @@ static void stc(int coverSize, stc_data_t *data) {
 
     for (int i = 0; i < msgSize; i++) {
 
-        if (i >= msgSize - (h - 1)) {
-            for (int j = 0; j < w; j++)
+        if (i >= msgSize - (HEIGHT - 1)) {
+            for (int j = 0; j < WIDTH; j++)
                 H[j] = H_hat[j] & ((1 << (msgSize - i)) - 1);
             tempHpow = tempHpow >> 1;
         }
 
-        for (int j = 0; j < w; j++) {
+        for (int j = 0; j < WIDTH; j++) {
             for (int k = 0; k < tempHpow; k++) {
 
                 w0 = wght[k] + cover[indx];
                 w1 = wght[k ^ H[j]] + !cover[indx];
-                path[indx * hpow + k] = w1 < w0;
+                path[indx * HPOW + k] = w1 < w0;
                 newwght[k] = w1 < w0 ? w1 : w0;
             }
             
@@ -526,10 +526,10 @@ static void stc(int coverSize, stc_data_t *data) {
         for (int j = 0; j < tempHpow >> 1; j++) {
             if(message[indm] == 2) {
                 wght[j] = wght[j << 1] < wght[(j << 1) + 1] ? wght[j << 1] : wght[(j << 1) + 1];
-                messagePath[indm * hpow + j] = wght[j << 1] < wght[(j << 1) + 1];
+                messagePath[indm * HPOW + j] = wght[j << 1] < wght[(j << 1) + 1];
             } else {
                 wght[j] = wght[(j << 1) + message[indm]];
-                messagePath[indm * hpow + j] = message[indm];
+                messagePath[indm * HPOW + j] = message[indm];
             }
         }
         
@@ -547,21 +547,21 @@ static void stc(int coverSize, stc_data_t *data) {
     indx--;
     indm--;
     for (int i = msgSize - 1; i >= 0; i--) {
-        state = (state << 1) + messagePath[indm * hpow + state];
+        state = (state << 1) + messagePath[indm * HPOW + state];
         indm--;
 
-        for (int j = w - 1; j >= 0; j--) {
-            steganogram[indx] = path[indx * hpow + state];
+        for (int j = WIDTH - 1; j >= 0; j--) {
+            steganogram[indx] = path[indx * HPOW + state];
             state = state ^ (steganogram[indx] ? H[j] : 0);
             indx--;
         }
         
-        if (i >= msgSize - (h - 1))
-            for (int j = 0; j < w; j++)
+        if (i >= msgSize - (HEIGHT - 1))
+            for (int j = 0; j < WIDTH; j++)
                 H[j] = H_hat[j] & ((1 << (msgSize - i + 1)) - 1);
     }
 
-    for (int i = msgSize * w; i < coverSize; i++)
+    for (int i = msgSize * WIDTH; i < coverSize; i++)
         steganogram[i] = cover[i];
 
 

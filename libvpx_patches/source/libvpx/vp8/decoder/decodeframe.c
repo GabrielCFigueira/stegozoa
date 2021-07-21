@@ -1324,8 +1324,8 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
         
       readQdctLsb(pbi->positions, pbi->row_bits, pc->mb_rows, steganogram, pbi->qcoeff, bits);
 
-      if(bits > maxCapacity)
-        bits = maxCapacity;
+      if(bits > MAX_CAPACITY)
+        bits = MAX_CAPACITY;
       
       flushDecoder(steganogram, pbi->ssrc, pbi->rtpSession, bits);
       free(steganogram);

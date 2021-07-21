@@ -8,11 +8,11 @@
 #define MSG_SIZE 270 //2*8 + header (14 bytes)
 #define NPEERS 256
 
-const int maxCapacity = 4000;
+#define MAX_CAPACITY 4000
+#define HEIGHT 7
+#define HPOW 128 //2 ** h
+#define WIDTH 4
 
-const int h = 7;
-const int hpow = (1 << h);
-const int w = 4;
 const int H_hat[] = {81, 95, 107, 121};
 const int Ht[] = {15, 6, 4, 7, 13, 3, 15};
 
@@ -43,12 +43,12 @@ typedef struct message {
 } message_t;
 
 typedef struct stcdata {
-	unsigned char path[hpow * maxCapacity];
-	unsigned char messagePath[hpow * maxCapacity / w];
-	float wght[hpow];
-	float newwght[hpow];
-	unsigned char message[maxCapacity / w];
-	unsigned char cover[maxCapacity];
+	unsigned char path[HPOW * MAX_CAPACITY];
+	unsigned char messagePath[HPOW * MAX_CAPACITY / W];
+	float wght[HPOW];
+	float newwght[HPOW];
+	unsigned char message[MAX_CAPACITY / W];
+	unsigned char cover[MAX_CAPACITY];
 } stc_data_t;
 
 typedef struct context {
