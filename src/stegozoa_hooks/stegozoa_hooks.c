@@ -517,7 +517,7 @@ static void stc(int coverSize, stc_data_t *data) {
     float w0, w1;
     float *temp;
 
-    start = clock();
+    //start = clock();
 
     //Forward part of the Viterbi algorithm
 
@@ -561,16 +561,15 @@ static void stc(int coverSize, stc_data_t *data) {
 
         indm++;
 
-        end = clock();
-        printf("Time spent in a stc cycle: %lf\n", ((double) end - start) / CLOCKS_PER_SEC);
+        //end = clock();
+        //printf("Time spent in a stc cycle: %lf\n", ((double) end - start) / CLOCKS_PER_SEC);
     }
     
-    end = clock();
-    printf("Time spent in stc firt phase: %lf\n", ((double) end - start) / CLOCKS_PER_SEC);
+    //end = clock();
+    //printf("Time spent in stc firt phase: %lf\n", ((double) end - start) / CLOCKS_PER_SEC);
 
     //Backward part of the Viterbi algorithm
 
-    start = clock();
     //float embeddingCost = wght[0];
     int state = 0;
     indx--;
@@ -647,23 +646,23 @@ int flushEncoder(uint32_t ssrc, int simulcast, int size) {
     stc_data_t *data = ctx->stcData;
 
 
-    clock_t start = clock();
+    //clock_t start = clock();
     
     int msgSize = size / WIDTH;
     int toSend = obtainMessage(ctx, msgSize);
 
-    clock_t end = clock();
-    printf("Time spent obtaining message: %lf\n", ((double) end - start) / CLOCKS_PER_SEC);
+    //clock_t end = clock();
+    //printf("Time spent obtaining message: %lf\n", ((double) end - start) / CLOCKS_PER_SEC);
 
     if(pthread_mutex_unlock(&barrier_mutex)) {
         error("Who knows", "Trying to release the lock");
         return 0; //should abort
     }
 
-    start = clock();
-    stc(size, data);
+    //start = clock();
+    //stc(size, data);
     end = clock();
-    printf("Time spent computing stc: %lf\n", ((double) end - start) / CLOCKS_PER_SEC);
+    //printf("Time spent computing stc: %lf\n", ((double) end - start) / CLOCKS_PER_SEC);
 
     return toSend;
 

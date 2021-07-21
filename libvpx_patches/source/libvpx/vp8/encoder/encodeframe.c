@@ -905,7 +905,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
         clock_t start, end;
         start = clock();
         
-        printf("Preparing frame %d\n", cm->current_video_frame);
+        //printf("Preparing frame %d\n", cm->current_video_frame);
 
         short *qcoeff = cpi->qcoeff;
         char *eobs = cpi->eobs;
@@ -933,10 +933,10 @@ void vp8_encode_frame(VP8_COMP *cpi) {
                 }
             out:
             {
-                clock_t start = clock();
+                //clock_t start = clock();
                 embbedData = flushEncoder(cpi->ssrc, cpi->simulcast, bits);
-                clock_t end = clock();
-                printf("Time spent generating steganogram in frame %d: %lf\n", cm->current_video_frame, ((double) end - start) / CLOCKS_PER_SEC);
+                //clock_t end = clock();
+                //printf("Time spent generating steganogram in frame %d: %lf\n", cm->current_video_frame, ((double) end - start) / CLOCKS_PER_SEC);
             }
 
             writeQdctLsb(cpi->positions, cpi->row_bits, cm->mb_rows, steganogram, qcoeff, bits);

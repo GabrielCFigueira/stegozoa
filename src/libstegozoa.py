@@ -402,11 +402,11 @@ def connect():
 
     sendMessage(message)
 
-    thread = threading.Thread(target=broadcastKeepalive, args=(), daemon=True)
-    thread.start()
+    #thread = threading.Thread(target=broadcastKeepalive, args=(), daemon=True)
+    #thread.start()
     
-    thread = threading.Thread(target=broadcastConnect, args=(), daemon=True)
-    thread.start()
+    #thread = threading.Thread(target=broadcastConnect, args=(), daemon=True)
+    #thread.start()
     
 
 def sigInt_handler(signum,frame):
@@ -495,7 +495,7 @@ if __name__ == "__main__":
         myId = 1
     signal.signal(signal.SIGINT,sigInt_handler)
     initialize(myId)
-    connect()
+    #connect()
     #while len(getPeers()) < 1:
     #    time.sleep(0.5)
     message = "Why are we still here... just to suffer"
