@@ -49,6 +49,7 @@ typedef struct stcdata {
 	float newwght[HPOW];
 	unsigned char message[MAX_CAPACITY / WIDTH];
 	unsigned char cover[MAX_CAPACITY];
+	unsigned char steganogram[MAX_CAPACITY];
 } stc_data_t;
 
 typedef struct context {
