@@ -489,7 +489,7 @@ static int obtainMessage(context_t *ctx, int size) {
 
 static void stc(int coverSize, stc_data_t *data) {
 
-    clock_t start, end;
+    //clock_t start, end;
 
     unsigned char *steganogram = data->steganogram;
     unsigned char *message = data->message;
@@ -522,7 +522,7 @@ static void stc(int coverSize, stc_data_t *data) {
     //Forward part of the Viterbi algorithm
 
     for (int i = 0; i < msgSize; i++) {
-        clock_t start, end;
+        //clock_t start, end;
         start = clock();
         if (i >= msgSize - (HEIGHT - 1)) {
             for (int j = 0; j < WIDTH; j++)
@@ -661,7 +661,7 @@ int flushEncoder(uint32_t ssrc, int simulcast, int size) {
 
     //start = clock();
     //stc(size, data);
-    end = clock();
+    //end = clock();
     //printf("Time spent computing stc: %lf\n", ((double) end - start) / CLOCKS_PER_SEC);
 
     return toSend;
