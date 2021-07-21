@@ -523,7 +523,7 @@ static void stc(int coverSize, stc_data_t *data) {
 
     for (int i = 0; i < msgSize; i++) {
         //clock_t start, end;
-        start = clock();
+        //start = clock();
         if (i >= msgSize - (HEIGHT - 1)) {
             for (int j = 0; j < WIDTH; j++)
                 H[j] = H_hat[j] & ((1 << (msgSize - i)) - 1);
@@ -643,7 +643,7 @@ int flushEncoder(uint32_t ssrc, int simulcast, int size) {
         broadcast = simulcast;
     
     context_t *ctx = getEncoderContext(ssrc);
-    stc_data_t *data = ctx->stcData;
+    //stc_data_t *data = ctx->stcData;
 
 
     //clock_t start = clock();
