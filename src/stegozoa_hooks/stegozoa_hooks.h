@@ -44,10 +44,10 @@ typedef struct message {
 
 typedef struct stcdata {
 	unsigned char path[HPOW * MAX_CAPACITY];
-	unsigned char messagePath[HPOW * MAX_CAPACITY / W];
+	unsigned char messagePath[HPOW * MAX_CAPACITY / WIDTH];
 	float wght[HPOW];
 	float newwght[HPOW];
-	unsigned char message[MAX_CAPACITY / W];
+	unsigned char message[MAX_CAPACITY / WIDTH];
 	unsigned char cover[MAX_CAPACITY];
 } stc_data_t;
 
