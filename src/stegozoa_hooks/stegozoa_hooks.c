@@ -643,7 +643,7 @@ int flushEncoder(uint32_t ssrc, int simulcast, int size) {
         broadcast = simulcast;
     
     context_t *ctx = getEncoderContext(ssrc);
-    //stc_data_t *data = ctx->stcData;
+    stc_data_t *data = ctx->stcData;
 
 
     //clock_t start = clock();
@@ -660,7 +660,7 @@ int flushEncoder(uint32_t ssrc, int simulcast, int size) {
     }
 
     //start = clock();
-    //stc(size, data);
+    stc(size, data);
     //end = clock();
     //printf("Time spent computing stc: %lf\n", ((double) end - start) / CLOCKS_PER_SEC);
 
