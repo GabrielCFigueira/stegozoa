@@ -509,7 +509,7 @@ static void stc(int coverSize, unsigned char *steganogram, unsigned char *messag
     unsigned char *path = malloc(msgSize * w * hpow * sizeof(unsigned char));
     unsigned char *messagePath = malloc(msgSize * hpow * sizeof(unsigned char));
     end = clock();
-    printf("Time spent obtaining message: %lf\n", (double (end - start)) / CLOCKS_PER_SEC);
+    printf("Time spent obtaining message: %lf\n", ((double) end - start) / CLOCKS_PER_SEC);
 
 
     float w0, w1;
