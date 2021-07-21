@@ -489,6 +489,10 @@ static int obtainMessage(context_t *ctx, int size) {
 
 static void stc(int coverSize, stc_data_t *data) {
 
+    clock_t start, end;
+
+    start = clock();
+
     unsigned char *steganogram = data->steganogram;
     unsigned char *message = data->message;
     unsigned char *cover = data->cover;
@@ -514,6 +518,10 @@ static void stc(int coverSize, stc_data_t *data) {
 
     float w0, w1;
     float *temp;
+
+    end = clock();
+    printf("Time spent prepping stc: %lf\n", ((double) end - start) / CLOCKS_PER_SEC);
+    start = clock();
 
     //Forward part of the Viterbi algorithm
 
@@ -557,9 +565,12 @@ static void stc(int coverSize, stc_data_t *data) {
         indm++;
     }
     
+    end = clock();
+    printf("Time spent in stc firt phase: %lf\n", ((double) end - start) / CLOCKS_PER_SEC);
 
     //Backward part of the Viterbi algorithm
 
+    start = clock();
     //float embeddingCost = wght[0];
     int state = 0;
     indx--;
@@ -581,6 +592,8 @@ static void stc(int coverSize, stc_data_t *data) {
 
     for (int i = msgSize * WIDTH; i < coverSize; i++)
         steganogram[i] = cover[i];
+    end = clock();
+    printf("Time spent in stc second phase phase: %lf\n", ((double) end - start) / CLOCKS_PER_SEC);
 
 
 }
