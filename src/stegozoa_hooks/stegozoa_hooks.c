@@ -517,13 +517,13 @@ static void stc(int coverSize, stc_data_t *data) {
     float w0, w1;
     float *temp;
 
-    printf("Time spent prepping stc: %lf\n", ((double) end - start) / CLOCKS_PER_SEC);
     start = clock();
 
     //Forward part of the Viterbi algorithm
 
     for (int i = 0; i < msgSize; i++) {
-        clock_t start = clock();
+        clock_t start, end;
+        start = clock();
         if (i >= msgSize - (HEIGHT - 1)) {
             for (int j = 0; j < WIDTH; j++)
                 H[j] = H_hat[j] & ((1 << (msgSize - i)) - 1);
@@ -561,7 +561,7 @@ static void stc(int coverSize, stc_data_t *data) {
 
         indm++;
 
-        clock_t end = clock();
+        end = clock();
         printf("Time spent in a stc cycle: %lf\n", ((double) end - start) / CLOCKS_PER_SEC);
     }
     
