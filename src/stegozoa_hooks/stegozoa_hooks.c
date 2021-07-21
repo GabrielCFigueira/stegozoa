@@ -90,7 +90,7 @@ static context_t *newContext(uint32_t ssrc) {
     }
     
     context->ssrc = ssrc;
-    context->data = (stc_data_t *) malloc(sizeof(stc_data_t));
+    context->stcData = (stc_data_t *) malloc(sizeof(stc_data_t));
     return context;
 }
 
@@ -435,7 +435,7 @@ static void discardMessage(context_t *ctx) {
 static int obtainMessage(context_t *ctx, int size) {
     
     message_t *msg = ctx->msg;
-    unsigned char *message = ctx->data->message;
+    unsigned char *message = ctx->stcData->message;
 
     int toSend = 0;
 
@@ -570,17 +570,17 @@ static void stc(int coverSize, stc_data_t *data) {
 static void reverseStc(unsigned char *steganogram, unsigned char* message, int coverSize) {
 
     int line = 0;
-    for(int i = 0; i < h; i++)
-        line += Ht[i] << (w * i);
+    for(int i = 0; i < HEIGHT; i++)
+        line += Ht[i] << (WIDTH * i);
 
-    int msgSize = coverSize / w;
+    int msgSize = coverSize / WIDTH;
 
     for(int i = 0; i < msgSize; i++) {
         int mask = 1;
         int index = 0;
         int bit = 0;
 
-        for(int j = w * (i + 1) - 1; j > w * (i + 1 - h) - 1; j--) {
+        for(int j = WIDTH * (i + 1) - 1; j > WIDTH * (i + 1 - HEIGHT) - 1; j--) {
 
             if (j < 0)
                 break;
@@ -601,7 +601,7 @@ stc_data_t *getStcData(uint32_t ssrc) {
     context_t *ctx = getEncoderContext(ssrc);
     if(ctx == NULL)
         ctx = createEncoderContext(ssrc);
-    return ctx->data;
+    return ctx->stcData;
 }
 
 int flushEncoder(uint32_t ssrc, int simulcast, int size) {
@@ -615,15 +615,12 @@ int flushEncoder(uint32_t ssrc, int simulcast, int size) {
         broadcast = simulcast;
     
     context_t *ctx = getEncoderContext(ssrc);
-    stc_data_t *data = ctx->data;
-
-    if(size > maxCapacity)
-        size = maxCapacity;
+    stc_data_t *data = ctx->stcData;
 
 
     clock_t start = clock();
     
-    int msgSize = size / w;
+    int msgSize = size / WIDTH;
     int toSend = obtainMessage(ctx, msgSize);
 
     clock_t end = clock();
@@ -704,7 +701,7 @@ void readQdctLsb(int **positions, int *row_bits, int n_rows, unsigned char* steg
 
 void flushDecoder(unsigned char *steganogram, uint32_t ssrc, uint64_t rtpSession, int size) {
 
-    int msgSize = size / w;
+    int msgSize = size / WIDTH;
     unsigned char *message = (unsigned char*) malloc(msgSize * sizeof(unsigned char));
     reverseStc(steganogram, message, size);
 
