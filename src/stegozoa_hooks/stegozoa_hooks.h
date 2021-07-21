@@ -13,23 +13,6 @@
 #define HPOW 128 //2 ** h
 #define WIDTH 4
 
-const int H_hat[] = {81, 95, 107, 121};
-const int Ht[] = {15, 6, 4, 7, 13, 3, 15};
-
-/*
- * const int h = 7;
- * const int w = 3;
- * const int H_hat[] = {95, 101, 121};
- * const int Ht[] = {7, 4, 6, 5, 5, 3, 7};
- * */
-
-/*
- * const int h = 7;
- * const int w = 2;
- * const int H_hat[] = {71, 109};
- * const int Ht[] = {3, 2, 3, 1, 0, 1, 3};
- * */
-
 typedef struct message {
 	unsigned char buffer[BUFFER_LEN];
 	int bit;

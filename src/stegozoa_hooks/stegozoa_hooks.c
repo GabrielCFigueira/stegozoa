@@ -58,6 +58,24 @@ static pthread_mutex_t barrier_mutex;
 static uint32_t constant = 0xC76E;
 
 
+const int H_hat[] = {81, 95, 107, 121};
+const int Ht[] = {15, 6, 4, 7, 13, 3, 15};
+
+/*
+ * const int h = 7;
+ * const int w = 3;
+ * const int H_hat[] = {95, 101, 121};
+ * const int Ht[] = {7, 4, 6, 5, 5, 3, 7};
+ * */
+
+/*
+ * const int h = 7;
+ * const int w = 2;
+ * const int H_hat[] = {71, 109};
+ * const int Ht[] = {3, 2, 3, 1, 0, 1, 3};
+ * */
+
+
 
 
 
