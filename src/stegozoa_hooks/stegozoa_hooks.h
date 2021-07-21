@@ -8,6 +8,28 @@
 #define MSG_SIZE 270 //2*8 + header (14 bytes)
 #define NPEERS 256
 
+const int maxCapacity = 4000;
+
+const int h = 7;
+const int hpow = (1 << h);
+const int w = 4;
+const int H_hat[] = {81, 95, 107, 121};
+const int Ht[] = {15, 6, 4, 7, 13, 3, 15};
+
+/*
+ * const int h = 7;
+ * const int w = 3;
+ * const int H_hat[] = {95, 101, 121};
+ * const int Ht[] = {7, 4, 6, 5, 5, 3, 7};
+ * */
+
+/*
+ * const int h = 7;
+ * const int w = 2;
+ * const int H_hat[] = {71, 109};
+ * const int Ht[] = {3, 2, 3, 1, 0, 1, 3};
+ * */
+
 typedef struct message {
 	unsigned char buffer[BUFFER_LEN];
 	int bit;
@@ -20,6 +42,15 @@ typedef struct message {
 	struct message *next;
 } message_t;
 
+typedef struct stcdata {
+	unsigned char path[hpow * maxCapacity];
+	unsigned char messagePath[hpow * maxCapacity / w];
+	float wght[hpow];
+	float newwght[hpow];
+	unsigned char message[maxCapacity / w];
+	unsigned char cover[maxCapacity];
+} stc_data_t;
+
 typedef struct context {
 	message_t *msg;
 	uint32_t ssrc;
@@ -30,14 +61,6 @@ typedef struct context {
 	stc_data_t *stcData;
 } context_t;
 
-typedef struct stcdata {
-	unsigned char *path;
-	unsigned char *messagePath;
-	float *wght;
-	float *newwght;
-	unsigned char *message;
-	unsigned char *cover;	
-} stc_data_t;
 
 
 stc_data_t *getStcData(uint32_t ssrc);
