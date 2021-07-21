@@ -918,31 +918,29 @@ void vp8_encode_frame(VP8_COMP *cpi) {
             bits += cpi->row_bits[i];
 
         if(embbed && bits >= 40) {
-            unsigned char *cover = (unsigned char*) malloc(bits * sizeof(unsigned char));
-            unsigned char *steganogram = (unsigned char*) malloc(bits * sizeof(unsigned char));
+            stc_data_t *data = getStcData(cpi->ssrc);
+            unsigned char *cover = data->cover; 
+            unsigned char *steganogram = data->steganogram;
 
-            if(!steganogram || !cover) {
-                fprintf(stderr, "Stegozoa: Failed malloc");
-                return;
-            }
-            
             int index = 0;
             for(int i = 0; i < cm->mb_rows; i++)
-                for(int j = 0; j < cpi->row_bits[i]; j++)
+                for(int j = 0; j < cpi->row_bits[i]; j++) {
                     cover[index++] = cpi->cover[i][j];
-
+                    if(index == maxCapacity) {
+                        bits = maxCapacity;
+                        goto out;
+                    }
+                }
+            out:
             {
                 clock_t start = clock();
-                embbedData = flushEncoder(steganogram, cover, cpi->ssrc, cpi->simulcast, bits);
+                embbedData = flushEncoder(cpi->ssrc, cpi->simulcast, bits);
                 clock_t end = clock();
                 printf("Time spent generating steganogram in frame %d: %lf\n", cm->current_video_frame, ((double) end - start) / CLOCKS_PER_SEC);
             }
 
             writeQdctLsb(cpi->positions, cpi->row_bits, cm->mb_rows, steganogram, qcoeff, bits);
 
-            free(steganogram);
-            free(cover);
-        
             end = clock();
             printf("Time spent embbedding secret data in frame %d: %lf, capacity:%d, embbeded bits:%d\n", cm->current_video_frame, ((double) end - start) / CLOCKS_PER_SEC, bits, embbedData);
         }

@@ -1317,11 +1317,16 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
 
   if(bits < 40) //minimal message size
       extract = 0;
+
   
   if(extract) {
       unsigned char *steganogram = (unsigned char*) malloc(bits * sizeof(unsigned char));
         
       readQdctLsb(pbi->positions, pbi->row_bits, pc->mb_rows, steganogram, pbi->qcoeff, bits);
+
+      if(bits > maxCapacity)
+        bits = maxCapacity;
+      
       flushDecoder(steganogram, pbi->ssrc, pbi->rtpSession, bits);
       free(steganogram);
   }

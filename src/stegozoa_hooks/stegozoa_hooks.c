@@ -90,6 +90,7 @@ static context_t *newContext(uint32_t ssrc) {
     }
     
     context->ssrc = ssrc;
+    context->data = (stc_data_t *) malloc(sizeof(stc_data_t));
     return context;
 }
 
@@ -431,9 +432,10 @@ static void discardMessage(context_t *ctx) {
 
 }
 
-static int obtainMessage(context_t *ctx, unsigned char *message, int size) {
+static int obtainMessage(context_t *ctx, int size) {
     
     message_t *msg = ctx->msg;
+    unsigned char *message = ctx->data->message;
 
     int toSend = 0;
 
@@ -467,31 +469,19 @@ static int obtainMessage(context_t *ctx, unsigned char *message, int size) {
 }
 
 
-const int h = 7;
-const int w = 4;
-const int H_hat[] = {81, 95, 107, 121};
-const int Ht[] = {15, 6, 4, 7, 13, 3, 15};
+static void stc(int coverSize, stc_data_t *data) {
 
-/*
- * const int h = 7;
- * const int w = 3;
- * const int H_hat[] = {95, 101, 121};
- * const int Ht[] = {7, 4, 6, 5, 5, 3, 7};
- * */
-
-/*
- * const int h = 7;
- * const int w = 2;
- * const int H_hat[] = {71, 109};
- * const int Ht[] = {3, 2, 3, 1, 0, 1, 3};
- * */
-
-
-static void stc(int coverSize, unsigned char *steganogram, unsigned char *message, unsigned char *cover) {
+    unsigned char *steganogram = data->steganogram;
+    unsigned char *message = data->message;
+    unsigned char *cover = data->cover;
+    unsigned char *path = data->path;
+    unsigned char *messagePath = data->messagePath;
+    float *wght = data->wght;
+    float *newwght = data->newwght;
 
     int indx = 0;
     int indm = 0;
-    int hpow = 1 << h;
+    int tempHpow = hpow;
 
     int H[w];
     for (int i = 0; i < w; i++)
@@ -499,23 +489,13 @@ static void stc(int coverSize, unsigned char *steganogram, unsigned char *messag
 
     int msgSize = coverSize / w;
 
-    float *wght = (float*) malloc(hpow * sizeof(float));
     wght[0] = 0;
-    for (int i = 1; i < hpow; i++)
+    for (int i = 1; i < hpw; i++)
         wght[i] = INFINITY;
    
-    clock_t start, end;
-    start = clock();   
-    unsigned char *path = malloc(msgSize * w * hpow * sizeof(unsigned char));
-    unsigned char *messagePath = malloc(msgSize * hpow * sizeof(unsigned char));
-    end = clock();
-    printf("Time spent waiting for malloc: %lf\n", ((double) end - start) / CLOCKS_PER_SEC);
-
 
     float w0, w1;
-    float *newwght = (float*) malloc(hpow * sizeof(float));
     float *temp;
-
 
     //Forward part of the Viterbi algorithm
 
@@ -524,15 +504,15 @@ static void stc(int coverSize, unsigned char *steganogram, unsigned char *messag
         if (i >= msgSize - (h - 1)) {
             for (int j = 0; j < w; j++)
                 H[j] = H_hat[j] & ((1 << (msgSize - i)) - 1);
-            hpow = hpow >> 1;
+            tempHpow = tempHpow >> 1;
         }
 
         for (int j = 0; j < w; j++) {
-            for (int k = 0; k < hpow; k++) {
+            for (int k = 0; k < tempHpow; k++) {
 
                 w0 = wght[k] + cover[indx];
                 w1 = wght[k ^ H[j]] + !cover[indx];
-                path[indx * (1 << h) + k] = w1 < w0;
+                path[indx * hpow + k] = w1 < w0;
                 newwght[k] = w1 < w0 ? w1 : w0;
             }
             
@@ -543,17 +523,17 @@ static void stc(int coverSize, unsigned char *steganogram, unsigned char *messag
         
         }
 
-        for (int j = 0; j < hpow >> 1; j++) {
+        for (int j = 0; j < tempHpow >> 1; j++) {
             if(message[indm] == 2) {
                 wght[j] = wght[j << 1] < wght[(j << 1) + 1] ? wght[j << 1] : wght[(j << 1) + 1];
-                messagePath[indm * (1 << h) + j] = wght[j << 1] < wght[(j << 1) + 1];
+                messagePath[indm * hpow + j] = wght[j << 1] < wght[(j << 1) + 1];
             } else {
                 wght[j] = wght[(j << 1) + message[indm]];
-                messagePath[indm * (1 << h) + j] = message[indm];
+                messagePath[indm * hpow + j] = message[indm];
             }
         }
         
-        for (int j = hpow >> 1; j < hpow; j++)
+        for (int j = tempHpow >> 1; j < tempHpow; j++)
             wght[j] = INFINITY;
 
         indm++;
@@ -567,11 +547,11 @@ static void stc(int coverSize, unsigned char *steganogram, unsigned char *messag
     indx--;
     indm--;
     for (int i = msgSize - 1; i >= 0; i--) {
-        state = (state << 1) + messagePath[indm * (1 << h) + state];
+        state = (state << 1) + messagePath[indm * hpow + state];
         indm--;
 
         for (int j = w - 1; j >= 0; j--) {
-            steganogram[indx] = path[indx * (1 << h) + state];
+            steganogram[indx] = path[indx * hpow + state];
             state = state ^ (steganogram[indx] ? H[j] : 0);
             indx--;
         }
@@ -580,11 +560,6 @@ static void stc(int coverSize, unsigned char *steganogram, unsigned char *messag
             for (int j = 0; j < w; j++)
                 H[j] = H_hat[j] & ((1 << (msgSize - i + 1)) - 1);
     }
-
-    free(wght);
-    free(newwght);
-    free(path);
-    free(messagePath);
 
     for (int i = msgSize * w; i < coverSize; i++)
         steganogram[i] = cover[i];
@@ -621,7 +596,15 @@ static void reverseStc(unsigned char *steganogram, unsigned char* message, int c
 
 }
 
-int flushEncoder(unsigned char *steganogram, unsigned char *cover, uint32_t ssrc, int simulcast, int size) {
+stc_data_t *getStcData(uint32_t ssrc) {
+
+    context_t *ctx = getEncoderContext(ssrc);
+    if(ctx == NULL)
+        ctx = createEncoderContext(ssrc);
+    return ctx->data;
+}
+
+int flushEncoder(uint32_t ssrc, int simulcast, int size) {
 
     if(pthread_mutex_lock(&barrier_mutex)) {
         error("Who knows", "Trying to acquire the lock");
@@ -632,16 +615,16 @@ int flushEncoder(unsigned char *steganogram, unsigned char *cover, uint32_t ssrc
         broadcast = simulcast;
     
     context_t *ctx = getEncoderContext(ssrc);
+    stc_data_t *data = ctx->data;
 
+    if(size > maxCapacity)
+        size = maxCapacity;
 
-    if(ctx == NULL)
-        ctx = createEncoderContext(ssrc);
 
     clock_t start = clock();
     
     int msgSize = size / w;
-    unsigned char *message = (unsigned char*) malloc(msgSize * sizeof(unsigned char));
-    int toSend = obtainMessage(ctx, message, msgSize);
+    int toSend = obtainMessage(ctx, msgSize);
 
     clock_t end = clock();
     printf("Time spent obtaining message: %lf\n", ((double) end - start) / CLOCKS_PER_SEC);
@@ -652,11 +635,9 @@ int flushEncoder(unsigned char *steganogram, unsigned char *cover, uint32_t ssrc
     }
 
     start = clock();
-    stc(size, steganogram, message, cover);
+    stc(size, data);
     end = clock();
     printf("Time spent computing stc: %lf\n", ((double) end - start) / CLOCKS_PER_SEC);
-
-    free(message);
 
     return toSend;
 
