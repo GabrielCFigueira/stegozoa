@@ -646,13 +646,13 @@ int flushEncoder(uint32_t ssrc, int simulcast, int size) {
     stc_data_t *data = ctx->stcData;
 
 
-    //clock_t start = clock();
+    clock_t start = clock();
     
     int msgSize = size / WIDTH;
     int toSend = obtainMessage(ctx, msgSize);
 
-    //clock_t end = clock();
-    //printf("Time spent obtaining message: %lf\n", ((double) end - start) / CLOCKS_PER_SEC);
+    clock_t end = clock();
+    printf("Time spent obtaining message: %lf\n", ((double) end - start) / CLOCKS_PER_SEC);
 
     if(pthread_mutex_unlock(&barrier_mutex)) {
         error("Who knows", "Trying to release the lock");
