@@ -1223,15 +1223,21 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
   
   memcpy(cpi->qcoeff + offset, xd->qcoeff, 400 * sizeof(short));
   memcpy(cpi->eobs + (offset >> 4), xd->eobs, 25 * sizeof(char));
+
+  short *qcoeff_ptr = xd->qcoeff;
+  int rc;
  
   int *positions = cpi->positions[mb_row];
   unsigned char *cover = cpi->cover[mb_row];
   int *row_bits = &cpi->row_bits[mb_row];
-  for(int i = 0; i < 256; i++)
-    if(xd->qcoeff[i] != 1 && xd->qcoeff[i] != 0 && (i & 0xF) != 0) {
-      positions[*row_bits] = i + offset;
-      cover[*row_bits] = xd->qcoeff[i] & 0x1;
-      (*row_bits)++;
+  for(int i = 0; i < 16; i++, qcoeff_ptr += 16)
+    for(int j = 1; j < xd->eobs[i]; j++) { //j = 1 to ignore dc coefficients
+      rc = vp8_default_zig_zag1d[j];
+      if(qcoeff_ptr[rc] >> 1) { //if different from 0 and 1
+        positions[*row_bits] = offset + (i << 4) + rc;
+        cover[*row_bits] = qcoeff_ptr[rc] & 0x1;
+        (*row_bits)++;
+      }
     }
 #endif // STEGOZOA
 
@@ -1409,14 +1415,20 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
 #else
     vp8_fake_tokenize_mb(cpi, x);
   
+    short *qcoeff_ptr = xd->qcoeff;
+    int rc;
+ 
     int *positions = cpi->positions[mb_row];
     unsigned char *cover = cpi->cover[mb_row];
     int *row_bits = &cpi->row_bits[mb_row];
-    for(int i = 0; i < 256; i++)
-      if(xd->qcoeff[i] != 1 && xd->qcoeff[i] != 0 && (i & 0xF) != 0) {
-        positions[*row_bits] = i + offset;
-        cover[*row_bits] = xd->qcoeff[i] & 0x1;
-        (*row_bits)++;
+    for(int i = 0; i < 16; i++, qcoeff_ptr += 16)
+      for(int j = 1; j < xd->eobs[i]; j++) { //j = 1 to ignore dc coefficients
+        rc = vp8_default_zig_zag1d[j];
+        if(qcoeff_ptr[rc] >> 1) { //if different from 0 and 1
+          positions[*row_bits] = offset + (i << 4) + rc;
+          cover[*row_bits] = qcoeff_ptr[rc] & 0x1;
+          (*row_bits)++;
+        }
       }
   
     memcpy(cpi->qcoeff + offset, xd->qcoeff, 400 * sizeof(short));
