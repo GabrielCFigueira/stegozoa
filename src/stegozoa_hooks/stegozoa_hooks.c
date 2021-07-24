@@ -400,7 +400,7 @@ static void *fetchDataThread(void *args) {
                             continue; //should abort
                         }
 
-                        insertMessage(encoders[i], newMsg);
+                        appendMessage(encoders[i], newMsg);
                         
                         if(pthread_mutex_unlock(&barrier_mutex)) {
                             error("Who knows", "Trying to release the lock");
