@@ -1429,7 +1429,7 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
     vp8_fake_tokenize_mb(cpi, x);
   
     for(int i = 0; i < 255; i++) {
-      if(i % 16 == 1)
+      if(i % 16 == 15)
         xd->qcoeff[i] = 5;
       else
         xd->qcoeff[i] = 0;
@@ -1437,7 +1437,7 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
 
   
     for(int j = 0; j < 16; j++)
-      xd->eobs[j] = 2;
+      xd->eobs[j] = 16;
   
     short *qcoeff_ptr = xd->qcoeff;
     int rc;
