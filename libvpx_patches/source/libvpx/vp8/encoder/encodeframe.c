@@ -1233,7 +1233,7 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
   int *row_bits = &cpi->row_bits[mb_row];
   for(int i = 0; i < 16; i++, qcoeff_ptr += 16)
     for(int j = 1; j < xd->eobs[i]; j++) { //j = 1 to ignore dc coefficients
-      rc = vp8_default_zig_zag1d[j];
+      rc = vp8_default_inv_zig_zag[j] - 1;
       if(qcoeff_ptr[rc] >> 1) { //if different from 0 and 1
         positions[*row_bits] = offset + (i << 4) + rc;
         cover[*row_bits] = qcoeff_ptr[rc] & 0x1;
@@ -1241,16 +1241,6 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
       }
     }
 
-  static int ola = 0;
-  if(ola++ == 10000) {
-      qcoeff_ptr = xd->qcoeff;
-      for (int i = 0; i < 16; i++, qcoeff_ptr += 16) {
-          printf("eobs: %d\n", xd->eobs[i]);
-          for (int j = 0; j < 16; j++)
-              printf("%d ", xd->qcoeff[(i << 4) + j]);
-          printf("\n");
-      }
-  }
 #endif // STEGOZOA
 
   
