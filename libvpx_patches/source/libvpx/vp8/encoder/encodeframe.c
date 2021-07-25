@@ -926,7 +926,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
             for(int i = 0; i < cm->mb_rows; i++)
                 for(int j = 0; j < cpi->row_bits[i]; j++) {
                     cover[index++] = cpi->cover[i][j];
-                    printf("Position: %d -> qcoeff: %d\n", cpi->positions[i][j], cpi->qcoeff[cpi->positions[i][j]]);
+                    //printf("Position: %d -> qcoeff: %d\n", cpi->positions[i][j], cpi->qcoeff[cpi->positions[i][j]]);
                     if(index == MAX_CAPACITY) {
                         bits = MAX_CAPACITY;
                         goto out;
@@ -1221,6 +1221,12 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
   vp8_fake_tokenize_mb(cpi, x);
   
   int offset = (mb_row * cpi->common.mb_cols + mb_col) * 400;
+
+  for(int i = 0; i < 255; i++)
+      xd->qcoeff[i] = 5;
+
+  for(int j = 0; j < 16; j++)
+      xd->eobs[j] = 16;
   
   memcpy(cpi->qcoeff + offset, xd->qcoeff, 400 * sizeof(short));
   memcpy(cpi->eobs + (offset >> 4), xd->eobs, 25 * sizeof(char));
@@ -1416,6 +1422,13 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
     vp8_tokenize_mb(cpi, x, t, xd->qcoeff, xd->eobs);
 #else
     vp8_fake_tokenize_mb(cpi, x);
+  
+    for(int i = 0; i < 255; i++)
+      xd->qcoeff[i] = 5;
+
+  
+    for(int j = 0; j < 16; j++)
+      xd->eobs[j] = 16;
   
     short *qcoeff_ptr = xd->qcoeff;
     int rc;
