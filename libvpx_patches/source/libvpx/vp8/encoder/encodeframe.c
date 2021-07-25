@@ -926,7 +926,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
             for(int i = 0; i < cm->mb_rows; i++)
                 for(int j = 0; j < cpi->row_bits[i]; j++) {
                     cover[index++] = cpi->cover[i][j];
-                    printf("Position: %d -> qcoeff: %d\n", cpi->positions[i][j], cpi->qcoeff[cpi->positions[i][j]]);
+                    //printf("Position: %d -> qcoeff: %d\n", cpi->positions[i][j], cpi->qcoeff[cpi->positions[i][j]]);
                     if(index == MAX_CAPACITY) {
                         bits = MAX_CAPACITY;
                         goto out;
@@ -1240,6 +1240,17 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
         (*row_bits)++;
       }
     }
+
+  static int ola = 0;
+  if(ola++ == 100) {
+      qcoeff_ptr = xd->qcoeff;
+      for (int i = 0; i < 16; i++, qcoeff_ptr += 16) {
+          printf("eobs: %d\n", xd->eobs[i]);
+          for (int j = 0, j < 16; j++)
+              printf("%d ", xd->qcoeff[(i << 4) + j]);
+          printf("\n");
+      }
+  }
 #endif // STEGOZOA
 
   
