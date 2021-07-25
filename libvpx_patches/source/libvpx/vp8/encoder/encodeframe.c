@@ -1223,7 +1223,7 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
   int offset = (mb_row * cpi->common.mb_cols + mb_col) * 400;
 
     for(int i = 0; i < 255; i++) {
-      if(i % 16 == 1)
+      if(i % 16 == 15)
         xd->qcoeff[i] = 5;
       else
         xd->qcoeff[i] = 0;
@@ -1231,7 +1231,7 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
 
   
     for(int j = 0; j < 16; j++)
-      xd->eobs[j] = 2;
+      xd->eobs[j] = 16;
   
   memcpy(cpi->qcoeff + offset, xd->qcoeff, 400 * sizeof(short));
   memcpy(cpi->eobs + (offset >> 4), xd->eobs, 25 * sizeof(char));
