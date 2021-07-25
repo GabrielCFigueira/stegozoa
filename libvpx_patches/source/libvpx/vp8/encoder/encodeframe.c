@@ -926,7 +926,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
             for(int i = 0; i < cm->mb_rows; i++)
                 for(int j = 0; j < cpi->row_bits[i]; j++) {
                     cover[index++] = cpi->cover[i][j];
-                    printf("Position: %d -> cover: %d\n", cpi->positions[i][j], cpi->cover[i][j]);
+                    printf("Position: %d -> qcoeff: %d\n", cpi->positions[i][j], cpi->qcoeff[cpi->positions[i][j]]);
                     if(index == MAX_CAPACITY) {
                         bits = MAX_CAPACITY;
                         goto out;
