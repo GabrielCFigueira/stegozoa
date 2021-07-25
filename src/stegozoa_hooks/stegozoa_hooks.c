@@ -678,6 +678,7 @@ int writeQdctLsb(int **positions, int *row_bits, int n_rows, unsigned char *steg
         for(int j = 0; j < row_bits[i]; j++) {
             position = positions[i][j];
             qcoeff[position] = (qcoeff[position] & 0xFFFE) | steganogram[index++];
+            if(index == MAX_CAPACITY) return bits;
         }
         
     
@@ -723,6 +724,7 @@ void readQdctLsb(int **positions, int *row_bits, int n_rows, unsigned char* steg
         for(int j = 0; j < row_bits[i]; j++) {
             position = positions[i][j];
             steganogram[index++] = getLsb(qcoeff[position]);
+            if(index == MAX_CAPACITY) return;
         }
 
 }
