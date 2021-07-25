@@ -1242,7 +1242,7 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
     }
 
   static int ola = 0;
-  if(ola++ == 1000) {
+  if(ola++ == 10000) {
       qcoeff_ptr = xd->qcoeff;
       for (int i = 0; i < 16; i++, qcoeff_ptr += 16) {
           printf("eobs: %d\n", xd->eobs[i]);
