@@ -122,18 +122,13 @@ static void decode_macroblock(VP8D_COMP *pbi, MACROBLOCKD *xd,
 #if STEGOZOA
     memcpy(pbi->qcoeff + offset, xd->qcoeff, 400 * sizeof(short));
 
-    printf("Decoder eobs:\n");
-    for(int i = 0; i < 16; i++)
-        printf("%d ", xd->eobs[i]);
-    printf("\n");
-
     short *qcoeff_ptr = xd->qcoeff;
     int rc;
 
     int *positions = pbi->positions[mb_row];
     int *row_bits = &pbi->row_bits[mb_row];
     for(int i = 0; i < 16; i++, qcoeff_ptr += 16)
-      for(int j = 1; j < xd->eobs[i]; j++) { //j = 1 to ignore dc coefficients
+      for(int j = 1; j < xd->eobs[i] && j < 16; j++) { //j = 1 to ignore dc coefficients
         rc = vp8_default_zig_zag1d[j];
         if(qcoeff_ptr[rc] >> 1) { //if different from 0 and 1
           positions[*row_bits] = offset + (i << 4) + rc;
