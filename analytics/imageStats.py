@@ -23,7 +23,7 @@ def computePsnrSsim(cap_folder):
             totalPsnr = 0
             totalSsim = 0
             n = 0
-            for i in range(100, len(lines)): # delete first 100 (video call is not in a stable state at the beginning
+            for i in range(1000, len(lines)): # delete first 1000 (video call is not in a stable state at the beginning
                 words = lines[i].split(" ")
                 if len(words) == 6 and words[0] == "Frame:":
                     try:

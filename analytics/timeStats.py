@@ -24,7 +24,7 @@ def computeTimes(cap_folder):
             totalEncodingTime = 0.0
             nEmbbed = 0
             nEncode = 0
-            for i in range(100, len(lines)): # delete first 100 (video call is not in a stable state at the beginning
+            for i in range(2000, len(lines)): # delete first 2000 (video call is not in a stable state at the beginning
                 words = lines[i].split(" ")
 
                 if len(words) >= 7: # both have 7 or more words
