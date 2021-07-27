@@ -52,7 +52,7 @@ static THREAD_FUNCTION thread_tokening_proc(void *p_data) {
   while (1) {
     if (vpx_atomic_load_acquire(&cpi->b_multi_threaded) == 0) break;
 
-    if (sem_wait(&cpi->h_event_start_encoding[ithread]) == 0) {
+    if (sem_wait(&cpi->h_event_start_tokening[ithread]) == 0) {
       /* we're shutting down */
       if (vpx_atomic_load_acquire(&cpi->b_multi_threaded) == 0) break;
       
@@ -98,7 +98,7 @@ static THREAD_FUNCTION thread_tokening_proc(void *p_data) {
           eobs += (cpi->encoding_thread_count + 1) * cm->mb_cols * 25;
       }
       /* Signal that this thread has completed processing its rows. */
-      sem_post(&cpi->h_event_end_encoding[ithread]);
+      sem_post(&cpi->h_event_end_tokening[ithread]);
     }
   }
   return 0;
