@@ -896,8 +896,9 @@ void vp8_encode_frame(VP8_COMP *cpi) {
 
 #if STEGOZOA
     {
-        //-----------Stegozoa section -------------------------------------------
+        int i;
         int embbed = 1;
+
         if(!isEmbbedInitialized())
             if(initializeEmbbed())
                 embbed = 0;
@@ -912,7 +913,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
         int embbedData = 0;
         int bits = 0;
 
-        for(int i = 0; i < cm->mb_rows; i++)
+        for(i = 0; i < cm->mb_rows; i++)
             bits += cpi->row_bits[i];
 
         if(embbed && bits >= 40) {
@@ -945,10 +946,17 @@ out:
 
 #if CONFIG_MULTITHREAD
         if (vpx_atomic_load_acquire(&cpi->b_multi_threaded)) {
+  
+            const int nsync = cpi->mt_sync_range;
+            vpx_atomic_int rightmost_col;
+            vpx_atomic_int *current_mb_col;
 
-            for (int i = 0; i < cpi->encoding_thread_count; ++i) {
+            for (i = 0; i < cm->mb_rows; ++i)
+                vpx_atomic_store_release(&cpi->mt_current_mb_col[i], -1);
+
+            for (i = 0; i < cpi->encoding_thread_count; ++i)
                 sem_post(&cpi->h_event_start_tokening[i]);
-            }
+            
 
             for (mb_row = 0; mb_row < cm->mb_rows;
                     mb_row += (cpi->encoding_thread_count + 1)) {
@@ -959,9 +967,26 @@ out:
                 xd->above_context = cm->above_context;
                 vp8_zero(cm->left_context);
             
+                rightmost_col = VPX_ATOMIC_INIT(cm->mb_cols + nsync);
+                const vpx_atomic_int *last_row_current_mb_col;
+                current_mb_col = &cpi->mt_current_mb_col[mb_row];
+
+                if (mb_row != 0)
+                    last_row_current_mb_col = &cpi->mt_current_mb_col[mb_row - 1];
+                else
+                    last_row_current_mb_col = &rightmost_col;
+
           
                 for (int mb_col = 0; mb_col < cm->mb_cols; ++mb_col) {
             
+                    if (((mb_col - 1) % nsync) == 0) {
+                        vpx_atomic_store_release(current_mb_col, mb_col - 1);
+                    }
+
+                    if (mb_row && !(mb_col & (nsync - 1))) {
+                        vp8_atomic_spin_wait(mb_col, last_row_current_mb_col, nsync);
+                    }
+
                     vp8_tokenize_mb(cpi, x, &tp, qcoeff, eobs);
 
                     xd->above_context++;
@@ -979,9 +1004,12 @@ out:
 
                 qcoeff += (cpi->encoding_thread_count + 1) * cm->mb_cols * 400;
                 eobs += (cpi->encoding_thread_count + 1) * cm->mb_cols * 25;
+ 
+                vpx_atomic_store_release(current_mb_col,
+                             vpx_atomic_load_acquire(&rightmost_col));
             }
       
-            for (int i = 0; i < cpi->encoding_thread_count; ++i) {
+            for (i = 0; i < cpi->encoding_thread_count; ++i) {
                 sem_wait(&cpi->h_event_end_encoding[i]);
             }
             

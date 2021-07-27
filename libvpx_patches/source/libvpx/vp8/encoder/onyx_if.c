@@ -3244,8 +3244,6 @@ static void encode_frame_to_data_rate(VP8_COMP *cpi, size_t *size,
                                       unsigned char *dest,
                                       unsigned char *dest_end,
                                       unsigned int *frame_flags) {
-printf("Calling encode_frame_to_data_rate\n");
-fflush(stdout);
   int Q;
   int frame_over_shoot_limit;
   int frame_under_shoot_limit;
