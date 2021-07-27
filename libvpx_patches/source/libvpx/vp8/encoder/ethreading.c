@@ -581,6 +581,8 @@ int vp8cx_create_encoder_threads(VP8_COMP *cpi) {
     CHECK_MEM_ERROR(cpi->h_event_end_encoding,
                     vpx_malloc(sizeof(sem_t) * th_count));
 #if STEGOZOA
+    CHECK_MEM_ERROR(cpi->h_tokening_thread,
+                    vpx_malloc(sizeof(pthread_t) * th_count));
     CHECK_MEM_ERROR(cpi->h_event_start_tokening,
                     vpx_malloc(sizeof(sem_t) * th_count));
     CHECK_MEM_ERROR(cpi->h_event_end_tokening,
