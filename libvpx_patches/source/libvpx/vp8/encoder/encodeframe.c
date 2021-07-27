@@ -948,7 +948,6 @@ out:
         if (vpx_atomic_load_acquire(&cpi->b_multi_threaded)) {
   
             const int nsync = cpi->mt_sync_range;
-            vpx_atomic_int rightmost_col;
             vpx_atomic_int *current_mb_col;
 
             for (i = 0; i < cm->mb_rows; ++i)
@@ -967,7 +966,7 @@ out:
                 xd->above_context = cm->above_context;
                 vp8_zero(cm->left_context);
             
-                rightmost_col = VPX_ATOMIC_INIT(cm->mb_cols + nsync);
+                vpx_atomic_int rightmost_col = VPX_ATOMIC_INIT(cm->mb_cols + nsync);
                 const vpx_atomic_int *last_row_current_mb_col;
                 current_mb_col = &cpi->mt_current_mb_col[mb_row];
 
