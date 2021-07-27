@@ -822,8 +822,6 @@ static vpx_codec_err_t vp8e_encode(vpx_codec_alg_priv_t *ctx,
                                    unsigned long duration,
                                    vpx_enc_frame_flags_t enc_flags,
                                    unsigned long deadline) {
-printf("Calling vp8e_encode\n");
-fflush(stdout);
   volatile vpx_codec_err_t res = VPX_CODEC_OK;
   // Make a copy as volatile to avoid -Wclobbered with longjmp.
   volatile vpx_enc_frame_flags_t flags = enc_flags;

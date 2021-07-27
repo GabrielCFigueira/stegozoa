@@ -762,8 +762,6 @@ void vp8_encode_frame(VP8_COMP *cpi) {
     vpx_usec_timer_start(&emr_timer);
 
 #if CONFIG_MULTITHREAD
-    printf("Before multithreaded encoding\n");
-    fflush(stdout);
     if (vpx_atomic_load_acquire(&cpi->b_multi_threaded)) {
       int i;
 
@@ -898,8 +896,6 @@ void vp8_encode_frame(VP8_COMP *cpi) {
 
 #if STEGOZOA
     {
-    printf("Before stegozoa\n");
-    fflush(stdout);
         //-----------Stegozoa section -------------------------------------------
         int embbed = 1;
         if(!isEmbbedInitialized())
@@ -948,8 +944,6 @@ out:
         xd->mode_info_context = cm->mi;
 
 #if CONFIG_MULTITHREAD
-    printf("Before tokens\n");
-    fflush(stdout);
         if (vpx_atomic_load_acquire(&cpi->b_multi_threaded)) {
 
             for (int i = 0; i < cpi->encoding_thread_count; ++i) {

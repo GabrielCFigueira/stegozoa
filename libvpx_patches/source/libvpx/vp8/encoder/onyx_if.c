@@ -4869,10 +4869,6 @@ int vp8_get_compressed_data(VP8_COMP *cpi, unsigned int *frame_flags,
                             size_t *size, unsigned char *dest,
                             unsigned char *dest_end, int64_t *time_stamp,
                             int64_t *time_end, int flush) {
-  
-  
-printf("Calling vp8_get_compressed_data\n");
-fflush(stdout);
   VP8_COMMON *cm;
   struct vpx_usec_timer tsctimer;
   struct vpx_usec_timer ticktimer;
