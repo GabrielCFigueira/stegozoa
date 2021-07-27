@@ -79,9 +79,11 @@ static THREAD_FUNCTION thread_tokening_proc(void *p_data) {
         
           const vpx_atomic_int *last_row_current_mb_col;
           vpx_atomic_int *current_mb_col = &cpi->mt_current_mb_col[mb_row];
+
+          int mb_col;
             
           
-          for (int mb_col = 0; mb_col < cm->mb_cols; ++mb_col) {
+          for (mb_col = 0; mb_col < cm->mb_cols; ++mb_col) {
           
             if (((mb_col - 1) % nsync) == 0) {
               vpx_atomic_store_release(current_mb_col, mb_col - 1);
