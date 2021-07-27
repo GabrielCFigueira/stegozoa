@@ -628,7 +628,7 @@ int vp8cx_create_encoder_threads(VP8_COMP *cpi) {
                           thread_tokening_proc, ethd);
       printf("Thread created!\n");
       fflush(stdout);
-      if (rc) break;
+      if (rc) { printf("What why? %d\n", rc); break; }
 #endif
     }
 
