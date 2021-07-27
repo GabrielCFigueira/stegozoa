@@ -63,7 +63,7 @@ static THREAD_FUNCTION thread_tokening_proc(void *p_data) {
 
       xd->mode_info_context = cm->mi + cm->mode_info_stride * (ithread + 1);
             
-      for (mb_row = ithread + 1; mb_row < cm->mb_rows;
+      for (int mb_row = ithread + 1; mb_row < cm->mb_rows;
         mb_row += (cpi->encoding_thread_count + 1)) {
       
           tp = cpi->tok + (mb_row * (cm->mb_cols * 16 * 24));
@@ -74,7 +74,7 @@ static THREAD_FUNCTION thread_tokening_proc(void *p_data) {
           vp8_zero(mb_row_left_context);
             
           
-          for (mb_col = 0; mb_col < cm->mb_cols; ++mb_col) {
+          for (int mb_col = 0; mb_col < cm->mb_cols; ++mb_col) {
             
             vp8_tokenize_mb(cpi, x, &tp, qcoeff, eobs);
 
@@ -82,7 +82,7 @@ static THREAD_FUNCTION thread_tokening_proc(void *p_data) {
             xd->mode_info_context++;
 
             qcoeff += 400;
-            eobs += 25
+            eobs += 25;
           
           }
           
