@@ -624,9 +624,9 @@ int vp8cx_create_encoder_threads(VP8_COMP *cpi) {
                           thread_encoding_proc, ethd);
       if (rc) break;
 #if STEGOZOA
-      rc = pthread_create(&cpi->h_tokening_thread[ithread], 0,
-                          thread_tokening_proc, ethd);
-      if (rc) break;
+      //rc = pthread_create(&cpi->h_tokening_thread[ithread], 0,
+      //                    thread_tokening_proc, ethd);
+      //if (rc) break;
 #endif
     }
 

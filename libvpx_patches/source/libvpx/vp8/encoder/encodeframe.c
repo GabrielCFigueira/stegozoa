@@ -947,7 +947,7 @@ out:
         memset(cm->above_context, 0, sizeof(ENTROPY_CONTEXT_PLANES) * cm->mb_cols);
         xd->mode_info_context = cm->mi;
 
-#if CONFIG_MULTITHREAD
+#if 0 //CONFIG_MULTITHREAD
     printf("Before tokens\n");
     fflush(stdout);
         if (vpx_atomic_load_acquire(&cpi->b_multi_threaded)) {
