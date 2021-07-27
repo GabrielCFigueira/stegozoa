@@ -41,6 +41,68 @@ static THREAD_FUNCTION thread_loopfilter(void *p_data) {
   return 0;
 }
 
+#if STEGOZOA
+
+static THREAD_FUNCTION thread_tokening_proc(void *p_data) {
+  int ithread = ((ENCODETHREAD_DATA *)p_data)->ithread;
+  VP8_COMP *cpi = (VP8_COMP *)(((ENCODETHREAD_DATA *)p_data)->ptr1);
+  MB_ROW_COMP *mbri = (MB_ROW_COMP *)(((ENCODETHREAD_DATA *)p_data)->ptr2);
+  ENTROPY_CONTEXT_PLANES mb_row_left_context;
+
+  while (1) {
+    if (vpx_atomic_load_acquire(&cpi->b_multi_threaded) == 0) break;
+
+    if (sem_wait(&cpi->h_event_start_encoding[ithread]) == 0) {
+      MACROBLOCK *x = &mbri->mb;
+      MACROBLOCKD *xd = &x->e_mbd;
+      VP8_COMMON *cm = &cpi->common;
+      TOKENEXTRA *tp;
+
+      short *qcoeff = cpi->qcoeff + (ithread + 1) * cm->mb_cols * 400;
+      char *eobs = cpi->eobs + (ithread + 1) * cm->mb_cols * 25;
+
+      xd->mode_info_context = cm->mi + cm->mode_info_stride * (ithread + 1);
+            
+      for (mb_row = ithread + 1; mb_row < cm->mb_rows;
+        mb_row += (cpi->encoding_thread_count + 1)) {
+      
+          tp = cpi->tok + (mb_row * (cm->mb_cols * 16 * 24));
+          cpi->tplist[mb_row].start = tp;
+      
+          xd->above_context = cm->above_context;
+          xd->left_context = &mb_row_left_context;
+          vp8_zero(mb_row_left_context);
+            
+          
+          for (mb_col = 0; mb_col < cm->mb_cols; ++mb_col) {
+            
+            vp8_tokenize_mb(cpi, x, &tp, qcoeff, eobs);
+
+            xd->above_context++;
+            xd->mode_info_context++;
+
+            qcoeff += 400;
+            eobs += 25
+          
+          }
+          
+          cpi->tplist[mb_row].stop = tp;
+          xd->mode_info_context++;
+          xd->mode_info_context +=
+                xd->mode_info_stride * cpi->encoding_thread_count;
+
+          qcoeff += (cpi->encoding_thread_count + 1) * cm->mb_cols * 400;
+          eobs += (cpi->encoding_thread_count + 1) * cm->mb_cols * 25;
+      }
+      /* Signal that this thread has completed processing its rows. */
+      sem_post(&cpi->h_event_end_encoding[ithread]);
+    }
+  }
+}
+
+#endif
+
+
 static THREAD_FUNCTION thread_encoding_proc(void *p_data) {
   int ithread = ((ENCODETHREAD_DATA *)p_data)->ithread;
   VP8_COMP *cpi = (VP8_COMP *)(((ENCODETHREAD_DATA *)p_data)->ptr1);
@@ -517,6 +579,12 @@ int vp8cx_create_encoder_threads(VP8_COMP *cpi) {
                     vpx_malloc(sizeof(sem_t) * th_count));
     CHECK_MEM_ERROR(cpi->h_event_end_encoding,
                     vpx_malloc(sizeof(sem_t) * th_count));
+#if STEGOZOA
+    CHECK_MEM_ERROR(cpi->h_event_start_tokening,
+                    vpx_malloc(sizeof(sem_t) * th_count));
+    CHECK_MEM_ERROR(cpi->h_event_end_tokening,
+                    vpx_malloc(sizeof(sem_t) * th_count));
+#endif
     CHECK_MEM_ERROR(cpi->mb_row_ei,
                     vpx_memalign(32, sizeof(MB_ROW_COMP) * th_count));
     memset(cpi->mb_row_ei, 0, sizeof(MB_ROW_COMP) * th_count);
@@ -540,6 +608,10 @@ int vp8cx_create_encoder_threads(VP8_COMP *cpi) {
 
       sem_init(&cpi->h_event_start_encoding[ithread], 0, 0);
       sem_init(&cpi->h_event_end_encoding[ithread], 0, 0);
+#if STEGOZOA
+      sem_init(&cpi->h_event_start_tokening[ithread], 0, 0);
+      sem_init(&cpi->h_event_end_tokening[ithread], 0, 0);
+#endif
 
       ethd->ithread = ithread;
       ethd->ptr1 = (void *)cpi;
@@ -548,6 +620,11 @@ int vp8cx_create_encoder_threads(VP8_COMP *cpi) {
       rc = pthread_create(&cpi->h_encoding_thread[ithread], 0,
                           thread_encoding_proc, ethd);
       if (rc) break;
+#if STEGOZOA
+      rc = pthread_create(&cpi->h_tokening_thread[ithread], 0,
+                          thread_tokening_proc, ethd);
+      if (rc) break;
+#endif
     }
 
     if (rc) {
@@ -557,12 +634,22 @@ int vp8cx_create_encoder_threads(VP8_COMP *cpi) {
         pthread_join(cpi->h_encoding_thread[ithread], 0);
         sem_destroy(&cpi->h_event_start_encoding[ithread]);
         sem_destroy(&cpi->h_event_end_encoding[ithread]);
+#if STEGOZOA
+        pthread_join(cpi->h_tokening_thread[ithread], 0);
+        sem_destroy(&cpi->h_event_start_tokening[ithread]);
+        sem_destroy(&cpi->h_event_end_tokening[ithread]);
+#endif
       }
 
       /* free thread related resources */
       vpx_free(cpi->h_event_start_encoding);
       vpx_free(cpi->h_event_end_encoding);
       vpx_free(cpi->h_encoding_thread);
+#if STEGOZOA
+      vpx_free(cpi->h_event_start_tokening);
+      vpx_free(cpi->h_event_end_tokening);
+      vpx_free(cpi->h_tokening_thread);
+#endif
       vpx_free(cpi->mb_row_ei);
       vpx_free(cpi->en_thread_data);
 
@@ -587,6 +674,13 @@ int vp8cx_create_encoder_threads(VP8_COMP *cpi) {
           pthread_join(cpi->h_encoding_thread[ithread], 0);
           sem_destroy(&cpi->h_event_start_encoding[ithread]);
           sem_destroy(&cpi->h_event_end_encoding[ithread]);
+#if STEGOZOA
+          sem_post(&cpi->h_event_start_tokening[ithread]);
+          sem_post(&cpi->h_event_end_tokening[ithread]);
+          pthread_join(cpi->h_tokening_thread[ithread], 0);
+          sem_destroy(&cpi->h_event_start_tokening[ithread]);
+          sem_destroy(&cpi->h_event_end_tokening[ithread]);
+#endif
         }
         sem_destroy(&cpi->h_event_end_lpf);
         sem_destroy(&cpi->h_event_start_lpf);
@@ -595,6 +689,11 @@ int vp8cx_create_encoder_threads(VP8_COMP *cpi) {
         vpx_free(cpi->h_event_start_encoding);
         vpx_free(cpi->h_event_end_encoding);
         vpx_free(cpi->h_encoding_thread);
+#if STEGOZOA
+        vpx_free(cpi->h_event_start_tokening);
+        vpx_free(cpi->h_event_end_tokening);
+        vpx_free(cpi->h_tokening_thread);
+#endif
         vpx_free(cpi->mb_row_ei);
         vpx_free(cpi->en_thread_data);
 
@@ -620,6 +719,15 @@ void vp8cx_remove_encoder_threads(VP8_COMP *cpi) {
 
         sem_destroy(&cpi->h_event_start_encoding[i]);
         sem_destroy(&cpi->h_event_end_encoding[i]);
+#if STEGOZOA
+        sem_post(&cpi->h_event_start_tokening[i]);
+        sem_post(&cpi->h_event_end_tokening[i]);
+
+        pthread_join(cpi->h_tokening_thread[i], 0);
+
+        sem_destroy(&cpi->h_event_start_tokening[i]);
+        sem_destroy(&cpi->h_event_end_tokening[i]);
+#endif
       }
 
       sem_post(&cpi->h_event_start_lpf);
@@ -633,6 +741,11 @@ void vp8cx_remove_encoder_threads(VP8_COMP *cpi) {
     vpx_free(cpi->h_event_start_encoding);
     vpx_free(cpi->h_event_end_encoding);
     vpx_free(cpi->h_encoding_thread);
+#if STEGOZOA
+    vpx_free(cpi->h_event_start_tokening);
+    vpx_free(cpi->h_event_end_tokening);
+    vpx_free(cpi->h_tokening_thread);
+#endif
     vpx_free(cpi->mb_row_ei);
     vpx_free(cpi->en_thread_data);
   }

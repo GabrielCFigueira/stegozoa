@@ -861,7 +861,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
           cpi->mb.error_bins[c_idx] += cpi->mb_row_ei[i].mb.error_bins[c_idx];
         }
 
-#if !STEGOZOA
+#if !STEGOZOA //TODO check why
         /* add up counts for each thread */
         sum_coef_counts(x, &cpi->mb_row_ei[i].mb);
 #endif
@@ -905,8 +905,6 @@ void vp8_encode_frame(VP8_COMP *cpi) {
         clock_t start, end;
         start = clock();
         
-        //printf("Preparing frame %d\n", cm->current_video_frame);
-
         short *qcoeff = cpi->qcoeff;
         char *eobs = cpi->eobs;
         
@@ -945,35 +943,88 @@ out:
         memset(cm->above_context, 0, sizeof(ENTROPY_CONTEXT_PLANES) * cm->mb_cols);
         xd->mode_info_context = cm->mi;
 
-        for (mb_row = 0; mb_row < cm->mb_rows; ++mb_row) {
+#if CONFIG_MULTITHREAD
+        if (vpx_atomic_load_acquire(&cpi->b_multi_threaded)) {
 
-            // reset above block coeffs
-            xd->above_context = cm->above_context;
-            vp8_zero(cm->left_context);
-
-            //multi partition
-            cpi->tplist[mb_row].start = tp;
-            
-            for (int mb_col = 0; mb_col < cm->mb_cols; ++mb_col) {
-                
-                vp8_tokenize_mb(cpi, x, &tp, qcoeff, eobs);
-
-                xd->above_context++;
-                xd->mode_info_context++;
-
-                qcoeff += 400;
-                eobs += 25;
+            for (i = 0; i < cpi->encoding_thread_count; ++i) {
+                sem_post(&cpi->h_event_start_tokening[i]);
             }
 
-            cpi->tplist[mb_row].stop = tp;
-            xd->mode_info_context++;
-        }
+            for (mb_row = 0; mb_row < cm->mb_rows;
+                    mb_row += (cpi->encoding_thread_count + 1)) {
+      
+                tp = cpi->tok + (mb_row * (cm->mb_cols * 16 * 24));
+                cpi->tplist[mb_row].start = tp;
+      
+                xd->above_context = cm->above_context;
+                vp8_zero(cm->left_context);
+            
+          
+                for (mb_col = 0; mb_col < cm->mb_cols; ++mb_col) {
+            
+                    vp8_tokenize_mb(cpi, x, &tp, qcoeff, eobs);
 
-        
-        cpi->tok_count = (unsigned int)(tp - cpi->tok);
+                    xd->above_context++;
+                    xd->mode_info_context++;
+
+                    qcoeff += 400;
+                    eobs += 25
+          
+                }
+          
+                cpi->tplist[mb_row].stop = tp;
+                xd->mode_info_context++;
+                xd->mode_info_context +=
+                    xd->mode_info_stride * cpi->encoding_thread_count;
+
+                qcoeff += (cpi->encoding_thread_count + 1) * cm->mb_cols * 400;
+                eobs += (cpi->encoding_thread_count + 1) * cm->mb_cols * 25;
+            }
+      
+            for (i = 0; i < cpi->encoding_thread_count; ++i) {
+                sem_wait(&cpi->h_event_end_encoding[i]);
+            }
+        }
+        else
+#endif  // CONFIG_MULTITHREAD
+        {
+
+            for (mb_row = 0; mb_row < cm->mb_rows; ++mb_row) {
+
+                // reset above block coeffs
+                xd->above_context = cm->above_context;
+                vp8_zero(cm->left_context);
+
+                //multi partition
+                cpi->tplist[mb_row].start = tp;
+                
+                for (int mb_col = 0; mb_col < cm->mb_cols; ++mb_col) {
+                    
+                    vp8_tokenize_mb(cpi, x, &tp, qcoeff, eobs);
+
+                    xd->above_context++;
+                    xd->mode_info_context++;
+
+                    qcoeff += 400;
+                    eobs += 25;
+                }
+
+                cpi->tplist[mb_row].stop = tp;
+                xd->mode_info_context++;
+            }
+
+            
+            for (mb_row = 0; mb_row < cm->mb_rows; ++mb_row) {
+                cpi->tok_count += (unsigned int)(cpi->tplist[mb_row].stop -
+                                             cpi->tplist[mb_row].start);
+            }
+            cpi->tok_count = (unsigned int)(tp - cpi->tok);
+
+        }
 
         end = clock();
         printf("Time spent generating tokens in frame %d: %lf\n", cm->current_video_frame, ((double) end - start) / CLOCKS_PER_SEC);
+        
     }
 #endif // STEGOZOA
 

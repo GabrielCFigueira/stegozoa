@@ -304,8 +304,6 @@ typedef struct VP8_COMP {
   char *eobs;
   uint32_t ssrc;
   int simulcast;
-#elif DCT_FREQUENCY
-  short *qcoeff;
 #endif
 
 
@@ -552,6 +550,9 @@ typedef struct VP8_COMP {
   int b_lpf_running;
 
   pthread_t *h_encoding_thread;
+#if STEGOZOA
+  pthread_t *h_tokening_thread;
+#endif
   pthread_t h_filter_thread;
 
   MB_ROW_COMP *mb_row_ei;
@@ -561,6 +562,10 @@ typedef struct VP8_COMP {
   /* events */
   sem_t *h_event_start_encoding;
   sem_t *h_event_end_encoding;
+#if STEGOZOA
+  sem_t *h_event_start_tokening;
+  sem_t *h_event_end_tokening;
+#endif
   sem_t h_event_start_lpf;
   sem_t h_event_end_lpf;
 #endif
