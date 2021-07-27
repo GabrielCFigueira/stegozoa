@@ -53,6 +53,9 @@ static THREAD_FUNCTION thread_tokening_proc(void *p_data) {
     if (vpx_atomic_load_acquire(&cpi->b_multi_threaded) == 0) break;
 
     if (sem_wait(&cpi->h_event_start_encoding[ithread]) == 0) {
+      /* we're shutting down */
+      if (vpx_atomic_load_acquire(&cpi->b_multi_threaded) == 0) break;
+      
       MACROBLOCK *x = &mbri->mb;
       MACROBLOCKD *xd = &x->e_mbd;
       VP8_COMMON *cm = &cpi->common;
@@ -624,9 +627,9 @@ int vp8cx_create_encoder_threads(VP8_COMP *cpi) {
                           thread_encoding_proc, ethd);
       if (rc) break;
 #if STEGOZOA
-      //rc = pthread_create(&cpi->h_tokening_thread[ithread], 0,
-      //                    thread_tokening_proc, ethd);
-      //if (rc) break;
+      rc = pthread_create(&cpi->h_tokening_thread[ithread], 0,
+                          thread_tokening_proc, ethd);
+      if (rc) break;
 #endif
     }
 
@@ -638,7 +641,7 @@ int vp8cx_create_encoder_threads(VP8_COMP *cpi) {
         sem_destroy(&cpi->h_event_start_encoding[ithread]);
         sem_destroy(&cpi->h_event_end_encoding[ithread]);
 #if STEGOZOA
-        //pthread_join(cpi->h_tokening_thread[ithread], 0);
+        pthread_join(cpi->h_tokening_thread[ithread], 0);
         sem_destroy(&cpi->h_event_start_tokening[ithread]);
         sem_destroy(&cpi->h_event_end_tokening[ithread]);
 #endif
@@ -725,7 +728,7 @@ void vp8cx_remove_encoder_threads(VP8_COMP *cpi) {
         sem_post(&cpi->h_event_start_tokening[i]);
         sem_post(&cpi->h_event_end_tokening[i]);
 
-        //pthread_join(cpi->h_tokening_thread[i], 0);
+        pthread_join(cpi->h_tokening_thread[i], 0);
 
         sem_destroy(&cpi->h_event_start_tokening[i]);
         sem_destroy(&cpi->h_event_end_tokening[i]);
