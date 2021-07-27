@@ -9,21 +9,6 @@
 #include <pthread.h>
 #include <math.h>
 
-#include <time.h>
-#include <sys/time.h>
-
-double now()
-{
-      struct timeval tp;
-
-        if (gettimeofday (&tp, NULL) < 0)
-              {
-                      perror ("gettimeofday failed");
-                        }
-
-          return (double) tp.tv_sec + (double) tp.tv_usec * 1.e-6;
-}
-
 #define MASK 0xFE
 #define DIVIDE8(num) (num >> 3)
 #define MOD8(num) (num & 0x7)
@@ -489,8 +474,6 @@ static int obtainMessage(context_t *ctx, int size) {
 
 static void stc(int coverSize, stc_data_t *data) {
 
-    //clock_t start, end;
-
     unsigned char *steganogram = data->steganogram;
     unsigned char *message = data->message;
     unsigned char *cover = data->cover;
@@ -517,13 +500,11 @@ static void stc(int coverSize, stc_data_t *data) {
     float w0, w1;
     float *temp;
 
-    //start = clock();
 
     //Forward part of the Viterbi algorithm
 
     for (int i = 0; i < msgSize; i++) {
-        //clock_t start, end;
-        //start = clock();
+        
         if (i >= msgSize - (HEIGHT - 1)) {
             for (int j = 0; j < WIDTH; j++)
                 H[j] = H_hat[j] & ((1 << (msgSize - i)) - 1);
@@ -561,12 +542,8 @@ static void stc(int coverSize, stc_data_t *data) {
 
         indm++;
 
-        //end = clock();
-        //printf("Time spent in a stc cycle: %lf\n", ((double) end - start) / CLOCKS_PER_SEC);
     }
     
-    //end = clock();
-    //printf("Time spent in stc firt phase: %lf\n", ((double) end - start) / CLOCKS_PER_SEC);
 
     //Backward part of the Viterbi algorithm
 
@@ -645,24 +622,15 @@ int flushEncoder(uint32_t ssrc, int simulcast, int size) {
     context_t *ctx = getEncoderContext(ssrc);
     stc_data_t *data = ctx->stcData;
 
-
-    clock_t start = clock();
-    
     int msgSize = size / WIDTH;
     int toSend = obtainMessage(ctx, msgSize);
-
-    clock_t end = clock();
-    printf("Time spent obtaining message: %lf\n", ((double) end - start) / CLOCKS_PER_SEC);
 
     if(pthread_mutex_unlock(&barrier_mutex)) {
         error("Who knows", "Trying to release the lock");
         return 0; //should abort
     }
 
-    //start = clock();
     stc(size, data);
-    //end = clock();
-    //printf("Time spent computing stc: %lf\n", ((double) end - start) / CLOCKS_PER_SEC);
 
     return toSend;
 

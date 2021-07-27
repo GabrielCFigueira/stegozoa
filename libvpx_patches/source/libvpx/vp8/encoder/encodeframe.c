@@ -926,19 +926,12 @@ void vp8_encode_frame(VP8_COMP *cpi) {
             for(int i = 0; i < cm->mb_rows; i++)
                 for(int j = 0; j < cpi->row_bits[i]; j++) {
                     cover[index++] = cpi->cover[i][j];
-                    //printf("Position: %d -> qcoeff: %d\n", cpi->positions[i][j], cpi->qcoeff[cpi->positions[i][j]]);
                     if(index == MAX_CAPACITY) {
                         bits = MAX_CAPACITY;
                         goto out;
                     }
                 }
-            out:
-            {
-                //clock_t start = clock();
-                embbedData = flushEncoder(cpi->ssrc, cpi->simulcast, bits);
-                //clock_t end = clock();
-                //printf("Time spent generating steganogram in frame %d: %lf\n", cm->current_video_frame, ((double) end - start) / CLOCKS_PER_SEC);
-            }
+            embbedData = flushEncoder(cpi->ssrc, cpi->simulcast, bits);
 
             writeQdctLsb(cpi->positions, cpi->row_bits, cm->mb_rows, steganogram, qcoeff, bits);
 
