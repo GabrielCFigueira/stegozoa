@@ -699,14 +699,10 @@ int vp8cx_create_encoder_threads(VP8_COMP *cpi) {
 #endif
         vpx_free(cpi->mb_row_ei);
         vpx_free(cpi->en_thread_data);
-printf("Wrong way\n");
-fflush(stdout);
         return -2;
       }
     }
   }
-printf("Correct way\n");
-fflush(stdout);
   return 0;
 }
 
