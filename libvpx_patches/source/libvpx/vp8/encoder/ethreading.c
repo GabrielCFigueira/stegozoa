@@ -626,9 +626,7 @@ int vp8cx_create_encoder_threads(VP8_COMP *cpi) {
 #if STEGOZOA
       rc = pthread_create(&cpi->h_tokening_thread[ithread], 0,
                           thread_tokening_proc, ethd);
-      printf("Thread created!\n");
-      fflush(stdout);
-      if (rc) { printf("What why? %d\n", rc); break; }
+      if (rc) break;
 #endif
     }
 
@@ -701,11 +699,14 @@ int vp8cx_create_encoder_threads(VP8_COMP *cpi) {
 #endif
         vpx_free(cpi->mb_row_ei);
         vpx_free(cpi->en_thread_data);
-
+printf("Wrong way\n");
+fflush(stdout);
         return -2;
       }
     }
   }
+printf("Correct way\n");
+fflush(stdout);
   return 0;
 }
 
