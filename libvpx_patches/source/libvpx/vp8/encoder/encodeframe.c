@@ -984,6 +984,11 @@ out:
             for (int i = 0; i < cpi->encoding_thread_count; ++i) {
                 sem_wait(&cpi->h_event_end_encoding[i]);
             }
+            
+            for (mb_row = 0; mb_row < cm->mb_rows; ++mb_row) {
+                cpi->tok_count += (unsigned int)(cpi->tplist[mb_row].stop -
+                                             cpi->tplist[mb_row].start);
+            }
         }
         else
 #endif  // CONFIG_MULTITHREAD
@@ -995,8 +1000,6 @@ out:
                 xd->above_context = cm->above_context;
                 vp8_zero(cm->left_context);
 
-                //multi partition
-                cpi->tplist[mb_row].start = tp;
                 
                 for (int mb_col = 0; mb_col < cm->mb_cols; ++mb_col) {
                     
@@ -1009,15 +1012,10 @@ out:
                     eobs += 25;
                 }
 
-                cpi->tplist[mb_row].stop = tp;
                 xd->mode_info_context++;
             }
 
             
-            for (mb_row = 0; mb_row < cm->mb_rows; ++mb_row) {
-                cpi->tok_count += (unsigned int)(cpi->tplist[mb_row].stop -
-                                             cpi->tplist[mb_row].start);
-            }
             cpi->tok_count = (unsigned int)(tp - cpi->tok);
 
         }
