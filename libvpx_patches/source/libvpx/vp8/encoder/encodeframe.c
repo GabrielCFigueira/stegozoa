@@ -931,6 +931,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
                         goto out;
                     }
                 }
+out:
             embbedData = flushEncoder(cpi->ssrc, cpi->simulcast, bits);
 
             writeQdctLsb(cpi->positions, cpi->row_bits, cm->mb_rows, steganogram, qcoeff, bits);
