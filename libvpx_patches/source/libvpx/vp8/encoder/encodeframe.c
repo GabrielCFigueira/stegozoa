@@ -946,7 +946,7 @@ out:
 #if CONFIG_MULTITHREAD
         if (vpx_atomic_load_acquire(&cpi->b_multi_threaded)) {
 
-            for (i = 0; i < cpi->encoding_thread_count; ++i) {
+            for (int i = 0; i < cpi->encoding_thread_count; ++i) {
                 sem_post(&cpi->h_event_start_tokening[i]);
             }
 
@@ -960,7 +960,7 @@ out:
                 vp8_zero(cm->left_context);
             
           
-                for (mb_col = 0; mb_col < cm->mb_cols; ++mb_col) {
+                for (int mb_col = 0; mb_col < cm->mb_cols; ++mb_col) {
             
                     vp8_tokenize_mb(cpi, x, &tp, qcoeff, eobs);
 
@@ -968,7 +968,7 @@ out:
                     xd->mode_info_context++;
 
                     qcoeff += 400;
-                    eobs += 25
+                    eobs += 25;
           
                 }
           
@@ -981,7 +981,7 @@ out:
                 eobs += (cpi->encoding_thread_count + 1) * cm->mb_cols * 25;
             }
       
-            for (i = 0; i < cpi->encoding_thread_count; ++i) {
+            for (int i = 0; i < cpi->encoding_thread_count; ++i) {
                 sem_wait(&cpi->h_event_end_encoding[i]);
             }
         }
