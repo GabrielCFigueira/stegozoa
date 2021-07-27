@@ -638,7 +638,7 @@ int vp8cx_create_encoder_threads(VP8_COMP *cpi) {
         sem_destroy(&cpi->h_event_start_encoding[ithread]);
         sem_destroy(&cpi->h_event_end_encoding[ithread]);
 #if STEGOZOA
-        pthread_join(cpi->h_tokening_thread[ithread], 0);
+        //pthread_join(cpi->h_tokening_thread[ithread], 0);
         sem_destroy(&cpi->h_event_start_tokening[ithread]);
         sem_destroy(&cpi->h_event_end_tokening[ithread]);
 #endif
@@ -725,7 +725,7 @@ void vp8cx_remove_encoder_threads(VP8_COMP *cpi) {
         sem_post(&cpi->h_event_start_tokening[i]);
         sem_post(&cpi->h_event_end_tokening[i]);
 
-        pthread_join(cpi->h_tokening_thread[i], 0);
+        //pthread_join(cpi->h_tokening_thread[i], 0);
 
         sem_destroy(&cpi->h_event_start_tokening[i]);
         sem_destroy(&cpi->h_event_end_tokening[i]);
