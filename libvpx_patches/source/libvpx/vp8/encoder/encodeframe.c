@@ -1005,7 +1005,8 @@ out:
                 // reset above block coeffs
                 xd->above_context = cm->above_context;
                 vp8_zero(cm->left_context);
-
+                
+                cpi->tplist[mb_row].start = tp;
                 
                 for (int mb_col = 0; mb_col < cm->mb_cols; ++mb_col) {
                     
@@ -1019,6 +1020,7 @@ out:
                 }
 
                 xd->mode_info_context++;
+                cpi->tplist[mb_row].stop = tp;
             }
 
             
