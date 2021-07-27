@@ -98,6 +98,7 @@ static THREAD_FUNCTION thread_tokening_proc(void *p_data) {
       sem_post(&cpi->h_event_end_encoding[ithread]);
     }
   }
+  return 0;
 }
 
 #endif
