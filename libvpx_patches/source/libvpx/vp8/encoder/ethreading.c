@@ -51,11 +51,14 @@ static THREAD_FUNCTION thread_tokening_proc(void *p_data) {
 
   while (1) {
     if (vpx_atomic_load_acquire(&cpi->b_multi_threaded) == 0) break;
-
+    printf("1\n");
+    fflush(stdout);
     if (sem_wait(&cpi->h_event_start_tokening[ithread]) == 0) {
       /* we're shutting down */
       if (vpx_atomic_load_acquire(&cpi->b_multi_threaded) == 0) break;
       
+    printf("2\n");
+    fflush(stdout);
       const int nsync = cpi->mt_sync_range;
       MACROBLOCK *x = &mbri->mb;
       MACROBLOCKD *xd = &x->e_mbd;
@@ -67,9 +70,13 @@ static THREAD_FUNCTION thread_tokening_proc(void *p_data) {
 
       xd->mode_info_context = cm->mi + cm->mode_info_stride * (ithread + 1);
             
+    printf("3\n");
+    fflush(stdout);
       for (int mb_row = ithread + 1; mb_row < cm->mb_rows;
         mb_row += (cpi->encoding_thread_count + 1)) {
       
+    printf("row\n");
+    fflush(stdout);
           tp = cpi->tok + (mb_row * (cm->mb_cols * 16 * 24));
           cpi->tplist[mb_row].start = tp;
       
@@ -84,14 +91,20 @@ static THREAD_FUNCTION thread_tokening_proc(void *p_data) {
             
           
           for (mb_col = 0; mb_col < cm->mb_cols; ++mb_col) {
+    printf("4\n");
+    fflush(stdout);
           
             if (((mb_col - 1) % nsync) == 0) {
               vpx_atomic_store_release(current_mb_col, mb_col - 1);
             }
+    printf("5\n");
+    fflush(stdout);
 
             if (mb_row && !(mb_col & (nsync - 1))) {
               vp8_atomic_spin_wait(mb_col, last_row_current_mb_col, nsync);
             }
+    printf("6\n");
+    fflush(stdout);
             
             vp8_tokenize_mb(cpi, x, &tp, qcoeff, eobs);
 
