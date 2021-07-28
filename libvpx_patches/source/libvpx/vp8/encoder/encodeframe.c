@@ -1017,7 +1017,8 @@ out:
                                              cpi->tplist[mb_row].start);
             }
             
-            //sum_coef_counts(x, &cpi->mb_row_ei[i].mb);
+            for (i = 0; i < cpi->encoding_thread_count; ++i)
+                sum_coef_counts(x, &cpi->mb_row_ei[i].mb);
         }
         else
 #endif  // CONFIG_MULTITHREAD
