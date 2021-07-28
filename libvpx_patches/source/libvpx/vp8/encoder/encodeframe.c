@@ -861,7 +861,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
           cpi->mb.error_bins[c_idx] += cpi->mb_row_ei[i].mb.error_bins[c_idx];
         }
 
-#if !STEGOZOA //TODO check why
+#if !STEGOZOA
         /* add up counts for each thread */
         sum_coef_counts(x, &cpi->mb_row_ei[i].mb);
 #endif
@@ -1016,6 +1016,8 @@ out:
                 cpi->tok_count += (unsigned int)(cpi->tplist[mb_row].stop -
                                              cpi->tplist[mb_row].start);
             }
+            
+            sum_coef_counts(x, &cpi->mb_row_ei[i].mb);
         }
         else
 #endif  // CONFIG_MULTITHREAD
