@@ -1017,7 +1017,7 @@ out:
                                              cpi->tplist[mb_row].start);
             }
             
-            sum_coef_counts(x, &cpi->mb_row_ei[i].mb);
+            //sum_coef_counts(x, &cpi->mb_row_ei[i].mb);
         }
         else
 #endif  // CONFIG_MULTITHREAD
