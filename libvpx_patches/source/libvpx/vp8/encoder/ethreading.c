@@ -123,8 +123,8 @@ static THREAD_FUNCTION thread_tokening_proc(void *p_data) {
                 xd->mode_info_stride * cpi->encoding_thread_count;
           vpx_atomic_store_release(current_mb_col, mb_col + nsync);
 
-          qcoeff += (cpi->encoding_thread_count + 1) * cm->mb_cols * 400;
-          eobs += (cpi->encoding_thread_count + 1) * cm->mb_cols * 25;
+          qcoeff += cpi->encoding_thread_count * cm->mb_cols * 400;
+          eobs += cpi->encoding_thread_count * cm->mb_cols * 25;
       }
       /* Signal that this thread has completed processing its rows. */
       sem_post(&cpi->h_event_end_tokening[ithread]);

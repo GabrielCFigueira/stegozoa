@@ -1001,8 +1001,8 @@ out:
                 xd->mode_info_context +=
                     xd->mode_info_stride * cpi->encoding_thread_count;
 
-                qcoeff += (cpi->encoding_thread_count + 1) * cm->mb_cols * 400;
-                eobs += (cpi->encoding_thread_count + 1) * cm->mb_cols * 25;
+                qcoeff += cpi->encoding_thread_count * cm->mb_cols * 400;
+                eobs += cpi->encoding_thread_count * cm->mb_cols * 25;
  
                 vpx_atomic_store_release(current_mb_col,
                              vpx_atomic_load_acquire(&rightmost_col));
