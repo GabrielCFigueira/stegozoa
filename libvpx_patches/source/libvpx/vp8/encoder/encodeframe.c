@@ -1009,7 +1009,7 @@ out:
             }
       
             for (i = 0; i < cpi->encoding_thread_count; ++i) {
-                sem_wait(&cpi->h_event_end_encoding[i]);
+                sem_wait(&cpi->h_event_end_tokening[i]);
             }
             
             for (mb_row = 0; mb_row < cm->mb_rows; ++mb_row) {
