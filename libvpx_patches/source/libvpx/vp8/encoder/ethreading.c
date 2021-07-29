@@ -56,7 +56,7 @@ static THREAD_FUNCTION thread_tokening_proc(void *p_data) {
       /* we're shutting down */
       if (vpx_atomic_load_acquire(&cpi->b_multi_threaded) == 0) break;
       
-      const int nsync = cpi->mt_sync_range;
+      //const int nsync = cpi->mt_sync_range;
       MACROBLOCK *x = &mbri->mb;
       MACROBLOCKD *xd = &x->e_mbd;
       VP8_COMMON *cm = &cpi->common;
@@ -78,22 +78,22 @@ static THREAD_FUNCTION thread_tokening_proc(void *p_data) {
           xd->left_context = &mb_row_left_context;
           vp8_zero(mb_row_left_context);
         
-          const vpx_atomic_int *last_row_current_mb_col;
+          /*const vpx_atomic_int *last_row_current_mb_col;
           vpx_atomic_int *current_mb_col = &cpi->mt_current_mb_col[mb_row];
 
-          last_row_current_mb_col = &cpi->mt_current_mb_col[mb_row - 1];
+          last_row_current_mb_col = &cpi->mt_current_mb_col[mb_row - 1];*/
           int mb_col;
             
           
           for (mb_col = 0; mb_col < cm->mb_cols; ++mb_col) {
           
-            if (((mb_col - 1) % nsync) == 0) {
+            /*if (((mb_col - 1) % nsync) == 0) {
               vpx_atomic_store_release(current_mb_col, mb_col - 1);
             }
 
             if (mb_row && !(mb_col & (nsync - 1))) {
               vp8_atomic_spin_wait(mb_col, last_row_current_mb_col, nsync);
-            }
+            }*/
             
             vp8_tokenize_mb(cpi, x, &tp, qcoeff, eobs);
 
@@ -109,7 +109,7 @@ static THREAD_FUNCTION thread_tokening_proc(void *p_data) {
           xd->mode_info_context++;
           xd->mode_info_context +=
                 xd->mode_info_stride * cpi->encoding_thread_count;
-          vpx_atomic_store_release(current_mb_col, mb_col + nsync);
+          //vpx_atomic_store_release(current_mb_col, mb_col + nsync);
 
           qcoeff += cpi->encoding_thread_count * cm->mb_cols * 400;
           eobs += cpi->encoding_thread_count * cm->mb_cols * 25;
