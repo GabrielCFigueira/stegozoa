@@ -1271,9 +1271,6 @@ void coeff_copy_400(void *d, const void *s) {
     const __m256i *sVec = (__m256i*) s;
     int nVec = sizeof(short) >> 1;
 
-    printf("Address: %p\n", dVec);
-    fflush(stdout);
-
     //loop unroll (25 times, 400 * sizeof(short) / 32)
     for (; nVec > 0; nVec--, sVec += 25, dVec += 25) {
     _mm256_store_si256(dVec, _mm256_load_si256(sVec));
@@ -1303,8 +1300,6 @@ void coeff_copy_400(void *d, const void *s) {
     _mm256_store_si256(dVec + 24, _mm256_load_si256(sVec + 24));
     }
     
-    printf("Address: %p\n", dVec);
-    fflush(stdout);
 }
 #endif
 
