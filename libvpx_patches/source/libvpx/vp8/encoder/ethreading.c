@@ -81,7 +81,7 @@ static THREAD_FUNCTION thread_tokening_proc(void *p_data) {
           const vpx_atomic_int *last_row_current_mb_col;
           vpx_atomic_int *current_mb_col = &cpi->mt_current_mb_col[mb_row];
 
-          last_row_current_mb_col = &cpi->mt_current_mb_col[mb_row - 1];*/
+          last_row_current_mb_col = &cpi->mt_current_mb_col[mb_row - 1];
           int mb_col;
             
           
