@@ -1336,7 +1336,8 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
   
   int offset = (mb_row * cpi->common.mb_cols + mb_col) * 400;
 
-  memcpy(cpi->qcoeff + offset, xd->qcoeff, 400 * sizeof(short));
+  //memcpy(cpi->qcoeff + offset, xd->qcoeff, 400 * sizeof(short));
+  coeff_copy_400(cpi->qcoeff + offset, xd->qcoeff);
   memcpy(cpi->eobs + (offset >> 4), xd->eobs, 25 * sizeof(char));
 
   short *qcoeff_ptr = xd->qcoeff;
@@ -1547,8 +1548,8 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
         }
       }
   
-    memcpy(cpi->qcoeff + offset, xd->qcoeff, 400 * sizeof(short));
-    memcpy(cpi->eobs + (offset >> 4), xd->eobs, 25 * sizeof(char));
+  //memcpy(cpi->qcoeff + offset, xd->qcoeff, 400 * sizeof(short));
+  coeff_copy_400(cpi->qcoeff + offset, xd->qcoeff);
 #endif // STEGOZOA
 
     if (xd->mode_info_context->mbmi.mode != B_PRED) {
