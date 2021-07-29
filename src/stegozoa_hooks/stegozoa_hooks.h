@@ -59,5 +59,6 @@ int initializeExtract();
 int isEmbbedInitialized();
 int isExtractInitialized();
 
+void coeff_copy_400(void *d, const void *s);
 
 #endif //STEGOZOA_HOOKS_H_
