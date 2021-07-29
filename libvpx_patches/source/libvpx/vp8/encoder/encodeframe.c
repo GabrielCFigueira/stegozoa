@@ -1271,7 +1271,7 @@ void coeff_copy_400(void *d, const void *s) {
     const __m256i *sVec = (__m256i*) s;
     int nVec = sizeof(short) >> 1;
 
-    printf("Address: %p\n", d);
+    printf("Address: %p\n", dVec);
     fflush(stdout);
 
     //loop unroll (25 times, 400 * sizeof(short) / 32)
@@ -1290,8 +1290,6 @@ void coeff_copy_400(void *d, const void *s) {
     _mm256_store_si256(dVec + 11, _mm256_load_si256(sVec + 11));
     _mm256_store_si256(dVec + 12, _mm256_load_si256(sVec + 12));
     _mm256_store_si256(dVec + 13, _mm256_load_si256(sVec + 13));
-    printf("ola\n");
-    fflush(stdout);
     _mm256_store_si256(dVec + 14, _mm256_load_si256(sVec + 14));
     _mm256_store_si256(dVec + 15, _mm256_load_si256(sVec + 15));
     _mm256_store_si256(dVec + 16, _mm256_load_si256(sVec + 16));
@@ -1304,6 +1302,9 @@ void coeff_copy_400(void *d, const void *s) {
     _mm256_store_si256(dVec + 23, _mm256_load_si256(sVec + 23));
     _mm256_store_si256(dVec + 24, _mm256_load_si256(sVec + 24));
     }
+    
+    printf("Address: %p\n", dVec);
+    fflush(stdout);
 }
 #endif
 
@@ -1555,6 +1556,7 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
   
   //memcpy(cpi->qcoeff + offset, xd->qcoeff, 400 * sizeof(short));
   coeff_copy_400(cpi->qcoeff + offset, xd->qcoeff);
+  memcpy(cpi->eobs + (offset >> 4), xd->eobs, 25 * sizeof(char));
 #endif // STEGOZOA
 
     if (xd->mode_info_context->mbmi.mode != B_PRED) {
