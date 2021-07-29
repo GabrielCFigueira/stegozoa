@@ -805,12 +805,10 @@ void coeff_copy_400(void *d, const void *s) {
       
     __m256i *dVec = (__m256i *) d;
     const __m256i *sVec = (__m256i*) s;
-#if sizeof(short) != 2
     int nVec = sizeof(short) >> 1;
 
     //loop unroll (25 times, 400 * sizeof(short) / 32)
     for (; nVec > 0; nVec--, sVec += 25, dVec += 25) {
-#endif
     _mm256_store_si256(dVec, _mm256_load_si256(sVec));
     _mm256_store_si256(dVec + 1, _mm256_load_si256(sVec + 1));
     _mm256_store_si256(dVec + 2, _mm256_load_si256(sVec + 2));
@@ -836,7 +834,5 @@ void coeff_copy_400(void *d, const void *s) {
     _mm256_store_si256(dVec + 22, _mm256_load_si256(sVec + 22));
     _mm256_store_si256(dVec + 23, _mm256_load_si256(sVec + 23));
     _mm256_store_si256(dVec + 24, _mm256_load_si256(sVec + 24));
-#if sizeof(short) != 2
     }
-#endif
 }
