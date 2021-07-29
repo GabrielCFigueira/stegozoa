@@ -8,7 +8,6 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <math.h>
-#include <immintrin.h>
 
 #define MASK 0xFE
 #define DIVIDE8(num) (num >> 3)

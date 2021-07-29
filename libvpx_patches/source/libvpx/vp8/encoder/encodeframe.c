@@ -13,6 +13,7 @@
 
 #if STEGOZOA
 #include <time.h>
+#include <immintrin.h>
 #endif
 
 
