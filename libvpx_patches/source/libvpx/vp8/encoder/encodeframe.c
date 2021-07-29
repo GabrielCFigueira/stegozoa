@@ -1005,7 +1005,7 @@ out:
                 eobs += cpi->encoding_thread_count * cm->mb_cols * 25;
  
                 //vpx_atomic_store_release(current_mb_col,
-                             vpx_atomic_load_acquire(&rightmost_col));
+                //             vpx_atomic_load_acquire(&rightmost_col));
             }
       
             for (i = 0; i < cpi->encoding_thread_count; ++i) {
