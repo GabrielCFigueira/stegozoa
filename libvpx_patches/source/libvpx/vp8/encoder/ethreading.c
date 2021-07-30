@@ -392,7 +392,7 @@ static THREAD_FUNCTION thread_encoding_proc(void *p_data) {
       /* Signal that this thread has completed processing its rows. */
       sem_post(&cpi->h_event_end_encoding[ithread]);
     }
-#if STEGOZOA
+#if 0 & STEGOZOA
     if (sem_wait(&cpi->h_event_start_tokening[ithread]) == 0) {
       /* we're shutting down */
       if (vpx_atomic_load_acquire(&cpi->b_multi_threaded) == 0) break;
@@ -667,7 +667,7 @@ int vp8cx_create_encoder_threads(VP8_COMP *cpi) {
                     vpx_malloc(sizeof(sem_t) * th_count));
     CHECK_MEM_ERROR(cpi->h_event_end_encoding,
                     vpx_malloc(sizeof(sem_t) * th_count));
-#if STEGOZOA
+#if 0 & STEGOZOA
     //CHECK_MEM_ERROR(cpi->h_tokening_thread,
     //                vpx_malloc(sizeof(pthread_t) * th_count));
     CHECK_MEM_ERROR(cpi->h_event_start_tokening,
@@ -698,7 +698,7 @@ int vp8cx_create_encoder_threads(VP8_COMP *cpi) {
 
       sem_init(&cpi->h_event_start_encoding[ithread], 0, 0);
       sem_init(&cpi->h_event_end_encoding[ithread], 0, 0);
-#if STEGOZOA
+#if 0 & STEGOZOA
       sem_init(&cpi->h_event_start_tokening[ithread], 0, 0);
       sem_init(&cpi->h_event_end_tokening[ithread], 0, 0);
 #endif
@@ -724,7 +724,7 @@ int vp8cx_create_encoder_threads(VP8_COMP *cpi) {
         pthread_join(cpi->h_encoding_thread[ithread], 0);
         sem_destroy(&cpi->h_event_start_encoding[ithread]);
         sem_destroy(&cpi->h_event_end_encoding[ithread]);
-#if STEGOZOA
+#if 0 & STEGOZOA
         //pthread_join(cpi->h_tokening_thread[ithread], 0);
         sem_destroy(&cpi->h_event_start_tokening[ithread]);
         sem_destroy(&cpi->h_event_end_tokening[ithread]);
@@ -735,7 +735,7 @@ int vp8cx_create_encoder_threads(VP8_COMP *cpi) {
       vpx_free(cpi->h_event_start_encoding);
       vpx_free(cpi->h_event_end_encoding);
       vpx_free(cpi->h_encoding_thread);
-#if STEGOZOA
+#if 0 & STEGOZOA
       vpx_free(cpi->h_event_start_tokening);
       vpx_free(cpi->h_event_end_tokening);
       //vpx_free(cpi->h_tokening_thread);
@@ -764,7 +764,7 @@ int vp8cx_create_encoder_threads(VP8_COMP *cpi) {
           pthread_join(cpi->h_encoding_thread[ithread], 0);
           sem_destroy(&cpi->h_event_start_encoding[ithread]);
           sem_destroy(&cpi->h_event_end_encoding[ithread]);
-#if STEGOZOA
+#if 0 & STEGOZOA
           sem_post(&cpi->h_event_start_tokening[ithread]);
           sem_post(&cpi->h_event_end_tokening[ithread]);
           //pthread_join(cpi->h_tokening_thread[ithread], 0);
@@ -779,7 +779,7 @@ int vp8cx_create_encoder_threads(VP8_COMP *cpi) {
         vpx_free(cpi->h_event_start_encoding);
         vpx_free(cpi->h_event_end_encoding);
         vpx_free(cpi->h_encoding_thread);
-#if STEGOZOA
+#if 0 & STEGOZOA
         vpx_free(cpi->h_event_start_tokening);
         vpx_free(cpi->h_event_end_tokening);
         //vpx_free(cpi->h_tokening_thread);
@@ -808,7 +808,7 @@ void vp8cx_remove_encoder_threads(VP8_COMP *cpi) {
 
         sem_destroy(&cpi->h_event_start_encoding[i]);
         sem_destroy(&cpi->h_event_end_encoding[i]);
-#if STEGOZOA
+#if 0 & STEGOZOA
         sem_post(&cpi->h_event_start_tokening[i]);
         sem_post(&cpi->h_event_end_tokening[i]);
 
@@ -830,7 +830,7 @@ void vp8cx_remove_encoder_threads(VP8_COMP *cpi) {
     vpx_free(cpi->h_event_start_encoding);
     vpx_free(cpi->h_event_end_encoding);
     vpx_free(cpi->h_encoding_thread);
-#if STEGOZOA
+#if 0 & STEGOZOA
     vpx_free(cpi->h_event_start_tokening);
     vpx_free(cpi->h_event_end_tokening);
     //vpx_free(cpi->h_tokening_thread);

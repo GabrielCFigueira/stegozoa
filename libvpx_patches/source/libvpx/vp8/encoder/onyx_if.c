@@ -1793,7 +1793,7 @@ struct VP8_COMP *vp8_create_compressor(VP8_CONFIG *oxcf) {
 #if STEGOZOA
 
   CHECK_MEM_ERROR(cpi->qcoeff, vpx_memalign(32, 400 * cm->mb_cols * cm->mb_rows * sizeof(short))); //because of avx instructions needing 32 byte alignment
-  CHECK_MEM_ERROR(cpi->eobs, vpx_calloc(25 * cm->mb_cols * cm->mb_rows, sizeof(char)));
+  CHECK_MEM_ERROR(cpi->eobs, vpx_memalign(32, 32 * cm->mb_cols * cm->mb_rows, sizeof(char))); //because of avx instructions needing 32 byte alignment
   CHECK_MEM_ERROR(cpi->row_bits, vpx_calloc(cm->mb_rows, sizeof(int)));
   CHECK_MEM_ERROR(cpi->positions, vpx_calloc(cm->mb_rows, sizeof(int*)));
   CHECK_MEM_ERROR(cpi->cover, vpx_calloc(cm->mb_rows, sizeof(unsigned char*)));

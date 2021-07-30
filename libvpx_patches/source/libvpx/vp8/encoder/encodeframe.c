@@ -945,7 +945,7 @@ out:
         memset(cm->above_context, 0, sizeof(ENTROPY_CONTEXT_PLANES) * cm->mb_cols);
         xd->mode_info_context = cm->mi;
 
-#if CONFIG_MULTITHREAD
+#if 0 & CONFIG_MULTITHREAD
         if (vpx_atomic_load_acquire(&cpi->b_multi_threaded)) {
   
             const int nsync = cpi->mt_sync_range;
@@ -1301,6 +1301,12 @@ void coeff_copy_400(void *d, const void *s) {
     }
     
 }
+
+void eobs_copy_32(void *d, void *s) {
+    __m256i *dVec = (__m256i *) d;
+    const __m256i *sVec = (__m256i*) s;
+    _mm256_store_si256(dVec, _mm256_load_si256(sVec));
+}
 #endif
 
 int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
@@ -1339,7 +1345,8 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
 
   //memcpy(cpi->qcoeff + offset, xd->qcoeff, 400 * sizeof(short));
   coeff_copy_400(cpi->qcoeff + offset, xd->qcoeff);
-  memcpy(cpi->eobs + (offset >> 4), xd->eobs, 25 * sizeof(char));
+  //memcpy(cpi->eobs + (offset >> 4), xd->eobs, 25 * sizeof(char));
+  eobs_copy_32(cpi->eobs + (mb_row * cpi.common.mb_cols + mb_col) * 32, xd->obs);
 
   short *qcoeff_ptr = xd->qcoeff;
   int rc;
@@ -1533,6 +1540,11 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
 #else
     vp8_fake_tokenize_mb(cpi, x);
   
+    //memcpy(cpi->qcoeff + offset, xd->qcoeff, 400 * sizeof(short));
+    coeff_copy_400(cpi->qcoeff + offset, xd->qcoeff);
+    //memcpy(cpi->eobs + (offset >> 4), xd->eobs, 25 * sizeof(char));
+    eobs_copy_32(cpi->eobs + (mb_row * cpi.common.mb_cols + mb_col) * 32, xd->obs);
+  
     short *qcoeff_ptr = xd->qcoeff;
     int rc;
  
@@ -1549,9 +1561,6 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
         }
       }
   
-  //memcpy(cpi->qcoeff + offset, xd->qcoeff, 400 * sizeof(short));
-  coeff_copy_400(cpi->qcoeff + offset, xd->qcoeff);
-  memcpy(cpi->eobs + (offset >> 4), xd->eobs, 25 * sizeof(char));
 #endif // STEGOZOA
 
     if (xd->mode_info_context->mbmi.mode != B_PRED) {
