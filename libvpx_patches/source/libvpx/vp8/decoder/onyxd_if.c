@@ -419,7 +419,7 @@ int vp8dx_receive_compressed_data(VP8D_COMP *pbi, int64_t time_stamp) {
     double frame_psnr, frame_ssim;
     double weight = 0;
 
-    vp8_deblock(cm, recon, &cm->post_proc_buffer,
+    vp8_deblock(cm, orig, &cm->post_proc_buffer,
                   cm->filter_level * 10 / 6);
     vpx_clear_system_state();
 
