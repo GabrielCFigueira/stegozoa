@@ -489,8 +489,6 @@ int vp8dx_get_raw_frame(VP8D_COMP *pbi, YV12_BUFFER_CONFIG *sd,
     double frame_psnr, frame_ssim;
     double weight = 0;
 
-    printf("pp->y_stride: %d", pp->y_stride);
-
     vp8_deblock(cm, recon, &cm->post_proc_buffer,
                   cm->filter_level * 10 / 6);
     vpx_clear_system_state();

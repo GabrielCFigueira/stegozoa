@@ -5187,9 +5187,6 @@ int vp8_get_compressed_data(VP8_COMP *cpi, unsigned int *frame_flags,
     generate_psnr_packet(cpi);
   }
 
-  printf("cpi->Source: %p\n", cpi->Source);
-  printf("cpi->common.frame_to_show: %p\n", cpi->common.frame_to_show);
-
 #if 0 & IMAGE_QUALITY
   
   //Stegozoa: psnr and ssim
