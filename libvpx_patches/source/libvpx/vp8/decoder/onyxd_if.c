@@ -398,47 +398,6 @@ int vp8dx_receive_compressed_data(VP8D_COMP *pbi, int64_t time_stamp) {
     goto decode_exit;
   }
 
-#if IMAGE_QUALITY  
-  //Stegozoa: psnr and ssim
-  if (cm->show_frame) {
-      
-    uint64_t ye, ue, ve;
-    YV12_BUFFER_CONFIG *orig = &cm->yv12_fb[cm->new_fb_idx];
-    YV12_BUFFER_CONFIG *recon = pbi->common.frame_to_show;
-    unsigned int y_width = pbi->common.Width;
-    unsigned int y_height = pbi->common.Height;
-    unsigned int uv_width = (y_width + 1) / 2;
-    unsigned int uv_height = (y_height + 1) / 2;
-    int y_samples = y_height * y_width;
-    int uv_samples = uv_height * uv_width;
-    int t_samples = y_samples + 2 * uv_samples;
-
-
-    YV12_BUFFER_CONFIG *pp = &cm->post_proc_buffer;
-    double sq_error;
-    double frame_psnr, frame_ssim;
-    double weight = 0;
-
-    vp8_deblock(cm, orig, &cm->post_proc_buffer,
-                  cm->filter_level * 10 / 6);
-    vpx_clear_system_state();
-
-    ye = calc_plane_error(orig->y_buffer, orig->y_stride, pp->y_buffer,
-                            pp->y_stride, y_width, y_height);
-    ue = calc_plane_error(orig->u_buffer, orig->uv_stride, pp->u_buffer,
-                            pp->uv_stride, uv_width, uv_height);
-
-    ve = calc_plane_error(orig->v_buffer, orig->uv_stride, pp->v_buffer,
-                            pp->uv_stride, uv_width, uv_height);
-
-    sq_error = (double)(ye + ue + ve);
-
-    frame_psnr = vpx_sse_to_psnr(t_samples, 255.0, sq_error);
-    frame_ssim = vpx_calc_ssim(orig, &cm->post_proc_buffer, &weight);
-    printf("Frame: %d, PSNR: %f, SSIM: %f\n", cm->current_video_frame, frame_psnr, frame_ssim);
-  }
-#endif // IMAGE_QUALITY
-
   if (swap_frame_buffers(cm)) {
     pbi->common.error.error_code = VPX_CODEC_ERROR;
     goto decode_exit;
@@ -507,6 +466,50 @@ int vp8dx_get_raw_frame(VP8D_COMP *pbi, YV12_BUFFER_CONFIG *sd,
   }
 
 #endif /*!CONFIG_POSTPROC*/
+
+#if IMAGE_QUALITY
+  VP8_COMMON *cm = &pbi->common;
+  //Stegozoa: psnr and ssim
+  if (cm->show_frame) {
+      
+    uint64_t ye, ue, ve;
+    YV12_BUFFER_CONFIG *orig = &cm->yv12_fb[cm->new_fb_idx];
+    YV12_BUFFER_CONFIG *recon = pbi->common.frame_to_show;
+    unsigned int y_width = pbi->common.Width;
+    unsigned int y_height = pbi->common.Height;
+    unsigned int uv_width = (y_width + 1) / 2;
+    unsigned int uv_height = (y_height + 1) / 2;
+    int y_samples = y_height * y_width;
+    int uv_samples = uv_height * uv_width;
+    int t_samples = y_samples + 2 * uv_samples;
+
+
+    YV12_BUFFER_CONFIG *pp = &cm->post_proc_buffer;
+    double sq_error;
+    double frame_psnr, frame_ssim;
+    double weight = 0;
+
+    printf("pp->y_stride: %d", pp->y_stride);
+
+    vp8_deblock(cm, recon, &cm->post_proc_buffer,
+                  cm->filter_level * 10 / 6);
+    vpx_clear_system_state();
+
+    ye = calc_plane_error(orig->y_buffer, orig->y_stride, pp->y_buffer,
+                            pp->y_stride, y_width, y_height);
+    ue = calc_plane_error(orig->u_buffer, orig->uv_stride, pp->u_buffer,
+                            pp->uv_stride, uv_width, uv_height);
+
+    ve = calc_plane_error(orig->v_buffer, orig->uv_stride, pp->v_buffer,
+                            pp->uv_stride, uv_width, uv_height);
+
+    sq_error = (double)(ye + ue + ve);
+
+    frame_psnr = vpx_sse_to_psnr(t_samples, 255.0, sq_error);
+    frame_ssim = vpx_calc_ssim(orig, pp, &weight);
+    printf("Frame: %d, PSNR: %f, SSIM: %f\n", cm->current_video_frame, frame_psnr, frame_ssim);
+  }
+#endif // IMAGE_QUALITY
   vpx_clear_system_state();
   return ret;
 }
