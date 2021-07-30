@@ -993,7 +993,7 @@ out:
                     xd->mode_info_context++;
 
                     qcoeff += 400;
-                    eobs += 25;
+                    eobs += 32;
           
                 }
           
@@ -1003,7 +1003,7 @@ out:
                     xd->mode_info_stride * cpi->encoding_thread_count;
 
                 qcoeff += cpi->encoding_thread_count * cm->mb_cols * 400;
-                eobs += cpi->encoding_thread_count * cm->mb_cols * 25;
+                eobs += cpi->encoding_thread_count * cm->mb_cols * 32;
  
                 vpx_atomic_store_release(current_mb_col,
                              vpx_atomic_load_acquire(&rightmost_col));
@@ -1302,7 +1302,7 @@ void coeff_copy_400(void *d, const void *s) {
     
 }
 
-void eobs_copy_32(void *d, void *s) {
+void eobs_copy_32(void *d, const void *s) {
     __m256i *dVec = (__m256i *) d;
     const __m256i *sVec = (__m256i*) s;
     _mm256_store_si256(dVec, _mm256_load_si256(sVec));
@@ -1587,7 +1587,7 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
     }
 #else
     memset(cpi->qcoeff + offset, 0, 400 * sizeof(short));
-    memset(cpi->eobs + (offset >> 4), 0, 25 * sizeof(char));
+    memset(cpi->eobs + (mb_row * cpi->common.mb_cols + mb_col) * 32, 0, 25 * sizeof(char));
 #endif // STEGOZOA
 
   }
