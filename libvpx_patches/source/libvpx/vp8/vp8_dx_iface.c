@@ -501,6 +501,9 @@ static vpx_codec_err_t vp8_decode(vpx_codec_alg_priv_t *ctx,
     pbi->ssrc = ssrc;
     pbi->rtpSession = rtpSession;
 #endif
+#if IMAGE_QUALITY
+  printf("Decoded Resolution - w:%u h:%u\n", ctx->si.w, ctx->si.h);
+#endif
     if (vp8dx_receive_compressed_data(pbi, deadline)) {
       res = update_error_state(ctx, &pbi->common.error);
     }

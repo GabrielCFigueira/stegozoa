@@ -11,6 +11,11 @@
 //Stegozoa
 #include "stegozoa_hooks/stegozoa_hooks.h"
 
+#if IMAGE_QUALITY
+#include "vpx_dsp/ssim.h"
+#include "vpx_dsp/psnr.h"
+#endif
+
 #include "vpx_config.h"
 #include "vp8_rtcd.h"
 #include "./vpx_scale_rtcd.h"
@@ -1349,6 +1354,49 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
   vpx_free(pbi->positions);
 
 #endif // STEGOZOA
+
+#if IMAGE_QUALITY
+  
+  //Stegozoa: psnr and ssim
+  if (pc->show_frame) {
+      
+    uint64_t ye, ue, ve;
+    YV12_BUFFER_CONFIG *orig = pc->yv12_fb[pc->new_fb_idx];
+    YV12_BUFFER_CONFIG *recon = pbi->common.frame_to_show;
+    unsigned int y_width = pbi->common.Width;
+    unsigned int y_height = pbi->common.Height;
+    unsigned int uv_width = (y_width + 1) / 2;
+    unsigned int uv_height = (y_height + 1) / 2;
+    int y_samples = y_height * y_width;
+    int uv_samples = uv_height * uv_width;
+    int t_samples = y_samples + 2 * uv_samples;
+
+
+    YV12_BUFFER_CONFIG *pp = &pc->post_proc_buffer;
+    double sq_error;
+    double frame_psnr, frame_ssim;
+    double weight = 0;
+
+    vp8_deblock(pc, pc->frame_to_show, &pc->post_proc_buffer,
+                  pc->filter_level * 10 / 6);
+    vpx_clear_system_state();
+
+    ye = calc_plane_error(orig->y_buffer, orig->y_stride, pp->y_buffer,
+                            pp->y_stride, y_width, y_height);
+    ue = calc_plane_error(orig->u_buffer, orig->uv_stride, pp->u_buffer,
+                            pp->uv_stride, uv_width, uv_height);
+
+    ve = calc_plane_error(orig->v_buffer, orig->uv_stride, pp->v_buffer,
+                            pp->uv_stride, uv_width, uv_height);
+
+    sq_error = (double)(ye + ue + ve);
+
+    frame_psnr = vpx_sse_to_psnr(t_samples, 255.0, sq_error);
+    frame_ssim = vpx_calc_ssim(orig, &pc->post_proc_buffer, &weight);
+    printf("Frame: %d, PSNR: %f, SSIM: %f\n", pc->current_video_frame, frame_psnr, frame_ssim);
+  }
+ 
+#endif // IMAGE_QUALITY
 
 
   return 0;
