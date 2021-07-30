@@ -904,8 +904,10 @@ void vp8_encode_frame(VP8_COMP *cpi) {
             if(initializeEmbbed())
                 embbed = 0;
 
+#if !IMAGE_QUALITY
         clock_t start, end;
         start = clock();
+#endif
         
         short *qcoeff = cpi->qcoeff;
         char *eobs = cpi->eobs;
@@ -936,11 +938,16 @@ out:
 
             writeQdctLsb(cpi->positions, cpi->row_bits, cm->mb_rows, steganogram, qcoeff, bits);
 
+#if !IMAGE_QUALITY
             end = clock();
             printf("Time spent embbedding secret data in frame %d: %lf, capacity:%d, embbeded bits:%d\n", cm->current_video_frame, ((double) end - start) / CLOCKS_PER_SEC, bits, embbedData);
+#endif
         }
 
+#if !IMAGE_QUALITY
         start = clock();
+#endif
+
 
         memset(cm->above_context, 0, sizeof(ENTROPY_CONTEXT_PLANES) * cm->mb_cols);
         xd->mode_info_context = cm->mi;
@@ -1053,8 +1060,10 @@ out:
 
         }
 
+#if !IMAGE_QUALITY
         end = clock();
         printf("Time spent generating tokens in frame %d: %lf\n", cm->current_video_frame, ((double) end - start) / CLOCKS_PER_SEC);
+#endif
         
     }
 #endif // STEGOZOA
