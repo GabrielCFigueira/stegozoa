@@ -400,10 +400,10 @@ int vp8dx_receive_compressed_data(VP8D_COMP *pbi, int64_t time_stamp) {
 
 #if IMAGE_QUALITY  
   //Stegozoa: psnr and ssim
-  if (pc->show_frame) {
+  if (cm->show_frame) {
       
     uint64_t ye, ue, ve;
-    YV12_BUFFER_CONFIG *orig = &pc->yv12_fb[pc->new_fb_idx];
+    YV12_BUFFER_CONFIG *orig = &cm->yv12_fb[cm->new_fb_idx];
     YV12_BUFFER_CONFIG *recon = pbi->common.frame_to_show;
     unsigned int y_width = pbi->common.Width;
     unsigned int y_height = pbi->common.Height;
@@ -414,13 +414,13 @@ int vp8dx_receive_compressed_data(VP8D_COMP *pbi, int64_t time_stamp) {
     int t_samples = y_samples + 2 * uv_samples;
 
 
-    YV12_BUFFER_CONFIG *pp = &pc->post_proc_buffer;
+    YV12_BUFFER_CONFIG *pp = &cm->post_proc_buffer;
     double sq_error;
     double frame_psnr, frame_ssim;
     double weight = 0;
 
-    vp8_deblock(pc, pc->frame_to_show, &pc->post_proc_buffer,
-                  pc->filter_level * 10 / 6);
+    vp8_deblock(cm, cm->frame_to_show, &cm->post_proc_buffer,
+                  cm->filter_level * 10 / 6);
     vpx_clear_system_state();
 
     ye = calc_plane_error(orig->y_buffer, orig->y_stride, pp->y_buffer,
@@ -434,8 +434,8 @@ int vp8dx_receive_compressed_data(VP8D_COMP *pbi, int64_t time_stamp) {
     sq_error = (double)(ye + ue + ve);
 
     frame_psnr = vpx_sse_to_psnr(t_samples, 255.0, sq_error);
-    frame_ssim = vpx_calc_ssim(orig, &pc->post_proc_buffer, &weight);
-    printf("Frame: %d, PSNR: %f, SSIM: %f\n", pc->current_video_frame, frame_psnr, frame_ssim);
+    frame_ssim = vpx_calc_ssim(orig, &cm->post_proc_buffer, &weight);
+    printf("Frame: %d, PSNR: %f, SSIM: %f\n", cm->current_video_frame, frame_psnr, frame_ssim);
   }
 #endif // IMAGE_QUALITY
 
