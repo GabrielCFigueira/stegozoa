@@ -1041,7 +1041,7 @@ out:
                     xd->mode_info_context++;
 
                     qcoeff += 400;
-                    eobs += 25;
+                    eobs += 32;
                 }
 
                 xd->mode_info_context++;
