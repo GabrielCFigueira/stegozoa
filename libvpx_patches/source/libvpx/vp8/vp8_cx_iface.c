@@ -830,6 +830,10 @@ static vpx_codec_err_t vp8e_encode(vpx_codec_alg_priv_t *ctx,
 #if STEGOZOA
   ctx->cpi->ssrc = img->ssrc;
   ctx->cpi->simulcast = (ctx->cpi->oxcf.mr_total_resolutions > 1);
+#if IMAGE_STATS
+  printf("Resolution - Storage w:%u h:%u, Display w:%u h:%u\n",
+          img->w, img->h, img->d_w, img->d_h);
+#endif
 #endif
 
   if (!ctx->cfg.rc_target_bitrate) {
