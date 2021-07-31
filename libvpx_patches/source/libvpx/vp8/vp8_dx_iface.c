@@ -421,7 +421,7 @@ static vpx_codec_err_t vp8_decode(vpx_codec_alg_priv_t *ctx,
                 vpx_free(pbi->row_bits);
                 for(int i = 0; i < prev_mb_rows; i++) {
                     printf("Row: %d\n", i);
-                    fflush(stdout)
+                    fflush(stdout);
                   vpx_free(pbi->positions[i]);
                 }
                 vpx_free(pbi->positions);
