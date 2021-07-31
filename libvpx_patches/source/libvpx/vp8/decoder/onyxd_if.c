@@ -146,6 +146,8 @@ static struct VP8D_COMP *create_decompressor(VP8D_CONFIG *oxcf) {
 
   for (int i = 0; i < 16; i++)
       CHECK_MEM_ERROR(pbi->positions[i], vpx_calloc(16, sizeof(int)));
+  printf("Common: %d\n", pbi->common.mb_rows);
+  fflush(stdout);
 #endif
   return pbi;
 }
