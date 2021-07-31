@@ -932,6 +932,10 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
   xd->corrupted = 0;
   yv12_fb_new->corrupted = 0;
 
+#if STEGOZOA
+  for(int i = 0; i < pc->mb_rows; i++)
+    pbi->row_bits[i] = 0;
+#endif
 
   if (data_end - data < 3) {
     if (!pbi->ec_active) {
