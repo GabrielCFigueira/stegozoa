@@ -412,7 +412,26 @@ static vpx_codec_err_t vp8_decode(vpx_codec_alg_priv_t *ctx,
           vpx_internal_error(&pc->error, VPX_CODEC_MEM_ERROR,
                              "Failed to allocate frame buffers");
         }
+#if STEGOZOA
+        else {
+            
+            if(previous_rows != 0) {
+                vpx_free(pbi->qcoeff);
+                vpx_free(pbi->row_bits);
+                for(int i = 0; i < previous_rows; i++)
+                  vpx_free(pbi->positions[i]);
+                vpx_free(pbi->positions);
+            }
+            
+            CHECK_MEM_ERROR(pbi->qcoeff, vpx_calloc(256 * pc->mb_cols * pc->mb_rows, sizeof(short)));
+            CHECK_MEM_ERROR(pbi->row_bits, vpx_calloc(pc->mb_rows, sizeof(int)));
+            CHECK_MEM_ERROR(pbi->positions, vpx_calloc(pc->mb_rows, sizeof(int*)));
+            
+            for (int i = 0; i < pc->mb_rows; i++)
+                CHECK_MEM_ERROR(pbi->positions[i], vpx_calloc(256 * pc->mb_cols, sizeof(int)));
 
+        }
+#endif
         xd->pre = pc->yv12_fb[pc->lst_fb_idx];
         xd->dst = pc->yv12_fb[pc->new_fb_idx];
 
