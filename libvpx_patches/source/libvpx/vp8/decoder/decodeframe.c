@@ -934,7 +934,7 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
   if(mb_rows != pc->mb_rows || mb_cols != pc->mb_cols) {
     vpx_free(pbi->qcoeff);
     vpx_free(pbi->row_bits);
-    for(int i = 0; i < pbi->common.mb_rows; i++)
+    for(int i = 0; i < mb_rows; i++)
       vpx_free(pbi->positions[i]);
     vpx_free(pbi->positions);
 
