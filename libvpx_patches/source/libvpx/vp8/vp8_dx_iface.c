@@ -415,20 +415,17 @@ static vpx_codec_err_t vp8_decode(vpx_codec_alg_priv_t *ctx,
 #if STEGOZOA
         else {
             if(prev_mb_rows != 0) {
-                vpx_free(pbi->qcoeff);
                 vpx_free(pbi->row_bits);
                 for(int i = 0; i < prev_mb_rows; i++)
-                    vpx_free(pbi->positions[i]);
-                vpx_free(pbi->positions);
+                    vpx_free(pbi->cover[i]);
+                vpx_free(pbi->cover);
             }
             
-            CHECK_MEM_ERROR(pbi->qcoeff, vpx_calloc(256 * pc->mb_cols * pc->mb_rows, sizeof(short)));
             CHECK_MEM_ERROR(pbi->row_bits, vpx_calloc(pc->mb_rows, sizeof(int)));
-            CHECK_MEM_ERROR(pbi->positions, vpx_calloc(pc->mb_rows, sizeof(int*)));
+            CHECK_MEM_ERROR(pbi->cover, vpx_calloc(pc->mb_rows, sizeof(unsigned char*)));
             
             for (int i = 0; i < pc->mb_rows; i++)
-                CHECK_MEM_ERROR(pbi->positions[i], vpx_calloc(256 * pc->mb_cols, sizeof(int)));
-
+                CHECK_MEM_ERROR(pbi->cover[i], vpx_calloc(256 * pc->mb_cols, sizeof(unsigned char)));
         }
 #endif
         xd->pre = pc->yv12_fb[pc->lst_fb_idx];

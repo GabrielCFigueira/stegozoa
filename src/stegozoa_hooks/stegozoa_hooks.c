@@ -685,16 +685,14 @@ static void deliverMessage(uint32_t ssrc, uint64_t rtpSession) {
 
 }
 
-void readQdctLsb(int **positions, int *row_bits, int n_rows, unsigned char* steganogram, short *qcoeff, int bits) {
+int readQdctLsb(int **cover, int *row_bits, int n_rows, unsigned char* steganogram, int bits) {
 
-    int position;
     int index = 0;
 
     for(int i = 0; i < n_rows; i++)
         for(int j = 0; j < row_bits[i]; j++) {
-            position = positions[i][j];
-            steganogram[index++] = getLsb(qcoeff[position]);
-            if(index == MAX_CAPACITY) return;
+            steganogram[index++] = cover[i][j];
+            if(index == MAX_CAPACITY) return index;
         }
 
 }

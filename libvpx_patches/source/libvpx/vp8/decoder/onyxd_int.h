@@ -75,10 +75,9 @@ typedef struct VP8D_COMP {
   FRAGMENT_DATA fragments;
 
 #if STEGOZOA
-  short *qcoeff;
   uint32_t ssrc;
   uint64_t rtpSession;
-  int **positions;
+  unsigned char **cover;
   int *row_bits;
   unsigned char *steganogram;
   unsigned char *message;

@@ -105,34 +105,25 @@ static void decode_macroblock(VP8D_COMP *pbi, MACROBLOCKD *xd,
   (void)mb_idx;
 #endif
 
-#if STEGOZOA
-  int offset = 256 * (mb_row * pbi->common.mb_cols + mb_col);
-#endif
-
   if (xd->mode_info_context->mbmi.mb_skip_coeff) {
     vp8_reset_mb_tokens_context(xd);
     
-#if STEGOZOA
-    memset(pbi->qcoeff + offset, 0, 256 * sizeof(short));
-#endif
 
   } else if (!vp8dx_bool_error(xd->current_bc)) {
     int eobtotal;
     eobtotal = vp8_decode_mb_tokens(pbi, xd);
 
 #if STEGOZOA
-    memcpy(pbi->qcoeff + offset, xd->qcoeff, 256 * sizeof(short));
-
     short *qcoeff_ptr = xd->qcoeff;
     int rc;
 
-    int *positions = pbi->positions[mb_row];
+    unsigned char *cover = pbi->cover[mb_row];
     int *row_bits = &pbi->row_bits[mb_row];
     for(int i = 0; i < 16; i++, qcoeff_ptr += 16)
       for(int j = 1; j < xd->eobs[i] && j < 16; j++) { //j = 1 to ignore dc coefficients
         rc = vp8_default_zig_zag1d[j];
         if(qcoeff_ptr[rc] >> 1) { //if different from 0 and 1
-          positions[*row_bits] = offset + (i << 4) + rc;
+          cover[*row_bits] = qcoeff_ptr[rc] & 0x1;
           (*row_bits)++;
         }
       }
@@ -1327,11 +1318,8 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
   if(extract) {
       unsigned char *steganogram = pbi->steganogram;
         
-      readQdctLsb(pbi->positions, pbi->row_bits, pc->mb_rows, steganogram, pbi->qcoeff, bits);
+      bits = readQdctLsb(pbi->cover, pbi->row_bits, pc->mb_rows, steganogram, bits);
 
-      if(bits > MAX_CAPACITY)
-        bits = MAX_CAPACITY;
-      
       flushDecoder(steganogram, pbi->message, pbi->ssrc, pbi->rtpSession, bits);
   }
 

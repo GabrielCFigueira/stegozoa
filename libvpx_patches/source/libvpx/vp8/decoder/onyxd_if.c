@@ -72,12 +72,10 @@ static void remove_decompressor(VP8D_COMP *pbi) {
   vpx_free(pbi->message);
       
   if(pbi->common.mb_rows != 0) {
-    vpx_free(pbi->qcoeff);
     vpx_free(pbi->row_bits);
     for(int i = 0; i < pbi->common.mb_rows; i++)
-      vpx_free(pbi->positions[i]);
-
-    vpx_free(pbi->positions);
+        vpx_free(pbi->cover[i]);
+    vpx_free(pbi->cover);
   }
 #endif
   vp8_remove_common(&pbi->common);
