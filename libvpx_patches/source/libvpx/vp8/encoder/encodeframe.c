@@ -1352,10 +1352,10 @@ int vp8cx_encode_intra_macroblock(VP8_COMP *cpi, MACROBLOCK *x,
   
   int offset = (mb_row * cpi->common.mb_cols + mb_col) * 400;
 
-  //memcpy(cpi->qcoeff + offset, xd->qcoeff, 400 * sizeof(short));
-  coeff_copy_400(cpi->qcoeff + offset, xd->qcoeff);
-  //memcpy(cpi->eobs + (offset >> 4), xd->eobs, 25 * sizeof(char));
-  eobs_copy_32(cpi->eobs + (mb_row * cpi->common.mb_cols + mb_col) * 32, xd->eobs);
+  memcpy(cpi->qcoeff + offset, xd->qcoeff, 400 * sizeof(short));
+  //coeff_copy_400(cpi->qcoeff + offset, xd->qcoeff);
+  memcpy(cpi->eobs + (mb_row * cpi->common.mb_cols + mb_col) * 32, xd->eobs, 32 * sizeof(char));
+  //eobs_copy_32(cpi->eobs + (mb_row * cpi->common.mb_cols + mb_col) * 32, xd->eobs);
 
   short *qcoeff_ptr = xd->qcoeff;
   int rc;
@@ -1549,10 +1549,10 @@ int vp8cx_encode_inter_macroblock(VP8_COMP *cpi, MACROBLOCK *x, TOKENEXTRA **t,
 #else
     vp8_fake_tokenize_mb(cpi, x);
   
-    //memcpy(cpi->qcoeff + offset, xd->qcoeff, 400 * sizeof(short));
-    coeff_copy_400(cpi->qcoeff + offset, xd->qcoeff);
-    //memcpy(cpi->eobs + (offset >> 4), xd->eobs, 25 * sizeof(char));
-    eobs_copy_32(cpi->eobs + (mb_row * cpi->common.mb_cols + mb_col) * 32, xd->eobs);
+    memcpy(cpi->qcoeff + offset, xd->qcoeff, 400 * sizeof(short));
+    //coeff_copy_400(cpi->qcoeff + offset, xd->qcoeff);
+    memcpy(cpi->eobs + (mb_row * cpi->common.mb_cols + mb_col) * 32, xd->eobs, 32 * sizeof(char));
+    //eobs_copy_32(cpi->eobs + (mb_row * cpi->common.mb_cols + mb_col) * 32, xd->eobs);
   
     short *qcoeff_ptr = xd->qcoeff;
     int rc;
