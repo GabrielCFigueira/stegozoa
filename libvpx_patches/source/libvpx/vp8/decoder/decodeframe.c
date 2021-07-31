@@ -106,14 +106,14 @@ static void decode_macroblock(VP8D_COMP *pbi, MACROBLOCKD *xd,
 #endif
 
 #if STEGOZOA
-  int offset = 400 * (mb_row * pbi->common.mb_cols + mb_col);
+  int offset = 256 * (mb_row * pbi->common.mb_cols + mb_col);
 #endif
 
   if (xd->mode_info_context->mbmi.mb_skip_coeff) {
     vp8_reset_mb_tokens_context(xd);
     
 #if STEGOZOA
-    memset(pbi->qcoeff + offset, 0, 400 * sizeof(short));
+    memset(pbi->qcoeff + offset, 0, 256 * sizeof(short));
 #endif
 
   } else if (!vp8dx_bool_error(xd->current_bc)) {
@@ -121,7 +121,7 @@ static void decode_macroblock(VP8D_COMP *pbi, MACROBLOCKD *xd,
     eobtotal = vp8_decode_mb_tokens(pbi, xd);
 
 #if STEGOZOA
-    memcpy(pbi->qcoeff + offset, xd->qcoeff, 400 * sizeof(short));
+    memcpy(pbi->qcoeff + offset, xd->qcoeff, 256 * sizeof(short));
 
     short *qcoeff_ptr = xd->qcoeff;
     int rc;
@@ -928,14 +928,24 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
 
   YV12_BUFFER_CONFIG *yv12_fb_new = pbi->dec_fb_ref[INTRA_FRAME];
  
-#if STEGOZOA 
-  CHECK_MEM_ERROR(pbi->qcoeff, vpx_calloc(400 * pc->mb_cols * pc->mb_rows, sizeof(short)));
-  CHECK_MEM_ERROR(pbi->row_bits, vpx_calloc(pc->mb_rows, sizeof(int)));
-  CHECK_MEM_ERROR(pbi->positions, vpx_calloc(pc->mb_rows, sizeof(int*)));
+#if STEGOZOA
+  static int mb_rows = 0;
+  static int mb_cols = 0;
+  if(mb_rows != pc->mb_rows || mb_cols != pc->mb_cols) {
+    vpx_free(pbi->qcoeff);
+    vpx_free(pbi->row_bits);
+    for(int i = 0; i < pbi->common.mb_rows; i++)
+      vpx_free(pbi->positions[i]);
+    vpx_free(pbi->positions);
+    mb_rows = pc->mb_rows;
+    mb_cols = pc->mb_cols;
 
-  for (int i = 0; i < pc->mb_rows; i++) {
-      CHECK_MEM_ERROR(pbi->positions[i], vpx_calloc(400 * pc->mb_cols, sizeof(int)));
-      pbi->row_bits[i] = 0;
+    CHECK_MEM_ERROR(pbi->qcoeff, vpx_calloc(256 * mb_cols * mb_rows, sizeof(short)));
+    CHECK_MEM_ERROR(pbi->row_bits, vpx_calloc(mb_rows, sizeof(int)));
+    CHECK_MEM_ERROR(pbi->positions, vpx_calloc(mb_rows, sizeof(int*)));
+
+    for (int i = 0; i < mb_rows; i++) 
+      CHECK_MEM_ERROR(pbi->positions[i], vpx_calloc(256 * mb_cols, sizeof(int)));
   }
 #endif
 
@@ -1332,7 +1342,7 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
 
   
   if(extract) {
-      unsigned char *steganogram = (unsigned char*) malloc(bits * sizeof(unsigned char));
+      unsigned char *steganogram = getStcData(pbi->ssrc)->steganogram;
         
       readQdctLsb(pbi->positions, pbi->row_bits, pc->mb_rows, steganogram, pbi->qcoeff, bits);
 
@@ -1340,14 +1350,7 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
         bits = MAX_CAPACITY;
       
       flushDecoder(steganogram, pbi->ssrc, pbi->rtpSession, bits);
-      free(steganogram);
   }
-
-  vpx_free(pbi->qcoeff);
-  vpx_free(pbi->row_bits);
-  for(int i = 0; i < pbi->common.mb_rows; i++)
-      vpx_free(pbi->positions[i]);
-  vpx_free(pbi->positions);
 
 #endif // STEGOZOA
 

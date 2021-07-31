@@ -84,7 +84,7 @@ def processRetransmission(syn, retransmissions, mutex, message):
 
         mutex.release()
 
-        time.sleep(116 - 100 * (0.995 ** size))
+        time.sleep(110 - 100 * (0.995 ** size))
 
 
 
