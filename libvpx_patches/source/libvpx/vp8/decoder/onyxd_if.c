@@ -68,8 +68,8 @@ static void remove_decompressor(VP8D_COMP *pbi) {
   vp8_de_alloc_overlap_lists(pbi);
 #endif
 #if STEGOZOA
-  vpx_free(cpi->steganogram);
-  vpx_free(cpi->message);
+  vpx_free(pbi->steganogram);
+  vpx_free(pbi->message);
 #endif
   vp8_remove_common(&pbi->common);
   vpx_free(pbi);
@@ -129,8 +129,8 @@ static struct VP8D_COMP *create_decompressor(VP8D_CONFIG *oxcf) {
 
   once(initialize_dec);
 #if STEGOZOA
-  CHECK_MEM_ERROR(cpi->steganogram, vpx_calloc(MAX_CAPACITY, sizeof(unsigned char)));
-  CHECK_MEM_ERROR(cpi->message, vpx_calloc(MAX_CAPACITY / WIDTH, sizeof(unsigned char)));
+  CHECK_MEM_ERROR(pbi->steganogram, vpx_calloc(MAX_CAPACITY, sizeof(unsigned char)));
+  CHECK_MEM_ERROR(pbi->message, vpx_calloc(MAX_CAPACITY / WIDTH, sizeof(unsigned char)));
 #endif
   return pbi;
 }
