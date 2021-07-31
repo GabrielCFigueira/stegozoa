@@ -100,21 +100,25 @@ static void releaseMessage(message_t *message) {
 
 static void appendMessage(context_t *ctx, message_t *newMsg) {
     message_t *msg = ctx->msg;
-    if(msg == NULL)
+    message_t *lastMsg = ctx->lastMsg;
+    if(msg == NULL) {
         ctx->msg = newMsg;
-    else {
-        while(msg->next != NULL) msg = msg->next;
-        msg->next = newMsg;
+        ctx->lastMsg = newMsg;
+    } else {
+        ctx->lastMsg->next = newMsg;
+        ctx->lastMsg = newMsg; 
     }
     ctx->n_msg++;
 }
 
 static void insertMessage(context_t *ctx, message_t *newMsg) {
     message_t *msg = ctx->msg;
+    message_t *lastMsg = ctx->lastMsg;
     message_t *previousMsg;
-    if(msg == NULL)
+    if(msg == NULL) {
         ctx->msg = newMsg;
-    else {
+        ctx->lastMsg = newMsg;
+    } else {
         do {
             previousMsg = msg;
             msg = msg->next;
@@ -125,6 +129,8 @@ static void insertMessage(context_t *ctx, message_t *newMsg) {
                 
                 previousMsg->next = newMsg;
                 newMsg->next = msg;
+                if (msg == NULL)
+                    ctx->lastMsg = newMsg;
                 break;
 
             } else if(msg->msgType == 4 && newMsg->msgType == 4 && 

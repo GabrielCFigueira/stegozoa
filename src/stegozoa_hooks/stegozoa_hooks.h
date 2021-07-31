@@ -37,6 +37,7 @@ typedef struct stcdata {
 
 typedef struct context {
 	message_t *msg;
+	message_t *lastMsg;
 	uint32_t ssrc;
 	uint64_t rtpSession;
 	int n_msg;
