@@ -932,11 +932,13 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
   static int mb_rows = 0;
   static int mb_cols = 0;
   if(mb_rows != pc->mb_rows || mb_cols != pc->mb_cols) {
-    vpx_free(pbi->qcoeff);
-    vpx_free(pbi->row_bits);
-    for(int i = 0; i < pbi->common.mb_rows; i++)
-      vpx_free(pbi->positions[i]);
-    vpx_free(pbi->positions);
+    if(!(mb_rows == 0 && mb_cols == 0)) {
+      vpx_free(pbi->qcoeff);
+      vpx_free(pbi->row_bits);
+      for(int i = 0; i < pbi->common.mb_rows; i++)
+        vpx_free(pbi->positions[i]);
+      vpx_free(pbi->positions);
+    }
     mb_rows = pc->mb_rows;
     mb_cols = pc->mb_cols;
 
