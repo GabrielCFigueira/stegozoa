@@ -685,7 +685,7 @@ static void deliverMessage(uint32_t ssrc, uint64_t rtpSession) {
 
 }
 
-int readQdctLsb(int **cover, int *row_bits, int n_rows, unsigned char* steganogram, int bits) {
+int readQdctLsb(unsigned char **cover, int *row_bits, int n_rows, unsigned char* steganogram, int bits) {
 
     int index = 0;
 
