@@ -105,7 +105,7 @@ static void appendMessage(context_t *ctx, message_t *newMsg) {
         ctx->msg = newMsg;
         ctx->lastMsg = newMsg;
     } else {
-        ctx->lastMsg->next = newMsg;
+        lastMsg->next = newMsg;
         ctx->lastMsg = newMsg; 
     }
     ctx->n_msg++;
@@ -113,7 +113,6 @@ static void appendMessage(context_t *ctx, message_t *newMsg) {
 
 static void insertMessage(context_t *ctx, message_t *newMsg) {
     message_t *msg = ctx->msg;
-    message_t *lastMsg = ctx->lastMsg;
     message_t *previousMsg;
     if(msg == NULL) {
         ctx->msg = newMsg;
