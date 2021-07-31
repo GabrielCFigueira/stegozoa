@@ -648,11 +648,11 @@ int writeQdctLsb(int **positions, int *row_bits, int n_rows, unsigned char *steg
         for(int j = 0; j < row_bits[i]; j++) {
             position = positions[i][j];
             qcoeff[position] = (qcoeff[position] & 0xFFFE) | steganogram[index++];
-            if(index == MAX_CAPACITY) return bits;
+            if(index == MAX_CAPACITY) return index;
         }
         
     
-    return bits;
+    return index;
 }
 
 static void deliverMessage(uint32_t ssrc, uint64_t rtpSession) {
@@ -694,6 +694,7 @@ int readQdctLsb(unsigned char **cover, int *row_bits, int n_rows, unsigned char*
             steganogram[index++] = cover[i][j];
             if(index == MAX_CAPACITY) return index;
         }
+    return index;
 
 }
 
