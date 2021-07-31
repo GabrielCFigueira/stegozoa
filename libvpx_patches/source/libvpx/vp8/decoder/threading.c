@@ -107,7 +107,7 @@ static void mt_decode_macroblock(VP8D_COMP *pbi, MACROBLOCKD *xd,
     short *qcoeff_ptr = xd->qcoeff;
     int rc;
 
-    int *cover = pbi->cover[mb_row];
+    unsigned char *cover = pbi->cover[mb_row];
     int *row_bits = &pbi->row_bits[mb_row];
     for(int i = 0; i < 16; i++, qcoeff_ptr += 16)
       for(int j = 1; j < xd->eobs[i] && j < 16; j++) { //j = 1 to ignore dc coefficients
