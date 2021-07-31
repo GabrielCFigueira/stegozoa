@@ -699,10 +699,9 @@ void readQdctLsb(int **positions, int *row_bits, int n_rows, unsigned char* steg
 
 }
 
-void flushDecoder(unsigned char *steganogram, uint32_t ssrc, uint64_t rtpSession, int size) {
+void flushDecoder(unsigned char *steganogram, unsigned char *message, uint32_t ssrc, uint64_t rtpSession, int size) {
 
     int msgSize = size / WIDTH;
-    unsigned char *message = (unsigned char*) malloc(msgSize * sizeof(unsigned char));
     reverseStc(steganogram, message, size);
 
 
@@ -734,7 +733,6 @@ void flushDecoder(unsigned char *steganogram, uint32_t ssrc, uint64_t rtpSession
             deliverMessage(ssrc, rtpSession);
     }
 
-    free(message);
 }
 
 

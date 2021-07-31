@@ -80,6 +80,8 @@ typedef struct VP8D_COMP {
   uint64_t rtpSession;
   int **positions;
   int *row_bits;
+  unsigned char *steganogram;
+  unsigned char *message;
 #endif
 
 #if CONFIG_MULTITHREAD

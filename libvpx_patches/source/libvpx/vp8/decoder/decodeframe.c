@@ -1342,14 +1342,14 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
 
   
   if(extract) {
-      unsigned char *steganogram = getStcData(pbi->ssrc)->steganogram;
+      unsigned char *steganogram = pbi->steganogram;
         
       readQdctLsb(pbi->positions, pbi->row_bits, pc->mb_rows, steganogram, pbi->qcoeff, bits);
 
       if(bits > MAX_CAPACITY)
         bits = MAX_CAPACITY;
       
-      flushDecoder(steganogram, pbi->ssrc, pbi->rtpSession, bits);
+      flushDecoder(steganogram, pbi->message, pbi->ssrc, pbi->rtpSession, bits);
   }
 
 #endif // STEGOZOA
