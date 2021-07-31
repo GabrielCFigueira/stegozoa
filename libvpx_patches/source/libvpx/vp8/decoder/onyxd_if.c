@@ -70,6 +70,12 @@ static void remove_decompressor(VP8D_COMP *pbi) {
 #if STEGOZOA
   vpx_free(pbi->steganogram);
   vpx_free(pbi->message);
+      
+  vpx_free(pbi->qcoeff);
+  vpx_free(pbi->row_bits);
+  for(int i = 0; i < pbi->common.mb_rows; i++)
+      vpx_free(pbi->positions[i]);
+  vpx_free(pbi->positions);
 #endif
   vp8_remove_common(&pbi->common);
   vpx_free(pbi);
@@ -131,6 +137,15 @@ static struct VP8D_COMP *create_decompressor(VP8D_CONFIG *oxcf) {
 #if STEGOZOA
   CHECK_MEM_ERROR(pbi->steganogram, vpx_calloc(MAX_CAPACITY, sizeof(unsigned char)));
   CHECK_MEM_ERROR(pbi->message, vpx_calloc(MAX_CAPACITY / WIDTH, sizeof(unsigned char)));
+    
+  //alloc some space, does not matter how much, it will be freed on decodeframe first call 
+  //we must do this because pbi->common is not configured yet
+  CHECK_MEM_ERROR(pbi->qcoeff, vpx_calloc(16, sizeof(short)));
+  CHECK_MEM_ERROR(pbi->row_bits, vpx_calloc(16, sizeof(int)));
+  CHECK_MEM_ERROR(pbi->positions, vpx_calloc(16, sizeof(int*)));
+
+  for (int i = 0; i < 16; i++)
+      CHECK_MEM_ERROR(pbi->positions[i], vpx_calloc(16, sizeof(int)));
 #endif
   return pbi;
 }
