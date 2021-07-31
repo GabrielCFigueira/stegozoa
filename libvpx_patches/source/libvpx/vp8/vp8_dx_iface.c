@@ -414,7 +414,8 @@ static vpx_codec_err_t vp8_decode(vpx_codec_alg_priv_t *ctx,
         }
 #if STEGOZOA
         else {
-            
+           printf("Alloccing new buffers, prev_mb_rows:%d\n", prev_mb_rows);
+           fflush(stdout);
             if(prev_mb_rows != 0) {
                 vpx_free(pbi->qcoeff);
                 vpx_free(pbi->row_bits);

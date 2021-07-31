@@ -71,6 +71,8 @@ static void remove_decompressor(VP8D_COMP *pbi) {
   vpx_free(pbi->steganogram);
   vpx_free(pbi->message);
       
+  printf("Alloccing new buffers, prev_mb_rows:%d\n", pbi->common.mb_rows);
+  fflush(stdout);
   if(pbi->common.mb_rows != 0) {
     vpx_free(pbi->qcoeff);
     vpx_free(pbi->row_bits);
