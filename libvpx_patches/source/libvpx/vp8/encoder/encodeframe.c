@@ -1272,7 +1272,7 @@ static void adjust_act_zbin(VP8_COMP *cpi, MACROBLOCK *x) {
 #endif
 }
 
-#if STEGOZOA
+#if 0 & STEGOZOA
 void coeff_copy_400(void *d, const void *s) {
     // d, s -> size of 400 * sizeof(short)
       
