@@ -81,7 +81,7 @@ config("libvpx_config") {
       # libvpx has many static functions in header, which trigger this warning.
       "-Wno-unused-function",
 
-      #"-mavx2", #Stegozoa
+      "-mavx2", #Stegozoa
 
       #"-pg", #Stegozoa
     ]
