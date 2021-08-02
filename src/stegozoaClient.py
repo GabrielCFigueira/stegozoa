@@ -57,7 +57,7 @@ def send():
         else:
             newConnection()
         
-        time.sleep(0.3)
+        time.sleep(0.1)
 
 
 def receive():
