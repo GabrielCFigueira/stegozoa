@@ -81,7 +81,7 @@ def barChart(resDict, savefile, title):
     plt.title(title)
 
     sortedValues = []
-    sortedKeys = resDict.keys()
+    sortedKeys = list(resDict.keys())
     sortedKeys.sort()
     for key in sortedKeys:
         sortedValues += [resDict[key]]
