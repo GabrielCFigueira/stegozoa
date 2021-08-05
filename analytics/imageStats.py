@@ -12,6 +12,8 @@ def computePsnrSsim(cap_folder):
     psnrList = []
     ssimList = []
 
+    resDict = {}
+
     for log_filename in log_list:
         
         if not log_filename.__contains__("chromium_log"):
@@ -34,13 +36,24 @@ def computePsnrSsim(cap_folder):
                     totalPsnr += psnr
                     totalSsim += ssim
                     n += 1
+                elif len(words) == 5 and words[1] == "Resolution":
+                    try:
+                        res = getRes(words[3], words[4])
+                    except:
+                        continue
+
+                    if res not in resDict:
+                        resDict[res] = 1
+                    else:
+                        resDict[res] += 1
+
             
             if n > 0:
 
                 psnrList += [totalPsnr / n]
                 ssimList += [totalSsim / n]
 
-    return psnrList, ssimList
+    return psnrList, ssimList, resDict
 
 def plot(stegoDist, regularDist, savefile, title):
 
@@ -49,6 +62,16 @@ def plot(stegoDist, regularDist, savefile, title):
 
     plt.title(title)
     plt.boxplot([stegoDist, regularDist], labels=["Stegozoa", "Regular"])
+
+    fig.savefig(savefile)
+    plt.close(fig)
+
+def barChart(resDict, savefile, title):
+
+    fig = plt.figure()
+
+    plt.title(title)
+    plt.bar(resDict.keys(), resDict.values())
 
     fig.savefig(savefile)
     plt.close(fig)
@@ -64,11 +87,12 @@ if __name__ == "__main__":
     regular_cap_folder = log_folder + "RegularTraffic" + "/" + baseline + "/" + network_condition
     stegozoa_cap_folder = log_folder + "StegozoaTraffic" + "/" + baseline + "/" + network_condition
 
-    stegoPsnrs, stegoSsims = computePsnrSsim(stegozoa_cap_folder)
-    regularPsnrs, regularSsims = computePsnrSsim(regular_cap_folder)
+    stegoPsnrs, stegoSsims, stegoRes = computePsnrSsim(stegozoa_cap_folder)
+    regularPsnrs, regularSsims, regularRes = computePsnrSsim(regular_cap_folder)
 
 
     plot(stegoPsnrs, regularPsnrs, "PSNR.pdf", "PSNR comparision")
     plot(stegoSsims, regularSsims, "SSIM.pdf", "SSIM comparision")
-
+    barChart(stegoRes, "stegoRes.pdf", "Stegozoa Resolutions")
+    barChart(regularRes, "regularRes.pdf", "Regular Resolutions")
     
