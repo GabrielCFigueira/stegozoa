@@ -5,6 +5,10 @@ import matplotlib.pyplot as plt
 
 log_folder = "/home/vagrant/SharedFolder/StegozoaCaps/"
 
+def getRes(w, h):
+    w = w[2:]
+    h = h[2:]
+    return w + "x" + h
 
 def computePsnrSsim(cap_folder):
 
