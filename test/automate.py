@@ -65,7 +65,7 @@ def ApprtcAutomation():
     #Appr.tc requires a single "Join Button" to be pressed to join a call
 
     time.sleep(0.25)
-    join_button = (637, 712)
+    join_button = (959, 920)
     pyautogui.click(join_button[0], join_button[1], button='left')
 
 
