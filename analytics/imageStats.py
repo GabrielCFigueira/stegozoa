@@ -58,7 +58,7 @@ def computePsnrSsim(cap_folder):
                 ssimList += [totalSsim / n]
 
                 
-    for key in resDict.keys():
+    for key in list(resDict.keys()):
         if resDict[key] < 100:
             del(resDict[key])
     return psnrList, ssimList, resDict
