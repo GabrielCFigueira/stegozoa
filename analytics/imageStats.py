@@ -7,7 +7,7 @@ log_folder = "/home/vagrant/SharedFolder/StegozoaCaps/"
 
 def getRes(w, h):
     w = w[2:]
-    h = h[2:]
+    h = h[2:-1]
     return w + "x" + h
 
 def computePsnrSsim(cap_folder):
@@ -79,7 +79,11 @@ def barChart(resDict, savefile, title):
     fig = plt.figure()
 
     plt.title(title)
-    plt.bar(resDict.keys(), resDict.values())
+
+    sortedValues = []
+    for key in sort(resDict.keys()):
+        sortedValues += [resDict[key]]
+    plt.bar(sort(resDict.keys()), sortedValues)
 
     fig.savefig(savefile)
     plt.close(fig)
