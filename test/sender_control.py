@@ -43,7 +43,7 @@ sync_late = 4
 
 #WEBRTC_APPLICATION = "https://coderpad.io/<chatroom-id>"
 WEBRTC_APPLICATION = "https://whereby.com/elgrabiel"
-#WEBRTC_APPLICATION = "https://appr.tc/r/<chatroom-id>"
+#WEBRTC_APPLICATION = "https://appr.tc/r/"
 #WEBRTC_APPLICATION = https://meet.jit.si/<chatroom-id>"
 
 #############################################################################
