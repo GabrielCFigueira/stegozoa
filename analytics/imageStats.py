@@ -57,6 +57,10 @@ def computePsnrSsim(cap_folder):
                 psnrList += [totalPsnr / n]
                 ssimList += [totalSsim / n]
 
+                
+    for key in resDict.keys():
+        if resDict[key] < 100:
+            del(resDict[key])
     return psnrList, ssimList, resDict
 
 def plot(stegoDist, regularDist, savefile, title):
