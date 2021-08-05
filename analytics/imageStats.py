@@ -5,6 +5,9 @@ import matplotlib.pyplot as plt
 
 log_folder = "/home/vagrant/SharedFolder/StegozoaCaps/"
 
+def customFunc(key):
+    return str(len(key)) + key
+
 def getRes(w, h):
     w = w[2:]
     h = h[2:-1]
@@ -82,7 +85,7 @@ def barChart(resDict, savefile, title):
 
     sortedValues = []
     sortedKeys = list(resDict.keys())
-    sortedKeys.sort()
+    sortedKeys.sort(key=customFunc)
     for key in sortedKeys:
         sortedValues += [resDict[key]]
     plt.bar(sortedKeys, sortedValues)
