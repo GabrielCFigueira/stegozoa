@@ -20,10 +20,10 @@ pyautogui.FAILSAFE = True
 def recordJitsi():
     pyautogui.moveTo(1126, 986)
 
-    time.sleep(0.5)
+    time.sleep(1)
     pyautogui.click(1126, 986, button='left')
 
-    time.sleep(0.5)
+    time.sleep(1)
     pyautogui.click(1019, 436, button='left')
     
     time.sleep(1)
@@ -32,10 +32,10 @@ def recordJitsi():
 def stopRecordJitsi():
     pyautogui.moveTo(1126, 986)
 
-    time.sleep(0.5)
+    time.sleep(1)
     pyautogui.click(1126, 986, button='left')
 
-    time.sleep(0.5)
+    time.sleep(1)
     pyautogui.click(1019, 436, button='left')
     
     time.sleep(1)
