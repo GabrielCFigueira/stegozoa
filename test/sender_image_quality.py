@@ -126,7 +126,7 @@ def SampleRegularImage(sample_index, config, baseline, network_condition, chromi
         
         if("meet.jit.si" in WEBRTC_APPLICATION):
             print "[P] Stopping recording Video call"
-            recordVideo(WEBRTC_APPLICATION)
+            stopRecordVideo(WEBRTC_APPLICATION)
 
         # Cleanup
         print "[P] Killing FFMPEG stream"
@@ -280,7 +280,7 @@ def SampleStegozoaImage(sample_index, config, baseline, network_condition, chrom
         
         if("meet.jit.si" in WEBRTC_APPLICATION):
             print "[P] Stopping recording Video call"
-            recordVideo(WEBRTC_APPLICATION)
+            stopRecordVideo(WEBRTC_APPLICATION)
 
         # Cleanup
         print "[P] Killing FFMPEG stream"

@@ -5,7 +5,7 @@ import random
 import threading
 import requests
 from termcolor import colored 
-from automate import automateChromium, gracefullyCloseChromium, recordVideo
+from automate import automateChromium, gracefullyCloseChromium, recordVideo, stopRecordVideo
 
 
 def PrintColored(string, color):
