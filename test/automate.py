@@ -102,7 +102,7 @@ def gracefullyCloseChromium():
     pyautogui.click(1265, 20, button='left')
 
 def recordVideo(webrtc_application):
-    elif("whereby" in webrtc_application):
+    if("whereby" in webrtc_application):
         print "WhereBy: Recording TODO"
     elif("meet.jit.si" in webrtc_application):
         print "Jitsi: Recording to Dropbox."
