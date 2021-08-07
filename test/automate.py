@@ -17,6 +17,19 @@ pyautogui.PAUSE = 0.25
 pyautogui.FAILSAFE = True
 
 
+def recordJitsi():
+    time.sleep(0.25)
+    pyautogui.moveTo(1126, 986)
+
+    time.sleep(0.5)
+    pyautogui.click(1126, 986, button='left')
+
+    time.sleep(0.5)
+    pyautogui.click(1019, 436, button='left')
+    
+    time.sleep(0.5)
+    pyautogui.click(1012, 521, button='left')
+
 def CoderpadAutomation(mode):
     #Coderpad requires different actions from the caller / callee
     #Caller must fill nickname, ask to start a call and confirm the request
@@ -83,7 +96,7 @@ def automateChromium(webrtc_application, mode):
         print "Appr.tc Automation: Started"
         ApprtcAutomation()
     elif("meet.jit.si" in webrtc_application):
-        print "Jitsi Automation: TODO"
+        print "Jitsi Automation: Nothing to do."
 
 def gracefullyCloseChromium():
     pyautogui.click(1265, 20, button='left')
