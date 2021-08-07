@@ -259,8 +259,6 @@ def SampleRegularExact(sample_index, config, baseline, network_condition, chromi
         if("appr.tc" in WEBRTC_APPLICATION):
             label = network_condition[2].replace(".","-")
             webrtc_app = WEBRTC_APPLICATION + "_reg_" + label + "_" + str(sample_index % 246)
-        elif("meet.jit.si" in WEBRTC_APPLICATION):
-            webrtc_app = WEBRTC_APPLICATION + "reg"
 
         print "[P] Starting Remote Chromium Browser at: " + str(start_remote_chromium)
         print "[P] Starting WebRTC Application: " + webrtc_app
@@ -415,8 +413,6 @@ def SampleStegozoaExact(sample_index, config, baseline, network_condition, chrom
         if("appr.tc" in WEBRTC_APPLICATION):
             label = network_condition[2].replace(".","-")
             webrtc_app = WEBRTC_APPLICATION + "_stego_" + label + "_" + str(sample_index % 246)
-        elif("meet.jit.si" in WEBRTC_APPLICATION):
-            webrtc_app = WEBRTC_APPLICATION + "reg"
 
         print "[P] Starting Remote Chromium Browser at: " + str(start_remote_chromium)
         RESTCall("startChromium", str(start_remote_chromium) + "," + chromium_build + "," + webrtc_app)
