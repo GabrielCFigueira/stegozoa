@@ -27,7 +27,7 @@ def recordJitsi():
     pyautogui.click(1019, 436, button='left')
     
     time.sleep(1)
-    pyautogui.click(1012, 521, button='left')
+    pyautogui.click(1010, 539, button='left')
 
 def CoderpadAutomation(mode):
     #Coderpad requires different actions from the caller / callee
@@ -102,10 +102,11 @@ def gracefullyCloseChromium():
     pyautogui.click(1265, 20, button='left')
 
 def recordVideo(webrtc_application):
+    print "Mouse position: " + str(pyautogui.position())
     if("whereby" in webrtc_application):
-        print "WhereBy: Recording TODO"
+        print "WhereBy Automation: Recording TODO"
     elif("meet.jit.si" in webrtc_application):
-        print "Jitsi: Recording to Dropbox."
+        print "Jitsi Automation: Recording to Dropbox."
         recordJitsi()
     
 
