@@ -124,6 +124,9 @@ def SampleRegularImage(sample_index, config, baseline, network_condition, chromi
         print "[P] Waiting for the " + str(duration) + " seconds to finish..."
         time.sleep(duration)
         
+        if("meet.jit.si" in WEBRTC_APPLICATION):
+            print "[P] Stopping recording Video call"
+            recordVideo(WEBRTC_APPLICATION)
 
         # Cleanup
         print "[P] Killing FFMPEG stream"
@@ -274,6 +277,10 @@ def SampleStegozoaImage(sample_index, config, baseline, network_condition, chrom
         #Wait
         print "[P] Waiting for the " + str(duration) + " seconds to finish..."
         time.sleep(duration)
+        
+        if("meet.jit.si" in WEBRTC_APPLICATION):
+            print "[P] Stopping recording Video call"
+            recordVideo(WEBRTC_APPLICATION)
 
         # Cleanup
         print "[P] Killing FFMPEG stream"

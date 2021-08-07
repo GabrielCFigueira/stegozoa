@@ -29,6 +29,19 @@ def recordJitsi():
     time.sleep(1)
     pyautogui.click(1010, 539, button='left')
 
+def stopRecordJitsi():
+    pyautogui.moveTo(1126, 986)
+
+    time.sleep(0.5)
+    pyautogui.click(1126, 986, button='left')
+
+    time.sleep(0.5)
+    pyautogui.click(1019, 436, button='left')
+    
+    time.sleep(1)
+    pyautogui.click(1031, 387, button='left')
+    time.sleep(1)
+
 def CoderpadAutomation(mode):
     #Coderpad requires different actions from the caller / callee
     #Caller must fill nickname, ask to start a call and confirm the request
@@ -108,6 +121,14 @@ def recordVideo(webrtc_application):
     elif("meet.jit.si" in webrtc_application):
         print "Jitsi Automation: Recording to Dropbox."
         recordJitsi()
+    
+def stopRecordVideo(webrtc_application):
+    print "Mouse position: " + str(pyautogui.position())
+    if("whereby" in webrtc_application):
+        print "WhereBy Automation: Stopping Recording TODO"
+    elif("meet.jit.si" in webrtc_application):
+        print "Jitsi Automation: Stopping Recording to Dropbox."
+        stopRecordJitsi()
     
 
 

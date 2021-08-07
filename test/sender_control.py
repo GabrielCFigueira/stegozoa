@@ -303,7 +303,7 @@ def SampleRegularExact(sample_index, config, baseline, network_condition, chromi
             print "[P] Performing remote automation task"
             RESTCall("automateApp", webrtc_app)
         
-        elif("meet.jit.si" in WEBRTC_APPLICATION): #TODO
+        elif("meet.jit.si" in WEBRTC_APPLICATION):
             time.sleep(20) #Ten seconds were apparently not enough for starting up Chromium
 
             print "[P] Performing local automation task"
@@ -455,7 +455,7 @@ def SampleStegozoaExact(sample_index, config, baseline, network_condition, chrom
 
             print "[P] Performing remote automation task"
             RESTCall("automateApp", webrtc_app)
-        elif("meet.jit.si" in WEBRTC_APPLICATION): #TODO
+        elif("meet.jit.si" in WEBRTC_APPLICATION):
             time.sleep(20) #Ten seconds were apparently not enough for starting up Chromium
 
             print "[P] Performing local automation task"
