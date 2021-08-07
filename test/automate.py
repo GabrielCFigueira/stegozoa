@@ -1,7 +1,7 @@
 """
 This file deals with GUI automation to test several WebRTC apps
 
-Screen resolution should be set to 1280x768
+Screen resolution should be set to 1920x1080
 
 Chromium browser window should be set to maximize
 """
