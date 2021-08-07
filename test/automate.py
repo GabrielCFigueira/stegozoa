@@ -80,10 +80,6 @@ def ApprtcAutomation():
     join_button = (959, 920)
     pyautogui.click(join_button[0], join_button[1], button='left')
 
-def JitsiAutomation():
-    time.sleep(0.25)
-    recordJitsi()
-
 
 def automateChromium(webrtc_application, mode):
     #Print debug info
@@ -100,11 +96,17 @@ def automateChromium(webrtc_application, mode):
         ApprtcAutomation()
     elif("meet.jit.si" in webrtc_application):
         print "Jitsi Automation: Nothing to do."
-        JitsiAutomation()
 
 def gracefullyCloseChromium():
     pyautogui.click(1265, 20, button='left')
     pyautogui.click(1265, 20, button='left')
+
+def recordVideo(webrtc_application):
+    elif("whereby" in webrtc_application):
+        print "WhereBy: Recording TODO"
+    elif("meet.jit.si" in webrtc_application):
+        print "Jitsi: Recording to Dropbox."
+        recordJitsi()
     
 
 
