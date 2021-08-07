@@ -26,7 +26,7 @@ def recordJitsi():
     time.sleep(0.5)
     pyautogui.click(1019, 436, button='left')
     
-    time.sleep(0.5)
+    time.sleep(1)
     pyautogui.click(1012, 521, button='left')
 
 def CoderpadAutomation(mode):
