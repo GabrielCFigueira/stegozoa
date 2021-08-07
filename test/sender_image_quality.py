@@ -116,6 +116,9 @@ def SampleRegularImage(sample_index, config, baseline, network_condition, chromi
 
             print "[P] Performing remote automation task"
             RESTCall("automateApp", webrtc_app)
+
+            print "[P] Recording Video call"
+            recordVideo(WEBRTC_APPLICATION)
         
         #Wait
         print "[P] Waiting for the " + str(duration) + " seconds to finish..."
