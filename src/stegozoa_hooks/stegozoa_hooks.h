@@ -4,8 +4,8 @@
 #include <stdint.h>
 #include "macros.h"
 
-#define BUFFER_LEN 270
-#define MSG_SIZE 270 //2*8 + header (14 bytes)
+#define BUFFER_LEN 256
+#define MSG_SIZE 256 //2*8 + header (14 bytes)
 #define NPEERS 256
 
 #define MAX_CAPACITY 4000

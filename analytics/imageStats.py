@@ -40,9 +40,11 @@ def computePsnrSsim(cap_folder):
                         ssim = float(words[5])
                     except:
                         continue
-                    totalPsnr += psnr
-                    totalSsim += ssim
-                    n += 1
+                    if psnr != 100 and ssim != 1:
+                        totalPsnr += psnr
+                        totalSsim += ssim
+                        n += 1
+
                 elif len(words) == 5 and words[1] == "Resolution":
                     try:
                         res = getRes(words[3], words[4])
