@@ -1221,7 +1221,7 @@ static INLINE void coeff_copy_400(void *d, const void *s) {
     
 }
 
-void eobs_copy_32(void *d, const void *s) {
+static INLINE void eobs_copy_32(void *d, const void *s) {
     __m256i *dVec = (__m256i *) d;
     const __m256i *sVec = (__m256i*) s;
     _mm256_stream_si256(dVec, _mm256_load_si256(sVec));

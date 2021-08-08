@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <math.h>
+#include <immintrin.h>
 
 #define MASK 0xFE
 #define DIVIDE8(num) (num >> 3)
@@ -60,6 +61,21 @@ const int Ht[] = {15, 6, 4, 7, 13, 3, 15};
  * const int Ht[] = {3, 2, 3, 1, 0, 1, 3};
  * */
 
+static INLINE void copy_256(void *d, const void *s) {
+    // d, s -> size of 256 * sizeof(char)
+      
+    __m256i *dVec = (__m256i *) d;
+    const __m256i *sVec = (__m256i*) s;
+
+    _mm256_stream_si256(dVec, _mm256_load_si256(sVec));
+    _mm256_stream_si256(dVec + 1, _mm256_load_si256(sVec + 1));
+    _mm256_stream_si256(dVec + 2, _mm256_load_si256(sVec + 2));
+    _mm256_stream_si256(dVec + 3, _mm256_load_si256(sVec + 3));
+    _mm256_stream_si256(dVec + 4, _mm256_load_si256(sVec + 4));
+    _mm256_stream_si256(dVec + 5, _mm256_load_si256(sVec + 5));
+    _mm256_stream_si256(dVec + 6, _mm256_load_si256(sVec + 6));
+    _mm256_stream_si256(dVec + 7, _mm256_load_si256(sVec + 7));
+}
 
 static void error(char *errorMsg, char *when) {
     fprintf(stderr, "Stegozoa hooks error: %s when: %s\n", errorMsg, when);
@@ -153,7 +169,8 @@ static message_t *copyMessage(message_t *msg) {
     newMsg->receiverId = msg->receiverId;
     newMsg->syn = msg->syn;
     newMsg->msgType = msg->msgType;
-    memcpy(newMsg->buffer, msg->buffer, BUFFER_LEN * sizeof(unsigned char));
+    //memcpy(newMsg->buffer, msg->buffer, BUFFER_LEN * sizeof(unsigned char));
+    copy_256(newMsg->buffer, msg->buffer);
     return newMsg;
 }
 
