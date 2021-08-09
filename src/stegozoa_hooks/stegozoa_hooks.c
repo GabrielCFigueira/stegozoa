@@ -111,10 +111,10 @@ static context_t *newContext(uint32_t ssrc) {
     context->stcData = (stc_data_t *) malloc(sizeof(stc_data_t));
     return context;
 }
-
+/*
 static void releaseMessage(message_t *message) {
     free(message);
-}
+}*/
 /*
 static void appendMessage(context_t *ctx, message_t *newMsg) {
     message_t *msg = ctx->msg;
@@ -223,14 +223,14 @@ static context_t *getDecoderContext(uint32_t ssrc, uint64_t rtpSession) {
     return ctx;
 }
 
-
+/*
 static void insertConstant(uint32_t constant, unsigned char buffer[]) {
     buffer[0] = constant & 0xff;
     buffer[1] = (constant >> 8) & 0xff;
     buffer[2] = (constant >> 16) & 0xff;
     buffer[3] = (constant >> 24) & 0xff;
 
-}
+}*/
 
 static uint32_t obtainConstant(unsigned char buffer[]) {
     uint32_t constant = 0;
