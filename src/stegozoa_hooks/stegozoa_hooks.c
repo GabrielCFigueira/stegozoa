@@ -38,7 +38,7 @@ static int decoderFd;
 static int embbedInitialized = 0;
 static int extractInitialized = 0;
 
-static pthread_t thread;
+//static pthread_t thread;
 static pthread_mutex_t barrier_mutex;
 
 static uint32_t constant = 0xC76E;
@@ -61,6 +61,8 @@ const int Ht[] = {15, 6, 4, 7, 13, 3, 15};
  * const int Ht[] = {3, 2, 3, 1, 0, 1, 3};
  * */
 
+
+/*
 static void copy_256(void *d, const void *s) {
     // d, s -> size of 256 * sizeof(char)
       
@@ -75,7 +77,7 @@ static void copy_256(void *d, const void *s) {
     _mm256_stream_si256(dVec + 5, _mm256_load_si256(sVec + 5));
     _mm256_stream_si256(dVec + 6, _mm256_load_si256(sVec + 6));
     _mm256_stream_si256(dVec + 7, _mm256_load_si256(sVec + 7));
-}
+}*/
 
 static void error(char *errorMsg, char *when) {
     fprintf(stderr, "Stegozoa hooks error: %s when: %s\n", errorMsg, when);
@@ -113,7 +115,7 @@ static context_t *newContext(uint32_t ssrc) {
 static void releaseMessage(message_t *message) {
     free(message);
 }
-
+/*
 static void appendMessage(context_t *ctx, message_t *newMsg) {
     message_t *msg = ctx->msg;
     message_t *lastMsg = ctx->lastMsg;
@@ -174,7 +176,7 @@ static message_t *copyMessage(message_t *msg) {
     return newMsg;
 }
 
-
+*/
 static context_t *getEncoderContext(uint32_t ssrc) {
 
     for(int i = 0; i < n_encoders; i++)
@@ -195,7 +197,7 @@ static int containsId(context_t *ctx, int id) {
             return 1;
     return 0;
 }
-
+/*
 static context_t *getEncoderContextById(int id) {
 
     for(int i = 0; i < n_encoders; i++)
@@ -205,7 +207,7 @@ static context_t *getEncoderContextById(int id) {
 
     return NULL;
 }
-
+*/
 static context_t *getDecoderContext(uint32_t ssrc, uint64_t rtpSession) {
 
     for(int i = 0; i < n_decoders; i++)
@@ -257,7 +259,7 @@ static void shiftConstant(unsigned char buffer[]) { //the constant is in a 4 byt
 
 
 }
-
+/*
 static void insertSsrc(message_t *msg, uint32_t ssrc) {
     msg->size += 4;
 
@@ -266,7 +268,7 @@ static void insertSsrc(message_t *msg, uint32_t ssrc) {
     
     insertConstant(ssrc, msg->buffer + 10);
 }
-
+*/
 
 #if 0
 static void *fetchDataThread(void *args) {
@@ -444,7 +446,6 @@ static void *fetchDataThread(void *args) {
 
 }
 
-#endif
 
 static void discardMessage(context_t *ctx) {
     
@@ -455,6 +456,7 @@ static void discardMessage(context_t *ctx) {
     ctx->n_msg--;
 
 }
+#endif
 
 static void randomBitString(unsigned char *message, int n) {
     srand(clock());
