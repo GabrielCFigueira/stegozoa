@@ -268,7 +268,7 @@ static void insertSsrc(message_t *msg, uint32_t ssrc) {
 }
 
 
-
+#if 0
 static void *fetchDataThread(void *args) {
     
     while(1) {
@@ -444,6 +444,8 @@ static void *fetchDataThread(void *args) {
 
 }
 
+#endif
+
 static void discardMessage(context_t *ctx) {
     
     message_t *msg = ctx->msg;
@@ -454,12 +456,19 @@ static void discardMessage(context_t *ctx) {
 
 }
 
+static unsigned char *randomBitString(unsigned char *message, int n) {
+    srand(clock());
+    for(int i = 0; i < n; i++)
+        res[i] = rand() & 0x1;
+    return res;
+}
+
 static int obtainMessage(context_t *ctx, int size) {
     
     message_t *msg = ctx->msg;
     unsigned char *message = ctx->stcData->message;
 
-    int toSend = 0;
+/*    int toSend = 0;
 
     while(msg != NULL) {
         int msgSize = (msg->size << 3) - msg->bit;
@@ -486,8 +495,12 @@ static int obtainMessage(context_t *ctx, int size) {
 
     for(int i = toSend; i < size; i++)
         message[i] = 2;
-    
+        
     return toSend;
+    */
+    randomBitString(message, size);
+    
+    return size;
 }
 
 
@@ -782,10 +795,10 @@ int initializeEmbbed() {
         return 1;
     }
     
-    else if(pthread_create(&thread, NULL, fetchDataThread, NULL)) {
+/*    else if(pthread_create(&thread, NULL, fetchDataThread, NULL)) {
         error("Who knows", "Creating the encoder thread");
         return 1;
-    }
+    }*/
     
     if(pthread_mutex_init(&barrier_mutex, NULL) != 0) {
         error("Who knows", "Initializing mutex");
