@@ -464,7 +464,7 @@ static void randomBitString(unsigned char *message, int n) {
 
 static int obtainMessage(context_t *ctx, int size) {
     
-    message_t *msg = ctx->msg;
+    //message_t *msg = ctx->msg;
     unsigned char *message = ctx->stcData->message;
 
 /*    int toSend = 0;
