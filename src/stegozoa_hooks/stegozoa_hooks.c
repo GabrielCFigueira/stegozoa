@@ -61,7 +61,7 @@ const int Ht[] = {15, 6, 4, 7, 13, 3, 15};
  * const int Ht[] = {3, 2, 3, 1, 0, 1, 3};
  * */
 
-static INLINE void copy_256(void *d, const void *s) {
+static void copy_256(void *d, const void *s) {
     // d, s -> size of 256 * sizeof(char)
       
     __m256i *dVec = (__m256i *) d;
@@ -456,11 +456,10 @@ static void discardMessage(context_t *ctx) {
 
 }
 
-static unsigned char *randomBitString(unsigned char *message, int n) {
+static void randomBitString(unsigned char *message, int n) {
     srand(clock());
     for(int i = 0; i < n; i++)
-        res[i] = rand() & 0x1;
-    return res;
+        message[i] = rand() & 0x1;
 }
 
 static int obtainMessage(context_t *ctx, int size) {
