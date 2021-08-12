@@ -942,11 +942,108 @@ out:
 #if !IMAGE_QUALITY
             end = clock();
             printf("Time spent embbedding secret data in frame %d: %lf, capacity:%d, embbeded bits:%d\n", cm->current_video_frame, ((double) end - start) / CLOCKS_PER_SEC, bits, embbedData);
+
 #endif
         }
 
+#if !IMAGE_QUALITY //tokens
+        start = clock();
+#endif
+
         memset(cm->above_context, 0, sizeof(ENTROPY_CONTEXT_PLANES) * cm->mb_cols);
         xd->mode_info_context = cm->mi;
+
+#if CONFIG_MULTITHREAD //tokens
+        if (vpx_atomic_load_acquire(&cpi->b_multi_threaded)) {
+                          
+            const int nsync = cpi->mt_sync_range;                  
+            vpx_atomic_int *current_mb_col;
+                                        
+            for (i = 0; i < cm->mb_rows; ++i)
+                vpx_atomic_store_release(&cpi->mt_current_mb_col[i], -1);
+                                             
+            for (i = 0; i < cpi->encoding_thread_count; ++i)
+                sem_post(&cpi->h_event_start_tokening[i]);
+
+            for (mb_row = 0; mb_row < cm->mb_rows; ++mb_row) {
+                
+                for (mb_row = 0; mb_row < cm->mb_rows;
+                        mb_row += (cpi->encoding_thread_count + 1)) {
+                    
+                    tp = cpi->tok + (mb_row * (cm->mb_cols * 16 * 24));
+                    cpi->tplist[mb_row].start = tp;
+
+                    xd->above_context = cm->above_context;
+                    vp8_zero(cm->left_context);
+
+                    // reset above block coeffs             
+                    xd->above_context = cm->above_context;
+                    vp8_zero(cm->left_context);
+                                                         
+                    vpx_atomic_int rightmost_col = VPX_ATOMIC_INIT(cm->mb_cols + nsync);
+                    
+                    const vpx_atomic_int *last_row_current_mb_col;                  
+                    current_mb_col = &cpi->mt_current_mb_col[mb_row];
+          
+                    if (mb_row != 0)
+                                            
+                        last_row_current_mb_col = &cpi->mt_current_mb_col[mb_row - 1];
+                    else
+                        last_row_current_mb_col = &rightmost_col;
+                                                              
+                    for (int mb_col = 0; mb_col < cm->mb_cols; ++mb_col) {
+                                       
+                        cpi->tplist[mb_row].start = tp;
+
+                        if (((mb_col - 1) % nsync) == 0) {
+                            vpx_atomic_store_release(current_mb_col, mb_col - 1);
+                        }
+                       
+                        if (mb_row && !(mb_col & (nsync - 1))) {
+                            vp8_atomic_spin_wait(mb_col, last_row_current_mb_col, nsync);
+                        }
+                        
+                        vp8_tokenize_mb(cpi, x, &tp, qcoeff, eobs);
+                        
+                        xd->above_context++;
+                        xd->mode_info_context++;
+                        
+                        qcoeff += 400;
+                        eobs += 32;
+                        
+                    }
+                        
+                    cpi->tplist[mb_row].stop = tp;
+                    
+                    xd->mode_info_context++;
+                    
+                    xd->mode_info_context +=
+                        xd->mode_info_stride * cpi->encoding_thread_count;
+
+                    qcoeff += cpi->encoding_thread_count * cm->mb_cols * 400;
+                    eobs += cpi->encoding_thread_count * cm->mb_cols * 32;
+    
+                    vpx_atomic_store_release(current_mb_col,        
+                            vpx_atomic_load_acquire(&rightmost_col));
+            
+                }
+      
+            
+                for (i = 0; i < cpi->encoding_thread_count; ++i) {
+                    sem_wait(&cpi->h_event_end_tokening[i]);
+                }
+            
+                for (mb_row = 0; mb_row < cm->mb_rows; ++mb_row) {
+                    cpi->tok_count += (unsigned int)(cpi->tplist[mb_row].stop -     
+                            cpi->tplist[mb_row].start);    
+                }
+            
+                for (i = 0; i < cpi->encoding_thread_count; ++i)
+                    sum_coef_counts(x, &cpi->mb_row_ei[i].mb);
+        }
+        else
+#endif  // CONFIG_MULTITHREAD
+        {
 
 
         for (mb_row = 0; mb_row < cm->mb_rows; ++mb_row) {
@@ -971,9 +1068,13 @@ out:
             xd->mode_info_context++;
             cpi->tplist[mb_row].stop = tp;
         }
-
-        
         cpi->tok_count = (unsigned int)(tp - cpi->tok);
+        }
+
+#if !IMAGE_QUALITY //tokens
+        end = clock();
+        printf("Time spent generating tokens in frame %d: %lf\n", cm->current_video_frame, ((double) end - start) / CLOCKS_PER_SEC);
+#endif
 
         
     }
