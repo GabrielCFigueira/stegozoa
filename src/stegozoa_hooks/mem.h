@@ -1,5 +1,5 @@
-#ifndef STEGOZOA_HOOKS_H_
-#define STEGOZOA_HOOKS_H_
+#ifndef MEM_H_
+#define MEM_H_
 
 
 
