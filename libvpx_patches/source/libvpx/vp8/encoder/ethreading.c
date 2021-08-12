@@ -328,7 +328,7 @@ static THREAD_FUNCTION thread_encoding_proc(void *p_data) {
         VP8_COMMON *cm = &cpi->common;
         TOKENEXTRA *tp;                       
         short *qcoeff = cpi->qcoeff + (ithread + 1) * cm->mb_cols * 400;
-        char *eobs = cpi->eobs + (ithread + 1) * cm->mb_cols * 25;
+        char *eobs = cpi->eobs + (ithread + 1) * cm->mb_cols * 32;
 
         xd->mode_info_context = cm->mi + cm->mode_info_stride * (ithread + 1);
   
@@ -366,7 +366,7 @@ static THREAD_FUNCTION thread_encoding_proc(void *p_data) {
                 xd->mode_info_context++;
 
                 qcoeff += 400;
-                eobs += 25;
+                eobs += 32;
             }
 
             cpi->tplist[mb_row].stop = tp;
@@ -376,7 +376,7 @@ static THREAD_FUNCTION thread_encoding_proc(void *p_data) {
             vpx_atomic_store_release(current_mb_col, mb_col + nsync);
 
             qcoeff += cpi->encoding_thread_count * cm->mb_cols * 400;
-            eobs += cpi->encoding_thread_count * cm->mb_cols * 25;
+            eobs += cpi->encoding_thread_count * cm->mb_cols * 32;
 
         }
 
