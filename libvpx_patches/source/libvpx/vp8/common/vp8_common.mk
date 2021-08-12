@@ -69,8 +69,6 @@ VP8_COMMON_SRCS-yes += common/stegozoa_hooks/stegozoa_hooks.h
 VP8_COMMON_SRCS-yes += common/stegozoa_hooks/stegozoa_hooks.c
 VP8_COMMON_SRCS-yes += common/stegozoa_hooks/macros.h
 VP8_COMMON_SRCS-$(HAVE_AVX2) += common/stegozoa_hooks/mem.h
-VP8_COMMON_SRCS-$(HAVE_AVX2) += common/stegozoa_hooks/mem.c
-
 
 
 VP8_COMMON_SRCS-yes += common/treecoder.c
