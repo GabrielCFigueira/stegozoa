@@ -970,19 +970,14 @@ out:
             for (mb_row = 0; mb_row < cm->mb_rows;    
                     mb_row += (cpi->encoding_thread_count + 1)) {
                     
-
                 tp = cpi->tok + (mb_row * (cm->mb_cols * 16 * 24));
                 cpi->tplist[mb_row].start = tp;
-
-                xd->above_context = cm->above_context;
-                vp8_zero(cm->left_context);
 
                 // reset above block coeffs             
                 xd->above_context = cm->above_context;
                 vp8_zero(cm->left_context);
 
                 vpx_atomic_int rightmost_col = VPX_ATOMIC_INIT(cm->mb_cols + nsync);
-                    
                 const vpx_atomic_int *last_row_current_mb_col;                  
                 current_mb_col = &cpi->mt_current_mb_col[mb_row];
               
@@ -994,8 +989,6 @@ out:
                 
                 for (int mb_col = 0; mb_col < cm->mb_cols; ++mb_col) {
                                        
-                    cpi->tplist[mb_row].start = tp;
-
                     if (((mb_col - 1) % nsync) == 0) {
                         vpx_atomic_store_release(current_mb_col, mb_col - 1);
                     }
@@ -1018,7 +1011,6 @@ out:
                 cpi->tplist[mb_row].stop = tp;
                 
                 xd->mode_info_context++;
-                
                 xd->mode_info_context +=
                     xd->mode_info_stride * cpi->encoding_thread_count;
 
@@ -1027,9 +1019,7 @@ out:
 
                 vpx_atomic_store_release(current_mb_col,        
                         vpx_atomic_load_acquire(&rightmost_col));
-        
             }
-      
             
             for (i = 0; i < cpi->encoding_thread_count; ++i) {
                 sem_wait(&cpi->h_event_end_tokening[i]);

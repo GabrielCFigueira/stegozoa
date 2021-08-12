@@ -9,7 +9,7 @@
 #define MAX_CAPACITY 4000
 #define HEIGHT 7
 #define HPOW 128 //2 ** h
-#define WIDTH 2
+#define WIDTH 4
 
 typedef struct message {
 	unsigned char buffer[MSG_SIZE];
