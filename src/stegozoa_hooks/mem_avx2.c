@@ -1,3 +1,5 @@
+#include "mem_avx2.h"
+
 #include <immintrin.h>
 
 
