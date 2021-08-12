@@ -3,8 +3,8 @@
 
 
 
-INLINE void copy_256(void *d, const void *s);
-INLINE void coeff_copy_400(void *d, const void *s);
-INLINE void eobs_copy_32(void *d, const void *s);
+inline void copy_256(void *d, const void *s);
+inline void coeff_copy_400(void *d, const void *s);
+inline void eobs_copy_32(void *d, const void *s);
 
 #endif

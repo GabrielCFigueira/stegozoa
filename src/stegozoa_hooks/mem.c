@@ -3,7 +3,7 @@
 
 
 
-INLINE void copy_256(void *d, const void *s) {
+inline void copy_256(void *d, const void *s) {
     // d, s -> size of 256 * sizeof(char)
       
     __m256i *dVec = (__m256i *) d;
@@ -19,7 +19,7 @@ INLINE void copy_256(void *d, const void *s) {
     _mm256_stream_si256(dVec + 7, _mm256_load_si256(sVec + 7));
 }
 
-INLINE void coeff_copy_400(void *d, const void *s) {
+inline void coeff_copy_400(void *d, const void *s) {
     // d, s -> size of 400 * sizeof(short)
       
     __m256i *dVec = (__m256i *) d;
@@ -57,7 +57,7 @@ INLINE void coeff_copy_400(void *d, const void *s) {
     
 }
 
-INLINE void eobs_copy_32(void *d, const void *s) {
+inline void eobs_copy_32(void *d, const void *s) {
     __m256i *dVec = (__m256i *) d;
     const __m256i *sVec = (__m256i*) s;
     _mm256_stream_si256(dVec, _mm256_load_si256(sVec));
