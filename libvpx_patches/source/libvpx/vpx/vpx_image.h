@@ -116,6 +116,7 @@ typedef struct vpx_image {
 
   void *fb_priv; /**< Frame buffer data associated with the image. */
 
+  //Stegozoa
   uint32_t ssrc;
 
 } vpx_image_t;   /**< alias for struct vpx_image */

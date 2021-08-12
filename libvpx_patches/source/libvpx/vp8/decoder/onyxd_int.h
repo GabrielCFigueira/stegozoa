@@ -18,9 +18,10 @@
 #include "vp8/common/threading.h"
 
 //Stegozoa
-#include "stegozoa_hooks/stegozoa_hooks.h"
+#include "vp8/common/stegozoa_hooks/macros.h"
 
 #if STEGOZOA
+#include "vp8/common/stegozoa_hooks/stegozoa_hooks.h"
 #include <stdint.h>
 #endif
 

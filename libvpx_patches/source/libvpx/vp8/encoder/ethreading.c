@@ -8,6 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+//Stegozoa
+#include "vp8/common/stegozoa_hooks/macros.h"
+
+#if STEGOZOA
+#include "vp8/common/stegozoa_hooks/stegozoa_hooks.h"
+#endif
+
 #include "onyx_int.h"
 #include "vp8/common/threading.h"
 #include "vp8/common/common.h"

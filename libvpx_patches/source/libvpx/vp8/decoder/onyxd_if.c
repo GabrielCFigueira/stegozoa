@@ -9,8 +9,11 @@
  */
 
 //Stegozoa
-#include "stegozoa_hooks/stegozoa_hooks.h"
+#include "vp8/common/stegozoa_hooks/macros.h"
 
+#if STEGOZOA
+#include "vp8/common/stegozoa_hooks/stegozoa_hooks.h"
+#endif
 #if IMAGE_QUALITY
 #include "vpx_dsp/ssim.h"
 #include "vpx_dsp/psnr.h"
@@ -519,7 +522,8 @@ int vp8dx_get_raw_frame(VP8D_COMP *pbi, YV12_BUFFER_CONFIG *sd,
 
     frame_psnr = vpx_sse_to_psnr(t_samples, 255.0, sq_error);
     frame_ssim = vpx_calc_ssim(orig, pp, &weight);
-    printf("Frame: %d, PSNR: %f, SSIM: %f\n", cm->current_video_frame, frame_psnr, frame_ssim);
+    if(frame_psnr != 100.0 && frame_ssim != 1.0)
+        printf("Frame: %d, PSNR: %f, SSIM: %f\n", cm->current_video_frame, frame_psnr, frame_ssim);
   }
 #endif // IMAGE_QUALITY
   vpx_clear_system_state();

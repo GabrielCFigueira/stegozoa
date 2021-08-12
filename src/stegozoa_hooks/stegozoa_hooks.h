@@ -2,7 +2,6 @@
 #define STEGOZOA_HOOKS_H_
 
 #include <stdint.h>
-#include "macros.h"
 
 #define MSG_SIZE 256 //2*8 + header (14 bytes)
 #define NPEERS 256

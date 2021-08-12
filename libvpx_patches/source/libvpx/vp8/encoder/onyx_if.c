@@ -9,11 +9,11 @@
  */
 
 //Stegozoa
-#include "stegozoa_hooks/stegozoa_hooks.h"
+#include "vp8/common/stegozoa_hooks/macros.h"
 #include <time.h>
 
-#if 0 & IMAGE_QUALITY
-#include "vpx_dsp/ssim.h"
+#if STEGOZOA
+#include "vp8/common/stegozoa_hooks/stegozoa_hooks.h"
 #endif
 
 #include "vpx_config.h"
@@ -5186,49 +5186,6 @@ int vp8_get_compressed_data(VP8_COMP *cpi, unsigned int *frame_flags,
   if (cpi->b_calculate_psnr && cpi->pass != 1 && cm->show_frame) {
     generate_psnr_packet(cpi);
   }
-
-#if 0 & IMAGE_QUALITY
-  
-  //Stegozoa: psnr and ssim
-  if (cm->show_frame) {
-      
-    uint64_t ye, ue, ve;
-    YV12_BUFFER_CONFIG *orig = cpi->Source;
-    YV12_BUFFER_CONFIG *recon = cpi->common.frame_to_show;
-    unsigned int y_width = cpi->common.Width;
-    unsigned int y_height = cpi->common.Height;
-    unsigned int uv_width = (y_width + 1) / 2;
-    unsigned int uv_height = (y_height + 1) / 2;
-    int y_samples = y_height * y_width;
-    int uv_samples = uv_height * uv_width;
-    int t_samples = y_samples + 2 * uv_samples;
-
-
-    YV12_BUFFER_CONFIG *pp = &cm->post_proc_buffer;
-    double sq_error;
-    double frame_psnr, frame_ssim;
-    double weight = 0;
-
-    vp8_deblock(cm, cm->frame_to_show, &cm->post_proc_buffer,
-                  cm->filter_level * 10 / 6);
-    vpx_clear_system_state();
-
-    ye = calc_plane_error(orig->y_buffer, orig->y_stride, pp->y_buffer,
-                            pp->y_stride, y_width, y_height);
-    ue = calc_plane_error(orig->u_buffer, orig->uv_stride, pp->u_buffer,
-                            pp->uv_stride, uv_width, uv_height);
-
-    ve = calc_plane_error(orig->v_buffer, orig->uv_stride, pp->v_buffer,
-                            pp->uv_stride, uv_width, uv_height);
-
-    sq_error = (double)(ye + ue + ve);
-
-    frame_psnr = vpx_sse_to_psnr(t_samples, 255.0, sq_error);
-    frame_ssim = vpx_calc_ssim(cpi->Source, &cm->post_proc_buffer, &weight);
-    printf("Frame: %d, PSNR: %f, SSIM: %f\n", cm->current_video_frame, frame_psnr, frame_ssim);
-  }
- 
-#endif // IMAGE_QUALITY
 
 #if CONFIG_INTERNAL_STATS
 

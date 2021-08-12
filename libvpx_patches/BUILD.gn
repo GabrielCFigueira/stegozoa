@@ -80,8 +80,6 @@ config("libvpx_config") {
 
       # libvpx has many static functions in header, which trigger this warning.
       "-Wno-unused-function",
-
-      "-mavx2", #Stegozoa
     ]
 
     # Fixes a mac / ios simulator link error for vpx_scaled_2d:
@@ -355,7 +353,7 @@ static_library("libvpx") {
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [ "//build/config/compiler:no_chromium_code" ]
   configs += [ ":libvpx_config" ]
-  deps = [ "//third_party/libvpx/source/libvpx/stegozoa_hooks:stegozoa_hooks($host_toolchain)" ]
+  deps = []
   if (!_force_generic_srcs) {
     if (current_cpu == "x86" || (current_cpu == "x64" && !is_msan)) {
       deps += [
