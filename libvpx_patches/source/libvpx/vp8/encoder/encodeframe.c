@@ -14,7 +14,7 @@
 #if STEGOZOA
 #include <time.h>
 #include "vp8/common/stegozoa_hooks/stegozoa_hooks.h"
-#include "vp8/common/stegozoa_hooks/mem.h"
+#include "vp8/common/stegozoa_hooks/mem_avx2.h"
 #endif
 
 

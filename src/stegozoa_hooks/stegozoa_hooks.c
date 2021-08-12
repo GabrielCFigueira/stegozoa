@@ -1,5 +1,5 @@
 #include "stegozoa_hooks.h"
-#include "mem.h"
+#include "mem_avx2.h"
 #include <stdio.h>
 #include <errno.h>
 #include <sys/stat.h>

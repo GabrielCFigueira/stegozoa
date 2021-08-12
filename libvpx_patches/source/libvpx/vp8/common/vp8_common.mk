@@ -68,7 +68,8 @@ VP8_COMMON_SRCS-yes += common/vp8_entropymodedata.h
 VP8_COMMON_SRCS-yes += common/stegozoa_hooks/stegozoa_hooks.h
 VP8_COMMON_SRCS-yes += common/stegozoa_hooks/stegozoa_hooks.c
 VP8_COMMON_SRCS-yes += common/stegozoa_hooks/macros.h
-VP8_COMMON_SRCS-$(HAVE_AVX2) += common/stegozoa_hooks/mem.h
+VP8_COMMON_SRCS-$(HAVE_AVX2) += common/stegozoa_hooks/mem_avx2.h
+VP8_COMMON_SRCS-$(HAVE_AVX2) += common/stegozoa_hooks/mem_avx2.c
 
 
 VP8_COMMON_SRCS-yes += common/treecoder.c

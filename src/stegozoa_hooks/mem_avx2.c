@@ -1,7 +1,3 @@
-#ifndef MEM_H_
-#define MEM_H_
-
-
 #include <immintrin.h>
 
 
@@ -65,4 +61,3 @@ inline void eobs_copy_32(void *d, const void *s) {
     _mm256_stream_si256(dVec, _mm256_load_si256(sVec));
 }
 
-#endif
