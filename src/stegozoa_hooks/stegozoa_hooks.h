@@ -4,17 +4,16 @@
 #include <stdint.h>
 #include "macros.h"
 
-#define BUFFER_LEN 256
 #define MSG_SIZE 256 //2*8 + header (14 bytes)
 #define NPEERS 256
 
 #define MAX_CAPACITY 4000
 #define HEIGHT 7
 #define HPOW 128 //2 ** h
-#define WIDTH 4
+#define WIDTH 2
 
 typedef struct message {
-	unsigned char buffer[BUFFER_LEN];
+	unsigned char buffer[MSG_SIZE];
 	int bit;
 	int size;
 

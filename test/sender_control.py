@@ -41,7 +41,6 @@ sync_late = 4
 #############################################################################
 # Choose WebRTC application to test
 
-#WEBRTC_APPLICATION = "https://coderpad.io/<chatroom-id>"
 WEBRTC_APPLICATION = "https://whereby.com/elgrabiel"
 #WEBRTC_APPLICATION = "https://appr.tc/r/"
 #WEBRTC_APPLICATION = https://meet.jit.si/<chatroom-id>"
@@ -282,18 +281,6 @@ def SampleRegularExact(sample_index, config, baseline, network_condition, chromi
             RESTCall("automateApp", webrtc_app)
 
             time.sleep(20)
-        elif("coderpad" in WEBRTC_APPLICATION):
-            time.sleep(20)
-
-            print "[P] Performing local automation task"
-            automateChromium(webrtc_app, "caller")
-
-            time.sleep(5)
-
-            print "[P] Performing remote automation task"
-            RESTCall("automateApp", webrtc_app)
-
-            time.sleep(20)
         elif("whereby" in WEBRTC_APPLICATION):
             time.sleep(20) #Ten seconds were apparently not enough for starting up Chromium
 
@@ -424,18 +411,6 @@ def SampleStegozoaExact(sample_index, config, baseline, network_condition, chrom
         print "[P] Starting local Chromium Browser"
         
         if("appr.tc" in WEBRTC_APPLICATION):
-            time.sleep(20)
-
-            print "[P] Performing local automation task"
-            automateChromium(webrtc_app, "caller")
-
-            time.sleep(5)
-
-            print "[P] Performing remote automation task"
-            RESTCall("automateApp", webrtc_app)
-
-            time.sleep(20)
-        elif("coderpad" in WEBRTC_APPLICATION):
             time.sleep(20)
 
             print "[P] Performing local automation task"
