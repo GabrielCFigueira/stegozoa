@@ -54,7 +54,7 @@ headless_env['DISPLAY'] = ':0'
 network_conditions = [
     
     #No changes to the network
-    [[None], [None], "regular.regular"],
+    [[None], "regular.regular"],
 
     #2ms, 5ms, 10ms
     #Variation of RTT between VM1 / VM3
