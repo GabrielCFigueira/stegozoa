@@ -176,18 +176,18 @@ def impairNetworkOperationWithOpenServer():
         network_condition = request.data
         if(len(network_condition.split("|")) == 1):
             PrintColored("[P] Setting network conditions: tc qdisc add dev " + NETWORK_INTERFACE + " root " + network_condition, 'red')
-            os.system("tc qdisc add dev " + NETWORK_INTERFACE + " root " + network_condition)
+            os.system("sudo tc qdisc add dev " + NETWORK_INTERFACE + " root " + network_condition)
         elif(len(network_condition.split("|")) == 3):
             network_condition = network_condition.split("|")
             
             #Combine netem with htb
-            os.system("tc qdisc add dev " + NETWORK_INTERFACE + " root handle 1: " + network_condition[0])
+            os.system("sudo tc qdisc add dev " + NETWORK_INTERFACE + " root handle 1: " + network_condition[0])
             print "[P] Setting network conditions: tc qdisc add dev " + NETWORK_INTERFACE + " root handle 1: " + network_condition[0]
 
-            os.system("tc class add dev " + NETWORK_INTERFACE + " parent 1:1 classid 1:12 " + network_condition[1])
+            os.system("sudo tc class add dev " + NETWORK_INTERFACE + " parent 1:1 classid 1:12 " + network_condition[1])
             print "[P] Setting network conditions: tc qdisc add dev " + NETWORK_INTERFACE + " parent 1:1 classid 1:12 " + network_condition[1]
 
-            os.system("tc qdisc add dev " + NETWORK_INTERFACE + " parent 1:12 " + network_condition[2])
+            os.system("sudo tc qdisc add dev " + NETWORK_INTERFACE + " parent 1:12 " + network_condition[2])
             print "[P] Setting network conditions: tc qdisc add dev " + NETWORK_INTERFACE + " parent 1:12 " + network_condition[2]
     return "Set network conditions for " + NETWORK_INTERFACE
 
@@ -196,7 +196,7 @@ def impairNetworkOperationWithOpenServer():
 @app.route('/resumeNetworkOperation', methods=['POST'])
 def resumeNetworkOperation():
     PrintColored("Applying default network settings", 'red')
-    os.system("tc qdisc del dev " + NETWORK_INTERFACE + " root")
+    os.system("sudo tc qdisc del dev " + NETWORK_INTERFACE + " root")
     return "Set default network settings"
 
 @app.route('/routeMiddlebox', methods=['POST'])
