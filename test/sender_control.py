@@ -54,30 +54,26 @@ headless_env['DISPLAY'] = ':0'
 network_conditions = [
     
     #No changes to the network
-    [[None], [None], "regular.regular"]]
-"""
+    [[None], [None], "regular.regular"],
+
     #2ms, 5ms, 10ms
     #Variation of RTT between VM1 / VM3
-    [["netem delay 7ms"],  ["netem delay 7ms 1ms distribution normal"],    "delay_15.delay_15"],
-    [["netem delay 25ms"], ["netem delay 7ms 1ms distribution normal"],   "delay_50.delay_15"],
-    [["netem delay 50ms"], ["netem delay 7ms 1ms distribution normal"],  "delay_100.delay_15"],
+    [["netem delay 7ms"], "delay_15.delay_15"],
+    [["netem delay 25ms"], "delay_50.delay_15"],
+    [["netem delay 50ms"], "delay_100.delay_15"],
 
     
     #Set baseline RTT between VM1 / VM3, vary bandwidth conditions (TC)
-    [["htb default 12", "htb rate 1500kbit ceil 1500kbit", "netem delay 25ms"],  ["netem delay 7ms 1ms distribution normal"],  "delay_50-bw_1500.delay_15"],
-    [["htb default 12",   "htb rate 750kbit ceil 750kbit", "netem delay 25ms"],  ["netem delay 7ms 1ms distribution normal"],  "delay_50-bw_750.delay_15"],
-    [["htb default 12",   "htb rate 250kbit ceil 250kbit", "netem delay 25ms"],  ["netem delay 7ms 1ms distribution normal"],  "delay_50-bw_250.delay_15"],
+    [["htb default 12", "htb rate 1500kbit ceil 1500kbit", "netem delay 25ms"], "delay_50-bw_1500.delay_15"],
+    [["htb default 12",   "htb rate 750kbit ceil 750kbit", "netem delay 25ms"], "delay_50-bw_750.delay_15"],
+    [["htb default 12",   "htb rate 250kbit ceil 250kbit", "netem delay 25ms"], "delay_50-bw_250.delay_15"],
     
     #Set baseline RTT between VM1 / VM3, vary packet loss conditions
-    [["netem delay 25ms loss 2%"],  ["netem delay 7ms 1ms distribution normal"],  "delay_50-loss_2.delay_15"],
-    [["netem delay 25ms loss 5%"],  ["netem delay 7ms 1ms distribution normal"],  "delay_50-loss_5.delay_15"],
-    [["netem delay 25ms loss 10%"], ["netem delay 7ms 1ms distribution normal"],  "delay_50-loss_10.delay_15"],
+    [["netem delay 25ms loss 2%"], "delay_50-loss_2.delay_15"],
+    [["netem delay 25ms loss 5%"], "delay_50-loss_5.delay_15"],
+    [["netem delay 25ms loss 10%"], "delay_50-loss_10.delay_15"],
 
-    #Openserver RTT variation for the baseline case
-    [["netem delay 25ms 2ms distribution normal"], ["netem delay 25ms 2ms distribution normal"],   "delay_50.delay_50"],
-    [["netem delay 25ms 2ms distribution normal"], ["netem delay 50ms 5ms distribution normal"],   "delay_50.delay_100"],
-"""
-#]
+]
 
 #################################################################################
 
@@ -173,23 +169,23 @@ def SaveStegozoaDownloadResult(sample, log_created):
 def ImpairNetworkOperation(network_condition):
     if(network_condition[0] is not None):
         if(len(network_condition) == 1):
-            os.system("tc qdisc add dev " + NETWORK_INTERFACE + " root " + network_condition[0])
+            os.system("sudo tc qdisc add dev " + NETWORK_INTERFACE + " root " + network_condition[0])
             print "[P] Setting network conditions: tc qdisc add dev " + NETWORK_INTERFACE + " root " + network_condition[0]
         elif(len(network_condition) == 3):
             #Combine netem with htb
-            os.system("tc qdisc add dev " + NETWORK_INTERFACE + " root handle 1: " + network_condition[0])
+            os.system("sudo tc qdisc add dev " + NETWORK_INTERFACE + " root handle 1: " + network_condition[0])
             print "[P] Setting network conditions: tc qdisc add dev " + NETWORK_INTERFACE + " root handle 1: " + network_condition[0]
 
-            os.system("tc class add dev " + NETWORK_INTERFACE + " parent 1:1 classid 1:12 " + network_condition[1])
+            os.system("sudo tc class add dev " + NETWORK_INTERFACE + " parent 1:1 classid 1:12 " + network_condition[1])
             print "[P] Setting network conditions: tc qdisc add dev " + NETWORK_INTERFACE + " parent 1:1 classid 1:12 " + network_condition[1]
 
-            os.system("tc qdisc add dev " + NETWORK_INTERFACE + " parent 1:12 " + network_condition[2])
+            os.system("sudo tc qdisc add dev " + NETWORK_INTERFACE + " parent 1:12 " + network_condition[2])
             print "[P] Setting network conditions: tc qdisc add dev " + NETWORK_INTERFACE + " parent 1:12 " + network_condition[2]
     else:
         print "[P] Setting network conditions: None"
 
 def ResumeNetworkOperation():
-    os.system("tc qdisc del dev " + NETWORK_INTERFACE + " root")
+    os.system("sudo tc qdisc del dev " + NETWORK_INTERFACE + " root")
 
 def routeMiddlebox():
     PrintColored("Applying routing through middlebox", 'red')
@@ -216,15 +212,15 @@ def SampleRegularExact(sample_index, config, baseline, network_condition, chromi
     if not os.path.exists(regular_cap_folder + baseline):
         os.makedirs(regular_cap_folder + baseline)
 
-    if not os.path.exists(regular_cap_folder + baseline + "/" + network_condition[2]):
-        os.makedirs(regular_cap_folder + baseline + "/" + network_condition[2])
+    if not os.path.exists(regular_cap_folder + baseline + "/" + network_condition[1]):
+        os.makedirs(regular_cap_folder + baseline + "/" + network_condition[1])
 
     chat_sample = sample_list[sample_index]
 
         
-    if(chat_sample[:-4].replace(" ", "") + "_" + str(sample_index % 246) + "_chromium_log" not in os.listdir(regular_cap_folder + baseline + "/" + network_condition[2])):
+    if(chat_sample[:-4].replace(" ", "") + "_" + str(sample_index % 246) + "_chromium_log" not in os.listdir(regular_cap_folder + baseline + "/" + network_condition[1])):
         print ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
-        print "Network conditions: " + network_condition[2]
+        print "Network conditions: " + network_condition[1]
         ImpairNetworkOperation(network_condition[0])
         
         if(len(network_condition[0]) == 1):
@@ -256,7 +252,7 @@ def SampleRegularExact(sample_index, config, baseline, network_condition, chromi
         
         webrtc_app = WEBRTC_APPLICATION
         if("appr.tc" in WEBRTC_APPLICATION):
-            label = network_condition[2].replace(".","-")
+            label = network_condition[1].replace(".","-")
             webrtc_app = WEBRTC_APPLICATION + "_reg_" + label + "_" + str(sample_index % 246)
 
         print "[P] Starting Remote Chromium Browser at: " + str(start_remote_chromium)
@@ -306,8 +302,8 @@ def SampleRegularExact(sample_index, config, baseline, network_condition, chromi
         start_remote_traffic_capture = now + sync_early
         
         print "[P] Starting Remote Traffic Capture at: " + str(start_remote_traffic_capture)
-        print "[P] Capturing " + baseline + "/" + network_condition[2] + "/" + chat_sample[:-4] + "_" + str(sample_index % 246) + ".pcap"
-        RESTCallMiddlebox("captureTraffic", str(start_remote_traffic_capture) + "," + chat_sample[:-4].replace(" ", "") + "_" + str(sample_index % 246) + "," + regular_cap_folder + baseline + "/" + network_condition[2] + "/" + "," + str(capture_duration))
+        print "[P] Capturing " + baseline + "/" + network_condition[1] + "/" + chat_sample[:-4] + "_" + str(sample_index % 246) + ".pcap"
+        RESTCallMiddlebox("captureTraffic", str(start_remote_traffic_capture) + "," + chat_sample[:-4].replace(" ", "") + "_" + str(sample_index % 246) + "," + regular_cap_folder + baseline + "/" + network_condition[1] + "/" + "," + str(capture_duration))
 
 
         #Wait for tcpdump to finish
@@ -321,7 +317,7 @@ def SampleRegularExact(sample_index, config, baseline, network_condition, chromi
         RESTCall("killFFMPEG")
 
         print "[P] Killing Chromium"
-        KillChromium(regular_cap_folder + baseline + "/" + network_condition[2] + "/" + chat_sample[:-4].replace(" ", "") + "_" + str(sample_index % 246), True)
+        KillChromium(regular_cap_folder + baseline + "/" + network_condition[1] + "/" + chat_sample[:-4].replace(" ", "") + "_" + str(sample_index % 246), True)
 
         print "[P] Killing Remote Chromium Browser"
         RESTCall("killChromium")
@@ -350,13 +346,13 @@ def SampleStegozoaExact(sample_index, config, baseline, network_condition, chrom
     if not os.path.exists(stegozoa_cap_folder + baseline):
         os.makedirs(stegozoa_cap_folder + baseline)
 
-    if not os.path.exists(stegozoa_cap_folder + baseline + "/" + network_condition[2]):
-        os.makedirs(stegozoa_cap_folder + baseline + "/" + network_condition[2])
+    if not os.path.exists(stegozoa_cap_folder + baseline + "/" + network_condition[1]):
+        os.makedirs(stegozoa_cap_folder + baseline + "/" + network_condition[1])
 
     chat_sample = sample_list[sample_index]
 
     #Check sample existence by checking whether chromium log is saved
-    if(chat_sample[:-4].replace(" ", "") + "_" + str(sample_index % 246) + "_chromium_log" not in os.listdir(stegozoa_cap_folder + baseline + "/" + network_condition[2])):
+    if(chat_sample[:-4].replace(" ", "") + "_" + str(sample_index % 246) + "_chromium_log" not in os.listdir(stegozoa_cap_folder + baseline + "/" + network_condition[1])):
         print ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 
         ImpairNetworkOperation(network_condition[0])
@@ -398,7 +394,7 @@ def SampleStegozoaExact(sample_index, config, baseline, network_condition, chrom
 
         webrtc_app = WEBRTC_APPLICATION
         if("appr.tc" in WEBRTC_APPLICATION):
-            label = network_condition[2].replace(".","-")
+            label = network_condition[1].replace(".","-")
             webrtc_app = WEBRTC_APPLICATION + "_stego_" + label + "_" + str(sample_index % 246)
 
         print "[P] Starting Remote Chromium Browser at: " + str(start_remote_chromium)
@@ -445,7 +441,7 @@ def SampleStegozoaExact(sample_index, config, baseline, network_condition, chrom
         RESTCall("pingTest")
         StegozoaPingTest(True)
         time.sleep(20) # ping time
-        SaveStegozoaPingResult(stegozoa_cap_folder + baseline + "/" + network_condition[2] + "/" + chat_sample[:-4].replace(" ", "") + "_" + str(sample_index % 246), True)
+        SaveStegozoaPingResult(stegozoa_cap_folder + baseline + "/" + network_condition[1] + "/" + chat_sample[:-4].replace(" ", "") + "_" + str(sample_index % 246), True)
         RESTCall("killPingTest")
 
         #Start Traffic Capture in sync
@@ -453,8 +449,8 @@ def SampleStegozoaExact(sample_index, config, baseline, network_condition, chrom
         start_remote_traffic_capture = now + sync_early
         
         print "[P] Starting Remote Traffic Capture at: " + str(start_remote_traffic_capture)
-        print "[P] Capturing " + baseline + "/" + network_condition[2] + "/" + chat_sample[:-4] + "_" + str(sample_index % 246) + ".pcap"
-        RESTCallMiddlebox("captureTraffic", str(start_remote_traffic_capture) + "," + chat_sample[:-4].replace(" ", "") + "_" + str(sample_index % 246) + "," + stegozoa_cap_folder + baseline + "/" + network_condition[2] + "/" + "," + str(capture_duration))
+        print "[P] Capturing " + baseline + "/" + network_condition[1] + "/" + chat_sample[:-4] + "_" + str(sample_index % 246) + ".pcap"
+        RESTCallMiddlebox("captureTraffic", str(start_remote_traffic_capture) + "," + chat_sample[:-4].replace(" ", "") + "_" + str(sample_index % 246) + "," + stegozoa_cap_folder + baseline + "/" + network_condition[1] + "/" + "," + str(capture_duration))
 
         
         #Start Stegozoa data transmission after tcpdump start
@@ -473,19 +469,19 @@ def SampleStegozoaExact(sample_index, config, baseline, network_condition, chrom
         RESTCall("killFFMPEG")
 
         print "[P] Killing Chromium"
-        KillChromium(stegozoa_cap_folder + baseline + "/" + network_condition[2] + "/" + chat_sample[:-4].replace(" ", "") + "_" + str(sample_index % 246), True)
+        KillChromium(stegozoa_cap_folder + baseline + "/" + network_condition[1] + "/" + chat_sample[:-4].replace(" ", "") + "_" + str(sample_index % 246), True)
 
         print "[P] Killing Remote Chromium Browser"
         RESTCall("killChromium")
 
         print "[P] saving local results for Stegozoa transmission"
-        SaveStegozoaDownloadResult(stegozoa_cap_folder + baseline + "/" + network_condition[2] + "/" + chat_sample[:-4].replace(" ", "") + "_" + str(sample_index % 246), True)
+        SaveStegozoaDownloadResult(stegozoa_cap_folder + baseline + "/" + network_condition[1] + "/" + chat_sample[:-4].replace(" ", "") + "_" + str(sample_index % 246), True)
 
         print "[P] Killing Remote Download Test"
         RESTCall("killDownloadTest")
 
         print "[P] Killing Stegozoa"
-        KillStegozoa(stegozoa_cap_folder + baseline + "/" + network_condition[2] + "/" + chat_sample[:-4].replace(" ", "") + "_" + str(sample_index % 246), True)
+        KillStegozoa(stegozoa_cap_folder + baseline + "/" + network_condition[1] + "/" + chat_sample[:-4].replace(" ", "") + "_" + str(sample_index % 246), True)
         print "[P] Killing Remote Stegozoa instance"
         RESTCall("killStegozoa")
         time.sleep(2)
