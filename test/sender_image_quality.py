@@ -22,15 +22,15 @@ def SampleRegularImage(sample_index, config, baseline, network_condition, chromi
     if not os.path.exists(regular_cap_folder + baseline):
         os.makedirs(regular_cap_folder + baseline)
 
-    if not os.path.exists(regular_cap_folder + baseline + "/" + network_condition[2]):
-        os.makedirs(regular_cap_folder + baseline + "/" + network_condition[2])
+    if not os.path.exists(regular_cap_folder + baseline + "/" + network_condition[1]):
+        os.makedirs(regular_cap_folder + baseline + "/" + network_condition[1])
 
     chat_sample = sample_list[sample_index]
 
         
-    if(chat_sample[:-4].replace(" ", "") + "_" + str(sample_index % 246) + "_chromium_log" not in os.listdir(regular_cap_folder + baseline + "/" + network_condition[2])):
+    if(chat_sample[:-4].replace(" ", "") + "_" + str(sample_index % 246) + "_chromium_log" not in os.listdir(regular_cap_folder + baseline + "/" + network_condition[1])):
         print ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
-        print "Network conditions: " + network_condition[2]
+        print "Network conditions: " + network_condition[1]
         ImpairNetworkOperation(network_condition[0])
         
         if(len(network_condition[0]) == 1):
@@ -62,7 +62,7 @@ def SampleRegularImage(sample_index, config, baseline, network_condition, chromi
         
         webrtc_app = WEBRTC_APPLICATION
         if("appr.tc" in WEBRTC_APPLICATION):
-            label = network_condition[2].replace(".","-")
+            label = network_condition[1].replace(".","-")
             webrtc_app = WEBRTC_APPLICATION + "_reg_" + label + "_" + str(sample_index % 246)
         elif("meet.jit.si" in WEBRTC_APPLICATION):
             webrtc_app = WEBRTC_APPLICATION + "reg"
@@ -125,7 +125,7 @@ def SampleRegularImage(sample_index, config, baseline, network_condition, chromi
         RESTCall("killFFMPEG")
 
         print "[P] Killing Chromium"
-        KillChromium(regular_cap_folder + baseline + "/" + network_condition[2] + "/" + chat_sample[:-4].replace(" ", "") + "_" + str(sample_index % 246), True)
+        KillChromium(regular_cap_folder + baseline + "/" + network_condition[1] + "/" + chat_sample[:-4].replace(" ", "") + "_" + str(sample_index % 246), True)
 
         print "[P] Killing Remote Chromium Browser"
         RESTCall("killChromium")
@@ -154,13 +154,13 @@ def SampleStegozoaImage(sample_index, config, baseline, network_condition, chrom
     if not os.path.exists(stegozoa_cap_folder + baseline):
         os.makedirs(stegozoa_cap_folder + baseline)
 
-    if not os.path.exists(stegozoa_cap_folder + baseline + "/" + network_condition[2]):
-        os.makedirs(stegozoa_cap_folder + baseline + "/" + network_condition[2])
+    if not os.path.exists(stegozoa_cap_folder + baseline + "/" + network_condition[1]):
+        os.makedirs(stegozoa_cap_folder + baseline + "/" + network_condition[1])
 
     chat_sample = sample_list[sample_index]
 
     #Check sample existence by checking whether chromium log is saved
-    if(chat_sample[:-4].replace(" ", "") + "_" + str(sample_index % 246) + "_chromium_log" not in os.listdir(stegozoa_cap_folder + baseline + "/" + network_condition[2])):
+    if(chat_sample[:-4].replace(" ", "") + "_" + str(sample_index % 246) + "_chromium_log" not in os.listdir(stegozoa_cap_folder + baseline + "/" + network_condition[1])):
         print ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 
         ImpairNetworkOperation(network_condition[0])
@@ -202,7 +202,7 @@ def SampleStegozoaImage(sample_index, config, baseline, network_condition, chrom
 
         webrtc_app = WEBRTC_APPLICATION
         if("appr.tc" in WEBRTC_APPLICATION):
-            label = network_condition[2].replace(".","-")
+            label = network_condition[1].replace(".","-")
             webrtc_app = WEBRTC_APPLICATION + "_stego_" + label + "_" + str(sample_index % 246)
         elif("meet.jit.si" in WEBRTC_APPLICATION):
             webrtc_app = WEBRTC_APPLICATION + "stego"
@@ -269,19 +269,19 @@ def SampleStegozoaImage(sample_index, config, baseline, network_condition, chrom
         RESTCall("killFFMPEG")
 
         print "[P] Killing Chromium"
-        KillChromium(stegozoa_cap_folder + baseline + "/" + network_condition[2] + "/" + chat_sample[:-4].replace(" ", "") + "_" + str(sample_index % 246), True)
+        KillChromium(stegozoa_cap_folder + baseline + "/" + network_condition[1] + "/" + chat_sample[:-4].replace(" ", "") + "_" + str(sample_index % 246), True)
 
         print "[P] Killing Remote Chromium Browser"
         RESTCall("killChromium")
 
         print "[P] saving local results for Stegozoa transmission"
-        SaveStegozoaDownloadResult(stegozoa_cap_folder + baseline + "/" + network_condition[2] + "/" + chat_sample[:-4].replace(" ", "") + "_" + str(sample_index % 246), False)
+        SaveStegozoaDownloadResult(stegozoa_cap_folder + baseline + "/" + network_condition[1] + "/" + chat_sample[:-4].replace(" ", "") + "_" + str(sample_index % 246), False)
 
         print "[P] Killing Remote Download Test"
         RESTCall("killDownloadTest")
 
         print "[P] Killing Stegozoa"
-        KillStegozoa(stegozoa_cap_folder + baseline + "/" + network_condition[2] + "/" + chat_sample[:-4].replace(" ", "") + "_" + str(sample_index % 246), False)
+        KillStegozoa(stegozoa_cap_folder + baseline + "/" + network_condition[1] + "/" + chat_sample[:-4].replace(" ", "") + "_" + str(sample_index % 246), False)
         print "[P] Killing Remote Stegozoa instance"
         RESTCall("killStegozoa")
         time.sleep(2)
@@ -294,9 +294,7 @@ def SampleStegozoaImage(sample_index, config, baseline, network_condition, chrom
 
 if __name__ == "__main__":
     
-    network_condition = [[None], [None], "regular.regular"]
-
-    #PSNR and SSIM values with and without Stegozoa
+    network_condition = [[None], "regular.regular"]
 
     baseline = "Chat"
 
