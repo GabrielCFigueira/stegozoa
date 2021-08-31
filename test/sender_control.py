@@ -54,8 +54,8 @@ headless_env['DISPLAY'] = ':0'
 network_conditions = [
     
     #No changes to the network
-    [[None], "regular.regular"],
-
+    [[None], "regular.regular"]]
+"""
     #2ms, 5ms, 10ms
     #Variation of RTT between VM1 / VM3
     [["netem delay 7ms"], "delay_15.delay_15"],
@@ -73,8 +73,8 @@ network_conditions = [
     [["netem delay 25ms loss 5%"], "delay_50-loss_5.delay_15"],
     [["netem delay 25ms loss 10%"], "delay_50-loss_10.delay_15"],
 
-]
-
+#]
+"""
 #################################################################################
 
 def RESTCall(method, args=""):
