@@ -54,27 +54,27 @@ headless_env['DISPLAY'] = ':0'
 network_conditions = [
     
     #No changes to the network
-    [[None], "regular.regular"]]
-"""
+    #[[None], "regular"],
+
     #2ms, 5ms, 10ms
     #Variation of RTT between VM1 / VM3
-    [["netem delay 7ms"], "delay_15.delay_15"],
-    [["netem delay 25ms"], "delay_50.delay_15"],
-    [["netem delay 50ms"], "delay_100.delay_15"],
+    #[["netem delay 7ms"], "delay_15.delay_15"],
+    [["netem delay 25ms"], "delay_50"],
+    #[["netem delay 50ms"], "delay_100.delay_15"],
 
     
     #Set baseline RTT between VM1 / VM3, vary bandwidth conditions (TC)
-    [["htb default 12", "htb rate 1500kbit ceil 1500kbit", "netem delay 25ms"], "delay_50-bw_1500.delay_15"],
-    [["htb default 12",   "htb rate 750kbit ceil 750kbit", "netem delay 25ms"], "delay_50-bw_750.delay_15"],
-    [["htb default 12",   "htb rate 250kbit ceil 250kbit", "netem delay 25ms"], "delay_50-bw_250.delay_15"],
+    [["htb default 12", "htb rate 1500kbit ceil 1500kbit", "netem delay 25ms"], "delay_50-bw_1500"],
+    [["htb default 12",   "htb rate 250kbit ceil 250kbit", "netem delay 25ms"], "delay_50-bw_250"],
+    [["htb default 12",   "htb rate 750kbit ceil 750kbit", "netem delay 25ms"], "delay_50-bw_750"],
     
     #Set baseline RTT between VM1 / VM3, vary packet loss conditions
-    [["netem delay 25ms loss 2%"], "delay_50-loss_2.delay_15"],
-    [["netem delay 25ms loss 5%"], "delay_50-loss_5.delay_15"],
-    [["netem delay 25ms loss 10%"], "delay_50-loss_10.delay_15"],
+    [["netem delay 25ms loss 2%"], "delay_50-loss_2"],
+    [["netem delay 25ms loss 10%"], "delay_50-loss_10"],
+    [["netem delay 25ms loss 5%"], "delay_50-loss_5"],
 
-#]
-"""
+]
+
 #################################################################################
 
 def RESTCall(method, args=""):
