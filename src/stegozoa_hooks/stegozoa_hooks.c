@@ -442,7 +442,8 @@ static void discardMessage(context_t *ctx) {
 static int obtainMessage(context_t *ctx, int size) {
     
     message_t *msg = ctx->msg;
-    unsigned char *message = ctx->stcData->message;
+    //unsigned char *message = ctx->stcData->message;
+    unsigned char *message = ctx->stcData->steganogram;
 
     int toSend = 0;
 
@@ -626,7 +627,9 @@ int flushEncoder(uint32_t ssrc, int simulcast, int size) {
     context_t *ctx = getEncoderContext(ssrc);
     stc_data_t *data = ctx->stcData;
 
-    int msgSize = size / WIDTH;
+    //int msgSize = size / WIDTH;
+    int msgSize = size;
+
     int toSend = obtainMessage(ctx, msgSize);
 
     if(pthread_mutex_unlock(&barrier_mutex)) {
@@ -634,7 +637,7 @@ int flushEncoder(uint32_t ssrc, int simulcast, int size) {
         return 0; //should abort
     }
 
-    stc(size, data);
+    //stc(size, data);
 
     return toSend;
 
@@ -702,9 +705,10 @@ int readQdctLsb(unsigned char **cover, int *row_bits, int n_rows, unsigned char*
 
 void flushDecoder(unsigned char *steganogram, unsigned char *message, uint32_t ssrc, uint64_t rtpSession, int size) {
 
-    int msgSize = size / WIDTH;
-    reverseStc(steganogram, message, size);
-
+    //int msgSize = size / WIDTH;
+    //reverseStc(steganogram, message, size);
+    int msgSize = size;
+    message = steganogram;
 
     message_t *msg = getDecoderContext(ssrc, rtpSession)->msg;
 
