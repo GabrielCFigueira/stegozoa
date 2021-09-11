@@ -42,6 +42,28 @@ def stopRecordJitsi():
     pyautogui.click(1031, 387, button='left')
     time.sleep(1)
 
+def recordWhereby():
+    pyautogui.click(962, 981, button='left')
+    
+    time.sleep(1)
+    pyautogui.click(962, 767, button='left')
+
+    time.sleep(1)
+    pyautogui.click(962, 216, button='left')
+    
+    time.sleep(1)
+    pyautogui.click(1209, 561, button='left')
+    
+
+    time.sleep(1)
+    
+    pyautogui.click(1888, 322, button='left')
+    
+    time.sleep(0.2)
+    pyautogui.click(1893, 380, button='left')
+    
+    time.sleep(1)
+    pyautogui.click(1805, 531, button='left')
 
 def ApprtcAutomation():
     #Appr.tc requires a single "Join Button" to be pressed to join a call
@@ -71,7 +93,8 @@ def gracefullyCloseChromium():
 def recordVideo(webrtc_application):
     print "Mouse position: " + str(pyautogui.position())
     if("whereby" in webrtc_application):
-        print "WhereBy Automation: Recording TODO"
+        print "WhereBy Automation: Recording to browser"
+        recordWhereby()
     elif("meet.jit.si" in webrtc_application):
         print "Jitsi Automation: Recording to Dropbox."
         recordJitsi()
@@ -79,7 +102,7 @@ def recordVideo(webrtc_application):
 def stopRecordVideo(webrtc_application):
     print "Mouse position: " + str(pyautogui.position())
     if("whereby" in webrtc_application):
-        print "WhereBy Automation: Stopping Recording TODO"
+        print "WhereBy Automation: Nothing to do"
     elif("meet.jit.si" in webrtc_application):
         print "Jitsi Automation: Stopping Recording to Dropbox."
         stopRecordJitsi()
