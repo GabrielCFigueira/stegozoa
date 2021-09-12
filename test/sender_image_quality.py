@@ -107,16 +107,16 @@ def SampleRegularImage(sample_index, config, baseline, network_condition, chromi
             print "[P] Performing remote automation task"
             RESTCall("automateApp", webrtc_app)
 
-            print "[P] Recording Video call"
-            recordVideo(WEBRTC_APPLICATION)
+            
+        print "[P] Recording Video call"
+        recordVideo(WEBRTC_APPLICATION)
         
         #Wait
         print "[P] Waiting for the " + str(duration) + " seconds to finish..."
         time.sleep(duration)
         
-        if("meet.jit.si" in WEBRTC_APPLICATION):
-            print "[P] Stopping recording Video call"
-            stopRecordVideo(WEBRTC_APPLICATION)
+        print "[P] Stopping recording Video call"
+        stopRecordVideo(WEBRTC_APPLICATION)
 
         # Cleanup
         print "[P] Killing FFMPEG stream"
@@ -245,8 +245,9 @@ def SampleStegozoaImage(sample_index, config, baseline, network_condition, chrom
             print "[P] Performing remote automation task"
             RESTCall("automateApp", webrtc_app)
 
-            print "[P] Recording Video call"
-            recordVideo(WEBRTC_APPLICATION)
+            
+        print "[P] Recording Video call"
+        recordVideo(WEBRTC_APPLICATION)
 
         
         #Start Stegozoa data transmission after tcpdump
@@ -258,9 +259,8 @@ def SampleStegozoaImage(sample_index, config, baseline, network_condition, chrom
         print "[P] Waiting for the " + str(duration) + " seconds to finish..."
         time.sleep(duration)
         
-        if("meet.jit.si" in WEBRTC_APPLICATION):
-            print "[P] Stopping recording Video call"
-            stopRecordVideo(WEBRTC_APPLICATION)
+        print "[P] Stopping recording Video call"
+        stopRecordVideo(WEBRTC_APPLICATION)
 
         # Cleanup
         print "[P] Killing FFMPEG stream"
