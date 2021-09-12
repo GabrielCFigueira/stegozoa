@@ -27,7 +27,7 @@ def recordJitsi():
     pyautogui.click(1020, 436, button='left')
     
     time.sleep(1)
-    pyautogui.click(1020, 522, button='left')
+    pyautogui.click(1020, 541, button='left')
 
 def stopRecordJitsi():
     pyautogui.moveTo(1126, 986)
