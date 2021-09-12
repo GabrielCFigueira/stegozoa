@@ -946,10 +946,6 @@ out:
 #endif
         }
 
-#if !IMAGE_QUALITY //tokens
-        start = clock();
-#endif
-
         memset(cm->above_context, 0, sizeof(ENTROPY_CONTEXT_PLANES) * cm->mb_cols);
         xd->mode_info_context = cm->mi;
 
@@ -977,11 +973,6 @@ out:
             cpi->tplist[mb_row].stop = tp;
         }
         cpi->tok_count = (unsigned int)(tp - cpi->tok);
-
-#if !IMAGE_QUALITY //tokens
-        end = clock();
-        printf("Time spent generating tokens in frame %d: %lf\n", cm->current_video_frame, ((double) end - start) / CLOCKS_PER_SEC);
-#endif
 
         
     }
