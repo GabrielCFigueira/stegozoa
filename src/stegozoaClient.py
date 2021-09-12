@@ -48,7 +48,7 @@ def send():
     while True:
         
         try:
-            message = server_socket.recv(4096)
+            message = server_socket.recv(1024)
         except socket.error as e:
             newConnection()
 

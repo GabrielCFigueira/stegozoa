@@ -8,4 +8,4 @@ client.connect(socketPath)
     
 
 while True:
-    client.send(bytes("why are we still here... just to suffer?" * 20, 'ascii'))
+    client.send(bytes("why are we still here... just to suffer?" * 100, 'ascii'))

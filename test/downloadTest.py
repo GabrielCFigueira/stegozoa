@@ -24,4 +24,4 @@ data = 0
 while True:
     message = client.recv(4096)
     data += len(message) * 8
-    client.send(bytes("Hello" * 200, 'ascii')) #so both endpoints are sending
+    client.send(bytes("Hello" * 2000, 'ascii')) #so both endpoints are sending
