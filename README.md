@@ -13,3 +13,12 @@ Warning: You may need to access the graphical interface of the VM on the first t
 # Code
 
 In `src/stegozoa_hooks` you will find the code that is bundled with Chromium, which implements the embedding and extraction functions. The set of files present in `libvpx_patches` replaces key libvpx files in order to call this code. The stegozoa library (`src/libstegozoa.py`) communicates with these hooks through named pipes, exposing a set of function calls in order to support communication: initialize(), send() and receive().
+
+# Tests
+
+## Steganalysis
+
+For jitsi, we need a dropbox account: https://www.dropbox.com/install-linux
+
+`cd ~ && wget -O - "https://www.dropbox.com/download?plat=lnx.x86_64" | tar xzf -`
+`~/.dropbox-dist/dropboxd`
