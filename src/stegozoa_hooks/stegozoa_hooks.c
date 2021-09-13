@@ -276,7 +276,7 @@ static void *fetchDataThread(void *args) {
             
             if(size > MSG_SIZE) {
                 error("Message too big", "Parsing the header of the new message");
-                fprintf("Size: %d\n", size);
+                printf("Size: %d\n", size);
                 fflush(stdout);
                 releaseMessage(newMsg);
                 continue;
