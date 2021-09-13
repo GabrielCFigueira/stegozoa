@@ -5,6 +5,8 @@ from sender_control import *
 # register psnr and ssim values for how long
 duration = 60
 
+WEBRTC_APPLICATION = "whereby.com"
+#WEBRTC_APPLICATION = "https://meet.jit.si/12349876"
 
 
 def SampleRegularImage(sample_index, config, baseline, network_condition, chromium_build):
@@ -66,6 +68,8 @@ def SampleRegularImage(sample_index, config, baseline, network_condition, chromi
             webrtc_app = WEBRTC_APPLICATION + "_reg_" + label + "_" + str(sample_index % 246)
         elif("meet.jit.si" in WEBRTC_APPLICATION):
             webrtc_app = WEBRTC_APPLICATION + "reg"
+        elif("whereby.com" in WEBRTC_APPLICATION):
+            webrtc_app = "https://regular." + WEBRTC_APPLICATION + "/regular"
 
         print "[P] Starting Remote Chromium Browser at: " + str(start_remote_chromium)
         print "[P] Starting WebRTC Application: " + webrtc_app
@@ -206,6 +210,8 @@ def SampleStegozoaImage(sample_index, config, baseline, network_condition, chrom
             webrtc_app = WEBRTC_APPLICATION + "_stego_" + label + "_" + str(sample_index % 246)
         elif("meet.jit.si" in WEBRTC_APPLICATION):
             webrtc_app = WEBRTC_APPLICATION + "stego"
+        elif("whereby.com" in WEBRTC_APPLICATION):
+            webrtc_app = "https://stegozoa." + WEBRTC_APPLICATION + "/stegozoa"
 
         print "[P] Starting Remote Chromium Browser at: " + str(start_remote_chromium)
         RESTCall("startChromium", str(start_remote_chromium) + "," + chromium_build + "," + webrtc_app)

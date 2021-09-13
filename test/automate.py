@@ -27,7 +27,7 @@ def recordJitsi():
     pyautogui.click(1020, 436, button='left')
     
     time.sleep(1)
-    pyautogui.click(1020, 541, button='left')
+    pyautogui.click(1020, 522, button='left')
 
 def stopRecordJitsi():
     pyautogui.moveTo(1126, 986)
@@ -41,6 +41,12 @@ def stopRecordJitsi():
     time.sleep(1)
     pyautogui.click(1031, 387, button='left')
     time.sleep(1)
+
+def stopRecordWhereby():
+    pyautogui.click(961, 981, button='left')
+
+    time.sleep(1)
+    pyautogui.click(1650, 374, button='left')
 
 def recordWhereby():
     pyautogui.click(962, 981, button='left')
@@ -102,7 +108,8 @@ def recordVideo(webrtc_application):
 def stopRecordVideo(webrtc_application):
     print "Mouse position: " + str(pyautogui.position())
     if("whereby" in webrtc_application):
-        print "WhereBy Automation: Nothing to do"
+        print "WhereBy Automation: Stopping Recording and Saving File"
+        stopRecordWhereby()
     elif("meet.jit.si" in webrtc_application):
         print "Jitsi Automation: Stopping Recording to Dropbox."
         stopRecordJitsi()
