@@ -47,6 +47,7 @@ def stopRecordWhereby():
 
     time.sleep(1)
     pyautogui.click(1650, 374, button='left')
+    time.sleep(2)
 
 def recordWhereby():
     pyautogui.click(962, 981, button='left')
