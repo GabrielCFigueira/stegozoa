@@ -71,18 +71,19 @@ def sendMessage(message):
         encoderPipe = open(encoderPipePath, 'wb')
 
 
-def processRetransmission(syn, retransmissions, mutex, message):
+def processRetransmission(syn, retransmissions, message):
+    global sendMutex
     while True:
        
-        mutex.acquire()
+        sendMutex.acquire()
         size = len(retransmissions)
         if syn in retransmissions:
             sendMessage(message)
         else:
-            mutex.release()
+            sendMutex.release()
             return
 
-        mutex.release()
+        sendMutex.release()
 
         time.sleep(110 - 100 * (0.995 ** size))
 
@@ -197,7 +198,7 @@ class recvQueue:
 
                     response = createMessage(3, receiver, sender, 0, 0, create2byte(actualSyn), True)
                     
-                    thread = threading.Thread(target=processRetransmission, args=(actualSyn, self.retransmissions, sendMutex, response), daemon=True)
+                    thread = threading.Thread(target=processRetransmission, args=(actualSyn, self.retransmissions, response), daemon=True)
                     thread.start() #have single thread doing this? TODO
 
 
