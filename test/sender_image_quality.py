@@ -281,13 +281,13 @@ def SampleStegozoaImage(sample_index, config, baseline, network_condition, chrom
         RESTCall("killChromium")
 
         print "[P] saving local results for Stegozoa transmission"
-        SaveStegozoaDownloadResult(stegozoa_cap_folder + baseline + "/" + network_condition[1] + "/" + chat_sample[:-4].replace(" ", "") + "_" + str(sample_index % 246), False)
+        SaveStegozoaDownloadResult(stegozoa_cap_folder + baseline + "/" + network_condition[1] + "/" + chat_sample[:-4].replace(" ", "") + "_" + str(sample_index % 246), True)
 
         print "[P] Killing Remote Download Test"
         RESTCall("killDownloadTest")
 
         print "[P] Killing Stegozoa"
-        KillStegozoa(stegozoa_cap_folder + baseline + "/" + network_condition[1] + "/" + chat_sample[:-4].replace(" ", "") + "_" + str(sample_index % 246), False)
+        KillStegozoa(stegozoa_cap_folder + baseline + "/" + network_condition[1] + "/" + chat_sample[:-4].replace(" ", "") + "_" + str(sample_index % 246), True)
         print "[P] Killing Remote Stegozoa instance"
         RESTCall("killStegozoa")
         time.sleep(2)
