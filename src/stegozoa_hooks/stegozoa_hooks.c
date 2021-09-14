@@ -273,14 +273,9 @@ static void *fetchDataThread(void *args) {
             newMsg->buffer[5] = header[1];
 
             int size = parseSize(header, 0);
+            printf("Size: %d\n", size);
+            fflush(stdout);
             
-            if(size > MSG_SIZE) {
-                error("Message too big", "Parsing the header of the new message");
-                printf("Size: %d\n", size);
-                fflush(stdout);
-                releaseMessage(newMsg);
-                continue;
-            }
             read_bytes = read(encoderFd, newMsg->buffer + 6, size);
 
             unsigned char *flags = newMsg->buffer + 6;
