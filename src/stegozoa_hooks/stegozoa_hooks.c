@@ -273,6 +273,7 @@ static void *fetchDataThread(void *args) {
             newMsg->buffer[5] = header[1];
 
             int size = parseSize(header, 0);
+            fflush(stderr);
             printf("Size: %d\n", size);
             fflush(stdout);
             
