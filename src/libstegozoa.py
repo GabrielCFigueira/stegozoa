@@ -165,7 +165,7 @@ class recvQueue:
         self.mutex = threading.Lock()
 
     def addMessage(self, message, sender, receiver, frag, syn):
-        global messageQueue
+        global messageQueue, sendMutex
         
         self.mutex.acquire()
         print("Expected syn: " + str(self.syn))
@@ -197,7 +197,7 @@ class recvQueue:
 
                     response = createMessage(3, receiver, sender, 0, 0, create2byte(actualSyn), True)
                     
-                    thread = threading.Thread(target=processRetransmission, args=(actualSyn, self.retransmissions, self.mutex, response), daemon=True)
+                    thread = threading.Thread(target=processRetransmission, args=(actualSyn, self.retransmissions, sendMutex, response), daemon=True)
                     thread.start() #have single thread doing this? TODO
 
 
@@ -259,12 +259,17 @@ def broadcastKeepalive():
         sendMutex.release()
 
 def broadcastConnect():
+    global sendMutex
 
     while True:
         time.sleep(10)
 
+        sendMutex.acquire()
+
         message = createMessage(0, myId, 15) # 0xf = broadcast address
-        sendMessage(message)    
+        sendMessage(message)
+        
+        sendMutex.release()
 
 
 def retransmit(receiver, synBytes):
@@ -347,10 +352,10 @@ def receiveMessage():
             sendMutex.acquire()
             if sender not in messageToSend:
                 messageToSend[sender] = sendQueue()
-            sendMutex.release()
             
             message = createMessage(1, myId, sender, 0, 0, payload, True) #payload is the ssrc in this case, must be sent back
             sendMessage(message)
+            sendMutex.release()
             continue
         
         success = success + 1
