@@ -177,11 +177,6 @@ def SampleStegozoaImage(sample_index, config, baseline, network_condition, chrom
         
         print "Chromium build - " + chromium_build
 
-        #Start Stegozoa
-        print "[P] Starting Remote Stegozoa"
-        RESTCall("startStegozoa")
-        print "[P] Starting Stegozoa"
-        StartStegozoa()
 
         #Start FFMPEG in sync
         s = sched.scheduler(time.time, time.sleep)
@@ -255,6 +250,11 @@ def SampleStegozoaImage(sample_index, config, baseline, network_condition, chrom
         print "[P] Recording Video call"
         recordVideo(WEBRTC_APPLICATION)
 
+        #Start Stegozoa
+        print "[P] Starting Remote Stegozoa"
+        RESTCall("startStegozoa")
+        print "[P] Starting Stegozoa"
+        StartStegozoa()
         
         #Start Stegozoa data transmission after tcpdump
         print "[P] Starting Stegozoa data transmission"
