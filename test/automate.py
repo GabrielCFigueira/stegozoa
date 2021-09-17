@@ -62,15 +62,15 @@ def recordWhereby():
     pyautogui.click(1209, 561, button='left')
     
 
-    time.sleep(1)
+    #time.sleep(1)
     
-    pyautogui.click(1888, 322, button='left')
+    #pyautogui.click(1888, 322, button='left')
     
-    time.sleep(0.2)
-    pyautogui.click(1893, 380, button='left')
+    #time.sleep(0.2)
+    #pyautogui.click(1893, 380, button='left')
     
-    time.sleep(1)
-    pyautogui.click(1805, 531, button='left')
+    #time.sleep(1)
+    #pyautogui.click(1805, 531, button='left')
 
 def ApprtcAutomation():
     #Appr.tc requires a single "Join Button" to be pressed to join a call
