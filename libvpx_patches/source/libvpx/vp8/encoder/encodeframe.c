@@ -896,6 +896,8 @@ void vp8_encode_frame(VP8_COMP *cpi) {
 
     }
 
+    printf("Stegozoa real time:%d\n", CONFIG_REALTIME_ONLY);
+
 #if STEGOZOA
     {
         int i;
