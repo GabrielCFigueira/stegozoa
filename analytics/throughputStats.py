@@ -34,8 +34,7 @@ def computeThroughput(cap_folder):
 
     return Speed
 
-def plot(dist, savefile, title):
-
+def plot(dist, savefile):
 
     fig = plt.figure()
 
@@ -46,18 +45,42 @@ def plot(dist, savefile, title):
     plt.close(fig)
 
 
+def plot3(dists, savefile, labels):
+
+    fig = plt.figure()
+
+    plt.boxplot(dists, labels=labels)
+
+    fig.savefig(savefile)
+    plt.close(fig)
+
             
 
 if __name__ == "__main__":
 
     baseline = "Chat"
-    network_condition = "regular.regular"
 
+    network_condition = "delay_50"
     stegozoa_cap_folder = log_folder + "StegozoaTraffic" + "/" + baseline + "/" + network_condition
+    throughput = computeThroughput(stegozoa_cap_folder)
+    plot(throughput, "Throughput.pdf")
 
-    throughputs = computeThroughput(stegozoa_cap_folder)
 
+    network_conditions = ["delay_50-bw_1500", "delay_50-bw_750", "delay_50-bw_250"]
+    labels = ["1500Kbps", "750Kbps", "250Kbps"]
+    throughputs = []
+    for network_condition in network_conditions:
+        stegozoa_cap_folder = log_folder + "StegozoaTraffic" + "/" + baseline + "/" + network_condition
+        throughput = computeThroughput(stegozoa_cap_folder)
+        throughputs += [throughput]
+    plot3(throughputs, "Throughput_bw.pdf", labels)
 
-    plot(throughputs, "Throughput.pdf", "Stegozoa throughput")
-
+    network_conditions = ["delay_50-loss_2", "delay_50-loss_5", "delay_50-loss_10"]
+    labels = ["2% loss", "5% loss", "10% loss"]
+    throughputs = []
+    for network_condition in network_conditions:
+        stegozoa_cap_folder = log_folder + "StegozoaTraffic" + "/" + baseline + "/" + network_condition
+        throughput = computeThroughput(stegozoa_cap_folder)
+        throughputs += [throughput]
+    plot3(throughputs, "Throughput_loss.pdf", labels)
     
