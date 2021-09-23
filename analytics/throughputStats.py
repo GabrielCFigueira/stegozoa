@@ -38,7 +38,6 @@ def plot(dist, savefile):
 
     fig = plt.figure()
 
-    plt.title(title)
     plt.boxplot(dist)
 
     fig.savefig(savefile)
