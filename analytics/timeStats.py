@@ -56,11 +56,53 @@ def plot(stegoDist, regularDist, savefile):
 
 
     fig = plt.figure()
+    ax1 = fig.add_subplot(111)
 
     if not regularDist:
-        plt.boxplot(stegoDist, label=["Stegozoa"], notch=False, showfliers=False, showmeans=True, meanprops={'markerfacecolor': 'slategray', 'markeredgecolor': 'slategray'})
+        bp = ax1.boxplot(stegoDist, label=["Stegozoa"], notch=False, showfliers=False, showmeans=True, meanprops={'markerfacecolor': 'slategray', 'markeredgecolor': 'slategray'})
     else:
-        plt.boxplot([stegoDist, regularDist], labels=["Stegozoa", "Regular"], notch=False, showfliers=False, showmeans=True, meanprops={'markerfacecolor': 'slategray', 'markeredgecolor': 'slategray'})
+        bp = ax1.boxplot([stegoDist, regularDist], labels=["Stegozoa", "Regular"], notch=False, showfliers=False, showmeans=True, meanprops={'markerfacecolor': 'slategray', 'markeredgecolor': 'slategray'})
+
+
+
+    for box in bp['boxes']:
+        # change outline color
+        box.set(color="black", linewidth=2)#, edgecolor="black")
+
+    ## change color and linewidth of the whiskers
+    for whisker in bp['whiskers']:
+        whisker.set(color='black', linewidth=2)
+
+    ## change color and linewidth of the caps
+    for cap in bp['caps']:
+        cap.set(color='black', linewidth=2)
+
+    ## change color and linewidth of the medians
+    for median in bp['medians']:
+        median.set(color='red', linewidth=2)
+
+    ## change marker of the arithmetic means
+    for mean in bp['means']:
+        mean.set(marker='o')
+
+
+    if not regularDist:
+        plt.ylabel('Embedding times', fontsize=20)
+    else:
+        plt.ylabel('Encoding times', fontsize=20)
+    
+    ax1.set(ylim=(0,0.05))
+    ax1.yaxis.set_ticks(np.arange(0, 0.051, 0.005))
+
+    ax1.spines['right'].set_visible(False)
+    ax1.spines['top'].set_visible(False)
+    ax1.yaxis.grid(color='grey', linestyle='dotted', lw=0.2)
+
+    plt.setp(ax1.get_xticklabels(), fontsize=15)
+    plt.setp(ax1.get_yticklabels(), fontsize=15)
+
+    plt.tight_layout()
+
 
     fig.savefig(savefile)
     plt.close(fig)
