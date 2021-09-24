@@ -45,7 +45,6 @@ def plot(dist, savefile, label):
     for median in bp['medians']:
         median.set(color='red', linewidth=2)
 
-    ax1.set(xlim=(-0.5, 2.5), ylim=(0,15000))
     ax1.yaxis.set_ticks(np.arange(0, 15001, 1500))
     ax1.spines['right'].set_visible(False)
     ax1.spines['top'].set_visible(False)
@@ -72,7 +71,7 @@ def plot3(dists, savefile, labels):
     for median in bp['medians']:
         median.set(color='red', linewidth=2)
 
-    ax1.set(xlim=(-0.5, 2.5), ylim=(0,15000))
+    #ax1.set(xlim=(-0.5, 2.5), ylim=(0,15000))
     ax1.yaxis.set_ticks(np.arange(0, 15001, 1500))
     ax1.spines['right'].set_visible(False)
     ax1.spines['top'].set_visible(False)
