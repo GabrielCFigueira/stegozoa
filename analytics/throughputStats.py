@@ -67,7 +67,7 @@ def plot3(dists, savefile, labels):
     fig = plt.figure()
     ax1 = fig.add_subplot(111)
 
-    bp = ax1.boxplot(dists, labels=labels, notch=False, showfliers=False, showmeans=True, meanprops={'markerfacecolor': 'slategray', 'markeredgecolor': 'slategray'}, positions=pos)
+    bp = ax1.boxplot(dists, labels=labels, notch=False, showfliers=False, showmeans=True, meanprops={'markerfacecolor': 'slategray', 'markeredgecolor': 'slategray'})
 
     for median in bp['medians']:
         median.set(color='red', linewidth=2)

@@ -52,12 +52,10 @@ def computeTimes(cap_folder):
 
     return Embedding, Encoding
 
-def plot(stegoDist, regularDist, savefile, title):
+def plot(stegoDist, regularDist, savefile):
 
 
     fig = plt.figure()
-
-    plt.title(title)
 
     if not regularDist:
         plt.boxplot(stegoDist, label=["Stegozoa"], notch=False, showfliers=False, showmeans=True, meanprops={'markerfacecolor': 'slategray', 'markeredgecolor': 'slategray'})
@@ -82,7 +80,7 @@ if __name__ == "__main__":
     _, regularEncoding = computeTimes(regular_cap_folder)
 
 
-    plot(stegoEncoding, regularEncoding, "EncodingTimes.pdf", "Encoding times comparision")
-    plot(stegoEmbedding, [], "EmbeddingTimes.pdf", "Embedding times")
+    plot(stegoEncoding, regularEncoding, "EncodingTimes.pdf")
+    plot(stegoEmbedding, [], "EmbeddingTimes.pdf")
 
     
