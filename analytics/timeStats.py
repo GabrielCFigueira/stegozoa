@@ -88,11 +88,13 @@ def plot(stegoDist, regularDist, savefile):
 
     if not regularDist:
         plt.ylabel('Embedding times', fontsize=20)
+        ax1.set(ylim=(0,0.01))
+        ax1.yaxis.set_ticks(np.arange(0, 0.011, 0.005))
     else:
         plt.ylabel('Encoding times', fontsize=20)
+        ax1.set(ylim=(0,0.09))
+        ax1.yaxis.set_ticks(np.arange(0, 0.091, 0.005))
     
-    ax1.set(ylim=(0,0.07))
-    ax1.yaxis.set_ticks(np.arange(0, 0.071, 0.01))
 
     ax1.spines['right'].set_visible(False)
     ax1.spines['top'].set_visible(False)
