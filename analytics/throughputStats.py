@@ -66,10 +66,10 @@ def plot(dist, savefile, label):
     ax1.spines['right'].set_visible(False)
     ax1.spines['top'].set_visible(False)
     ax1.yaxis.grid(color='grey', linestyle='dotted', lw=0.2)
-    plt.ylabel('Stegozoa Throughput (bps)', fontsize=20)
+    plt.ylabel('Stegozoa Throughput (bps)', fontsize=26)
 
     plt.setp(ax1.get_xticklabels(), fontsize=20)
-    plt.setp(ax1.get_yticklabels(), fontsize=15)
+    plt.setp(ax1.get_yticklabels(), fontsize=20)
 
     plt.tight_layout()
 
@@ -106,15 +106,15 @@ def plot3(dists, savefile, labels):
         mean.set(marker='o')
 
 
-    #ax1.set(xlim=(-0.5, 2.5), ylim=(0,15000))
+    ax1.set(xlim=(-0.5, 2.5), ylim=(0,15000))
     ax1.yaxis.set_ticks(np.arange(0, 15001, 1500))
     ax1.spines['right'].set_visible(False)
     ax1.spines['top'].set_visible(False)
     ax1.yaxis.grid(color='grey', linestyle='dotted', lw=0.2)
-    plt.ylabel('Stegozoa Throughput (bps)', fontsize=20)
+    plt.ylabel('Stegozoa Throughput (bps)', fontsize=26)
 
     plt.setp(ax1.get_xticklabels(), fontsize=20)
-    plt.setp(ax1.get_yticklabels(), fontsize=15)
+    plt.setp(ax1.get_yticklabels(), fontsize=20)
 
     plt.tight_layout()
 
