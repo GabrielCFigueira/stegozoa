@@ -68,22 +68,20 @@ def computePsnrSsim(cap_folder):
             del(resDict[key])
     return psnrList, ssimList, resDict
 
-def plot(stegoDist, regularDist, savefile, title):
+def plot(stegoDist, regularDist, savefile):
 
 
     fig = plt.figure()
 
-    plt.title(title)
-    plt.boxplot([stegoDist, regularDist], labels=["Stegozoa", "Regular"])
+    plt.boxplot([stegoDist, regularDist], labels=["Stegozoa", "Regular"], notch=False, showfliers=False, showmeans=True, meanprops={'markerfacecolor': 'slategray', 'markeredgecolor': 'slategray'})
 
     fig.savefig(savefile)
     plt.close(fig)
 
-def barChart(resDict, savefile, title):
+def barChart(resDict, savefile):
 
     fig = plt.figure()
 
-    plt.title(title)
 
     sortedValues = []
     sortedKeys = list(resDict.keys())
@@ -110,8 +108,8 @@ if __name__ == "__main__":
     regularPsnrs, regularSsims, regularRes = computePsnrSsim(regular_cap_folder)
 
 
-    plot(stegoPsnrs, regularPsnrs, "PSNR.pdf", "PSNR comparision")
-    plot(stegoSsims, regularSsims, "SSIM.pdf", "SSIM comparision")
-    barChart(stegoRes, "stegoRes.pdf", "Stegozoa Resolutions")
-    barChart(regularRes, "regularRes.pdf", "Regular Resolutions")
+    plot(stegoPsnrs, regularPsnrs, "PSNR.pdf")
+    plot(stegoSsims, regularSsims, "SSIM.pdf")
+    barChart(stegoRes, "stegoRes.pdf")
+    barChart(regularRes, "regularRes.pdf")
     

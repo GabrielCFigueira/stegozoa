@@ -60,9 +60,9 @@ def plot(stegoDist, regularDist, savefile, title):
     plt.title(title)
 
     if not regularDist:
-        plt.boxplot(stegoDist)
+        plt.boxplot(stegoDist, label=["Stegozoa"], notch=False, showfliers=False, showmeans=True, meanprops={'markerfacecolor': 'slategray', 'markeredgecolor': 'slategray'})
     else:
-        plt.boxplot([stegoDist, regularDist], labels=["Stegozoa", "Regular"])
+        plt.boxplot([stegoDist, regularDist], labels=["Stegozoa", "Regular"], notch=False, showfliers=False, showmeans=True, meanprops={'markerfacecolor': 'slategray', 'markeredgecolor': 'slategray'})
 
     fig.savefig(savefile)
     plt.close(fig)

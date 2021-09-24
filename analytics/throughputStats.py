@@ -34,11 +34,29 @@ def computeThroughput(cap_folder):
 
     return Speed
 
-def plot(dist, savefile):
+def plot(dist, savefile, label):
 
     fig = plt.figure()
+    ax1 = fig.add_subplot(111)
 
-    plt.boxplot(dist)
+
+    bp = ax1.boxplot(dist, labels=label, notch=False, showfliers=False, showmeans=True, meanprops={'markerfacecolor': 'slategray', 'markeredgecolor': 'slategray'})
+
+    for median in bp['medians']:
+        median.set(color='red', linewidth=2)
+
+    ax1.set(xlim=(-0.5, 2.5), ylim=(0,15000))
+    ax1.yaxis.set_ticks(np.arange(0, 15001, 1500))
+    ax1.spines['right'].set_visible(False)
+    ax1.spines['top'].set_visible(False)
+    ax1.yaxis.grid(color='grey', linestyle='dotted', lw=0.2)
+    plt.ylabel('Stegozoa Throughput (bps)', fontsize=26)
+
+    plt.setp(ax1.get_xticklabels(), fontsize=20)
+    plt.setp(ax1.get_yticklabels(), fontsize=20)
+
+    plt.tight_layout()
+
 
     fig.savefig(savefile)
     plt.close(fig)
@@ -47,8 +65,25 @@ def plot(dist, savefile):
 def plot3(dists, savefile, labels):
 
     fig = plt.figure()
+    ax1 = fig.add_subplot(111)
 
-    plt.boxplot(dists, labels=labels)
+    bp = ax1.boxplot(dists, labels=labels, notch=False, showfliers=False, showmeans=True, meanprops={'markerfacecolor': 'slategray', 'markeredgecolor': 'slategray'}, positions=pos)
+
+    for median in bp['medians']:
+        median.set(color='red', linewidth=2)
+
+    ax1.set(xlim=(-0.5, 2.5), ylim=(0,15000))
+    ax1.yaxis.set_ticks(np.arange(0, 15001, 1500))
+    ax1.spines['right'].set_visible(False)
+    ax1.spines['top'].set_visible(False)
+    ax1.yaxis.grid(color='grey', linestyle='dotted', lw=0.2)
+    plt.ylabel('Stegozoa Throughput (bps)', fontsize=26)
+
+    plt.setp(ax1.get_xticklabels(), fontsize=20)
+    plt.setp(ax1.get_yticklabels(), fontsize=20)
+
+    plt.tight_layout()
+
 
     fig.savefig(savefile)
     plt.close(fig)
@@ -62,7 +97,7 @@ if __name__ == "__main__":
     network_condition = "delay_50"
     stegozoa_cap_folder = log_folder + "StegozoaTraffic" + "/" + baseline + "/" + network_condition
     throughput = computeThroughput(stegozoa_cap_folder)
-    plot(throughput, "Throughput.pdf")
+    plot(throughput, "Throughput.pdf", "meet.jit.si")
 
 
     network_conditions = ["delay_50-bw_1500", "delay_50-bw_750", "delay_50-bw_250"]

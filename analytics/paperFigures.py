@@ -122,7 +122,7 @@ def PerturbationsAUCPerProfile():
                 elif perturbation == "loss":
                     plot_title = "c) Packet Loss"
 
-                plt.xlabel('False Positive Rate\na) %s'%plot_title, fontsize=24)
+                plt.xlabel('False Positive Rate\n%s'%plot_title, fontsize=24)
                 plt.tight_layout()
                 fig.savefig("Figures/PerturbationsAUC/" + dataset + "/" + videoProfile + "/" + perturbation + "_" + feature_set + "_ROC_plot.pdf")   # save the figure to file
                 plt.close(fig)
