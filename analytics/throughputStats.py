@@ -40,7 +40,7 @@ def plot(dist, savefile, label):
     ax1 = fig.add_subplot(111)
 
 
-    bp = ax1.boxplot(dist, labels=label, notch=False, showfliers=False, showmeans=True, meanprops={'markerfacecolor': 'slategray', 'markeredgecolor': 'slategray'})
+    bp = ax1.boxplot(dist, labels=[label], notch=False, showfliers=False, showmeans=True, meanprops={'markerfacecolor': 'slategray', 'markeredgecolor': 'slategray'})
 
     for median in bp['medians']:
         median.set(color='red', linewidth=2)
