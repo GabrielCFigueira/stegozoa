@@ -42,8 +42,25 @@ def plot(dist, savefile, label):
 
     bp = ax1.boxplot(dist, labels=[label], notch=False, showfliers=False, showmeans=True, meanprops={'markerfacecolor': 'slategray', 'markeredgecolor': 'slategray'})
 
+    for box in bp['boxes']:
+        # change outline color
+        box.set(color="black", linewidth=2)#, edgecolor="black")
+
+    ## change color and linewidth of the whiskers
+    for whisker in bp['whiskers']:
+        whisker.set(color='black', linewidth=2)
+
+    ## change color and linewidth of the caps
+    for cap in bp['caps']:
+        cap.set(color='black', linewidth=2)
+
+    ## change color and linewidth of the medians
     for median in bp['medians']:
         median.set(color='red', linewidth=2)
+
+    ## change marker of the arithmetic means
+    for mean in bp['means']:
+        mean.set(marker='o')
 
     ax1.yaxis.set_ticks(np.arange(0, 15001, 1500))
     ax1.spines['right'].set_visible(False)
@@ -68,8 +85,26 @@ def plot3(dists, savefile, labels):
 
     bp = ax1.boxplot(dists, labels=labels, notch=False, showfliers=False, showmeans=True, meanprops={'markerfacecolor': 'slategray', 'markeredgecolor': 'slategray'})
 
+    for box in bp['boxes']:
+        # change outline color
+        box.set(color="black", linewidth=2)#, edgecolor="black")
+
+    ## change color and linewidth of the whiskers
+    for whisker in bp['whiskers']:
+        whisker.set(color='black', linewidth=2)
+
+    ## change color and linewidth of the caps
+    for cap in bp['caps']:
+        cap.set(color='black', linewidth=2)
+
+    ## change color and linewidth of the medians
     for median in bp['medians']:
         median.set(color='red', linewidth=2)
+
+    ## change marker of the arithmetic means
+    for mean in bp['means']:
+        mean.set(marker='o')
+
 
     #ax1.set(xlim=(-0.5, 2.5), ylim=(0,15000))
     ax1.yaxis.set_ticks(np.arange(0, 15001, 1500))
