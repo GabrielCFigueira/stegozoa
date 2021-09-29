@@ -132,7 +132,8 @@ if __name__ == "__main__":
     network_condition = "delay_50"
     stegozoa_cap_folder = log_folder + "StegozoaTraffic" + "/" + baseline + "/" + network_condition
     throughput = computeThroughput(stegozoa_cap_folder)
-    plot(throughput, "Throughput.pdf", "meet.jit.si")
+    #plot(throughput, "Throughput.pdf", "meet.jit.si")
+    plot(throughput, "Throughput.pdf", "whereby.com")
 
 
     network_conditions = ["delay_50-bw_1500", "delay_50-bw_750", "delay_50-bw_250"]
