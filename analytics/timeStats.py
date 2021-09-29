@@ -115,7 +115,7 @@ def plot(stegoDist, regularDist, savefile):
 if __name__ == "__main__":
 
     baseline = "Chat"
-    network_condition = "regular.regular"
+    network_condition = "delay_50"
 
     regular_cap_folder = log_folder + "RegularTraffic" + "/" + baseline + "/" + network_condition
     stegozoa_cap_folder = log_folder + "StegozoaTraffic" + "/" + baseline + "/" + network_condition
