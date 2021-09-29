@@ -59,7 +59,7 @@ def plot(stegoDist, regularDist, savefile):
     ax1 = fig.add_subplot(111)
 
     if not regularDist:
-        bp = ax1.boxplot(stegoDist, label=["Stegozoa"], notch=False, showfliers=False, showmeans=True, meanprops={'markerfacecolor': 'slategray', 'markeredgecolor': 'slategray'})
+        bp = ax1.boxplot(stegoDist, labels=["Stegozoa"], notch=False, showfliers=False, showmeans=True, meanprops={'markerfacecolor': 'slategray', 'markeredgecolor': 'slategray'})
     else:
         bp = ax1.boxplot([stegoDist, regularDist], labels=["Stegozoa", "Regular"], notch=False, showfliers=False, showmeans=True, meanprops={'markerfacecolor': 'slategray', 'markeredgecolor': 'slategray'})
 
