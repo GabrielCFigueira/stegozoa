@@ -98,12 +98,12 @@ def plot(stegoDist, regularDist, savefile, ylabel):
         mean.set(marker='o')
 
 
-    if label = "PSNR":
-        ax1.set(ylim=(30,60))
-        ax1.yaxis.set_ticks(np.arange(30, 61, 5))
-    else:
-        ax1.set(ylim=(0.99,1))
-        ax1.yaxis.set_ticks(np.arange(0.99, 1.01, 0.001))
+    #if label = "PSNR":
+    #    ax1.set(ylim=(30,60))
+    #    ax1.yaxis.set_ticks(np.arange(30, 61, 5))
+    #else:
+    #    ax1.set(ylim=(0.99,1))
+    #    ax1.yaxis.set_ticks(np.arange(0.99, 1.01, 0.001))
 
     ax1.spines['right'].set_visible(False)
     ax1.spines['top'].set_visible(False)

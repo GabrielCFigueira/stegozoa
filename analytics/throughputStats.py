@@ -62,8 +62,8 @@ def plot(dist, savefile, label):
     for mean in bp['means']:
         mean.set(marker='o')
 
-    ax1.set(ylim=(0,15000))
-    ax1.yaxis.set_ticks(np.arange(0, 15001, 1500))
+    #ax1.set(ylim=(0,15000))
+    #ax1.yaxis.set_ticks(np.arange(0, 15001, 1500))
     ax1.spines['right'].set_visible(False)
     ax1.spines['top'].set_visible(False)
     ax1.yaxis.grid(color='grey', linestyle='dotted', lw=0.2)
@@ -107,8 +107,8 @@ def plot3(dists, savefile, labels):
         mean.set(marker='o')
 
 
-    ax1.set(ylim=(0,15000))
-    ax1.yaxis.set_ticks(np.arange(0, 15001, 1500))
+    #ax1.set(ylim=(0,15000))
+    #ax1.yaxis.set_ticks(np.arange(0, 15001, 1500))
     ax1.spines['right'].set_visible(False)
     ax1.spines['top'].set_visible(False)
     ax1.yaxis.grid(color='grey', linestyle='dotted', lw=0.2)
