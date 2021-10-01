@@ -26,7 +26,7 @@ def computeThroughput(cap_folder):
 
                     if words[0] == "Throughput(bits/s):":
                         try:
-                            speed = float(words[1])
+                            speed = float(words[1]) / 1000
                         except ValueError:
                             break
                         Speed += [speed]
@@ -67,7 +67,7 @@ def plot(dist, savefile, label):
     ax1.spines['right'].set_visible(False)
     ax1.spines['top'].set_visible(False)
     ax1.yaxis.grid(color='grey', linestyle='dotted', lw=0.2)
-    plt.ylabel('Stegozoa Throughput (bps)', fontsize=20)
+    plt.ylabel('Stegozoa Throughput (kbps)', fontsize=20)
 
     plt.setp(ax1.get_xticklabels(), fontsize=15)
     plt.setp(ax1.get_yticklabels(), fontsize=15)
@@ -112,7 +112,7 @@ def plot3(dists, savefile, labels):
     ax1.spines['right'].set_visible(False)
     ax1.spines['top'].set_visible(False)
     ax1.yaxis.grid(color='grey', linestyle='dotted', lw=0.2)
-    plt.ylabel('Stegozoa Throughput (bps)', fontsize=20)
+    plt.ylabel('Stegozoa Throughput (kbps)', fontsize=20)
 
     plt.setp(ax1.get_xticklabels(), fontsize=15)
     plt.setp(ax1.get_yticklabels(), fontsize=15)
