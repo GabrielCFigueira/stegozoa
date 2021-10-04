@@ -121,13 +121,14 @@ def barChart(resDict, savefile):
 
     fig = plt.figure()
 
-
-    sortedValues = []
-    sortedKeys = list(resDict.keys())
-    sortedKeys.sort(key=customFunc)
-    for key in sortedKeys:
-        sortedValues += [resDict[key]]
-    plt.bar(sortedKeys, sortedValues)
+    orders_df = pd.DataFrame(resDict)
+    print(orders_df)
+    orders_df = orders_df.sort_index()
+    series = orders_df.value_counts(True)
+    
+    plt.bar(series.index, series * 100)
+    plt.ylabel("Relative frequency (%)", fontsize=20)
+    plt.xlabel("Resolutions", fontsize=20)
 
     fig.savefig(savefile)
     plt.close(fig)
@@ -147,8 +148,8 @@ if __name__ == "__main__":
     regularPsnrs, regularSsims, regularRes = computePsnrSsim(regular_cap_folder)
 
 
-    plot(stegoPsnrs, regularPsnrs, "PSNR.pdf", "PSNR")
-    plot(stegoSsims, regularSsims, "SSIM.pdf", "SSIM")
+    #plot(stegoPsnrs, regularPsnrs, "PSNR.pdf", "PSNR")
+    #plot(stegoSsims, regularSsims, "SSIM.pdf", "SSIM")
     barChart(stegoRes, "stegoRes.pdf")
     barChart(regularRes, "regularRes.pdf")
     
