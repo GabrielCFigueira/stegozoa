@@ -123,10 +123,10 @@ def barChart(resDict, savefile):
     fig = plt.figure()
 
     df = pd.DataFrame(resDict.items(), columns=['res', 'count'])
-    print(df)
     df = df.sort_values('res')
     x, y = df['count'].min(), df['count'].max()
     df['count'] = (df['count'] - x) / (y - x)
+    print(df)
     df = df[df['count'] >= 0.01]
     
     plt.bar(df['res'], df['count'] * 100)
