@@ -64,9 +64,6 @@ def computePsnrSsim(cap_folder):
                 ssimList += [totalSsim / n]
 
                 
-    for key in list(resDict.keys()):
-        if resDict[key] < 100:
-            del(resDict[key])
     return psnrList, ssimList, resDict
 
 def plot(stegoDist, regularDist, savefile, ylabel):
@@ -124,10 +121,10 @@ def barChart(resDict, savefile):
 
     df = pd.DataFrame(resDict.items(), columns=['res', 'count'])
     df = df.sort_values('res')
+    df = df[df['count'] >= 100]
     total = df['count'].sum()
     df['count'] = (df['count'] / total)
     print(df)
-    df = df[df['count'] >= 0.01]
     
     plt.bar(df['res'], df['count'] * 100)
     plt.ylabel("Relative frequency (%)", fontsize=20)
