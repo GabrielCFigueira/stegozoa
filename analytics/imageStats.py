@@ -124,8 +124,8 @@ def barChart(resDict, savefile):
 
     df = pd.DataFrame(resDict.items(), columns=['res', 'count'])
     df = df.sort_values('res')
-    x, y = df['count'].min(), df['count'].max()
-    df['count'] = (df['count'] - x) / (y - x)
+    total = df['count'].sum()
+    df['count'] = (df['count'] / total)
     print(df)
     df = df[df['count'] >= 0.01]
     
