@@ -122,10 +122,10 @@ def barChart(resDict, savefile):
 
     fig = plt.figure()
 
-    orders_df = pd.DataFrame(resDict)
+    orders_df = pd.DataFrame(resDict.items(), columns=['res', 'count'])
     print(orders_df)
-    orders_df = orders_df.sort_index()
-    series = orders_df.value_counts(True)
+    orders_df = orders_df.sort_values('res')
+    series = orders_df['count'].value_counts(normalize=True)
     
     plt.bar(series.index, series * 100)
     plt.ylabel("Relative frequency (%)", fontsize=20)
