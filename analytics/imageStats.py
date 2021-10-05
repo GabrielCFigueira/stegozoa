@@ -120,7 +120,7 @@ def barChart(resDict, savefile):
     fig = plt.figure()
 
     df = pd.DataFrame(resDict.items(), columns=['res', 'count'])
-    df = df.sort_values('res')
+    df = df.sort_values('count')
     df = df[df['count'] >= 100]
     total = df['count'].sum()
     df['count'] = (df['count'] / total)
