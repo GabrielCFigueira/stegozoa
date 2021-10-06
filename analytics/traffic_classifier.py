@@ -210,12 +210,12 @@ def runClassificationKFold_CV(data_folder, mode, cfg, classifier, comparison, lo
     plt.xlabel('False Positive Rate', fontsize=26)
     plt.ylabel('True Positive Rate', fontsize=24)
     plt.legend(loc='lower right', frameon=False, handlelength=1.0, fontsize=14)
-    #plt.tight_layout()
 
     plt.setp(ax1.get_xticklabels(), fontsize=20)
     plt.setp(ax1.get_yticklabels(), fontsize=20)
 
     ax1.set(xlim=(0, 1), ylim=(0.0, 1))
+    plt.tight_layout()
 
     if not os.path.exists('classificationResults/' + cap_folder + "/" + location + "/" + comparison + "/" + mode):
         os.makedirs('classificationResults/' + cap_folder + "/" + location + "/" + comparison + "/" + mode)
