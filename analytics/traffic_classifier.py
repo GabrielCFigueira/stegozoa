@@ -203,9 +203,12 @@ def runClassificationKFold_CV(data_folder, mode, cfg, classifier, comparison, lo
     ax1.plot([0, 1], [0, 1], 'k--', lw=2, color='0.0', label = 'Random Guess')
     ax1.grid(color='black', linestyle='dotted')
 
+    ax1.spines['right'].set_visible(False)
+    ax1.spines['top'].set_visible(False)
+
     plt.xlabel('False Positive Rate', fontsize='26')
     plt.ylabel('True Positive Rate', fontsize='24')
-    plt.legend(loc='lower right', fontsize='large')
+    plt.legend(loc='lower right', frameon=False, handlength=1.0, fontsize=14)
     plt.tight_layout()
 
     plt.setp(ax1.get_xticklabels(), fontsize=20)
