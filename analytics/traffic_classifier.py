@@ -179,7 +179,7 @@ def runClassificationKFold_CV(data_folder, mode, cfg, classifier, comparison, lo
 
 
     #Figure properties
-    fig = plt.figure(figsize=[7.2, 6.0])
+    fig = plt.figure(figsize=[7.6, 6.4])
     ax1 = fig.add_subplot(111)
 
     std_auc = np.std(aucs)
