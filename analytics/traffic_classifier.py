@@ -179,7 +179,7 @@ def runClassificationKFold_CV(data_folder, mode, cfg, classifier, comparison, lo
 
 
     #Figure properties
-    fig = plt.figure(figsize=[6.4, 5.2])
+    fig = plt.figure(figsize=[6.8, 5.2])
     ax1 = fig.add_subplot(111)
 
     std_auc = np.std(aucs)
@@ -207,7 +207,7 @@ def runClassificationKFold_CV(data_folder, mode, cfg, classifier, comparison, lo
     ax1.spines['top'].set_visible(False)
 
     plt.xlabel('False Positive Rate', fontsize='26')
-    plt.ylabel('True Positive Rate', fontsize='26')
+    plt.ylabel('True Positive Rate', fontsize='24')
     plt.legend(loc='lower right', frameon=False, handlelength=1.0, fontsize=14)
     plt.tight_layout()
 
