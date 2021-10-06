@@ -201,7 +201,7 @@ def runClassificationKFold_CV(data_folder, mode, cfg, classifier, comparison, lo
     np.save('classificationData/' + cap_folder + "/" + location + "/" + comparison + "/" + mode + "/" + "ROC_10CV_" + clf_name + "_Specificity", np.array(mean_fpr))
 
     ax1.plot([0, 1], [0, 1], 'k--', lw=2, color='0.0', label = 'Random Guess')
-    ax1.grid(color='black', linestyle='dotted')
+    ax1.yaxis.grid(color='black', linestyle='dotted', lw=0.2)
 
     ax1.spines['right'].set_visible(False)
     ax1.spines['top'].set_visible(False)
