@@ -31,7 +31,7 @@ def computeThroughput(cap_folder):
                             break
                         Speed += [speed]
 
-    print(capfolder + str(":"))
+    print(cap_folder + str(":"))
     print("mean:{}, std:{}".format(np.mean(Speed), np.std(Speed)))
 
     return Speed
