@@ -29,6 +29,8 @@ def computeRTTs(cap_folder):
                             break                
                         RTT += [rtt]
 
+    print(cap_folder + str(":"))
+    print("mean:{}, std:{}".format(np.mean(RTT), np.std(RTT)))
     return RTT
 
 

@@ -50,6 +50,9 @@ def computeTimes(cap_folder):
             if nEncode > 0:
                 Encoding += [totalEncodingTime / nEncode]
 
+    print(cap_folder + str(":"))
+    print("Embedding: mean:{}, std:{}".format(np.mean(Embedding), np.std(Embedding)))
+    print("Encoding: mean:{}, std:{}".format(np.mean(Encoding), np.std(Encoding)))
     return Embedding, Encoding
 
 def plot(stegoDist, regularDist, savefile):
