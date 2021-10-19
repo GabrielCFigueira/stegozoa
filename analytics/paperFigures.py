@@ -142,8 +142,8 @@ def Steganalysis():
     for n, a in enumerate([4, 2, 1]):
             
 
-        sensitivity = np.load("jitsi" + a + "/" + extractor + "/ROC_10CV_XGBoost_Sensitivity.npy")
-        specificity = np.load("jitsi" + a + "/" + extractor + "/ROC_10CV_XGBoost_Specificity.npy")
+        sensitivity = np.load("jitsi" + str(a) + "/" + extractor + "/ROC_10CV_XGBoost_Sensitivity.npy")
+        specificity = np.load("jitsi" + str(a) + "/" + extractor + "/ROC_10CV_XGBoost_Specificity.npy")
 
         auc = np.trapz(sensitivity, specificity)
         print "stats AUC " + cfg + ": " + str(auc)
