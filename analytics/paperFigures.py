@@ -148,7 +148,7 @@ def Steganalysis():
         auc = np.trapz(sensitivity, specificity)
         print "stats AUC: " + str(auc)
 
-        label_text = '$\alpha=' + str(1.0 / a) + '$ - AUC = 0.2%f' % (auc)
+        label_text = '$\\alpha=' + str(1.0 / a) + '$ - AUC = %0.2f' % (auc)
 
         ax1.plot(specificity, sensitivity, lw=6, color=colors[n], label = label_text)
 
