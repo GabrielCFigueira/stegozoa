@@ -146,7 +146,7 @@ def Steganalysis():
         specificity = np.load("jitsi" + str(a) + "/" + extractor + "/ROC_10CV_XGBoost_Specificity.npy")
 
         auc = np.trapz(sensitivity, specificity)
-        print "stats AUC " + cfg + ": " + str(auc)
+        print "stats AUC: " + str(auc)
 
         label_text = '$\alpha=' + str(1.0 / a) + '$ - AUC = 0.2%f' % (auc)
 
