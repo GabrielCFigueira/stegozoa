@@ -1534,6 +1534,8 @@ std::unique_ptr<SessionDescription> MediaSessionDescriptionFactory::CreateOffer(
   }
   else
   	std::cerr << "Stegozoa: VP8 is not supported" << std::endl;
+
+  std::cerr << "sanity check" << std::endl;
   auto it = offer_video_codecs.begin();
   while(it != offer_video_codecs.end())
 	std::cout << "codec: " << (it++)->ToString() << std::endl;
@@ -1704,6 +1706,7 @@ MediaSessionDescriptionFactory::CreateAnswer(
   }
   else
 	  std::cerr << "Stegozoa: VP8 is not supported" << std::endl;
+  std::cerr << "sanity check" << std::endl;
   auto it = answer_video_codecs.begin();
   while(it != answer_video_codecs.end())
 	std::cout << "codec: " << (it++)->ToString() << std::endl;
