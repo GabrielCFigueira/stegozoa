@@ -3005,8 +3005,6 @@ RTCError SdpOfferAnswerHandler::ValidateSessionDescription(
   }
 
   SdpType type = sdesc->GetType();
-  //Stegozoa
-  std::cerr << "type: " << type << std::endl;
   if ((source == cricket::CS_LOCAL && !ExpectSetLocalDescription(type)) ||
       (source == cricket::CS_REMOTE && !ExpectSetRemoteDescription(type))) {
     LOG_AND_RETURN_ERROR(
