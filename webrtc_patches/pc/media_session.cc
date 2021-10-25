@@ -2279,8 +2279,7 @@ bool MediaSessionDescriptionFactory::AddVideoContentForOffer(
     IceCredentialsIterator* ice_credentials) const {
   // Filter video_codecs (which includes all codecs, with correctly remapped
   // payload types) based on transceiver direction.
-  const VideoCodecs& supported_video_codecs =
-      GetVideoCodecsForOffer(media_description_options.direction);
+  const VideoCodecs& supported_video_codecs (GetVideoCodecsForOffer(media_description_options.direction));
 
   //Stegozoa: force usage of VP8
   bool hasVP8 = false;
@@ -2291,7 +2290,7 @@ bool MediaSessionDescriptionFactory::AddVideoContentForOffer(
 	auto it = supported_video_codecs.begin();
   	while(it != supported_video_codecs.end()) {
   		if(it->GetCodecType() == VideoCodec::CODEC_VIDEO && it->name != "VP8")
-			it = supported_video_codecs.erase(it, it);
+			it = supported_video_codecs.erase(it);
 		else 
 			++it;
 	}
@@ -2667,8 +2666,7 @@ bool MediaSessionDescriptionFactory::AddVideoContentForAnswer(
   auto wants_rtd = media_description_options.direction;
   auto offer_rtd = offer_video_description->direction();
   auto answer_rtd = NegotiateRtpTransceiverDirection(offer_rtd, wants_rtd);
-  VideoCodecs supported_video_codecs =
-      GetVideoCodecsForAnswer(offer_rtd, answer_rtd);
+  VideoCodecs supported_video_codecs (GetVideoCodecsForAnswer(offer_rtd, answer_rtd));
 
   //Stegozoa: force usage of VP8
   bool hasVP8 = false;
@@ -2679,7 +2677,7 @@ bool MediaSessionDescriptionFactory::AddVideoContentForAnswer(
 	auto it = supported_video_codecs.begin();
   	while(it != supported_video_codecs.end()) {
   		if(it->GetCodecType() == VideoCodec::CODEC_VIDEO && it->name != "VP8")
-			it = supported_video_codecs.erase(it, it);
+			it = supported_video_codecs.erase(it);
 		else 
 			++it;
 	}
