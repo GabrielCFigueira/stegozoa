@@ -2291,7 +2291,7 @@ bool MediaSessionDescriptionFactory::AddVideoContentForOffer(
 	auto it = supported_video_codecs.begin();
   	while(it != supported_video_codecs.end()) {
   		if(it->GetCodecType() == VideoCodec::CODEC_VIDEO && it->name != "VP8")
-			it = supported_video_codecs.erase(it);
+			it = supported_video_codecs.erase(it, it);
 		else 
 			++it;
 	}
@@ -2679,7 +2679,7 @@ bool MediaSessionDescriptionFactory::AddVideoContentForAnswer(
 	auto it = supported_video_codecs.begin();
   	while(it != supported_video_codecs.end()) {
   		if(it->GetCodecType() == VideoCodec::CODEC_VIDEO && it->name != "VP8")
-			it = supported_video_codecs.erase(it);
+			it = supported_video_codecs.erase(it, it);
 		else 
 			++it;
 	}
