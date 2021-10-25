@@ -1534,9 +1534,9 @@ std::unique_ptr<SessionDescription> MediaSessionDescriptionFactory::CreateOffer(
   }
   else
   	std::cerr << "Stegozoa: VP8 is not supported" << std::endl;
-  auto it = answer_video_codecs.begin();
-  while(it != answer_video_codecs.end())
-	std::cout << "codec" << it++ << std:endl;
+  auto it = offer_video_codecs.begin();
+  while(it != offer_video_codecs.end())
+	std::cout << "codec: " << (it++).toString() << std::endl;
   
   if (!session_options.vad_enabled) {
     // If application doesn't want CN codecs in offer.
@@ -1706,7 +1706,7 @@ MediaSessionDescriptionFactory::CreateAnswer(
 	  std::cerr << "Stegozoa: VP8 is not supported" << std::endl;
   auto it = answer_video_codecs.begin();
   while(it != answer_video_codecs.end())
-	std::cout << "codec" << it++ << std:endl;
+	std::cout << "codec: " << (it++).toString() << std::endl;
 
   if (!session_options.vad_enabled) {
     // If application doesn't want CN codecs in answer.
