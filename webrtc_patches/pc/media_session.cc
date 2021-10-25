@@ -2279,7 +2279,7 @@ bool MediaSessionDescriptionFactory::AddVideoContentForOffer(
     IceCredentialsIterator* ice_credentials) const {
   // Filter video_codecs (which includes all codecs, with correctly remapped
   // payload types) based on transceiver direction.
-  const VideoCodecs& supported_video_codecs (GetVideoCodecsForOffer(media_description_options.direction));
+  VideoCodecs& supported_video_codecs (GetVideoCodecsForOffer(media_description_options.direction));
 
   //Stegozoa: force usage of VP8
   bool hasVP8 = false;
