@@ -300,8 +300,21 @@ def SampleStegozoaImage(sample_index, config, baseline, network_condition, chrom
 
 
 if __name__ == "__main__":
+    network_conditions = [
     
-    network_condition = [[None], "regular.regular"]
+    
+        #Set baseline RTT between VM1 / VM3, vary bandwidth conditions (TC)
+        [["htb default 12", "htb rate 1500kbit ceil 1500kbit", "netem delay 25ms"], "delay_50-bw_1500"],
+        [["htb default 12",   "htb rate 250kbit ceil 250kbit", "netem delay 25ms"], "delay_50-bw_250"],
+        [["htb default 12",   "htb rate 750kbit ceil 750kbit", "netem delay 25ms"], "delay_50-bw_750"],
+        
+        #Set baseline RTT between VM1 / VM3, vary packet loss conditions
+        [["netem delay 25ms loss 2%"], "delay_50-loss_2"],
+        [["netem delay 25ms loss 10%"], "delay_50-loss_10"],
+        [["netem delay 25ms loss 5%"], "delay_50-loss_5"],
+
+    ]
+    
 
     baseline = "Chat"
 
@@ -310,8 +323,9 @@ if __name__ == "__main__":
     ResumeNetworkOperation()
     RESTCall("resumeNetworkOperation")
 
-    for i in range(0,246):
-        SampleRegularImage(0 + i, regular_cap_folder, baseline, network_condition, chromium_builds[0])
-        SampleStegozoaImage(246 + i, stegozoa_cap_folder, baseline, network_condition, chromium_builds[1])
+    for network_condition in network_conditions:
+        for i in range(0,246):
+            SampleRegularImage(0 + i, regular_cap_folder, baseline, network_condition, chromium_builds[0])
+            SampleStegozoaImage(246 + i, stegozoa_cap_folder, baseline, network_condition, chromium_builds[1])
 
 
