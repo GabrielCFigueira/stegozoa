@@ -67,7 +67,7 @@ def SampleRegularImage(sample_index, config, baseline, network_condition, chromi
             label = network_condition[1].replace(".","-")
             webrtc_app = WEBRTC_APPLICATION + "_reg_" + label + "_" + str(sample_index % 246)
         elif("meet.jit.si" in WEBRTC_APPLICATION):
-            webrtc_app = WEBRTC_APPLICATION + "reg"
+            webrtc_app = WEBRTC_APPLICATION + network_condition[1] + "_reg"
         elif("whereby.com" in WEBRTC_APPLICATION):
             webrtc_app = "https://regular." + WEBRTC_APPLICATION + "/regular"
 
@@ -210,7 +210,7 @@ def SampleStegozoaImage(sample_index, config, baseline, network_condition, chrom
             label = network_condition[1].replace(".","-")
             webrtc_app = WEBRTC_APPLICATION + "_stego_" + label + "_" + str(sample_index % 246)
         elif("meet.jit.si" in WEBRTC_APPLICATION):
-            webrtc_app = WEBRTC_APPLICATION + "stego"
+            webrtc_app = WEBRTC_APPLICATION + network_condition[1] + "_stego"
         elif("whereby.com" in WEBRTC_APPLICATION):
             webrtc_app = "https://stegozoa." + WEBRTC_APPLICATION + "/stegozoa"
 
