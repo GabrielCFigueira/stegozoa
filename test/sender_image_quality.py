@@ -5,8 +5,8 @@ from sender_control import *
 # register psnr and ssim values for how long
 duration = 60
 
-WEBRTC_APPLICATION = "whereby.com"
-#WEBRTC_APPLICATION = "https://meet.jit.si/12349876"
+#WEBRTC_APPLICATION = "whereby.com"
+WEBRTC_APPLICATION = "https://meet.jit.si/12349876"
 
 
 def SampleRegularImage(sample_index, config, baseline, network_condition, chromium_build):
