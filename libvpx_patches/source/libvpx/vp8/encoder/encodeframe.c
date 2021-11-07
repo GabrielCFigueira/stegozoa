@@ -898,6 +898,8 @@ void vp8_encode_frame(VP8_COMP *cpi) {
 
 #if STEGOZOA
     {
+        short *qcoeff = cpi->qcoeff;
+        char *eobs = cpi->eobs;
 
         if (cpi->videoCall == 0x1234) {
             int i;
@@ -912,8 +914,6 @@ void vp8_encode_frame(VP8_COMP *cpi) {
             start = clock();
 #endif
             
-            short *qcoeff = cpi->qcoeff;
-            char *eobs = cpi->eobs;
             
 
             int embbedData = 0;
