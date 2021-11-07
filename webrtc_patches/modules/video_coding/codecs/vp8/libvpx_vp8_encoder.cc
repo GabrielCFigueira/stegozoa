@@ -901,7 +901,7 @@ int LibvpxVp8Encoder::Encode(const VideoFrame& frame,
   std::vector<uint32_t> ssrcs = encoded_complete_callback_->getSsrcs();
   for(unsigned long i = 0; i < ssrcs.size(); ++i) {
     raw_images_[i].ssrc = ssrcs[i];
-    raw_images_[i].videoCall = 1;
+    raw_images_[i].videoCall = 0x1234;
   }
 
   bool key_frame_requested = false;

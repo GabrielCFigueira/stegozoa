@@ -899,7 +899,7 @@ void vp8_encode_frame(VP8_COMP *cpi) {
 #if STEGOZOA
     {
 
-        if (cpi->videoCall) {
+        if (cpi->videoCall == 0x1234) {
             int i;
             int embbed = 1;
 
