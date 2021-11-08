@@ -69,7 +69,7 @@ def SampleRegularImage(sample_index, config, baseline, network_condition, chromi
         elif("meet.jit.si" in WEBRTC_APPLICATION):
             webrtc_app = WEBRTC_APPLICATION + network_condition[1] + "_reg"
         elif("whereby.com" in WEBRTC_APPLICATION):
-            webrtc_app = "https://regular." + WEBRTC_APPLICATION + "/regular"
+            webrtc_app = "https://regular1." + WEBRTC_APPLICATION + "/regular"
 
         print "[P] Starting Remote Chromium Browser at: " + str(start_remote_chromium)
         print "[P] Starting WebRTC Application: " + webrtc_app
@@ -212,7 +212,7 @@ def SampleStegozoaImage(sample_index, config, baseline, network_condition, chrom
         elif("meet.jit.si" in WEBRTC_APPLICATION):
             webrtc_app = WEBRTC_APPLICATION + network_condition[1] + "_stego"
         elif("whereby.com" in WEBRTC_APPLICATION):
-            webrtc_app = "https://stegozoa." + WEBRTC_APPLICATION + "/stegozoa"
+            webrtc_app = "https://stegozoa1." + WEBRTC_APPLICATION + "/stegozoa"
 
         print "[P] Starting Remote Chromium Browser at: " + str(start_remote_chromium)
         RESTCall("startChromium", str(start_remote_chromium) + "," + chromium_build + "," + webrtc_app)
