@@ -6,8 +6,8 @@ import pandas as pd
 
 log_folder = "/home/vagrant/SharedFolder/StegozoaCaps/"
 
-def customFunc(key):
-    return str(len(key)) + key
+def customFunc(series):
+    return series.apply(lambda x: str(len(x)) + x)
 
 def getRes(w, h):
     w = w[2:]
@@ -120,7 +120,7 @@ def barChart(resDict, savefile):
     fig = plt.figure()
 
     df = pd.DataFrame(resDict.items(), columns=['res', 'count'])
-    df = df.sort_values('res')
+    df = df.sort_values('res', key=customFunc)
     df = df[df['count'] >= 100]
     total = df['count'].sum()
     df['count'] = (df['count'] / total)

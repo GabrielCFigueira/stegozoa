@@ -158,7 +158,7 @@ def runClassificationKFold_CV(data_folder, mode, cfg, classifier, comparison, lo
 
 
 
-    plt.plot([0, 1], [0, 1], linestyle='--', lw=2, color='r', label='Random Guess', alpha=.8)
+    plt.plot([0, 1], [0, 1], 'k--', lw=2, color='0.0', label='Random Guess')
 
 
     mean_tpr = np.mean(tprs, axis=0)
@@ -179,6 +179,7 @@ def runClassificationKFold_CV(data_folder, mode, cfg, classifier, comparison, lo
 
 
     #Figure properties
+    #fig = plt.figure(figsize=[7.6, 6.4])
     fig = plt.figure()
     ax1 = fig.add_subplot(111)
 
@@ -200,16 +201,21 @@ def runClassificationKFold_CV(data_folder, mode, cfg, classifier, comparison, lo
     np.save('classificationData/' + cap_folder + "/" + location + "/" + comparison + "/" + mode + "/" + "ROC_10CV_" + clf_name + "_Sensitivity", np.array(mean_tpr))
     np.save('classificationData/' + cap_folder + "/" + location + "/" + comparison + "/" + mode + "/" + "ROC_10CV_" + clf_name + "_Specificity", np.array(mean_fpr))
 
-    ax1.plot([0, 1], [0, 1], 'k--', lw=2, color='orange', label = 'Random Guess')
-    ax1.grid(color='black', linestyle='dotted')
+    ax1.plot([0, 1], [0, 1], 'k--', lw=2, color='0.0', label = 'Random Guess')
+    ax1.yaxis.grid(color='black', linestyle='dotted', lw=0.2)
 
-    plt.title('Receiver Operating Characteristic (ROC)')
-    plt.xlabel('False Positive Rate', fontsize='x-large')
-    plt.ylabel('True Positive Rate', fontsize='x-large')
-    plt.legend(loc='lower right', fontsize='large')
+    ax1.spines['right'].set_visible(False)
+    ax1.spines['top'].set_visible(False)
 
-    plt.setp(ax1.get_xticklabels(), fontsize=14)
-    plt.setp(ax1.get_yticklabels(), fontsize=14)
+    plt.xlabel('False Positive Rate', fontsize=20)
+    plt.ylabel('True Positive Rate', fontsize=20)
+    plt.legend(loc='lower right', frameon=False, handlelength=1.0, fontsize=14)
+
+    plt.setp(ax1.get_xticklabels(), fontsize=20)
+    plt.setp(ax1.get_yticklabels(), fontsize=20)
+
+    ax1.set(xlim=(0, 1), ylim=(0.0, 1))
+    plt.tight_layout()
 
     if not os.path.exists('classificationResults/' + cap_folder + "/" + location + "/" + comparison + "/" + mode):
         os.makedirs('classificationResults/' + cap_folder + "/" + location + "/" + comparison + "/" + mode)

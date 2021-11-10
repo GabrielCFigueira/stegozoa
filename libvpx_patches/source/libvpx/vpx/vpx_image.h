@@ -118,6 +118,7 @@ typedef struct vpx_image {
 
   //Stegozoa
   uint32_t ssrc;
+  int videoCall;
 
 } vpx_image_t;   /**< alias for struct vpx_image */
 

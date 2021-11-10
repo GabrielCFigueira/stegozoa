@@ -6,35 +6,34 @@ import matplotlib.pyplot as plt
 log_folder = "/home/vagrant/SharedFolder/StegozoaCaps/"
 
 
-def computeThroughput(cap_folder):
+def computeRTTs(cap_folder):
 
-    log_list = os.listdir(cap_folder)
-    Speed = []
-
+    log_list = os.listdir(cap_folder)    
+    RTT = []
+    
     for log_filename in log_list:
-
-        if not log_filename.__contains__("download_log"):
+        if not log_filename.__contains__("ping_log"):
             continue
 
         with open(cap_folder + "/" + log_filename, "rt") as logfile:
             lines = logfile.readlines()
 
             for line in lines:
+
                 words = line.split(" ")
-
-                if len(words) == 2:
-
-                    if words[0] == "Throughput(bits/s):":
+                if len(words) == 3:
+                    if words[0] == "Average":
                         try:
-                            speed = float(words[1]) / 1000
+                            rtt = float(words[2])
                         except ValueError:
-                            break
-                        Speed += [speed]
+                            break                
+                        RTT += [rtt]
 
     print(cap_folder + str(":"))
-    print("mean:{}, std:{}".format(np.mean(Speed), np.std(Speed)))
+    print("mean:{}, std:{}".format(np.mean(RTT), np.std(RTT)))
+    return RTT
 
-    return Speed
+
 
 def plot(dist, savefile, label):
 
@@ -69,7 +68,7 @@ def plot(dist, savefile, label):
     ax1.spines['right'].set_visible(False)
     ax1.spines['top'].set_visible(False)
     ax1.yaxis.grid(color='grey', linestyle='dotted', lw=0.2)
-    plt.ylabel('Stegozoa Throughput (kbps)', fontsize=20)
+    plt.ylabel('RTT (s)', fontsize=20)
 
     plt.setp(ax1.get_xticklabels(), fontsize=15)
     plt.setp(ax1.get_yticklabels(), fontsize=15)
@@ -114,7 +113,7 @@ def plot3(dists, savefile, labels):
     ax1.spines['right'].set_visible(False)
     ax1.spines['top'].set_visible(False)
     ax1.yaxis.grid(color='grey', linestyle='dotted', lw=0.2)
-    plt.ylabel('Stegozoa Throughput (kbps)', fontsize=20)
+    plt.ylabel('RTT (s)', fontsize=20)
 
     plt.setp(ax1.get_xticklabels(), fontsize=15)
     plt.setp(ax1.get_yticklabels(), fontsize=15)
@@ -133,26 +132,26 @@ if __name__ == "__main__":
 
     network_condition = "delay_50"
     stegozoa_cap_folder = log_folder + "StegozoaTraffic" + "/" + baseline + "/" + network_condition
-    throughput = computeThroughput(stegozoa_cap_folder)
-    #plot(throughput, "Throughput.pdf", "meet.jit.si")
-    plot(throughput, "Throughput.pdf", "whereby.com")
+    rtt = computeRTTs(stegozoa_cap_folder)
+    #plot(rtt, "RTT.pdf", "meet.jit.si")
+    plot(rtt, "RTT.pdf", "whereby.com")
 
 
     network_conditions = ["delay_50-bw_1500", "delay_50-bw_750", "delay_50-bw_250"]
     labels = ["1500Kbps", "750Kbps", "250Kbps"]
-    throughputs = []
+    rtts = []
     for network_condition in network_conditions:
         stegozoa_cap_folder = log_folder + "StegozoaTraffic" + "/" + baseline + "/" + network_condition
-        throughput = computeThroughput(stegozoa_cap_folder)
-        throughputs += [throughput]
-    plot3(throughputs, "Throughput_bw.pdf", labels)
+        rtt = computeRTTs(stegozoa_cap_folder)
+        rtts += [rtt]
+    plot3(rtts, "RTT_bw.pdf", labels)
 
     network_conditions = ["delay_50-loss_2", "delay_50-loss_5", "delay_50-loss_10"]
     labels = ["2% loss", "5% loss", "10% loss"]
-    throughputs = []
+    rtts = []
     for network_condition in network_conditions:
         stegozoa_cap_folder = log_folder + "StegozoaTraffic" + "/" + baseline + "/" + network_condition
-        throughput = computeThroughput(stegozoa_cap_folder)
-        throughputs += [throughput]
-    plot3(throughputs, "Throughput_loss.pdf", labels)
+        rtt = computeRTTs(stegozoa_cap_folder)
+        rtts += [rtt]
+    plot3(rtts, "RTT_loss.pdf", labels)
     
