@@ -125,7 +125,7 @@ def PerturbationsAUCPerProfile():
 
 
 
-def Steganalysis():
+def SteganalysisAlpha():
 
     extractor = "superb"
 
@@ -162,6 +162,54 @@ def Steganalysis():
     plt.close(fig)
 
 
+def SteganalysisPerturbations():
+
+    extractor = "superb"
+
+    fig = plt.figure()#figsize=[5.4, 5.4])
+    ax1 = fig.add_subplot(111)
+
+    for n, a in enumerate(["bw_1500", "bw_750", "bw_250", "loss_2", "loss_5", "loss_10"]):
+            
+
+        sensitivity = np.load(a + "/" + extractor + "/ROC_10CV_XGBoost_Sensitivity.npy")
+        specificity = np.load(a + "/" + extractor + "/ROC_10CV_XGBoost_Specificity.npy")
+
+        auc = np.trapz(sensitivity, specificity)
+        print "stats AUC: " + str(auc)
+
+        if(a == "bw_1500"):
+            label_text = "bw 1500Kbps " + ' - AUC = %0.2f' % (auc)
+        elif(a == "bw_750"):
+            label_text = "bw 750Kbps " + ' - AUC = %0.2f' % (auc)
+        elif(a == "bw_250"):
+            label_text = "bw 250Kbps " + ' - AUC = %0.2f' % (auc)
+
+        elif(a == "loss_2"):
+            label_text = "loss 2% " + ' - AUC = %0.2f' % (auc)
+        elif(a == "loss_5"):
+            label_text = "loss 5% " + ' - AUC = %0.2f' % (auc)
+        elif(a == "loss_10"):
+            label_text = "loss 10% " + ' - AUC = %0.2f' % (auc)
+
+
+        ax1.plot(specificity, sensitivity, lw=6, color=colors[n], label = label_text)
+
+    ax1.plot([0, 1], [0, 1], 'k--', lw=2, color="0.0", label = 'Random Guess')
+    ax1.yaxis.grid(color='grey', linestyle='dotted', lw=0.2)
+    ax1.spines['right'].set_visible(False)
+    ax1.spines['top'].set_visible(False)
+    plt.xlabel('False Positive Rate', fontsize=20)
+    plt.ylabel('True Positive Rate', fontsize=20)
+    plt.legend(loc='lower right', frameon=False, handlelength=1.0, fontsize=14)
+
+    plt.setp(ax1.get_xticklabels(), fontsize=20)
+    plt.setp(ax1.get_yticklabels(), fontsize=20)
+    ax1.set(xlim=(0, 1), ylim=(0.0, 1))
+    plt.tight_layout()
+    
+    fig.savefig(extractor + "Steganalysis.pdf")   # save the figure to file
+    plt.close(fig)
 
 
 
@@ -171,4 +219,5 @@ def Steganalysis():
 if __name__ == "__main__":
     #PerturbationsAUCPerProfile()
 
-    Steganalysis()
+    SteganalysisAlpha()
+    SteganalysisPerturbations()
