@@ -1534,6 +1534,7 @@ std::unique_ptr<SessionDescription> MediaSessionDescriptionFactory::CreateOffer(
   }
   else
   	std::cerr << "Stegozoa: VP8 is not supported" << std::endl;
+
   
   if (!session_options.vad_enabled) {
     // If application doesn't want CN codecs in offer.
@@ -2278,8 +2279,28 @@ bool MediaSessionDescriptionFactory::AddVideoContentForOffer(
     IceCredentialsIterator* ice_credentials) const {
   // Filter video_codecs (which includes all codecs, with correctly remapped
   // payload types) based on transceiver direction.
-  const VideoCodecs& supported_video_codecs =
-      GetVideoCodecsForOffer(media_description_options.direction);
+
+  const VideoCodecs& temp_codecs = GetVideoCodecsForOffer(media_description_options.direction);
+  VideoCodecs supported_video_codecs;
+
+  std::copy(temp_codecs.begin(), temp_codecs.end(), std::back_inserter(supported_video_codecs));
+
+  //Stegozoa: force usage of VP8
+  bool hasVP8 = false;
+  for(VideoCodec v : supported_video_codecs)
+  	if(v.name == "VP8")
+		hasVP8 = true;
+  if(hasVP8) {
+	auto it = supported_video_codecs.begin();
+  	while(it != supported_video_codecs.end()) {
+  		if(it->GetCodecType() == VideoCodec::CODEC_VIDEO && it->name != "VP8")
+			it = supported_video_codecs.erase(it);
+		else 
+			++it;
+	}
+  }
+  else
+	  std::cerr << "Stegozoa: VP8 is not supported" << std::endl;
 
   VideoCodecs filtered_codecs;
 
@@ -2649,8 +2670,28 @@ bool MediaSessionDescriptionFactory::AddVideoContentForAnswer(
   auto wants_rtd = media_description_options.direction;
   auto offer_rtd = offer_video_description->direction();
   auto answer_rtd = NegotiateRtpTransceiverDirection(offer_rtd, wants_rtd);
-  VideoCodecs supported_video_codecs =
-      GetVideoCodecsForAnswer(offer_rtd, answer_rtd);
+  
+  const VideoCodecs& temp_codecs = GetVideoCodecsForAnswer(offer_rtd, answer_rtd);
+  VideoCodecs supported_video_codecs;
+
+  std::copy(temp_codecs.begin(), temp_codecs.end(), std::back_inserter(supported_video_codecs));
+
+  //Stegozoa: force usage of VP8
+  bool hasVP8 = false;
+  for(VideoCodec v : supported_video_codecs)
+  	if(v.name == "VP8")
+		hasVP8 = true;
+  if(hasVP8) {
+	auto it = supported_video_codecs.begin();
+  	while(it != supported_video_codecs.end()) {
+  		if(it->GetCodecType() == VideoCodec::CODEC_VIDEO && it->name != "VP8")
+			it = supported_video_codecs.erase(it);
+		else 
+			++it;
+	}
+  }
+  else
+	  std::cerr << "Stegozoa: VP8 is not supported" << std::endl;
 
   VideoCodecs filtered_codecs;
 

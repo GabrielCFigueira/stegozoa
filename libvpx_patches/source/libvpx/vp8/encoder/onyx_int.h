@@ -305,6 +305,7 @@ typedef struct VP8_COMP {
   short *qcoeff;
   char *eobs;
   uint32_t ssrc;
+  int videoCall;
   int simulcast;
 #endif
 

@@ -898,52 +898,56 @@ void vp8_encode_frame(VP8_COMP *cpi) {
 
 #if STEGOZOA
     {
-        int i;
-        int embbed = 1;
-
-        if(!isEmbbedInitialized())
-            if(initializeEmbbed())
-                embbed = 0;
-
-#if !IMAGE_QUALITY
-        clock_t start, end;
-        start = clock();
-#endif
-        
         short *qcoeff = cpi->qcoeff;
         char *eobs = cpi->eobs;
-        
 
-        int embbedData = 0;
-        int bits = 0;
+        if (cpi->videoCall == 0x1234) {
+            int i;
+            int embbed = 1;
 
-        for(i = 0; i < cm->mb_rows; i++)
-            bits += cpi->row_bits[i];
-
-        if(embbed && bits >= 40) {
-            stc_data_t *data = getStcData(cpi->ssrc);
-            unsigned char *cover = data->cover; 
-            unsigned char *steganogram = data->steganogram;
-
-            int index = 0;
-            for(int i = 0; i < cm->mb_rows; i++)
-                for(int j = 0; j < cpi->row_bits[i]; j++) {
-                    cover[index++] = cpi->cover[i][j];
-                    if(index == MAX_CAPACITY) {
-                        bits = MAX_CAPACITY;
-                        goto out;
-                    }
-                }
-out:
-            embbedData = flushEncoder(cpi->ssrc, cpi->simulcast, bits);
-
-            writeQdctLsb(cpi->positions, cpi->row_bits, cm->mb_rows, steganogram, qcoeff, bits);
+            if(!isEmbbedInitialized())
+                if(initializeEmbbed())
+                    embbed = 0;
 
 #if !IMAGE_QUALITY
-            end = clock();
-            printf("Time spent embbedding secret data in frame %d: %lf, capacity:%d, embbeded bits:%d\n", cm->current_video_frame, ((double) end - start) / CLOCKS_PER_SEC, bits, embbedData);
+            clock_t start, end;
+            start = clock();
+#endif
+            
+            
+
+            int embbedData = 0;
+            int bits = 0;
+
+            for(i = 0; i < cm->mb_rows; i++)
+                bits += cpi->row_bits[i];
+
+            if(embbed && bits >= 40) {
+                stc_data_t *data = getStcData(cpi->ssrc);
+                unsigned char *cover = data->cover; 
+                unsigned char *steganogram = data->steganogram;
+
+                int index = 0;
+                for(int i = 0; i < cm->mb_rows; i++)
+                    for(int j = 0; j < cpi->row_bits[i]; j++) {
+                        cover[index++] = cpi->cover[i][j];
+                        if(index == MAX_CAPACITY) {
+                            bits = MAX_CAPACITY;
+                            goto out;
+                        }
+                    }
+    out:
+                embbedData = flushEncoder(cpi->ssrc, cpi->simulcast, bits);
+
+                writeQdctLsb(cpi->positions, cpi->row_bits, cm->mb_rows, steganogram, qcoeff, bits);
+
+#if !IMAGE_QUALITY
+                end = clock();
+                printf("Time spent embbedding secret data in frame %d: %lf, capacity:%d, embbeded bits:%d\n", cm->current_video_frame, ((double) end - start) / CLOCKS_PER_SEC, bits, embbedData);
 
 #endif
+            }
+
         }
 
         memset(cm->above_context, 0, sizeof(ENTROPY_CONTEXT_PLANES) * cm->mb_cols);
