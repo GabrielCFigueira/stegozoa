@@ -5,8 +5,8 @@ from sender_control import *
 # register psnr and ssim values for how long
 duration = 60
 
-#WEBRTC_APPLICATION = "whereby.com"
-WEBRTC_APPLICATION = "https://meet.jit.si/12349876"
+WEBRTC_APPLICATION = "whereby.com"
+#WEBRTC_APPLICATION = "https://meet.jit.si/12349876"
 
 
 def SampleRegularImage(sample_index, config, baseline, network_condition, chromium_build):
@@ -300,9 +300,9 @@ def SampleStegozoaImage(sample_index, config, baseline, network_condition, chrom
 
 
 if __name__ == "__main__":
-    network_conditions = [
+    network_conditions = [[[None], "regular"]]
     
-    
+    """
         #Set baseline RTT between VM1 / VM3, vary bandwidth conditions (TC)
         [["htb default 12", "htb rate 1500kbit ceil 1500kbit", "netem delay 25ms"], "delay_50-bw_1500"],
         [["htb default 12",   "htb rate 250kbit ceil 250kbit", "netem delay 25ms"], "delay_50-bw_250"],
@@ -314,7 +314,7 @@ if __name__ == "__main__":
         [["netem delay 25ms loss 5%"], "delay_50-loss_5"],
 
     ]
-    
+    """
 
     baseline = "Chat"
 
