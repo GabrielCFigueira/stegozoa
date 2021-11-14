@@ -128,6 +128,7 @@ def PerturbationsAUCPerProfile():
 def SteganalysisAlpha():
 
     extractor = "superb"
+    app = "whereby"
 
     fig = plt.figure()#figsize=[5.4, 5.4])
     ax1 = fig.add_subplot(111)
@@ -135,8 +136,8 @@ def SteganalysisAlpha():
     for n, a in enumerate([4, 2, 1]):
             
 
-        sensitivity = np.load("jitsi" + str(a) + "/" + extractor + "/ROC_10CV_XGBoost_Sensitivity.npy")
-        specificity = np.load("jitsi" + str(a) + "/" + extractor + "/ROC_10CV_XGBoost_Specificity.npy")
+        sensitivity = np.load(app + str(a) + "/" + extractor + "/ROC_10CV_XGBoost_Sensitivity.npy")
+        specificity = np.load(app + str(a) + "/" + extractor + "/ROC_10CV_XGBoost_Specificity.npy")
 
         auc = np.trapz(sensitivity, specificity)
         print "stats AUC: " + str(auc)
@@ -149,8 +150,8 @@ def SteganalysisAlpha():
     ax1.yaxis.grid(color='grey', linestyle='dotted', lw=0.2)
     ax1.spines['right'].set_visible(False)
     ax1.spines['top'].set_visible(False)
-    plt.xlabel('False Positive Rate', fontsize=20)
-    plt.ylabel('True Positive Rate', fontsize=20)
+    plt.xlabel('False Positive Rate', fontsize=24)
+    plt.ylabel('True Positive Rate', fontsize=24)
     plt.legend(loc='lower right', frameon=False, handlelength=1.0, fontsize=14)
 
     plt.setp(ax1.get_xticklabels(), fontsize=20)
@@ -220,4 +221,4 @@ if __name__ == "__main__":
     #PerturbationsAUCPerProfile()
 
     SteganalysisAlpha()
-    SteganalysisPerturbations()
+    #SteganalysisPerturbations()

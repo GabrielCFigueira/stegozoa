@@ -43,10 +43,13 @@ def stopRecordJitsi():
     time.sleep(1)
 
 def stopRecordWhereby():
-    pyautogui.click(961, 981, button='left')
+    pyautogui.moveTo(961, 981)
+    time.sleep(2)
+
+    pyautogui.click(961, 926, button='left')
 
     time.sleep(1)
-    pyautogui.click(1650, 374, button='left')
+    pyautogui.click(1646, 425, button='left')
     time.sleep(2)
 
 def recordWhereby():
