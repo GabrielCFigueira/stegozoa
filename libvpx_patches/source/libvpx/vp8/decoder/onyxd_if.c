@@ -14,10 +14,6 @@
 #if STEGOZOA
 #include "vp8/common/stegozoa_hooks/stegozoa_hooks.h"
 #endif
-#if IMAGE_QUALITY
-#include "vpx_dsp/ssim.h"
-#include "vpx_dsp/psnr.h"
-#endif
 
 #include "vp8/common/onyxc_int.h"
 #if CONFIG_POSTPROC
@@ -327,58 +323,6 @@ static int check_fragments_for_errors(VP8D_COMP *pbi) {
   return 1;
 }
 
-#if IMAGE_QUALITY
-static uint64_t calc_plane_error(unsigned char *orig, int orig_stride,
-        unsigned char *recon, int recon_stride,
-        unsigned int cols, unsigned int rows) {
-
-    unsigned int row, col;
-
-    uint64_t total_sse = 0;
-    int diff;
-    
-    for (row = 0; row + 16 <= rows; row += 16) {
-        for (col = 0; col + 16 <= cols; col += 16) {
-            unsigned int sse;
-            vpx_mse16x16(orig + col, orig_stride, recon + col, recon_stride, &sse);
-            total_sse += sse;
-        }
-
-        /* Handle odd-sized width */
-        if (col < cols) {
-            unsigned int border_row, border_col;
-            unsigned char *border_orig = orig;
-            unsigned char *border_recon = recon;
-
-            for (border_row = 0; border_row < 16; ++border_row) {
-                for (border_col = col; border_col < cols; ++border_col) {
-                    diff = border_orig[border_col] - border_recon[border_col];
-                    total_sse += diff * diff;
-                }
-                                             
-                border_orig += orig_stride;
-                border_recon += recon_stride;
-            }
-        }
-             
-        orig += orig_stride * 16;
-        recon += recon_stride * 16;                              
-    }
-
-    /* Handle odd-sized height */
-    for (; row < rows; ++row) {
-        for (col = 0; col < cols; ++col) {
-            diff = orig[col] - recon[col];
-            total_sse += diff * diff;
-        }
-
-        orig += orig_stride;
-        recon += recon_stride;
-    }
-    vpx_clear_system_state();
-    return total_sse;
-}
-#endif
 
 
 int vp8dx_receive_compressed_data(VP8D_COMP *pbi, int64_t time_stamp) {
@@ -484,48 +428,6 @@ int vp8dx_get_raw_frame(VP8D_COMP *pbi, YV12_BUFFER_CONFIG *sd,
 
 #endif /*!CONFIG_POSTPROC*/
 
-#if IMAGE_QUALITY
-  VP8_COMMON *cm = &pbi->common;
-  //Stegozoa: psnr and ssim
-  if (cm->show_frame) {
-      
-    uint64_t ye, ue, ve;
-    YV12_BUFFER_CONFIG *orig = &cm->yv12_fb[cm->new_fb_idx];
-    YV12_BUFFER_CONFIG *recon = pbi->common.frame_to_show;
-    unsigned int y_width = pbi->common.Width;
-    unsigned int y_height = pbi->common.Height;
-    unsigned int uv_width = (y_width + 1) / 2;
-    unsigned int uv_height = (y_height + 1) / 2;
-    int y_samples = y_height * y_width;
-    int uv_samples = uv_height * uv_width;
-    int t_samples = y_samples + 2 * uv_samples;
-
-
-    YV12_BUFFER_CONFIG *pp = &cm->post_proc_buffer;
-    double sq_error;
-    double frame_psnr, frame_ssim;
-    double weight = 0;
-
-    vp8_deblock(cm, recon, &cm->post_proc_buffer,
-                  cm->filter_level * 10 / 6);
-    vpx_clear_system_state();
-
-    ye = calc_plane_error(orig->y_buffer, orig->y_stride, pp->y_buffer,
-                            pp->y_stride, y_width, y_height);
-    ue = calc_plane_error(orig->u_buffer, orig->uv_stride, pp->u_buffer,
-                            pp->uv_stride, uv_width, uv_height);
-
-    ve = calc_plane_error(orig->v_buffer, orig->uv_stride, pp->v_buffer,
-                            pp->uv_stride, uv_width, uv_height);
-
-    sq_error = (double)(ye + ue + ve);
-
-    frame_psnr = vpx_sse_to_psnr(t_samples, 255.0, sq_error);
-    frame_ssim = vpx_calc_ssim(orig, pp, &weight);
-    if(frame_psnr != 100.0 && frame_ssim != 1.0)
-        printf("Frame: %d, PSNR: %f, SSIM: %f\n", cm->current_video_frame, frame_psnr, frame_ssim);
-  }
-#endif // IMAGE_QUALITY
   vpx_clear_system_state();
   return ret;
 }
