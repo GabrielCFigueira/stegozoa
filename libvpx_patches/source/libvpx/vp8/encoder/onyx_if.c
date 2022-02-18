@@ -5210,8 +5210,22 @@ int vp8_get_compressed_data(VP8_COMP *cpi, unsigned int *frame_flags,
 
     YV12_BUFFER_CONFIG *pp = &cm->post_proc_buffer;
     double sq_error;
-    double frame_psnr, frame_ssim;
+    double frame_psnr, frame_psnr2, frame_ssim;
     double weight = 0;
+       
+    ye = calc_plane_error(orig->y_buffer, orig->y_stride, recon->y_buffer,
+                              recon->y_stride, y_width, y_height);
+
+    ue = calc_plane_error(orig->u_buffer, orig->uv_stride, recon->u_buffer,
+                              recon->uv_stride, uv_width, uv_height);
+
+    ve = calc_plane_error(orig->v_buffer, orig->uv_stride, recon->v_buffer,
+                              recon->uv_stride, uv_width, uv_height);
+
+    sq_error = (double)(ye + ue + ve);
+
+    frame_psnr = vpx_sse_to_psnr(t_samples, 255.0, sq_error);
+
 
     vp8_deblock(cm, cm->frame_to_show, &cm->post_proc_buffer,
                   cm->filter_level * 10 / 6);
@@ -5227,9 +5241,9 @@ int vp8_get_compressed_data(VP8_COMP *cpi, unsigned int *frame_flags,
 
     sq_error = (double)(ye + ue + ve);
 
-    frame_psnr = vpx_sse_to_psnr(t_samples, 255.0, sq_error);
+    frame_psnr2 = vpx_sse_to_psnr(t_samples, 255.0, sq_error);
     frame_ssim = vpx_calc_ssim(cpi->Source, &cm->post_proc_buffer, &weight);
-    printf("Frame: %d, PSNR: %f, SSIM: %f\n", cm->current_video_frame, frame_psnr, frame_ssim);
+    printf("Frame: %d, PSNR: %f, PSNR2: %f, SSIM: %f\n", cm->current_video_frame, frame_psnr, frame_psnr2, frame_ssim);
   }
 
 #endif // IMAGE_QUALITY
