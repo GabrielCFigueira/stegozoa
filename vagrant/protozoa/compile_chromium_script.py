@@ -5,7 +5,7 @@ import random
 import threading
 import requests
 
-protozoa_folder_location = '/home/vagrant/protozoa/'
+protozoa_folder_location = '/home/vagrant/Protozoa/protozoa/'
 chromium_src_folder = "/home/vagrant/Chromium/chromium/src/"
 chromium_builds_folder = "/home/vagrant/chromium_builds/"
 
