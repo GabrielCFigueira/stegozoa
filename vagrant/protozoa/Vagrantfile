@@ -71,7 +71,7 @@ git clone https://github.com/rofl0r/proxychains-ng.git
 cd proxychains-ng
 ./configure --prefix=/usr --sysconfdir=/etc
 make
-make install
+sudo make install
 cd ..
 
 SCRIPT
@@ -163,7 +163,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 		protozoa1_config.vm.provision :reload
 		protozoa1_config.vm.provision "shell", inline: $chromium_provision_script
 		protozoa1_config.vm.provision "shell", inline: $protozoa_provision_script, privileged: false
-		protozoa1_config.vm.synced_folder "/home/dbarradas/SharedFolder/", "/home/vagrant/SharedFolder", create: true
+		protozoa1_config.vm.synced_folder "SharedFolder/", "/home/vagrant/SharedFolder", create: true
 		
 
 		#VM Settings
@@ -200,7 +200,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 		protozoa2_config.vm.provision :reload
 		protozoa2_config.vm.provision "shell", inline: $chromium_provision_script
 		protozoa2_config.vm.provision "shell", inline: $protozoa_provision_script, privileged: false
-		protozoa2_config.vm.synced_folder "/home/dbarradas/SharedFolder/", "/home/vagrant/SharedFolder", create: true
+		protozoa2_config.vm.synced_folder "SharedFolder/", "/home/vagrant/SharedFolder", create: true
 
 		#VM Settings
 		protozoa2_config.vm.provider "virtualbox" do |vb|

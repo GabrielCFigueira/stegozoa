@@ -94,8 +94,8 @@ def PerturbationsAUCPerProfile():
                 ax1.yaxis.grid(color='grey', linestyle='dotted', lw=0.2)
                 ax1.spines['right'].set_visible(False)
                 ax1.spines['top'].set_visible(False)
-                plt.xlabel('False Positive Rate', fontsize=20)
-                plt.ylabel('True Positive Rate', fontsize=20)
+                plt.xlabel('False Positive Rate', fontsize=24)
+                plt.ylabel('True Positive Rate', fontsize=24)
                 plt.legend(loc='lower right', frameon=False, handlelength=1.0, fontsize=14)
 
                 plt.setp(ax1.get_xticklabels(), fontsize=20)
@@ -123,11 +123,72 @@ def PerturbationsAUCPerProfile():
 
 
 
+def PerturbationsAUCPerAlpha():
+
+    dataset = "StegozoaCaps"
+    
+
+    feature_sets = [
+        "PL_0_30_246",
+        "Stats_0_30_246"
+    ]
+
+
+    for videoProfile in os.listdir("classificationData/" + dataset):
+        if (".DS_Store" in videoProfile):
+            continue
+        for feature_set in feature_sets:
+
+            
+           fig = plt.figure()
+           ax1 = fig.add_subplot(111)
+                
+
+           for n, a in enumerate([4, 2, 1]):
+            
+                cfg = "delay_50/" + "RegularTraffic-StegozoaTraffic/"
+                sensitivity = np.load("width" + str(a) + "Data/" + dataset + "/" + videoProfile + "/" + cfg + feature_set + "/ROC_10CV_XGBoost_Sensitivity.npy")
+                specificity = np.load("width" + str(a) + "Data/" + dataset + "/" + videoProfile + "/" + cfg + feature_set + "/ROC_10CV_XGBoost_Specificity.npy")
+
+                auc = np.trapz(sensitivity, specificity)
+                print "stats AUC " + cfg + ": " + str(auc)
+
+                label_text = "AUC"
+                label_text = '$\\alpha=' + str(1.0 / a) + '$ - AUC = %0.2f' % (auc)
+
+
+
+                ax1.plot(specificity, sensitivity, lw=6, color=colors[n], label = label_text)
+
+           ax1.plot([0, 1], [0, 1], 'k--', lw=2, color="0.0", label = 'Random Guess')
+           ax1.yaxis.grid(color='grey', linestyle='dotted', lw=0.2)
+           ax1.spines['right'].set_visible(False)
+           ax1.spines['top'].set_visible(False)
+           plt.xlabel('False Positive Rate', fontsize=24)
+           plt.ylabel('True Positive Rate', fontsize=24)
+           plt.legend(loc='lower right', frameon=False, handlelength=1.0, fontsize=14)
+
+           plt.setp(ax1.get_xticklabels(), fontsize=20)
+           plt.setp(ax1.get_yticklabels(), fontsize=20)
+           ax1.set(xlim=(0, 1), ylim=(0.0, 1))
+            
+
+           if not os.path.exists("Figures/PerturbationsAUC/" + dataset + "/" + videoProfile):
+               os.makedirs("Figures/PerturbationsAUC/" + dataset + "/" + videoProfile)
+            
+           perturbation = "none"
+
+
+           plt.tight_layout()
+           fig.savefig("Figures/PerturbationsAUC/" + dataset + "/" + videoProfile + "/" + perturbation + "_" + feature_set + "_ROC_plot.pdf")   # save the figure to file
+           plt.close(fig)
+
 
 
 def SteganalysisAlpha():
 
     extractor = "superb"
+    app = "whereby"
 
     fig = plt.figure()#figsize=[5.4, 5.4])
     ax1 = fig.add_subplot(111)
@@ -135,8 +196,8 @@ def SteganalysisAlpha():
     for n, a in enumerate([4, 2, 1]):
             
 
-        sensitivity = np.load("jitsi" + str(a) + "/" + extractor + "/ROC_10CV_XGBoost_Sensitivity.npy")
-        specificity = np.load("jitsi" + str(a) + "/" + extractor + "/ROC_10CV_XGBoost_Specificity.npy")
+        sensitivity = np.load(app + str(a) + "/" + extractor + "/ROC_10CV_XGBoost_Sensitivity.npy")
+        specificity = np.load(app + str(a) + "/" + extractor + "/ROC_10CV_XGBoost_Specificity.npy")
 
         auc = np.trapz(sensitivity, specificity)
         print "stats AUC: " + str(auc)
@@ -149,8 +210,8 @@ def SteganalysisAlpha():
     ax1.yaxis.grid(color='grey', linestyle='dotted', lw=0.2)
     ax1.spines['right'].set_visible(False)
     ax1.spines['top'].set_visible(False)
-    plt.xlabel('False Positive Rate', fontsize=20)
-    plt.ylabel('True Positive Rate', fontsize=20)
+    plt.xlabel('False Positive Rate', fontsize=24)
+    plt.ylabel('True Positive Rate', fontsize=24)
     plt.legend(loc='lower right', frameon=False, handlelength=1.0, fontsize=14)
 
     plt.setp(ax1.get_xticklabels(), fontsize=20)
@@ -219,5 +280,6 @@ def SteganalysisPerturbations():
 if __name__ == "__main__":
     #PerturbationsAUCPerProfile()
 
-    SteganalysisAlpha()
-    SteganalysisPerturbations()
+    PerturbationsAUCPerAlpha()
+    #SteganalysisAlpha()
+    #SteganalysisPerturbations()
