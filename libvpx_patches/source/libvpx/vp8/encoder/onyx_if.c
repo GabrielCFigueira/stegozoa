@@ -87,9 +87,10 @@ extern const int vp8_gf_interval_table[101];
 #include "vpx_dsp/ssim.h"
 #endif
 
-#ifdef OUTPUT_YUV_SRC
+//Stegozoa
+//#ifdef OUTPUT_YUV_SRC
 FILE *yuv_file;
-#endif
+//#endif
 #ifdef OUTPUT_YUV_DENOISED
 FILE *yuv_denoised_file;
 #endif
@@ -5196,7 +5197,7 @@ int vp8_get_compressed_data(VP8_COMP *cpi, unsigned int *frame_flags,
 #if IMAGE_QUALITY
   //Stegozoa: psnr and ssim
   yuv_file = fopen("bd.yuv", "rb");
-  V12_BUFFER_CONFIG test;
+  YV12_BUFFER_CONFIG test;
   if (vp8_yv12_alloc_frame_buffer(&test, cpi->common.Width, cpi->common.Height, VP8BORDERINPIXELS)) {
     vpx_internal_error(&cpi->common.error, VPX_CODEC_MEM_ERROR, "Failed to allocate last frame buffer");
   }
