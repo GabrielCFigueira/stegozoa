@@ -5238,6 +5238,7 @@ int vp8_get_compressed_data(VP8_COMP *cpi, unsigned int *frame_flags,
     frame_ssim = vpx_calc_ssim(cpi->Source, &cm->post_proc_buffer, &weight);
     printf("Frame: %d, PSNR: %f, SSIM: %f\n", cm->current_video_frame, frame_psnr, frame_ssim);
   }
+  vp8_yv12_de_alloc_frame_buffer(&test);
 
 #endif // IMAGE_QUALITY
 
