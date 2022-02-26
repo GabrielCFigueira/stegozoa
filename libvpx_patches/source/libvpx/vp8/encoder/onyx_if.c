@@ -5202,7 +5202,7 @@ int vp8_get_compressed_data(VP8_COMP *cpi, unsigned int *frame_flags,
     vpx_internal_error(&cpi->common.error, VPX_CODEC_MEM_ERROR, "Failed to allocate last frame buffer");
   }
 
-  vpx_read_yuv_frame(yuv_file, test);
+  vpx_read_yuv_frame(yuv_file, &test);
   fclose(yuv_file);
 
   if (cm->show_frame) {
