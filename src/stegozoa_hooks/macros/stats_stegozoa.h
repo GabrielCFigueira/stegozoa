@@ -5,5 +5,6 @@
 
 #define IMAGE_QUALITY 1
 
+#define OUTPUT_YUV_SRC 1
 
 #endif //STEGOZOA_MACROS_H_

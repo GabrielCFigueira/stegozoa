@@ -16,8 +16,6 @@
 #include <algorithm>
 #include <memory>
 #include <string>
-//Stegozoa
-#include <iostream>
 
 #include "absl/types/optional.h"
 #include "api/scoped_refptr.h"
@@ -306,9 +304,6 @@ int LibvpxVp8Decoder::Decode(const EncodedImage& input_image,
   vpx_codec_err_t vpx_ret =
       vpx_codec_control(decoder_, VPXD_GET_LAST_QUANTIZER, &qp);
   RTC_DCHECK_EQ(vpx_ret, VPX_CODEC_OK);
-  //Stegozoa
-  static int mine = 0;
-  std::cout << "Decoder frame " + std::to_string(mine++) + " with timestamp: " + std::to_string(input_image.Timestamp()) << std::endl;
   ret = ReturnFrame(img, input_image.Timestamp(), qp, input_image.ColorSpace());
   if (ret != 0) {
     // Reset to avoid requesting key frames too often.

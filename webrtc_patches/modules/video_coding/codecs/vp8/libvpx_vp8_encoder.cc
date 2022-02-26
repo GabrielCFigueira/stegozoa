@@ -1053,10 +1053,6 @@ int LibvpxVp8Encoder::Encode(const VideoFrame& frame,
     // Examines frame timestamps only.
     error = GetEncodedPartitions(frame, retransmission_allowed);
   }
-  //Stegozoa
-  static int mine = 0;
-  std::cout << "Encoder frame " + std::to_string(mine++) + " with timestamp: " + std::to_string(timestamp_) << std::endl;
-  // TODO(sprang): Shouldn't we use the frame timestamp instead?
   timestamp_ += duration;
   return error;
 }
