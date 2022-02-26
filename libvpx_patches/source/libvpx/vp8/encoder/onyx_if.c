@@ -3875,7 +3875,7 @@ static void encode_frame_to_data_rate(VP8_COMP *cpi, size_t *size,
   fflush(stdout);
   fclose(yuv_file);
 #endif
-
+#endif
   do {
     vpx_clear_system_state();
 
