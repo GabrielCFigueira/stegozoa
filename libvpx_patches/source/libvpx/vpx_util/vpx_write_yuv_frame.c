@@ -19,9 +19,7 @@ void vpx_write_yuv_frame(FILE *yuv_file, YV12_BUFFER_CONFIG *s) {
 #if defined(OUTPUT_YUV_SRC) || defined(OUTPUT_YUV_DENOISED) || \
     defined(OUTPUT_YUV_SKINMAP) || defined(OUTPUT_YUV_SVC_SRC)
 
-#if STEGOZOA
-  printf("Cheguei aqui!\n");
-#endif
+  printf("%d %d\n", s->y_crop_height, s->uv_crop_height);
   unsigned char *src = s->y_buffer;
   int h = s->y_crop_height;
 
