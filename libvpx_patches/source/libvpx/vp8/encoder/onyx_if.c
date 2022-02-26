@@ -1984,7 +1984,7 @@ struct VP8_COMP *vp8_create_compressor(VP8_CONFIG *oxcf) {
   }
 
 #ifdef OUTPUT_YUV_SRC
-  yuv_file = fopen("bd.yuv", "ab");
+  //yuv_file = fopen("bd.yuv", "ab");
 #endif
 #ifdef OUTPUT_YUV_DENOISED
   yuv_denoised_file = fopen("denoised.yuv", "ab");
@@ -2323,7 +2323,7 @@ void vp8_remove_compressor(VP8_COMP **comp) {
   *comp = 0;
 
 #ifdef OUTPUT_YUV_SRC
-  fclose(yuv_file);
+  //fclose(yuv_file);
 #endif
 #ifdef OUTPUT_YUV_DENOISED
   fclose(yuv_denoised_file);
