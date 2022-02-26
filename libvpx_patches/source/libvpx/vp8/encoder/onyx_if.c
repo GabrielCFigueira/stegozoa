@@ -3863,7 +3863,8 @@ static void encode_frame_to_data_rate(VP8_COMP *cpi, size_t *size,
 
 #endif
 
-#ifdef OUTPUT_YUV_SRC && 0
+#if 0
+#ifdef OUTPUT_YUV_SRC
   printf("Opening file!\n");
   fflush(stdout);
   yuv_file = fopen("bd.yuv", "ab");
