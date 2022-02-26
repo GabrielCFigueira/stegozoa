@@ -5199,6 +5199,7 @@ int vp8_get_compressed_data(VP8_COMP *cpi, unsigned int *frame_flags,
   yuv_file = fopen("bd.yuv", "rb");
   YV12_BUFFER_CONFIG *test;
   test = vpx_memalign(32, sizeof(YV12_BUFFER_CONFIG));
+  memset(test, 0, sizeof(YV12_BUFFER_CONFIG));
   if (vp8_yv12_alloc_frame_buffer(test, cpi->common.Width, cpi->common.Height, VP8BORDERINPIXELS)) {
     vpx_internal_error(&cpi->common.error, VPX_CODEC_MEM_ERROR, "Failed to allocate last frame buffer");
   }
