@@ -5199,16 +5199,16 @@ int vp8_get_compressed_data(VP8_COMP *cpi, unsigned int *frame_flags,
   yuv_file = fopen("bd.yuv", "rb");
   YV12_BUFFER_CONFIG *test;
   test = vpx_memalign(32, sizeof(YV12_BUFFER_CONFIG));
-  if (vp8_yv12_alloc_frame_buffer(&test, cpi->common.Width, cpi->common.Height, VP8BORDERINPIXELS)) {
+  if (vp8_yv12_alloc_frame_buffer(test, cpi->common.Width, cpi->common.Height, VP8BORDERINPIXELS)) {
     vpx_internal_error(&cpi->common.error, VPX_CODEC_MEM_ERROR, "Failed to allocate last frame buffer");
   }
 
-  vpx_read_yuv_frame(yuv_file, &test);
+  vpx_read_yuv_frame(yuv_file, test);
   fclose(yuv_file);
 
   if (cm->show_frame) {
     uint64_t ye, ue, ve;
-    YV12_BUFFER_CONFIG *orig = &test;
+    YV12_BUFFER_CONFIG *orig = test;
     YV12_BUFFER_CONFIG *recon = cpi->common.frame_to_show;
     unsigned int y_width = cpi->common.Width;
     unsigned int y_height = cpi->common.Height;
@@ -5239,7 +5239,7 @@ int vp8_get_compressed_data(VP8_COMP *cpi, unsigned int *frame_flags,
     frame_ssim = vpx_calc_ssim(cpi->Source, &cm->post_proc_buffer, &weight);
     printf("Frame: %d, PSNR: %f, SSIM: %f\n", cm->current_video_frame, frame_psnr, frame_ssim);
   }
-  vp8_yv12_de_alloc_frame_buffer(&test);
+  vp8_yv12_de_alloc_frame_buffer(test);
 
 #endif // IMAGE_QUALITY
 
