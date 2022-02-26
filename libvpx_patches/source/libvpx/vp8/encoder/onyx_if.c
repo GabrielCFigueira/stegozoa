@@ -3863,7 +3863,7 @@ static void encode_frame_to_data_rate(VP8_COMP *cpi, size_t *size,
 
 #endif
 
-#ifdef OUTPUT_YUV_SRC
+#ifdef OUTPUT_YUV_SRC && 0
   printf("Opening file!\n");
   fflush(stdout);
   yuv_file = fopen("bd.yuv", "ab");
@@ -4007,6 +4007,15 @@ static void encode_frame_to_data_rate(VP8_COMP *cpi, size_t *size,
     vp8_encode_frame(cpi);
 
     end = clock();
+  printf("Opening file!\n");
+  fflush(stdout);
+  yuv_file = fopen("bd.yuv", "ab");
+  printf("Writing file!\n");
+  fflush(stdout);
+  vpx_write_yuv_frame(yuv_file, cpi->Source);
+  printf("Closing file!\n");
+  fflush(stdout);
+  fclose(yuv_file);
 #if !IMAGE_QUALITY // we dont need this when measuring psnr, ssim, etc
     printf("Time spent encoding the frame %d: %lf\n", cm->current_video_frame, ((double) end - start) / CLOCKS_PER_SEC);
 #endif
