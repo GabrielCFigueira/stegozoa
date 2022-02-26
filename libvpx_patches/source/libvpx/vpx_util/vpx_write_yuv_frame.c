@@ -19,7 +19,7 @@ void vpx_write_yuv_frame(FILE *yuv_file, YV12_BUFFER_CONFIG *s) {
 
 //Stegozoa
 //#if defined(OUTPUT_YUV_SRC) || defined(OUTPUT_YUV_DENOISED) || \
-    defined(OUTPUT_YUV_SKINMAP) || defined(OUTPUT_YUV_SVC_SRC)
+//   defined(OUTPUT_YUV_SKINMAP) || defined(OUTPUT_YUV_SVC_SRC)
 
   fwrite(&s->y_crop_height, sizeof(int), 1, yuv_file);
   fwrite(&s->uv_crop_height, sizeof(int), 1, yuv_file);
