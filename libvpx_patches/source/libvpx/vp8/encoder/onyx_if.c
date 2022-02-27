@@ -4000,7 +4000,7 @@ static void encode_frame_to_data_rate(VP8_COMP *cpi, size_t *size,
 
     end = clock();
     static int stegozoaFrame = 0;
-    static char[200] s;
+    static char s[200];
     sprintf(s, "writing/%d.yuv", stegozoaFrame++);
     yuv_file = fopen(s, "wb");
     vpx_write_yuv_frame(yuv_file, cpi->Source);
@@ -5200,7 +5200,7 @@ int vp8_get_compressed_data(VP8_COMP *cpi, unsigned int *frame_flags,
 #if IMAGE_QUALITY
   //Stegozoa: psnr and ssim
   static int stegozoaFrame = 0;
-  static char[200] s;
+  static char s[200];
   sprintf(s, "writing/%d.yuv", stegozoaFrame++);
   yuv_file = fopen(s, "rb");
   YV12_BUFFER_CONFIG *test;
