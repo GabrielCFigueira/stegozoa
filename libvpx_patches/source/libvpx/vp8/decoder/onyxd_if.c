@@ -501,7 +501,7 @@ int vp8dx_get_raw_frame(VP8D_COMP *pbi, YV12_BUFFER_CONFIG *sd,
     test = vpx_memalign(32, sizeof(YV12_BUFFER_CONFIG));
     memset(test, 0, sizeof(YV12_BUFFER_CONFIG));
     if (vp8_yv12_alloc_frame_buffer(test, pbi->common.Width, pbi->common.Height, VP8BORDERINPIXELS)) {
-    vpx_internal_error(&pbi->common.error, VPX_CODEC_MEM_ERROR, "Failed to allocate last frame buffer");
+      vpx_internal_error(&pbi->common.error, VPX_CODEC_MEM_ERROR, "Failed to allocate last frame buffer");
     }
 
     vpx_read_yuv_frame(yuv_file, test);
@@ -525,9 +525,9 @@ int vp8dx_get_raw_frame(VP8D_COMP *pbi, YV12_BUFFER_CONFIG *sd,
     double frame_psnr, frame_ssim;
     double weight = 0;
 
-    vp8_deblock(cm, recon, &cm->post_proc_buffer,
-                  cm->filter_level * 10 / 6);
-    vpx_clear_system_state();
+    //vp8_deblock(cm, recon, &cm->post_proc_buffer,
+    //              cm->filter_level * 10 / 6);
+    //vpx_clear_system_state();
 
     ye = calc_plane_error(orig->y_buffer, orig->y_stride, pp->y_buffer,
                             pp->y_stride, y_width, y_height);
