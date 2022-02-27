@@ -328,8 +328,8 @@ if __name__ == "__main__":
     for network_condition in network_conditions:
         for i in range(0,246):
             SampleRegularImage(0 + i, regular_cap_folder, baseline, network_condition, chromium_builds[0])
-            cleanFolders()
+            CleanFolders()
             SampleStegozoaImage(246 + i, stegozoa_cap_folder, baseline, network_condition, chromium_builds[1])
-            cleanFolders()
+            CleanFolders()
 
 
