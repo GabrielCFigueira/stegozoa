@@ -5207,7 +5207,7 @@ int vp8_get_compressed_data(VP8_COMP *cpi, unsigned int *frame_flags,
     //Stegozoa: psnr and ssim
     static int stegozoaFrame = 0;
     static char s[200];
-    printf("Reading frame: %d, cpi->pass: %d\n", stegozoaFrame, cpi->pass);
+    printf("Encoder Reading frame: %d, cpi->pass: %d\n", stegozoaFrame, cpi->pass);
     fflush(stdout);
     sprintf(s, "writing/%d.yuv", stegozoaFrame++);
     yuv_file = fopen(s, "rb");

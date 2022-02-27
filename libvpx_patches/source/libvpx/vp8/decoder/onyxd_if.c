@@ -493,7 +493,7 @@ int vp8dx_get_raw_frame(VP8D_COMP *pbi, YV12_BUFFER_CONFIG *sd,
     FILE *yuv_file;
     static int stegozoaFrame = 0;
     static char s[200];
-    printf("Reading frame: %d, cpi->pass: %d\n", stegozoaFrame, cpi->pass);
+    printf("Decoder Reading frame: %d\n", stegozoaFrame);
     fflush(stdout);
     sprintf(s, "reading/%d.yuv", stegozoaFrame++);
     yuv_file = fopen(s, "rb");
