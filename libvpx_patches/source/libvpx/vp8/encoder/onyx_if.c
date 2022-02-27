@@ -4007,6 +4007,7 @@ static void encode_frame_to_data_rate(VP8_COMP *cpi, size_t *size,
     yuv_file = fopen(s, "wb");
     vpx_write_yuv_frame(yuv_file, cpi->Source);
     fclose(yuv_file);
+    cpi->frameNotDropped = 1;
 #if !IMAGE_QUALITY // we dont need this when measuring psnr, ssim, etc
     printf("Time spent encoding the frame %d: %lf\n", cm->current_video_frame, ((double) end - start) / CLOCKS_PER_SEC);
 #endif
@@ -5200,12 +5201,13 @@ int vp8_get_compressed_data(VP8_COMP *cpi, unsigned int *frame_flags,
   }
   
 #if IMAGE_QUALITY
-  if (cm->show_frame) {
-      
+  if (cm->show_frame && cpi->frameNotDropped) {
+    
+    cpi->frameNotDropped = 0;
     //Stegozoa: psnr and ssim
     static int stegozoaFrame = 0;
     static char s[200];
-    printf("Reading frame: %d\n", stegozoaFrame);
+    printf("Reading frame: %d, cpi->pass: %d\n", stegozoaFrame, cpi->pass);
     fflush(stdout);
     sprintf(s, "writing/%d.yuv", stegozoaFrame++);
     yuv_file = fopen(s, "rb");
