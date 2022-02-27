@@ -539,7 +539,7 @@ int vp8dx_get_raw_frame(VP8D_COMP *pbi, YV12_BUFFER_CONFIG *sd,
 
     frame_psnr = vpx_sse_to_psnr(t_samples, 255.0, sq_error);
     frame_ssim = vpx_calc_ssim(orig, pp, &weight);
-    printf("Decoder Frame: %d, PSNR: %f, SSIM: %f\n", cm->current_video_frame, frame_psnr, frame_ssim);
+    printf("Frame: %d, PSNR: %f, SSIM: %f\n", cm->current_video_frame, frame_psnr, frame_ssim);
     
     vp8_yv12_de_alloc_frame_buffer(test);
   }
