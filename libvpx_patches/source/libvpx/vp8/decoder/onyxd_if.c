@@ -17,6 +17,7 @@
 #if IMAGE_QUALITY
 #include "vpx_dsp/ssim.h"
 #include "vpx_dsp/psnr.h"
+#include "vpx_util/vpx_write_yuv_frame.h"
 #endif
 
 #include "vp8/common/onyxc_int.h"
@@ -485,9 +486,11 @@ int vp8dx_get_raw_frame(VP8D_COMP *pbi, YV12_BUFFER_CONFIG *sd,
 #endif /*!CONFIG_POSTPROC*/
 
 #if IMAGE_QUALITY
+  
+  VP8_COMMON *cm = &pbi->common;
   //Stegozoa: psnr and ssim
   if (cm->show_frame) {
-    VP8_COMMON *cm = &pbi->common;
+    FILE *yuv_file;
     static int stegozoaFrame = 0;
     static char s[200];
     printf("Reading frame: %d, cpi->pass: %d\n", stegozoaFrame, cpi->pass);
@@ -497,8 +500,8 @@ int vp8dx_get_raw_frame(VP8D_COMP *pbi, YV12_BUFFER_CONFIG *sd,
     YV12_BUFFER_CONFIG *test;
     test = vpx_memalign(32, sizeof(YV12_BUFFER_CONFIG));
     memset(test, 0, sizeof(YV12_BUFFER_CONFIG));
-    if (vp8_yv12_alloc_frame_buffer(test, cpi->common.Width, cpi->common.Height, VP8BORDERINPIXELS)) {
-    vpx_internal_error(&cpi->common.error, VPX_CODEC_MEM_ERROR, "Failed to allocate last frame buffer");
+    if (vp8_yv12_alloc_frame_buffer(test, pbi->common.Width, pbi->common.Height, VP8BORDERINPIXELS)) {
+    vpx_internal_error(&pbi->common.error, VPX_CODEC_MEM_ERROR, "Failed to allocate last frame buffer");
     }
 
     vpx_read_yuv_frame(yuv_file, test);
@@ -541,6 +544,7 @@ int vp8dx_get_raw_frame(VP8D_COMP *pbi, YV12_BUFFER_CONFIG *sd,
     printf("Decoder Frame: %d, PSNR: %f, SSIM: %f\n", cm->current_video_frame, frame_psnr, frame_ssim);
     
     vp8_yv12_de_alloc_frame_buffer(test);
+  }
 #endif // IMAGE_QUALITY
 
   vpx_clear_system_state();
