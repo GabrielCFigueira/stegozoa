@@ -5198,22 +5198,23 @@ int vp8_get_compressed_data(VP8_COMP *cpi, unsigned int *frame_flags,
   }
   
 #if IMAGE_QUALITY
-  //Stegozoa: psnr and ssim
-  static int stegozoaFrame = 0;
-  static char s[200];
-  sprintf(s, "writing/%d.yuv", stegozoaFrame++);
-  yuv_file = fopen(s, "rb");
-  YV12_BUFFER_CONFIG *test;
-  test = vpx_memalign(32, sizeof(YV12_BUFFER_CONFIG));
-  memset(test, 0, sizeof(YV12_BUFFER_CONFIG));
-  if (vp8_yv12_alloc_frame_buffer(test, cpi->common.Width, cpi->common.Height, VP8BORDERINPIXELS)) {
-    vpx_internal_error(&cpi->common.error, VPX_CODEC_MEM_ERROR, "Failed to allocate last frame buffer");
-  }
-
-  vpx_read_yuv_frame(yuv_file, test);
-  fclose(yuv_file);
-
   if (cm->show_frame) {
+      
+    //Stegozoa: psnr and ssim
+    static int stegozoaFrame = 0;
+    static char s[200];
+    sprintf(s, "writing/%d.yuv", stegozoaFrame++);
+    yuv_file = fopen(s, "rb");
+    YV12_BUFFER_CONFIG *test;
+    test = vpx_memalign(32, sizeof(YV12_BUFFER_CONFIG));
+    memset(test, 0, sizeof(YV12_BUFFER_CONFIG));
+    if (vp8_yv12_alloc_frame_buffer(test, cpi->common.Width, cpi->common.Height, VP8BORDERINPIXELS)) {
+      vpx_internal_error(&cpi->common.error, VPX_CODEC_MEM_ERROR, "Failed to allocate last frame buffer");
+    }
+
+    vpx_read_yuv_frame(yuv_file, test);
+    fclose(yuv_file);
+
     uint64_t ye, ue, ve;
     YV12_BUFFER_CONFIG *orig = test;
     YV12_BUFFER_CONFIG *recon = cpi->common.frame_to_show;
