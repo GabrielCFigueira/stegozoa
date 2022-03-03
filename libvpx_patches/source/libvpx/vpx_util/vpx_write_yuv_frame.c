@@ -18,8 +18,9 @@
 void vpx_write_yuv_frame(FILE *yuv_file, YV12_BUFFER_CONFIG *s) {
 
 //Stegozoa
-//#if defined(OUTPUT_YUV_SRC) || defined(OUTPUT_YUV_DENOISED) || \
-//   defined(OUTPUT_YUV_SKINMAP) || defined(OUTPUT_YUV_SVC_SRC)
+#if defined(OUTPUT_YUV_SRC) || defined(OUTPUT_YUV_DENOISED) || \
+    defined(OUTPUT_YUV_SKINMAP) || defined(OUTPUT_YUV_SVC_SRC) || \
+    IMAGE_QUALITY
 
   fwrite(&s->y_crop_height, sizeof(int), 1, yuv_file);
   fwrite(&s->uv_crop_height, sizeof(int), 1, yuv_file);
@@ -52,14 +53,14 @@ void vpx_write_yuv_frame(FILE *yuv_file, YV12_BUFFER_CONFIG *s) {
     src += s->uv_stride;
   } while (--h);
 
-//Stegozoa
-//#else
-//  (void)yuv_file;
-//  (void)s;
-//#endif
+
+#else
+  (void)yuv_file;
+  (void)s;
+#endif
 }
 
-//Stegozoa
+#if IMAGE_QUALITY
 void vpx_read_yuv_frame(FILE *yuv_file, YV12_BUFFER_CONFIG *s) {
   
   fread(&s->y_crop_height, sizeof(int), 1, yuv_file);
@@ -94,3 +95,5 @@ void vpx_read_yuv_frame(FILE *yuv_file, YV12_BUFFER_CONFIG *s) {
   } while (--h);
 
 }
+
+#endif

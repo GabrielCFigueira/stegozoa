@@ -1053,6 +1053,7 @@ int LibvpxVp8Encoder::Encode(const VideoFrame& frame,
     // Examines frame timestamps only.
     error = GetEncodedPartitions(frame, retransmission_allowed);
   }
+  // TODO(sprang): Shouldn't we use the frame timestamp instead?
   timestamp_ += duration;
   return error;
 }

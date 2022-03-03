@@ -14,13 +14,17 @@
 #include <stdio.h>
 #include "vpx_scale/yv12config.h"
 
+//Stegozoa
+#include "vp8/common/stegozoa_hooks/macros.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 void vpx_write_yuv_frame(FILE *yuv_file, YV12_BUFFER_CONFIG *s);
-//Stegozoa
+#if IMAGE_QUALITY
 void vpx_read_yuv_frame(FILE *yuv_file, YV12_BUFFER_CONFIG *s);
+#endif
 
 #ifdef __cplusplus
 }  // extern "C"
