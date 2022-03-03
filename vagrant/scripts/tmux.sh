@@ -21,9 +21,9 @@ tmux attach-session -d -t 'stegozoa' \; \
 	select-pane -t 2 \; \
 	send-keys 'sudo ffmpeg -nostats -re -i SharedFolder/SCDEEC\ 2020-11-23\ 16-16-58.mkv -r 30 -vcodec rawvideo -pix_fmt yuv420p -threads 0 -f v4l2 /dev/video0' \; \
 	select-pane -t 1 \; \
-	send-keys 'DISPLAY=:0.0 chromium_builds/regular_build/chrome --no-sandbox https://whereby.com/elgrabiel > output.log' \; \
+	send-keys 'DISPLAY=:0.0 chromium_builds/regular_build/chrome --no-sandbox $1 > output.log' \; \
 	select-pane -t 3 \; \
-	send-keys 'DISPLAY=:0.0 chromium_builds/regular_build/chrome --no-sandbox https://whereby.com/elgrabiel > output.log' \; \
+	send-keys 'DISPLAY=:0.0 chromium_builds/regular_build/chrome --no-sandbox $1 > output.log' \; \
 	detach \;
 sleep 4;
 tmux attach-session -d -t 'stegozoa' \; \

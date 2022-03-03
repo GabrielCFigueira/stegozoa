@@ -5,7 +5,7 @@ from sender_control import *
 # register psnr and ssim values for how long
 duration = 45
 
-WEBRTC_APPLICATION = "https://whereby.com/elgrabiel"
+WEBRTC_APPLICATION = "https://whereby.com/123"
 #WEBRTC_APPLICATION = "https://meet.jit.si/12349876"
 
 def CleanFolders():
