@@ -25,15 +25,15 @@ Warning: You may need to access the graphical interface of the VM on the first t
 
 In `src/stegozoa_hooks` you will find the code that is bundled with Chromium, which implements the embedding and extraction functions. The set of files present in `libvpx_patches` replaces key libvpx files in order to call this code (likewise for webrtc in `webrtc_patches`). The stegozoa library (`src/libstegozoa.py`) communicates with these hooks through named pipes, exposing an API in order to support communication.
 
-# Tests
+## Tests
 
 For normal usage and tests, use the regular\_build and no\_stegozoa\_build macro files. For steganalysis and psnr/ssim tests, use stats\_stegozoa and stats\_no\_stegozoa macro files.
 
-## Throughput
+### Throughput
 
 Run the test/upload.py file in one VM and test/download.py in the other VM. Press Ctrl+C to obtain the average throughput.
 
-## Steganalysis
+### Steganalysis
 
 For jitsi, we need a dropbox account: https://www.dropbox.com/install-linux
 
@@ -42,11 +42,13 @@ For jitsi, we need a dropbox account: https://www.dropbox.com/install-linux
 
 Whereby can also be used for recording, but you may need a premium account.
 
+Adjust the file test/sender\_image\_quality.py for recording videos. After recording the videos, you will need to train a steganalysis classifier based on features extracted from the videos, and compute its accuracy.
+
 Adjust the test/automate.py file in order to correctly record video calls (coordinates of mouse clicks can become outdated).
 
-## PSNR
+### PSNR
 
-Two symlinks are needed in each VM in other to share frames (and compute the PSNR/SSIM). For example, create two folder in the `SharedFolder` of vagrant, `1to2` and `2to1`. In VM1, run:
+Two symlinks are needed in each VM in other to share frames (and compute the PSNR/SSIM). For example, create two folders in the `SharedFolder` of vagrant, `1to2` and `2to1`. In VM1, run:
 
 `ln -sf ~/SharedFolder/1to2 writing`
 
