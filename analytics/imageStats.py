@@ -106,7 +106,7 @@ def plot(stegoDist, regularDist, savefile, ylabel):
     ax1.spines['right'].set_visible(False)
     ax1.spines['top'].set_visible(False)
     ax1.yaxis.grid(color='grey', linestyle='dotted', lw=0.2)
-    plt.ylabel(label, fontsize=20)
+    plt.ylabel(ylabel, fontsize=20)
 
     plt.setp(ax1.get_xticklabels(), fontsize=15)
     plt.setp(ax1.get_yticklabels(), fontsize=15)

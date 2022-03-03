@@ -308,6 +308,7 @@ typedef struct VP8_COMP {
   int videoCall;
   int simulcast;
 #endif
+  int frameNotDropped;
 
 
   VP8_COMMON common;
