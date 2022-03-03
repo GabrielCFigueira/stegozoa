@@ -41,7 +41,7 @@ sync_late = 4
 #############################################################################
 # Choose WebRTC application to test
 
-WEBRTC_APPLICATION = "https://whereby.com/elgrabiel"
+WEBRTC_APPLICATION = "https://whereby.com/123"
 #WEBRTC_APPLICATION = "https://appr.tc/r/"
 #WEBRTC_APPLICATION = "https://meet.jit.si/12349876"
 

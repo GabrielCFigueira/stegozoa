@@ -3,11 +3,13 @@ from sender_control import *
 
 
 # register psnr and ssim values for how long
-duration = 60
+duration = 45
 
-WEBRTC_APPLICATION = "whereby.com"
+WEBRTC_APPLICATION = "https://whereby.com/123"
 #WEBRTC_APPLICATION = "https://meet.jit.si/12349876"
 
+def CleanFolders():
+    os.system("rm writing/* reading/*")
 
 def SampleRegularImage(sample_index, config, baseline, network_condition, chromium_build):
     regular_cap_folder = config
@@ -69,7 +71,7 @@ def SampleRegularImage(sample_index, config, baseline, network_condition, chromi
         elif("meet.jit.si" in WEBRTC_APPLICATION):
             webrtc_app = WEBRTC_APPLICATION + network_condition[1] + "_reg"
         elif("whereby.com" in WEBRTC_APPLICATION):
-            webrtc_app = "https://regular1." + WEBRTC_APPLICATION + "/regular"
+            webrtc_app = WEBRTC_APPLICATION
 
         print "[P] Starting Remote Chromium Browser at: " + str(start_remote_chromium)
         print "[P] Starting WebRTC Application: " + webrtc_app
@@ -112,15 +114,15 @@ def SampleRegularImage(sample_index, config, baseline, network_condition, chromi
             RESTCall("automateApp", webrtc_app)
 
             
-        print "[P] Recording Video call"
-        recordVideo(WEBRTC_APPLICATION)
+        #print "[P] Recording Video call"
+        #recordVideo(WEBRTC_APPLICATION)
         
         #Wait
         print "[P] Waiting for the " + str(duration) + " seconds to finish..."
         time.sleep(duration)
         
-        print "[P] Stopping recording Video call"
-        stopRecordVideo(WEBRTC_APPLICATION)
+        #print "[P] Stopping recording Video call"
+        #stopRecordVideo(WEBRTC_APPLICATION)
 
         # Cleanup
         print "[P] Killing FFMPEG stream"
@@ -212,7 +214,7 @@ def SampleStegozoaImage(sample_index, config, baseline, network_condition, chrom
         elif("meet.jit.si" in WEBRTC_APPLICATION):
             webrtc_app = WEBRTC_APPLICATION + network_condition[1] + "_stego"
         elif("whereby.com" in WEBRTC_APPLICATION):
-            webrtc_app = "https://stegozoa1." + WEBRTC_APPLICATION + "/stegozoa"
+            webrtc_app = WEBRTC_APPLICATION
 
         print "[P] Starting Remote Chromium Browser at: " + str(start_remote_chromium)
         RESTCall("startChromium", str(start_remote_chromium) + "," + chromium_build + "," + webrtc_app)
@@ -253,8 +255,8 @@ def SampleStegozoaImage(sample_index, config, baseline, network_condition, chrom
             RESTCall("automateApp", webrtc_app)
 
             
-        print "[P] Recording Video call"
-        recordVideo(WEBRTC_APPLICATION)
+        #print "[P] Recording Video call"
+        #recordVideo(WEBRTC_APPLICATION)
 
         
         #Start Stegozoa data transmission after tcpdump
@@ -266,8 +268,8 @@ def SampleStegozoaImage(sample_index, config, baseline, network_condition, chrom
         print "[P] Waiting for the " + str(duration) + " seconds to finish..."
         time.sleep(duration)
         
-        print "[P] Stopping recording Video call"
-        stopRecordVideo(WEBRTC_APPLICATION)
+        #print "[P] Stopping recording Video call"
+        #stopRecordVideo(WEBRTC_APPLICATION)
 
         # Cleanup
         print "[P] Killing FFMPEG stream"
@@ -326,6 +328,8 @@ if __name__ == "__main__":
     for network_condition in network_conditions:
         for i in range(0,246):
             SampleRegularImage(0 + i, regular_cap_folder, baseline, network_condition, chromium_builds[0])
+            CleanFolders()
             SampleStegozoaImage(246 + i, stegozoa_cap_folder, baseline, network_condition, chromium_builds[1])
+            CleanFolders()
 
 

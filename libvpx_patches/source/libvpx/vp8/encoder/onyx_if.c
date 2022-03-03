@@ -3866,7 +3866,6 @@ static void encode_frame_to_data_rate(VP8_COMP *cpi, size_t *size,
 #ifdef OUTPUT_YUV_SRC
   vpx_write_yuv_frame(yuv_file, cpi->Source);
 #endif
-
   do {
     vpx_clear_system_state();
 
@@ -3999,7 +3998,17 @@ static void encode_frame_to_data_rate(VP8_COMP *cpi, size_t *size,
     vp8_encode_frame(cpi);
 
     end = clock();
-#if !IMAGE_QUALITY // we dont need this when measuring psnr, ssim, etc
+
+#if IMAGE_QUALITY
+    {
+        static int stegozoaFrame = 0;
+        static char s[200];
+        sprintf(s, "writing/%d.yuv", stegozoaFrame++);
+        FILE *yuv_file = fopen(s, "wb");
+        vpx_write_yuv_frame(yuv_file, cpi->Source);
+        fclose(yuv_file);
+    }
+#else // we dont need this when measuring psnr, ssim, etc
     printf("Time spent encoding the frame %d: %lf\n", cm->current_video_frame, ((double) end - start) / CLOCKS_PER_SEC);
 #endif
 
@@ -5190,63 +5199,7 @@ int vp8_get_compressed_data(VP8_COMP *cpi, unsigned int *frame_flags,
   if (cpi->b_calculate_psnr && cpi->pass != 1 && cm->show_frame) {
     generate_psnr_packet(cpi);
   }
-
-  #if IMAGE_QUALITY
-
-  //Stegozoa: psnr and ssim
-  if (cm->show_frame) {
-
-    uint64_t ye, ue, ve;
-    YV12_BUFFER_CONFIG *orig = cpi->Source;
-    YV12_BUFFER_CONFIG *recon = cpi->common.frame_to_show;
-    unsigned int y_width = cpi->common.Width;
-    unsigned int y_height = cpi->common.Height;
-    unsigned int uv_width = (y_width + 1) / 2;
-    unsigned int uv_height = (y_height + 1) / 2;
-    int y_samples = y_height * y_width;
-    int uv_samples = uv_height * uv_width;
-    int t_samples = y_samples + 2 * uv_samples;
-
-
-    YV12_BUFFER_CONFIG *pp = &cm->post_proc_buffer;
-    double sq_error;
-    double frame_psnr, frame_psnr2, frame_ssim;
-    double weight = 0;
-       
-    ye = calc_plane_error(orig->y_buffer, orig->y_stride, recon->y_buffer,
-                              recon->y_stride, y_width, y_height);
-
-    ue = calc_plane_error(orig->u_buffer, orig->uv_stride, recon->u_buffer,
-                              recon->uv_stride, uv_width, uv_height);
-
-    ve = calc_plane_error(orig->v_buffer, orig->uv_stride, recon->v_buffer,
-                              recon->uv_stride, uv_width, uv_height);
-
-    sq_error = (double)(ye + ue + ve);
-
-    frame_psnr = vpx_sse_to_psnr(t_samples, 255.0, sq_error);
-
-
-    vp8_deblock(cm, cm->frame_to_show, &cm->post_proc_buffer,
-                  cm->filter_level * 10 / 6);
-    vpx_clear_system_state();
-
-    ye = calc_plane_error(orig->y_buffer, orig->y_stride, pp->y_buffer,
-                            pp->y_stride, y_width, y_height);
-    ue = calc_plane_error(orig->u_buffer, orig->uv_stride, pp->u_buffer,
-                            pp->uv_stride, uv_width, uv_height);
-
-    ve = calc_plane_error(orig->v_buffer, orig->uv_stride, pp->v_buffer,
-                            pp->uv_stride, uv_width, uv_height);
-
-    sq_error = (double)(ye + ue + ve);
-
-    frame_psnr2 = vpx_sse_to_psnr(t_samples, 255.0, sq_error);
-    frame_ssim = vpx_calc_ssim(cpi->Source, &cm->post_proc_buffer, &weight);
-    printf("Frame: %d, PSNR: %f, PSNR2: %f, SSIM: %f\n", cm->current_video_frame, frame_psnr, frame_psnr2, frame_ssim);
-  }
-
-#endif // IMAGE_QUALITY
+  
 
 #if CONFIG_INTERNAL_STATS
 
